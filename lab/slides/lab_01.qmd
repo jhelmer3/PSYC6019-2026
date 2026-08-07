@@ -1,11 +1,14 @@
 ---
 title: "Introduction to R"
-subtitle: "PSYC 6019-A01 / PSYC 6022-A01 | 2025-08-28 | Lab 1"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 \n 2025-08-28 | Lab 1"
 author: "Jess Helmer"
 footer: "[jhelmer3.github.io/PSYC6019-2026/](https://jhelmer3.github.io/PSYC6019-2026/)"
 format: 
   revealjs:
-    theme: "../../../../../../../../OneDrive - Georgia Institute of Technology/Courses/GTA/PSYC 6019/PSYC6019-2026/gt-theme"
+    code-link: true
+    code-line-numbers: false
+    theme: ../../gt-theme.scss
+    # theme: "../../../../../../../../OneDrive - Georgia Institute of Technology/Courses/GTA/PSYC 6019/PSYC6019-2026/gt-theme"
 execute: 
   echo: true
 ---
@@ -27,6 +30,7 @@ Hi! I'm Jess Helmer. I'm a third-year PhD student in Quantitative Psychology.
 My research focuses on the measurement and modeling of psychological data.
 
 :::: {.columns}
+
 ::: {.column}
 ::: subpoint
 ○ Email: [jhelmer3\@gatech.edu](mailto:jhelmer3\@gatech.edu) 
@@ -102,6 +106,17 @@ Please submit both the rendered (.html or .pdf) and the source Quarto (.qmd) fil
 As long as a complete attempt is made, full credit will be given.
 
 
+## Lab Project
+
+One of the best ways to learn R is to work on an independent data analysis project with real data.
+
+Opportunity to immerse yourself in the language, explore the messiness of real data, make and learn from mistakes. 
+
+We can provide you with a dataset if needed, but you are strongly encouraged to find data you are particularly interested in.
+
+More details to come---will be due at the end of the semester.
+
+
 ## About AI
 
 AI can be a very helpful tool for learning coding! Feel free to use it to clarify concepts, troubleshoot code, or syntax explanations.
@@ -114,24 +129,50 @@ It is important to practice and gain experiencing coding independently!
 ## Lab Resources
 
 :::: {.columns}
+
 ::: {.column width="30%"}
-[Introduction to Data Exploration and Analysis with R (IDEAR)](https://bookdown.org/mikemahoney218/IDEAR/)
+[R for Data Science (2e)](https://r4ds.hadley.nz/){target="blank"}
+
+[![](../media/lab_01/r4de.jpg)](https://r4ds.hadley.nz/){target="blank"}
 :::
 
 ::: {.column width="30%"}
-[R for Data Science (2e)](https://r4ds.hadley.nz/)
+[ggplot2: Elegant Graphics for Data Analysis (3e)](https://ggplot2-book.org/)
 
-[![](../media/lab_01/r4de.jpg)](https://r4ds.hadley.nz/)
+[![](../media/lab_01/ggplot2.jpg)](https://ggplot2-book.org//)
 :::
 
 ::: {.column width="30%"}
-[YaRrr! The Pirate’s Guide to R](https://bookdown.org/ndphillips/YaRrr/)
+[Quarto Documentation](https://quarto.org/docs/reference/)
 
-[![](../media/lab_01/yarrr.jpg)](https://bookdown.org/ndphillips/YaRrr/)
+[![](../media/lab_01/quarto.png)](https://quarto.org/docs/reference/)
 :::
+
 ::::
 
 All free, open source materials for learning R
+
+
+## Lab Resources (Other)
+
+:::: {.columns}
+::: {.column width="30%"}
+[Introduction to Data Exploration and Analysis with R (IDEAR)](https://bookdown.org/mikemahoney218/IDEAR/)
+
+Similar content as R4DS but with a different writing style.
+:::
+
+::: {.column width="30%"}
+[What They Forgot to Teach You About R](https://rstats.wtf/)
+
+:::
+
+::: {.column width="30%"}
+[Happy Git with R](https://happygitwithr.com/)
+
+An excellent resource for getting started with Git and GitHub as an R user.
+:::
+::::
 
 
 ------------------------------------------------------------------------
@@ -145,7 +186,7 @@ All free, open source materials for learning R
 
 Open source coding language, primarily used for data analysis and data science.
 
-![](../media/lab_01/R.png){.absolute width="200" top="140" left="1000"}
+![](../media/lab_01/R.png){.absolute width="200" bottom=20 right=0}
 
 Coding (per the IDEAR book):
 
@@ -232,6 +273,7 @@ PEMDAS!
 ```
 :::
 
+
 ## Vectors
 
 ```{r}
@@ -277,105 +319,118 @@ Vectors can only hold one type of data!
 ```{r}
 c(1, 2, 3) / 3
 ```
+:::
 
+:::: {.columns}
+::: {.column width="50%"}
+::: fragment
 ```{r}
 #| error: true
 c(1, "hello!", "Georgia Tech") / 3
 ```
 :::
+:::
 
+::: {.column width="50%"}
+::: fragment
 Error because we cannot divide characters
-
-## Data Types
-
-```{r}
-TRUE
-```
-
-::: fragment
-```{r}
-c(1, "hello!", TRUE)
-```
 :::
-
-::: fragment
-```{r}
-c(TRUE, FALSE)
-```
-:::
-
-## Data Types: Logical (boolean)
-
-```{r}
-6 > 4
-```
-
-::: fragment
-```{r}
-12 / 2 < 6
-```
-:::
-
-::::: {.columns}
-::: {.column .fragment}
-The `<`, `>`, and `<=` symbols are *logical operators*
-
-Logical data handled like binary numeric data
-
-```{r}
-TRUE == 1
-```
-
-```{r}
-FALSE + 3
-```
-:::
-
-:::: {.column .fragment}
-`TRUE` and `FALSE` can be abbreviated as `T` and `F`
-
-```{r}
-TRUE == T
-```
-
-```{r}
-FALSE == F
-```
-
-::: fragment
-Harder to tell apart, so be careful!
 :::
 ::::
-:::::
 
-## Practice Break!
 
-```{r}
-#| output-location: fragment
-2 + 2
-```
+<!-- ## Data Types -->
 
-::: fragment
-```{r}
-#| output-location: fragment
-2 + 2 / 2
-```
-:::
+<!-- ```{r} -->
+<!-- TRUE -->
+<!-- ``` -->
 
-::: fragment
-```{r}
-#| output-location: fragment
-2 + 2 / 2 ^ 2
-```
-:::
+<!-- ::: fragment -->
+<!-- ```{r} -->
+<!-- c(1, "hello!", TRUE) -->
+<!-- ``` -->
+<!-- ::: -->
 
-::: fragment
-```{r}
-#| output-location: fragment
-#| error: true
-c("hello!", 2) / 2
-```
-:::
+<!-- ::: fragment -->
+<!-- ```{r} -->
+<!-- c(TRUE, FALSE) -->
+<!-- ``` -->
+<!-- ::: -->
+
+
+<!-- ## Data Types: Logical (boolean) -->
+
+<!-- ```{r} -->
+<!-- 6 > 4 -->
+<!-- ``` -->
+
+<!-- ::: fragment -->
+<!-- ```{r} -->
+<!-- 12 / 2 < 6 -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::::: {.columns} -->
+<!-- ::: {.column .fragment} -->
+<!-- The `<`, `>`, and `<=` symbols are *logical operators* -->
+
+<!-- Logical data handled like binary numeric data -->
+
+<!-- ```{r} -->
+<!-- TRUE == 1 -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- FALSE + 3 -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- :::: {.column .fragment} -->
+<!-- `TRUE` and `FALSE` can be abbreviated as `T` and `F` -->
+
+<!-- ```{r} -->
+<!-- TRUE == T -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- FALSE == F -->
+<!-- ``` -->
+
+<!-- ::: fragment -->
+<!-- Harder to tell apart, so be careful! -->
+<!-- ::: -->
+<!-- :::: -->
+<!-- ::::: -->
+
+
+<!-- ## Practice Break! -->
+
+<!-- ```{r} -->
+<!-- #| output-location: fragment -->
+<!-- 2 + 2 -->
+<!-- ``` -->
+
+<!-- ::: fragment -->
+<!-- ```{r} -->
+<!-- #| output-location: fragment -->
+<!-- 2 + 2 / 2 -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: fragment -->
+<!-- ```{r} -->
+<!-- #| output-location: fragment -->
+<!-- 2 + 2 / 2 ^ 2 -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: fragment -->
+<!-- ```{r} -->
+<!-- #| output-location: fragment -->
+<!-- #| error: true -->
+<!-- c("hello!", 2) / 2 -->
+<!-- ``` -->
+<!-- ::: -->
 
 
 ## Variable Assignment
@@ -414,7 +469,73 @@ Overwrites previous value!
 
 Overwriting can mess stuff up!
 
+:::: {.columns}
+::: {.column width="50%"}
 ![](../media/lab_01/goback.jpg)
+:::
+
+::: {.column width="50%"}
+::: fragment
+Generally, we want to avoid overwriting these "[reserved words](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Reserved.html)" or names of key functions.
+:::
+
+::: fragment
+But, how can we fix things if we do?
+:::
+:::
+::::
+
+
+## Clearing Environement and Restarting R
+
+Clearing your environment and restarting R frequently helps you reset
+
+:::: {.columns}
+::: {.column width="50%"}
+### How to Clear Your Environment
+
+1)  Button
+
+![](../media/lab_01/envclear.png)
+:::
+
+::: {.column width="50%"}
+### How to Restart R
+
+1)  Manually:
+
+::: subpoint
+○ Session \> Restart R.
+:::
+
+2)  Shortcut:
+
+::: subpoint
+○ Use the shortcut Ctrl + Shift + F10 (Windows) or Cmd + Shift + F10.
+:::
+:::
+::::
+
+
+## Clearing Environement and Restarting R
+
+:::: {.columns}
+::: {.column width="50%"}
+I strongly (!!) suggest you change these default RStudio settings in order to always start R with a blank slate.
+
+Tools > Global Options
+
+:::
+
+::: {.column width="50%"}
+![](../media/lab_01/blank-slate-settings_wtf-book.png)
+:::
+::::
+
+
+::: footer
+[What They Forgot to Teach You About R](https://rstats.wtf/source-and-blank-slates#always-start-r-with-a-blank-slate)
+:::
 
 
 ## Variables in Statistics: Numeric vs. Categorical
@@ -443,68 +564,66 @@ Overwriting can mess stuff up!
 ○ Name, gender, ethnicity...
 :::
 
-## Four Types of Measurement
+<!-- ## Four Types of Measurement -->
 
-::::::::::::: columns
-::::::: column
-### Nominal
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- ### Nominal -->
 
-::: subpoint
-○ Variable that represents categories without any inherent order.
-:::
+<!-- ::: subpoint -->
+<!-- ○ Variable that represents categories without any inherent order. -->
+<!-- ::: -->
 
-::: subpoint
-○ E.g., types of fruit (“apple,"“orange,” “banana”).
-:::
+<!-- ::: subpoint -->
+<!-- ○ E.g., types of fruit (“apple,"“orange,” “banana”). -->
+<!-- ::: -->
 
-### Ordinal
+<!-- ### Ordinal -->
 
-::: subpoint
-○ Variable that represents categories with a meaningful order.
-:::
+<!-- ::: subpoint -->
+<!-- ○ Variable that represents categories with a meaningful order. -->
+<!-- ::: -->
 
-::: subpoint
-○ For example, levels of satisfaction (“very unsatisfied,” “unsatisfied,” “neutral,” “satisfied,” “very satisfied”)
-:::
-:::::::
+<!-- ::: subpoint -->
+<!-- ○ For example, levels of satisfaction (“very unsatisfied,” “unsatisfied,” “neutral,” “satisfied,” “very satisfied”) -->
+<!-- ::: -->
+<!-- ::: -->
 
-::::::: column
-### Discrete
+<!-- ::: {.column width="50%"} -->
+<!-- ### Discrete -->
 
-::: subpoint
-○ Variable that can only take specific values.
-:::
+<!-- ::: subpoint -->
+<!-- ○ Variable that can only take specific values. -->
+<!-- ::: -->
 
-::: subpoint
-○ Think of things you can count, like the number of people in a room or the number of apples in a basket.
-:::
+<!-- ::: subpoint -->
+<!-- ○ Think of things you can count, like the number of people in a room or the number of apples in a basket. -->
+<!-- ::: -->
 
-### Continuous
+<!-- ### Continuous -->
 
-::: subpoint
-○ Variable that can take any value within a range.
-:::
+<!-- ::: subpoint -->
+<!-- ○ Variable that can take any value within a range. -->
+<!-- ::: -->
 
-::: subpoint
-○ Think of things you can measure, like height or time.
-:::
-:::::::
-:::::::::::::
+<!-- ::: subpoint -->
+<!-- ○ Think of things you can measure, like height or time. -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- :::: -->
 
-<!-- ## Statistical Variables in R -->
 
-<!-- | Nominal | Ordinal | Discrete | Continuous | -->
+## Statistical Variables in R
 
-<!-- |---------|---------|----------|------------| -->
-
-<!-- | `factor` | `factor` | `integer` | `float` | -->
-
-<!-- | `character` | | | | -->
+| Nominal | Ordinal | Discrete | Continuous |
+|---------|---------|----------|------------|
+| `factor` | `factor` | `integer` | `float` |
+| `character` | | | |
 
 
 ## Dataframes
 
-Table of data
+Table of data organized by columns
 
 Can make by hand with the `data.frame()` function:
 
@@ -522,281 +641,314 @@ Most of the time, we import data (and don't manually type it in)
 
 In console, can press up arrow to reload last line of code
 
-## Dataframes
 
-If you already have vector objects saved, you don't have to type them in again
+<!-- ## Dataframes -->
 
-```{r}
-a <- c(1, 2, 3)
-b <- c(2, 3, 4)
-c <- c(3, 4, 5)
-```
-
-<br>
-
-:::::: columns
-::: {.column width="30%"}
-```{r}
-data.frame(a = a,
-           b = b,
-           c = c)
-```
-:::
-
-::: {.column width="30%"}
-```{r}
-data.frame(a, b, c)
-
-```
-:::
-
-::: {.column width="30%"}
-```{r}
-data.frame(A = a, b, c)
-```
-:::
-::::::
-
-<!-- ## R Projects -->
-
-<!-- RStudio's way of helping organizing files, scripts, etc. -->
-
-<!-- I strongly recommend this!! -->
-
-<!-- ::: subpoint -->
-<!-- ○ File \> New Project -->
-<!-- ::: -->
-
-<!-- ::: subpoint -->
-<!-- ○ If you don't already have a folder associated with this class, "New Directory" -->
-<!-- ::: -->
-
-<!-- ::: subpoint -->
-<!-- ○ If you do, "Existing Directory" -->
-<!-- ::: -->
-
-<!-- All R Scripts under the same project share a *working directory* -->
-
-<!-- <dir class="subpoint"> -->
-
-<!-- ○ Location of files -->
-
-<!-- </dir> -->
-
-<!-- `getwd()` tells us the location of our working directory -->
-
-<!-- `setwd("C:/Users/Desktop/R Example")` sets the working directory -->
-
-<!-- Or, `here::here()` lets us do relative directories (my favorite!) -->
-
-<!-- ::: subpoint -->
-<!-- ○ Just use the command at the top of the file to see where your directory is -->
-<!-- ::: -->
-
-<!-- ## R Scripts -->
-
-<!-- R script files end with .R -->
-
-<!-- ### How to Create an R Script File -->
-
-<!-- 1)  Manually -->
-
-<!-- ::: subpoint -->
-<!-- File \> New File \> R Script -->
-<!-- ::: -->
-
-<!-- 2)  Shortcut -->
-
-<!-- ::: subpoint -->
-<!-- Ctrl + Shift + N -->
-<!-- ::: -->
-
-<!-- ## RMarkdown -->
-
-<!-- ::::: columns -->
-<!-- ::: column -->
-<!-- A way of typesetting R code into a document -->
-
-<!-- End in .rmd -->
-
-<!-- File \> New File \> RMarkdown... -->
-
-<!-- Input Title, Author, Date -->
-
-<!-- How we will complete assignments -->
-<!-- ::: -->
-
-<!-- ::: column -->
-<!-- ![](rmd.png) -->
-<!-- ::: -->
-<!-- ::::: -->
-
-<!-- ## Insert a Chunk -->
-
-<!-- How to insert an RMarkdown chunk in RStudio -->
-
-<!-- 1)  Manually: -->
-
-<!-- ::: subpoint -->
-<!-- ○ Type ```` ```{r} ````. -->
-<!-- ::: -->
-
-<!-- ::: subpoint -->
-<!-- ○ Add your R code. -->
-<!-- ::: -->
-
-<!-- ::: subpoint -->
-<!-- ○ Close the chunk with ```` ``` ````. -->
-<!-- ::: -->
-
-<!-- 2)  Shortcut: -->
-
-<!-- ::: subpoint -->
-<!-- ○ Use the shortcut Ctrl + Alt + I (Windows) or Cmd + Option + I. -->
-<!-- ::: -->
-
-<!-- 3)  Button -->
-
-<!-- ![](chunkinsert.png) -->
-
-<!-- ## Run a Chunk -->
-
-<!-- How to run RMarkdown code chunks in RStudio -->
-
-<!-- 1)  Shortcut: -->
-
-<!-- ::: subpoint -->
-<!-- ○ Use the shortcut Ctrl + Enter (Windows) or Ctrl + Return (Mac) -->
-<!-- ::: -->
-
-<!-- 2)  Button -->
-
-<!-- ![](chunkrun.png) -->
-
-<!-- Can also select a variable and run it to see its output (helpful!) -->
-
-<!-- ## Clearing Environement and Restarting R -->
-
-<!-- Important to ensure that your code isn't unintentionally relying on hidden objects in the environement -->
-
-<!-- ::: subpoint -->
-<!-- ○ E.g., you created an object, deleted the line to create it, but R still sees it there -->
-<!-- ::: -->
-
-<!-- When you try to knit your file, it will clear, restart, and run all code -->
-
-<!-- ::: subpoint -->
-<!-- ○ In the previous situation, your code would error -->
-<!-- ::: -->
-
-<!-- Clearing your environment and restarting R frequently helps you avoid this -->
-
-<!-- ## Clearing Environement and Restarting R -->
-
-<!-- ::::::: columns -->
-<!-- ::: column -->
-<!-- ### How to Clear Your Environment -->
-
-<!-- 1)  Button -->
-
-<!-- ![](envclear.png) -->
-<!-- ::: -->
-
-<!-- ::::: column -->
-<!-- ### How to Restart R -->
-
-<!-- 1)  Manually: -->
-
-<!-- ::: subpoint -->
-<!-- ○ Session \> Restart R. -->
-<!-- ::: -->
-
-<!-- 2)  Shortcut: -->
-
-<!-- ::: subpoint -->
-<!-- ○ Use the shortcut Ctrl + Shift + F10 (Windows) or Cmd + Shift + F10. -->
-<!-- ::: -->
-<!-- ::::: -->
-<!-- ::::::: -->
-
-<!-- ## Tips for RMarkdown! -->
-
-<!-- Run code often to ensure it's working -->
-
-<!-- Restart R frequently -->
-
-<!-- Knitting will combine text, syntax, results, and output into a Word, PDF, or HTML file -->
-
-<!-- ![](knit.png) -->
-
-<!-- ## Today's Dataset -->
-
-<!-- `iris` dataset has measurements of 150 flowers, preloaded from R -->
-
-<!-- :::: {.columns style="font-size:70%"} -->
-<!-- ::: {.column} -->
-<!-- `head()` function shows first few rows of a dataframe -->
+<!-- If you already have vector objects saved, you don't have to type them in again -->
 
 <!-- ```{r} -->
+<!-- a <- c(1, 2, 3) -->
+<!-- b <- c(2, 3, 4) -->
+<!-- c <- c(3, 4, 5) -->
+<!-- ``` -->
 
-<!-- head(iris) -->
+<!-- <br> -->
+
+<!-- :::: columns -->
+<!-- ::: {.column width="30%"} -->
+<!-- ```{r} -->
+<!-- data.frame(a = a, -->
+<!--            b = b, -->
+<!--            c = c) -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: {.column width="30%"} -->
+<!-- ```{r} -->
+<!-- data.frame(a, b, c) -->
 
 <!-- ``` -->
 <!-- ::: -->
 
-<!-- ::: {.column} -->
-<!-- `tail()` shows last few rows -->
-
-<!-- Can specify how many rows you want -->
-
+<!-- ::: {.column width="30%"} -->
 <!-- ```{r} -->
-
-<!-- tail(iris, n = 3) -->
-
+<!-- data.frame(A = a, b, c) -->
 <!-- ``` -->
 <!-- ::: -->
 <!-- :::: -->
 
-<!-- ## Saving Work -->
 
-<!-- Press Ctrl + S frequently to save your work!! -->
+## R Projects
 
-<!-- Can also press the save icon in the top left -->
+RStudio's way of helping organizing files, scripts, etc.
 
-<!-- ![](save.png) -->
+I strongly recommend this!!
 
-<!-- ## Suggested R Workflow -->
+::: subpoint
+○ File \> New Project
+:::
 
-<!-- 1)  Open a new script or RMarkdown file -->
+::: subpoint
+○ If you don't already have a folder associated with this class, "New Directory"
+:::
 
-<!-- 2)  Check (and set if needed) your working directory -->
+::: subpoint
+○ If you do, "Existing Directory"
+:::
 
-<!-- 3)  Load any packages you'll be working with -->
+All R Scripts under the same project share a *working directory*
 
-<!-- 4)  Write your code -->
+<dir class="subpoint">
 
-<!-- 5)  Knit and save your file -->
+○ Location of files
+
+</dir>
+
+`getwd()` tells us the location of our working directory
+
+`setwd("C:/Users/Desktop/R Example")` sets the working directory
+
+Or, `here::here()` lets us do relative directories (my favorite!)
+
+::: subpoint
+○ Just use the command at the top of the file to see where your directory is
+:::
+
+
+## R Scripts
+
+R script files end with .R
+
+### How to Create an R Script File
+
+1)  Manually
+
+::: subpoint
+File \> New File \> R Script
+:::
+
+2)  Shortcut
+
+::: subpoint
+Ctrl + Shift + N
+:::
+
+
+## Quarto
+
+:::: columns
+::: column
+A way of typesetting R code into a document
+
+End in .qmd
+
+File \> New File \> Quarto Document...
+
+Input Title, Author, Date
+
+How we will complete assignments
+:::
+
+::: column
+![](../media/lab_01/creating-quarto-document.png)
+:::
+::::
+
+
+## Insert a Code Chunk
+
+How to insert an Quarto code chunk in RStudio
+
+:::: {.columns}
+
+::: {.column width="50%"}
+1)  Manually:
+
+::: subpoint
+○ Type ```` ```{r} ````.
+:::
+
+::: subpoint
+○ Add your R code.
+:::
+
+::: subpoint
+○ Close the chunk with ```` ``` ````.
+:::
+
+2)  Shortcut:
+
+::: subpoint
+○ Use the shortcut Ctrl + Alt + I (Windows) or Cmd + Option + I.
+:::
+
+3)  Button
+
+:::
+
+::: {.column width="50%"}
+![](../media/lab_01/quarto-new-r-chunk.png)
+:::
+::::
+
+
+## Run a Chunk
+
+How to run Quarto code chunks in RStudio
+
+1)  Shortcut:
+
+::: subpoint
+○ Use the shortcut Ctrl + Enter (Windows) or Ctrl + Return (Mac)
+:::
+
+2)  Button
+
+![](../media/lab_01/quarto-run-r-chunk.png)
+
+Can also select a variable and run it to see its output (helpful!)
+
+
+## Revisiting Clearing Environement and Restarting R
+
+Important to ensure that your code isn't unintentionally relying on hidden objects in the environement
+
+::: subpoint
+○ E.g., you created an object, deleted the line to create it, but R still sees it there
+:::
+
+When you try to render your file, it will clear, restart, and run all code
+
+Clearing your environment and restarting R frequently helps you avoid this
+
+
+## Tips for Quarto!
+
+Run code often to ensure it's working
+
+Restart R frequently
+
+Rendering will combine text, syntax, results, and output into a Word, PDF, or HTML file
+
+![](../media/lab_01/quarto-render.png)
+
+
+## Today's Dataset
+
+`iris` dataset has measurements of 150 flowers, already exists within R.
+
+:::: {.columns style="font-size:70%"}
+
+::: {.column}
+`head()` function shows first elements of an object (here, rows in a dataframe).
+
+```{r}
+head(iris)
+```
+:::
+
+::: {.column}
+`tail()` shows last few rows.
+
+Can specify how many rows you want
+
+```{r}
+tail(iris, n = 3)
+```
+:::
+
+::::
+
+`View()` (note the capital V) will open the data in an interactive viewer.
+
+```{r}
+#| eval: false
+View(iris)
+```
+
+
+## Basic Descriptives
+
+`$` operator references columns within a dataframe
+
+Dataframes contain columns of variables
+
+```{r}
+head(iris$Petal.Length)
+```
+
+
+`mean(x)` for mean, `sd(x)` for standard deviation, and `var(x)` for variance of a vector `x`.
+
+:::: {.columns}
+
+::: {.column width="33%"}
+```{r}
+mean(iris$Petal.Length)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+sd(iris$Petal.Length)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+var(iris$Petal.Length)
+```
+:::
+
+::::
+
+
+## Saving Work
+
+Press Ctrl + S frequently to save your work!!
+
+Can also press the save icon in the top left
+
+![](../media/lab_01/quarto-save.png)
+
 
 <!-- ## Data Visualization -->
 
-<!-- Let's make our first plot! -->
+<!-- Let's make our first plots! -->
 
-<!-- `$` operator references columns within a dataframe -->
+<!-- :::: {.columns} -->
 
+<!-- ::: {.column width="50%"} -->
+<!-- ::: fragment -->
+<!-- ```{r, eval=T} -->
+<!-- #| fig-width: 6 -->
+<!-- #| fig-height: 4 -->
+<!-- hist(iris$Petal.Length) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+<!-- ::: fragment -->
 <!-- ```{r, eval=T} -->
 <!-- #| fig-width: 6 -->
 <!-- #| fig-height: 4 -->
 <!-- plot(iris$Sepal.Length, iris$Sepal.Width) -->
 <!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+
+<!-- :::: -->
 
 <!-- ::: fragment -->
 <!-- Do we like this plot? -->
 <!-- ::: -->
 
-<!-- ## Assignment 1 -->
 
-<!-- Objectives: -->
+## Activity 1
 
-<!-- -   Do some basic R! -->
+Objectives:
 
-<!-- -   Get familiar with RMarkdown -->
+-   Do some basic R!
+
+-   Get familiar with Quarto
