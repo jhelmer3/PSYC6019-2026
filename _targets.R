@@ -9,6 +9,8 @@ tar_option_set(
 tar_source("lab/R")
 
 list(
+  tar_target(lab_01_slides, "lab/slides/lab_01.qmd"),
+  
   tar_target(world_cup_player_stats_full, read.csv("lab/raw_data/world_cup_player_stats.csv")),
   tar_target(world_cup_teams_full, read.csv("lab/raw_data/world_cup_teams.csv")),
   tar_target(player_stats, 
