@@ -606,7 +606,7 @@
     "href": "lab/lab-index.html",
     "title": "Lab",
     "section": "",
-    "text": "08-28 Lab 01\nWelcome to the website for PSYC 6019 Statistical Analysis I / PSYC 6022 Psychological Statistics for HCI for Fall 2026!\n\n\n\n\n\nSlides in Full Screen\n\n\n\nLab One Activity"
+    "text": "Welcome to the website for PSYC 6019 Statistical Analysis I / PSYC 6022 Psychological Statistics for HCI for Fall 2026!"
   },
   {
     "objectID": "syllabus.html",
@@ -1299,14 +1299,14 @@
     "href": "lab/slides/lab_02.html#visualize-ggplot2-10",
     "title": "Data Workflow and Visualization with the tidyverse\n",
     "section": "Visualize: ggplot2\n",
-    "text": "Visualize: ggplot2\n\nNow, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?\n\n\nWe can use the theme() function to further customize our plot.\nWe can remove the redundant color legend by setting legend.position to \"none\".\nWe can center and increase the plot title by specifiying that it is a text element with element_text(), and customizing its hjust (horizontal justification) and size argument.\nI also like to cap the axes with the guides() and guide_axis(cap = T) function.\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nposition_labels = c(\n  \"GK\" = \"Goalkeeper\",\n  \"DEF\" = \"Defense\",\n  \"MID\" = \"Midfield\",\n  \"FWD\" = \"Forward\"\n)\n\nggplot(data = player_stats,\n       mapping = aes(x = goals, fill = position)) +\n  geom_bar(mapping = aes(y = after_stat(prop))) +\n  facet_wrap(~ position, labeller = as_labeller(position_labels)) +\n  scale_y_continuous(\"Proportion\", limits = 0:1, labels = scales::label_percent()) +\n  scale_x_continuous(\"Goals Scored\", breaks = 0:10) +\n  labs(title = \"2026 World Cup Goals by Player Position\",\n       caption = \"Data from doi.org/10.5281/zenodo.21592427\") +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T)) +\n  theme_classic(base_size = 12) +\n  theme(legend.position = \"none\",\n        plot.title = element_text(size = 20, hjust = 0.5, face = \"bold\"),\n        text = element_text(family = \"Roboto\"))"
+    "text": "Visualize: ggplot2\n\nNow, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?\n\n\nWe can use the theme() function to further customize our plot.\nWe can remove the redundant color legend by setting legend.position to \"none\".\nWe can center and increase the plot title by specifying that it is a text element with element_text(), and customizing its hjust (horizontal justification) and size argument.\nI also like to cap the axes with the guides() and guide_axis(cap = T) function.\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nposition_labels = c(\n  \"GK\" = \"Goalkeeper\",\n  \"DEF\" = \"Defense\",\n  \"MID\" = \"Midfield\",\n  \"FWD\" = \"Forward\"\n)\n\nggplot(data = player_stats,\n       mapping = aes(x = goals, fill = position)) +\n  geom_bar(mapping = aes(y = after_stat(prop))) +\n  facet_wrap(~ position, labeller = as_labeller(position_labels)) +\n  scale_y_continuous(\"Proportion\", limits = 0:1, labels = scales::label_percent()) +\n  scale_x_continuous(\"Goals Scored\", breaks = 0:10) +\n  labs(title = \"2026 World Cup Goals by Player Position\",\n       caption = \"Data from doi.org/10.5281/zenodo.21592427\") +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T)) +\n  theme_classic(base_size = 12) +\n  theme(legend.position = \"none\",\n        plot.title = element_text(size = 20, hjust = 0.5, face = \"bold\"),\n        text = element_text(family = \"Roboto\"))"
   },
   {
     "objectID": "lab/slides/lab_02.html#visualizations-resources",
     "href": "lab/slides/lab_02.html#visualizations-resources",
     "title": "Data Workflow and Visualization with the tidyverse\n",
     "section": "Visualizations: Resources",
-    "text": "Visualizations: Resources\nPlotting in ggplot2 is very powerful and flexible but can take some getting used to.\nNone of these functions or arguments need to be memorized. You will always have access to reference material and documentation.\n\n\nR for Data Science (2e)\n\n\nggplot2: Elegant Graphics for Data Analysis (3e)\n\n\nggplot2 Documentation"
+    "text": "Visualizations: Resources\nPlotting in ggplot2 is very powerful and flexible but can take some getting used to. None of these functions or arguments need to be memorized. You will always have access to reference material and documentation.\n\n\nR for Data Science (2e)\n\n\nggplot2: Elegant Graphics for Data Analysis (3e)\n\n\nggplot2 Documentation"
   },
   {
     "objectID": "lab/slides/lab_02.html#import-read-data-into-r-1",
@@ -1321,5 +1321,152 @@
     "title": "Data Workflow and Visualization with the tidyverse\n",
     "section": "Import: Read Data into R",
     "text": "Import: Read Data into R\nThis file is a CSV file, so we can use the read.csv(file) function, where file is a path to the data file.\n\nhead(player_stats)\n\n  team_name fifa_code           player_name position matches_played\n1    Mexico       MEX      José Raúl Rangel       GK              5\n2    Mexico       MEX Jorge Eduardo Sanchez      DEF              5\n3    Mexico       MEX    César Jasib Montes      DEF              3\n4    Mexico       MEX    Edson Omar Alvarez      DEF              2\n5    Mexico       MEX  Johan Felipe Vasquez      DEF              2\n6    Mexico       MEX     Erik Antonio Lira      MID              5\n  matches_started minutes_played goals assists yellow_cards red_cards own_goals\n1               5            438     0       0            0         0         0\n2               5            439     0       1            0         0         0\n3               2            165     0       0            0         1         0\n4               0             75     0       0            1         0         0\n5               2            180     0       0            0         0         0\n6               5            450     0       1            1         0         0\n  saves goals_conceded\n1     7              3\n2    NA             NA\n3    NA             NA\n4    NA             NA\n5    NA             NA\n6    NA             NA"
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_01_activity_key.html",
+    "href": "lab/activities/activity_keys/lab_01_activity_key.html",
+    "title": "Lab 01 Activity Key",
+    "section": "",
+    "text": "Do some basic R!\nGet familiar with Quarto"
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_01_activity_key.html#activity",
+    "href": "lab/activities/activity_keys/lab_01_activity_key.html#activity",
+    "title": "Lab 01 Activity Key",
+    "section": "Activity",
+    "text": "Activity\n\n1) Display the first few rows of the iris dataset.\n\nhead(iris)\n\n  Sepal.Length Sepal.Width Petal.Length Petal.Width Species\n1          5.1         3.5          1.4         0.2  setosa\n2          4.9         3.0          1.4         0.2  setosa\n3          4.7         3.2          1.3         0.2  setosa\n4          4.6         3.1          1.5         0.2  setosa\n5          5.0         3.6          1.4         0.2  setosa\n6          5.4         3.9          1.7         0.4  setosa\n\n\n\n\n2) Calculate the mean and SD for the Sepal Width and Sepal Length variables. How do they compare to each other? (1–2 sentences).\n\nmean(iris$Sepal.Width)\n\n[1] 3.057333\n\nmean(iris$Sepal.Length)\n\n[1] 5.843333\n\nsd(iris$Sepal.Width)\n\n[1] 0.4358663\n\nsd(iris$Sepal.Length)\n\n[1] 0.8280661\n\n\nThe mean and variance of Sepal Length are both larger than those of Sepal Width.\n\n\n3) What kinds of R topics are you hoping to learn this semester? If you have experience coding in R, are there any challenges you’ve encountered with it?\n\n\n4) The Quarto documentation has a Gallery Page. Visit the link, and look through the neat things people have made with Quarto! For whichever is your favorite, paste the link below. Also, check out its source code by visiting its accompanying &lt;/&gt; “View Source Code” link."
+  },
+  {
+    "objectID": "lab/slides/lab_01.html#clearing-environment-and-restarting-r",
+    "href": "lab/slides/lab_01.html#clearing-environment-and-restarting-r",
+    "title": "Introduction to R",
+    "section": "Clearing Environment and Restarting R",
+    "text": "Clearing Environment and Restarting R\nClearing your environment and restarting R frequently helps you reset\n\n\nHow to Clear Your Environment\n\nButton\n\n\n\nHow to Restart R\n\nManually:\n\n\n○ Session &gt; Restart R.\n\n\nShortcut:\n\n\n○ Use the shortcut Ctrl + Shift + F10 (Windows) or Cmd + Shift + F10."
+  },
+  {
+    "objectID": "lab/slides/lab_01.html#clearing-environment-and-restarting-r-1",
+    "href": "lab/slides/lab_01.html#clearing-environment-and-restarting-r-1",
+    "title": "Introduction to R",
+    "section": "Clearing Environment and Restarting R",
+    "text": "Clearing Environment and Restarting R\n\n\nI strongly (!!) suggest you change these default RStudio settings in order to always start R with a blank slate.\nTools &gt; Global Options\n\n\n\n\nWhat They Forgot to Teach You About R"
+  },
+  {
+    "objectID": "lab/activities/lab_01_activity.html",
+    "href": "lab/activities/lab_01_activity.html",
+    "title": "Lab 01 Activity",
+    "section": "",
+    "text": "Do some basic R!\nGet familiar with Quarto"
+  },
+  {
+    "objectID": "lab/activities/lab_01_activity.html#activity",
+    "href": "lab/activities/lab_01_activity.html#activity",
+    "title": "Lab 01 Activity",
+    "section": "Activity",
+    "text": "Activity\n\n1) Display the first few rows of the iris dataset.\n\n\n2) Calculate the mean and SD for the Sepal Width and Sepal Length variables. How do they compare to each other? (1–2 sentences).\n\n\n3) What kinds of R topics are you hoping to learn this semester? If you have experience coding in R, are there any challenges you’ve encountered with it?\n\n\n4) The Quarto documentation has a Gallery Page. Visit the link, and look through the neat things people have made with Quarto! For whichever is your favorite, paste the link below. Also, check out its source code by visiting its accompanying &lt;/&gt; “View Source Code” link."
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#some-more-ggplots",
+    "href": "lab/slides/lab_02.html#some-more-ggplots",
+    "title": "Data Workflow and Visualization with the tidyverse\n",
+    "section": "Some More ggplots",
+    "text": "Some More ggplots\nThat was a barplot created with geom_bar(), which plots discrete variables. To plot the distribution of continuous variables, we can use a histogram with geom_histogram() or a density plot with geom_density().\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played)) +\n  geom_histogram(binwidth = 30)\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played)) +\n  geom_density()"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#some-more-ggplots-1",
+    "href": "lab/slides/lab_02.html#some-more-ggplots-1",
+    "title": "Data Workflow and Visualization with the tidyverse\n",
+    "section": "Some More ggplots",
+    "text": "Some More ggplots\nWe can layer on the observed data by adding a point plot with geom_point().\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = position)) +\n  geom_violin()\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(y = minutes_played, x = position)) +\n  geom_violin()"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#some-more-ggplots-2",
+    "href": "lab/slides/lab_02.html#some-more-ggplots-2",
+    "title": "Data Workflow and Visualization with the tidyverse\n",
+    "section": "Some More ggplots",
+    "text": "Some More ggplots\nTo plot two continuous variables, we can specify both the x- and y-axes in aes() and add a point plot with geom_point(). We can also start to layer geoms, adding a trend line with geom_smooth(). Note that geom_smooth() picks up the same x and y assignment as already specified in aes().\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals)) +\n  geom_point()\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals)) +\n  geom_point() +\n  geom_smooth()"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#visualize-ggplot2-11",
+    "href": "lab/slides/lab_02.html#visualize-ggplot2-11",
+    "title": "Data Workflow and Visualization with the tidyverse\n",
+    "section": "Visualize: ggplot2\n",
+    "text": "Visualize: ggplot2\n\nAnother example of tidying a plot up. Note how similar all the code is!\n\n\nWe can use the theme() function to further customize our plot.\nWe can remove the redundant color legend by setting legend.position to \"none\".\nWe can center and increase the plot title by specifying that it is a text element with element_text(), and customizing its hjust (horizontal justification) and size argument.\nI also like to cap the axes with the guides() and guide_axis(cap = T) function.\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nplayer_stats |&gt;\n  filter_out(position == \"GK\") |&gt;\n  ggplot(mapping = aes(x = minutes_played, y = goals, \n                     color = position, fill = position)) +\n  geom_point() +\n  geom_smooth() +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T)) +\n  scale_y_continuous(breaks = 0:10) +\n  labs(title = \"Player Minutes Played vs. Goals Scored\",\n       subtitle = str_wrap(\"Stronger Relationship Between Minutes Played and Goals Scored for Attacking Players than Defensive Players\",\n       caption = \"Data from doi.org/10.5281/zenodo.21592427\"),\n       x = \"Minutes Played\", y = \"Goals\", \n       color = \"Position\", fill = \"Position\") +\n  theme_classic(base_size = 12) +\n  theme(legend.position = \"inside\",\n        legend.position.inside = c(.1, .8),\n        plot.title = element_text(size = 20, hjust = 0.5, face = \"bold\"),\n        plot.subtitle = element_text(size = 12, hjust = 0.5, face = \"italic\"),\n        text = element_text(family = \"Roboto\"))"
+  },
+  {
+    "objectID": "lab/activities/lab_02_activity.html",
+    "href": "lab/activities/lab_02_activity.html",
+    "title": "Lab 02 Activity",
+    "section": "",
+    "text": "Practice data visualization in ggplot2"
+  },
+  {
+    "objectID": "lab/activities/lab_02_activity.html#activity",
+    "href": "lab/activities/lab_02_activity.html#activity",
+    "title": "Lab 02 Activity",
+    "section": "Activity",
+    "text": "Activity\n\n1) Load in the tidyverse packages with library(tidyverse). Then, read in the world_cup_player_stats.csv data and assign it to a variable.\n\n\n2) Use at least two functions to explore and ‘get a sense of’ the data (HINT: glimpse() can be one of them).\n\n\n3) Come up with one question you’d like to ask of the data through data transformation (feel free to use the ones from the slides as inspiration, but it shouldn’t be the exact same), and write the question below.\n\n\n4) Use a tidyverse pipe chain to address this question.\n\n\n5) Come up with one question you’d like to ask of the data through data visualization (this can be the same, similar, or different from your question in (3)), and write the question below.\n\n\n6) Start by creating just the bare bones of the plot. Use the ggplot() function and set the data and mapping argument. For the mapping argument, think carefully about which variables you want to set on which axes using the aes() function.\n\n\n7) Next, add a geom_ layer.\n\n\n8) Briefly interpret this plot (1–2 sentences).\n\n\n9) Make at least one structural modification to this plot. By structural modification, I mean changing either (1) something in the data being plotted, (2) something in the data mapping in the aes() argument, or (3) the geom(s) being plotted.\n\n\n10) Briefly interpret this new plot (1–2 sentences).\n\n\n11) Finally, make at least three additional modifications to this plot. This can include changes to the theme, scales, labels, etc. Please provide a brief justification for each change (e.g., making the plot visually cleaner, clarifying expected breaks in scale, adding text to explain the plot)."
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_02_activity_key.html",
+    "href": "lab/activities/activity_keys/lab_02_activity_key.html",
+    "title": "Lab 02 Activity Key",
+    "section": "",
+    "text": "Practice data visualization in ggplot2"
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_02_activity_key.html#activity",
+    "href": "lab/activities/activity_keys/lab_02_activity_key.html#activity",
+    "title": "Lab 02 Activity Key",
+    "section": "Activity",
+    "text": "Activity\n\n1) Load in the tidyverse packages with library(tidyverse). Then, read in the world_cup_player_stats.csv data and assign it to a variable.\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.2.1     ✔ readr     2.2.0\n✔ forcats   1.0.1     ✔ stringr   1.6.0\n✔ ggplot2   4.0.3     ✔ tibble    3.3.1\n✔ lubridate 1.9.5     ✔ tidyr     1.3.2\n✔ purrr     1.2.2     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nplayer_stats &lt;- read.csv(here::here(\"lab\", \"data\", \"world_cup_player_stats.csv\"))\n\n\n\n2) Use at least two functions to explore and ‘get a sense of’ the data (HINT: glimpse() can be one of them).\n\nhead(player_stats)\n\n  team_name fifa_code           player_name position matches_played\n1    Mexico       MEX      José Raúl Rangel       GK              5\n2    Mexico       MEX Jorge Eduardo Sanchez      DEF              5\n3    Mexico       MEX    César Jasib Montes      DEF              3\n4    Mexico       MEX    Edson Omar Alvarez      DEF              2\n5    Mexico       MEX  Johan Felipe Vasquez      DEF              2\n6    Mexico       MEX     Erik Antonio Lira      MID              5\n  matches_started minutes_played goals assists yellow_cards red_cards own_goals\n1               5            438     0       0            0         0         0\n2               5            439     0       1            0         0         0\n3               2            165     0       0            0         1         0\n4               0             75     0       0            1         0         0\n5               2            180     0       0            0         0         0\n6               5            450     0       1            1         0         0\n  saves goals_conceded\n1     7              3\n2    NA             NA\n3    NA             NA\n4    NA             NA\n5    NA             NA\n6    NA             NA\n\nglimpse(player_stats)\n\nRows: 1,248\nColumns: 14\n$ team_name       &lt;chr&gt; \"Mexico\", \"Mexico\", \"Mexico\", \"Mexico\", \"Mexico\", \"Mex…\n$ fifa_code       &lt;chr&gt; \"MEX\", \"MEX\", \"MEX\", \"MEX\", \"MEX\", \"MEX\", \"MEX\", \"MEX\"…\n$ player_name     &lt;chr&gt; \"José Raúl Rangel\", \"Jorge Eduardo Sanchez\", \"César Ja…\n$ position        &lt;chr&gt; \"GK\", \"DEF\", \"DEF\", \"DEF\", \"DEF\", \"MID\", \"MID\", \"MID\",…\n$ matches_played  &lt;int&gt; 5, 5, 3, 2, 2, 5, 4, 2, 3, 0, 5, 0, 1, 0, 4, 4, 4, 1, …\n$ matches_started &lt;int&gt; 5, 5, 2, 0, 2, 5, 2, 0, 2, 0, 3, 0, 0, 0, 3, 2, 3, 0, …\n$ minutes_played  &lt;int&gt; 438, 439, 165, 75, 180, 450, 194, 41, 193, 0, 316, 0, …\n$ goals           &lt;int&gt; 0, 0, 0, 0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 4, 0, 0, …\n$ assists         &lt;int&gt; 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, …\n$ yellow_cards    &lt;int&gt; 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …\n$ red_cards       &lt;int&gt; 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …\n$ own_goals       &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …\n$ saves           &lt;int&gt; 7, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, N…\n$ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, N…\n\n\n\n\n3) Come up with one question you’d like to ask of the data through data transformation (feel free to use the ones from the slides as inspiration, but it shouldn’t be the exact same), and write the question below.\nWhich team had the most red and yellow cards?\n\n\n4) Use a tidyverse pipe chain to address this question.\n\nplayer_stats |&gt;\n  summarize(.by = team_name,\n            total_yellow_cards = sum(yellow_cards),\n            total_red_cards = sum(red_cards)) |&gt;\n  arrange(desc(total_red_cards)) |&gt;\n  head()\n\n               team_name total_yellow_cards total_red_cards\n1           South Africa                  2               2\n2                  Qatar                  1               2\n3                 Mexico                  2               1\n4 Bosnia and Herzegovina                  1               1\n5                    USA                  3               1\n6               Paraguay                  1               1\n\nplayer_stats |&gt;\n  summarize(.by = team_name,\n            total_cards = sum(yellow_cards) + sum(red_cards)) |&gt;\n  arrange(desc(total_cards)) |&gt;\n  head()\n\n     team_name total_cards\n1    Australia           5\n2 South Africa           4\n3          USA           4\n4       Mexico           3\n5        Qatar           3\n6        Haiti           3\n\n\n\n\n5) Come up with one question you’d like to ask of the data through data visualization (this can be the same, similar, or different from your question in (3)), and write the question below.\nIs there a relationship between the number of yellow and red cards a team gets?\n\n\n6) Start by creating just the bare bones of the plot. Use the ggplot() function and set the data and mapping argument. For the mapping argument, think carefully about which variables you want to set on which axes using the aes() function.\n\nplayer_stats |&gt;\n  summarize(.by = team_name,\n            total_yellow_cards = sum(yellow_cards),\n            total_red_cards = sum(red_cards)) |&gt;\n  ggplot(mapping = aes(x = total_yellow_cards, y = total_red_cards))\n\n\n\n\n\n\n\n\n\n\n7) Next, add a geom_ layer.\n\nplayer_stats |&gt;\n  summarize(.by = team_name,\n            total_yellow_cards = sum(yellow_cards),\n            total_red_cards = sum(red_cards)) |&gt;\n  ggplot(mapping = aes(x = total_yellow_cards, y = total_red_cards)) +\n  geom_jitter(height = .1, width = .1)\n\n\n\n\n\n\n\n\n\n\n8) Briefly interpret this plot (1–2 sentences).\n\n\n9) Make at least one structural modification to this plot. By structural modification, I mean changing either (1) something in the data being plotted, (2) something in the data mapping in the aes() argument, or (3) the geom(s) being plotted.\n\nplayer_stats |&gt;\n  summarize(.by = team_name,\n            total_goals = sum(goals),\n            total_cards = sum(yellow_cards) + sum(red_cards)) |&gt;\n  ggplot(mapping = aes(x = total_cards, y = total_goals, group = total_cards)) +\n  geom_violin(drop = F) +\n  geom_jitter(width = 0.1)\n\nWarning: Cannot compute density for groups with fewer than two datapoints.\n\n\n\n\n\n\n\n\n\n\n\n10) Briefly interpret this new plot (1–2 sentences).\n\n\n11) Finally, make at least three additional modifications to this plot. This can include changes to the theme, scales, labels, etc. Please provide a brief justification for each change (e.g., making the plot visually cleaner, clarifying expected breaks in scale, adding text to explain the plot).\n\nplayer_stats |&gt;\n  summarize(.by = team_name,\n            total_goals = sum(goals),\n            total_cards = sum(yellow_cards) + sum(red_cards)) |&gt;\n  ggplot(mapping = aes(x = total_cards, y = total_goals, group = total_cards)) +\n  geom_violin(drop = F) +\n  geom_jitter(width = 0.1) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T)) +\n  theme_classic(base_size = 12)\n\nWarning: Cannot compute density for groups with fewer than two datapoints."
+  },
+  {
+    "objectID": "lab/lab-index.html#lab-01",
+    "href": "lab/lab-index.html#lab-01",
+    "title": "Lab",
+    "section": "08-28 Lab 01",
+    "text": "08-28 Lab 01\n\n\n\n\n\nSlides in Full Screen\n\n\n\nLab One Activity"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#some-more-ggplots-3",
+    "href": "lab/slides/lab_02.html#some-more-ggplots-3",
+    "title": "Data Workflow and Visualization with the tidyverse\n",
+    "section": "Some More ggplots",
+    "text": "Some More ggplots\nIf we want to see the points labeled by player position, we can specify the color mapping in aes(). Also, because data is the first argument, we can pipe right into ggplot()!\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals, color = position)) +\n  geom_point() +\n  geom_smooth()\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nplayer_stats |&gt;\n  filter_out(position == \"GK\") |&gt;\n  ggplot(mapping = aes(x = minutes_played, y = goals, color = position)) +\n  geom_point() +\n  geom_smooth()"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#visualizations-bonus-stuff",
+    "href": "lab/slides/lab_02.html#visualizations-bonus-stuff",
+    "title": "Data Workflow and Visualization with the tidyverse\n",
+    "section": "Visualizations: Bonus Stuff",
+    "text": "Visualizations: Bonus Stuff\nBack to the violin plot, we can layer on the observed data by adding a point plot with geom_point().\n\n\nBut, the points are all overlapping and hard to see at the different levels of position.\nWe can nudge them off their data value by using geom_jitter(). But, we only want it to nudge on the y-axis, not the x-axis.\nSo, we will need to set geom_jitter()’s height argument to 0. Otherwise, it’ll try to move the points on their minutes_played value, too.\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = position)) +\n  geom_violin() + \n  geom_point()"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#visualizations-bonus-stuff-1",
+    "href": "lab/slides/lab_02.html#visualizations-bonus-stuff-1",
+    "title": "Data Workflow and Visualization with the tidyverse\n",
+    "section": "Visualizations: Bonus Stuff",
+    "text": "Visualizations: Bonus Stuff\nComparison between not specifying the height argument and specifying height = 0.\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = position)) +\n  geom_violin() + \n  geom_jitter()\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(y = minutes_played, x = position)) +\n  geom_violin() + \n  geom_jitter(height = 0)"
+  },
+  {
+    "objectID": "lab/lab-index.html#lab-02",
+    "href": "lab/lab-index.html#lab-02",
+    "title": "Lab",
+    "section": "09-04 Lab 02",
+    "text": "09-04 Lab 02\n\n\n\n\n\nSlides in Full Screen\n\n\n\nLab Two Activity"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#visualizations-bonus",
+    "href": "lab/slides/lab_02.html#visualizations-bonus",
+    "title": "Data Workflow and Visualization with the tidyverse\n",
+    "section": "Visualizations: Bonus",
+    "text": "Visualizations: Bonus\nBack to the violin plot, we can layer on the observed data by adding a point plot with geom_point().\n\n\nBut, the points are all overlapping and hard to see at the different levels of position.\nWe can nudge them off their data value by using geom_jitter(). But, we only want it to nudge on the y-axis, not the x-axis.\nSo, we will need to set geom_jitter()’s width argument to 0. Otherwise, it’ll try to move the points on their minutes_played value, too.\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = position)) +\n  geom_violin() + \n  geom_point()"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#visualizations-bonus-1",
+    "href": "lab/slides/lab_02.html#visualizations-bonus-1",
+    "title": "Data Workflow and Visualization with the tidyverse\n",
+    "section": "Visualizations: Bonus",
+    "text": "Visualizations: Bonus\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = position)) +\n  geom_violin() + \n  geom_point()\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = position)) +\n  geom_violin() + \n  geom_jitter(width = 0)"
   }
 ]

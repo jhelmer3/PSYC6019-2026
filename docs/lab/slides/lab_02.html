@@ -1393,7 +1393,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="column" style="width:33%;">
 <p>We can use the <code><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme()</a></code> function to further customize our plot.</p>
 <p>We can remove the redundant color legend by setting <code>legend.position</code> to <code>"none"</code>.</p>
-<p>We can center and increase the plot title by specifiying that it is a text element with <code><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text()</a></code>, and customizing its <code>hjust</code> (horizontal justification) and <code>size</code> argument.</p>
+<p>We can center and increase the plot title by specifying that it is a text element with <code><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text()</a></code>, and customizing its <code>hjust</code> (horizontal justification) and <code>size</code> argument.</p>
 <p>I also like to cap the axes with the <code><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides()</a></code> and <code>guide_axis(cap = T)</code> function.</p>
 </div><div class="column" style="width:66%;">
 <div class="panel-tabset">
@@ -1440,9 +1440,289 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 </div>
 </div></div>
+</section><section id="some-more-ggplots" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
+<p>That was a barplot created with <code><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar()</a></code>, which plots discrete variables. To plot the distribution of continuous variables, we can use a histogram with <code><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram()</a></code> or a density plot with <code><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density()</a></code>.</p>
+<div class="columns" style="font-size:60%">
+<div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-14" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-14-1">Plot</a></li>
+<li><a href="#tabset-14-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-14-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-49-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-14-2">
+<div class="cell">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-15" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-15-1">Plot</a></li>
+<li><a href="#tabset-15-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-15-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-51-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-15-2">
+<div class="cell">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="some-more-ggplots-1" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
+<p>We can layer on the observed data by adding a point plot with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>.</p>
+<div class="columns" style="font-size:60%">
+<div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-16" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-16-1">Plot</a></li>
+<li><a href="#tabset-16-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-16-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-53-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-16-2">
+<div class="cell">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-17" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-17-1">Plot</a></li>
+<li><a href="#tabset-17-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-17-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-55-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-17-2">
+<div class="cell">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">minutes_played</span>, x <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="some-more-ggplots-2" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
+<p>To plot two continuous variables, we can specify both the x- and y-axes in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> and add a point plot with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>. We can also start to layer <code>geom</code>s, adding a trend line with <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code>. Note that <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code> picks up the same x and y assignment as already specified in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code>.</p>
+<div class="columns" style="font-size:60%">
+<div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-18" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-18-1">Plot</a></li>
+<li><a href="#tabset-18-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-18-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-57-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-18-2">
+<div class="cell">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-19" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-19-1">Plot</a></li>
+<li><a href="#tabset-19-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-19-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-59-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-19-2">
+<div class="cell">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="some-more-ggplots-3" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
+<p>If we want to see the points labeled by player position, we can specify the <code>color</code> mapping in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code>. Also, because <code>data</code> is the first argument, we can pipe right into <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code>!</p>
+<div class="columns" style="font-size:60%">
+<div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-20" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-20-1">Plot</a></li>
+<li><a href="#tabset-20-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-20-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-61-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-20-2">
+<div class="cell">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span>, color <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-21" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-21-1">Plot</a></li>
+<li><a href="#tabset-21-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-21-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-63-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-21-2">
+<div class="cell">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">player_stats</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter_out</a></span><span class="op">(</span><span class="va">position</span> <span class="op">==</span> <span class="st">"GK"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span>, color <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="visualize-ggplot2-11" class="slide level2"><h2>Visualize: <code>ggplot2</code>
+</h2>
+<p>Another example of tidying a plot up. Note how similar all the code is!</p>
+<div class="columns" style="font-size:60%">
+<div class="column" style="width:33%;">
+<p>We can use the <code><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme()</a></code> function to further customize our plot.</p>
+<p>We can remove the redundant color legend by setting <code>legend.position</code> to <code>"none"</code>.</p>
+<p>We can center and increase the plot title by specifying that it is a text element with <code><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text()</a></code>, and customizing its <code>hjust</code> (horizontal justification) and <code>size</code> argument.</p>
+<p>I also like to cap the axes with the <code><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides()</a></code> and <code>guide_axis(cap = T)</code> function.</p>
+</div><div class="column" style="width:66%;">
+<div class="panel-tabset">
+<ul id="tabset-22" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-22-1">Plot</a></li>
+<li><a href="#tabset-22-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-22-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-65-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-22-2">
+<div class="cell">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">player_stats</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter_out</a></span><span class="op">(</span><span class="va">position</span> <span class="op">==</span> <span class="st">"GK"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span>, </span>
+<span>                     color <span class="op">=</span> <span class="va">position</span>, fill <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_axis.html">guide_axis</a></span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
+<span>         y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_axis.html">guide_axis</a></span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Player Minutes Played vs. Goals Scored"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_wrap.html">str_wrap</a></span><span class="op">(</span><span class="st">"Stronger Relationship Between Minutes Played and Goals Scored for Attacking Players than Defensive Players"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Data from doi.org/10.5281/zenodo.21592427"</span><span class="op">)</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"Minutes Played"</span>, y <span class="op">=</span> <span class="st">"Goals"</span>, </span>
+<span>       color <span class="op">=</span> <span class="st">"Position"</span>, fill <span class="op">=</span> <span class="st">"Position"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"inside"</span>,</span>
+<span>        legend.position.inside <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.1</span>, <span class="fl">.8</span><span class="op">)</span>,</span>
+<span>        plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">20</span>, hjust <span class="op">=</span> <span class="fl">0.5</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>,</span>
+<span>        plot.subtitle <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">12</span>, hjust <span class="op">=</span> <span class="fl">0.5</span>, face <span class="op">=</span> <span class="st">"italic"</span><span class="op">)</span>,</span>
+<span>        text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">"Roboto"</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
 </section><section id="visualizations-resources" class="slide level2"><h2>Visualizations: Resources</h2>
-<p>Plotting in <code>ggplot2</code> is very powerful and flexible but can take some getting used to.</p>
-<p><strong>None</strong> of these functions or arguments need to be memorized. You will always have access to reference material and documentation.</p>
+<p>Plotting in <code>ggplot2</code> is very powerful and flexible but can take some getting used to. <strong>None</strong> of these functions or arguments need to be memorized. You will always have access to reference material and documentation.</p>
 <div class="columns">
 <div class="column" style="width:33%;">
 <p><a href="https://r4ds.hadley.nz/" target="blank">R for Data Science (2e)</a></p>
@@ -1452,6 +1732,98 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <p><a href="https://ggplot2-book.org//" target="blank"><img data-src="../media/lab_01/ggplot2.jpg"></a></p>
 </div><div class="column" style="width:33%;">
 <p><a href="https://ggplot2.tidyverse.org/index.html" target="blank"><code>ggplot2</code> Documentation</a></p>
+</div></div>
+</section><section id="visualizations-bonus" class="slide level2"><h2>Visualizations: Bonus</h2>
+<p>Back to the violin plot, we can layer on the observed data by adding a point plot with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>.</p>
+<div class="columns" style="font-size:60%">
+<div class="column" style="width:33%;">
+<p>But, the points are all overlapping and hard to see at the different levels of position.</p>
+<p>We can nudge them off their data value by using <code><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter()</a></code>. But, we only want it to nudge on the y-axis, not the x-axis.</p>
+<p>So, we will need to set <code><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter()</a></code>’s <code>width</code> argument to 0. Otherwise, it’ll try to move the points on their <code>minutes_played</code> value, too.</p>
+</div><div class="column" style="width:66%;">
+<div class="panel-tabset">
+<ul id="tabset-23" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-23-1">Plot</a></li>
+<li><a href="#tabset-23-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-23-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-67-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-23-2">
+<div class="cell">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="visualizations-bonus-1" class="slide level2"><h2>Visualizations: Bonus</h2>
+<div class="columns" style="font-size:60%">
+<div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-24" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-24-1">Plot</a></li>
+<li><a href="#tabset-24-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-24-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-69-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-24-2">
+<div class="cell">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-25" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-25-1">Plot</a></li>
+<li><a href="#tabset-25-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-25-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-71-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-25-2">
+<div class="cell">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 </div></div>
 
 

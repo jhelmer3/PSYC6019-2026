@@ -1210,7 +1210,7 @@ We can use the `theme()` function to further customize our plot.
 
 We can remove the redundant color legend by setting `legend.position` to `"none"`.
 
-We can center and increase the plot title by specifiying that it is a text element with `element_text()`, and customizing its `hjust` (horizontal justification) and `size` argument.
+We can center and increase the plot title by specifying that it is a text element with `element_text()`, and customizing its `hjust` (horizontal justification) and `size` argument.
 
 I also like to cap the axes with the `guides()` and `guide_axis(cap = T)` function.
 :::
@@ -1276,11 +1276,305 @@ ggplot(data = player_stats,
 ::::
 
 
+## Some More `ggplot`s
+
+That was a barplot created with `geom_bar()`, which plots discrete variables. To plot the distribution of continuous variables, we can use a histogram with `geom_histogram()` or a density plot with `geom_density()`. 
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played)) +
+  geom_histogram(binwidth = 30)
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played)) +
+  geom_histogram(binwidth = 30)
+```
+:::
+:::
+
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played)) +
+  geom_density()
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played)) +
+  geom_density()
+```
+:::
+:::
+
+::::
+
+
+## Some More `ggplot`s
+
+We can layer on the observed data by adding a point plot with `geom_point()`.
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position)) +
+  geom_violin() + 
+  geom_point()
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position)) +
+  geom_violin()
+```
+:::
+:::
+
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(y = minutes_played, x = position)) +
+  geom_violin()
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(y = minutes_played, x = position)) +
+  geom_violin()
+```
+:::
+:::
+
+::::
+
+
+## Some More `ggplot`s
+
+To plot two continuous variables, we can specify both the x- and y-axes in `aes()` and add a point plot with `geom_point()`. We can also start to layer `geom`s, adding a trend line with `geom_smooth()`. Note that `geom_smooth()` picks up the same x and y assignment as already specified in `aes()`.
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals)) +
+  geom_point()
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals)) +
+  geom_point()
+```
+:::
+:::
+
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals)) +
+  geom_point() +
+  geom_smooth()
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals)) +
+  geom_point() +
+  geom_smooth()
+```
+:::
+:::
+
+::::
+
+
+## Some More `ggplot`s
+
+If we want to see the points labeled by player position, we can specify the `color` mapping in `aes()`. Also, because `data` is the first argument, we can pipe right into `ggplot()`!
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals, color = position)) +
+  geom_point() +
+  geom_smooth()
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals, color = position)) +
+  geom_point() +
+  geom_smooth()
+```
+:::
+:::
+
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+player_stats |>
+  filter_out(position == "GK") |>
+  ggplot(mapping = aes(x = minutes_played, y = goals, color = position)) +
+  geom_point() +
+  geom_smooth()
+```
+
+### Code
+```{r}
+#| eval: false
+player_stats |>
+  filter_out(position == "GK") |>
+  ggplot(mapping = aes(x = minutes_played, y = goals, color = position)) +
+  geom_point() +
+  geom_smooth()
+```
+:::
+:::
+
+::::
+
+
+## Visualize: `ggplot2`
+
+Another example of tidying a plot up. Note how similar all the code is!
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=33%}
+We can use the `theme()` function to further customize our plot.
+
+We can remove the redundant color legend by setting `legend.position` to `"none"`.
+
+We can center and increase the plot title by specifying that it is a text element with `element_text()`, and customizing its `hjust` (horizontal justification) and `size` argument.
+
+I also like to cap the axes with the `guides()` and `guide_axis(cap = T)` function.
+:::
+
+::: {.column width=66%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+player_stats |>
+  filter_out(position == "GK") |>
+  ggplot(mapping = aes(x = minutes_played, y = goals, 
+                     color = position, fill = position)) +
+  geom_point() +
+  geom_smooth() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  scale_y_continuous(breaks = 0:10) +
+  labs(title = "Player Minutes Played vs. Goals Scored",
+       subtitle = str_wrap("Stronger Relationship Between Minutes Played and Goals Scored for Attacking Players than Defensive Players"),
+       caption = "Data from doi.org/10.5281/zenodo.21592427",
+       x = "Minutes Played", y = "Goals", 
+       color = "Position", fill = "Position") +
+  theme_classic(base_size = 12) +
+  theme(legend.position = "inside",
+        legend.position.inside = c(.1, .8),
+        plot.title = element_text(size = 20, hjust = 0.5, face = "bold"),
+        plot.subtitle = element_text(size = 12, hjust = 0.5, face = "italic"),
+        text = element_text(family = "Roboto"))
+```
+
+### Code
+```{r}
+#| eval: false
+player_stats |>
+  filter_out(position == "GK") |>
+  ggplot(mapping = aes(x = minutes_played, y = goals, 
+                     color = position, fill = position)) +
+  geom_point() +
+  geom_smooth() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  scale_y_continuous(breaks = 0:10) +
+  labs(title = "Player Minutes Played vs. Goals Scored",
+       subtitle = str_wrap("Stronger Relationship Between Minutes Played and Goals Scored for Attacking Players than Defensive Players",
+       caption = "Data from doi.org/10.5281/zenodo.21592427"),
+       x = "Minutes Played", y = "Goals", 
+       color = "Position", fill = "Position") +
+  theme_classic(base_size = 12) +
+  theme(legend.position = "inside",
+        legend.position.inside = c(.1, .8),
+        plot.title = element_text(size = 20, hjust = 0.5, face = "bold"),
+        plot.subtitle = element_text(size = 12, hjust = 0.5, face = "italic"),
+        text = element_text(family = "Roboto"))
+```
+:::
+:::
+
+::::
+
+
 ## Visualizations: Resources
 
-Plotting in `ggplot2` is very powerful and flexible but can take some getting used to.
-
-**None** of these functions or arguments need to be memorized. You will always have access to reference material and documentation.
+Plotting in `ggplot2` is very powerful and flexible but can take some getting used to. **None** of these functions or arguments need to be memorized. You will always have access to reference material and documentation.
 
 :::: {.columns}
 ::: {.column width="33%"}
@@ -1301,13 +1595,100 @@ Plotting in `ggplot2` is very powerful and flexible but can take some getting us
 ::::
 
 
+## Visualizations: Bonus
+
+Back to the violin plot, we can layer on the observed data by adding a point plot with `geom_point()`. 
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=33%}
+But, the points are all overlapping and hard to see at the different levels of position.
+
+We can nudge them off their data value by using `geom_jitter()`. But, we only want it to nudge on the y-axis, not the x-axis.
+
+So, we will need to set `geom_jitter()`'s `width` argument to 0. Otherwise, it'll try to move the points on their `minutes_played` value, too.
+:::
+
+::: {.column width=66%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position)) +
+  geom_violin() + 
+  geom_point()
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position)) +
+  geom_violin() + 
+  geom_point()
+```
+:::
+:::
+
+::::
 
 
+## Visualizations: Bonus
 
+:::: {.columns style="font-size:60%"}
 
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position)) +
+  geom_violin() + 
+  geom_point()
+```
 
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position)) +
+  geom_violin() + 
+  geom_point()
+```
+:::
+:::
 
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position)) +
+  geom_violin() + 
+  geom_jitter(width = 0)
+```
 
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position)) +
+  geom_violin() + 
+  geom_jitter(width = 0)
+```
+:::
+:::
+
+::::
 
 
 
