@@ -1,0 +1,916 @@
+---
+title: "Lecture 9: More You Can Do with t"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: visual
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(gganimate)
+library(gifski)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+
+bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
+                                                draft_year != "")
+
+```
+
+## Last Time
+
+We learned all about the beauty of the $t$-distribution
+
+-   Like the normal distribution, but with fatter tails
+-   Accounts for additional noise (uncertainty) that crops up because we are *estimating* the population variance, instead of knowing it for sure
+-   Fatness of tails is proportional to the degrees of freedom ($df$)
+
+Today we will discuss
+
+-   Assumptions
+-   Point estimates vs. confidence intervals
+-   More practical use cases for $t$-tests
+
+## Assumptions of a $t$-test
+
+::: {style="font-size: 0.8em;"}
+-   The sampling distribution follows a normal distribution
+    -   [If $N$ is large enough, the CLT will take care of this for us! But the more normal the data is, the more normal our sampling distribution, so we can explore the data for extra peace of mind]{.answer .fragment .content-visible unless-meta="params.v0"}
+-   The observations are independent
+    -   [Make sure no datapoints come from the same person, clusters that are somehow related]{.answer .fragment .content-visible unless-meta="params.v0"}
+-   There are no outliers
+    -   Influential data points that are not from our population
+    -   [We should **only** remove points if we have reason to believe they come from a different population, not just because they stand out somehow]{.answer .fragment .content-visible unless-meta="params.v0"}
+-   Sampling was random
+    -   [We rely on research design for this!]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+How might we check these?
+:::
+
+## Normality Checks
+
+Numerical checks:
+
+-   Skewness & kurtosis
+    -   Both = 0 in a normal distribution
+-   Kolmogorov-Smirnov test, Shapiro-Wilk test
+    -   Hypothesis tests of whether sample distribution is significantly different from a (population) normal distribution (null hypothesis = normality)
+    -   Sensitive to $N$ (tend to always reject if $N$ is big, retain if $N$ is small)
+    -   Shapiro-Wilk more powerful than Kolmogorov-Smirnov
+
+Graphical checks:
+
+-   Histograms/density plots
+-   Quantile-quantile (QQ) plots
+    -   $x$ axis: theoretical quantiles of the normal distribution
+    -   $y$ axis: quantiles of the data
+    -   If normal, points should fall in a straight line
+
+## QQ Plot (Normal)
+
+```{r}
+set.seed(5)
+x <- tibble(x = rnorm(10000))
+p1 <- ggplot(x, aes(x)) + geom_histogram(aes(y = ..density..), bins = 20) +
+  stat_function(fun = dnorm, args = list(mean = 0, sd = 1), col = my_red, size = I(1)) +
+  theme_light() +
+  labs(x = "sample") + theme(axis.title = element_text(size = 14))
+p2 <- ggplot(x) + geom_qq(aes(sample = x)) + geom_qq_line(aes(sample = x), col = my_red, size = I(1)) +
+  theme_light()+ theme(axis.title = element_text(size = 14))
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+## QQ Plot (Not)
+
+```{r}
+set.seed(31)
+x <- tibble(x = rbeta(10000, 2, 10))
+# 2 / (2 + 10) = .17
+# sqrt(12 / (12^2 * 13)) = .08
+p1 <- ggplot(x, aes(x)) + geom_histogram(aes(y = ..density..), bins = 20) +
+  stat_function(fun = dnorm, args = list(mean = .17, sd = .08), col = my_red, size = I(1)) +
+  theme_light() +
+  labs(x = "sample") + theme(axis.title = element_text(size = 14))
+p2 <- ggplot(x) + geom_qq(aes(sample = x)) + geom_qq_line(aes(sample = x), col = my_red, size = I(1)) +
+  theme_light() + theme(axis.title = element_text(size = 14))
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+## QQ Plot (NBA Data)
+
+```{r}
+p1 <- ggplot(bball) + geom_histogram(aes(MP, y = ..density..), bins = 9, na.rm = TRUE) +
+  stat_function(fun = dnorm, args = list(mean = 24, sd = 7.2), col = my_red, size = I(1)) + labs(x = "Minutes Per Game") + 
+  theme_light() + theme(axis.title = element_text(size = 14))
+
+p2 <- ggplot(bball, aes(sample = MP)) + geom_qq(na.rm = TRUE) + geom_qq_line(na.rm = TRUE, col = my_red, size = I(1)) +
+  theme_light() + theme(axis.title = element_text(size = 14))
+
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+## Normality Checks
+
+::: {style="font-size: 0.85em;"}
+```{r echo = TRUE}
+library(e1071) # for skewness and kurtosis functions
+skewness(bball$MP)
+kurtosis(bball$MP)
+shapiro.test(bball$MP)
+
+ks.test(bball$MP, "pnorm")
+```
+
+Rejecting the null is evidence **against** normality
+
+-   **Remember:** This is evidence the **data** is non-normal. Sampling distribution still might be fine if $N$ is large enough (hard to quantify with precision)
+:::
+
+## Confidence Interval
+
+Sample mean is the **point estimate** of the population mean
+
+-   Single value that will minimize our (squared) error to population mean
+
+Confidence interval gives an **interval estimate** of the range in which the population mean lies
+
+Definition of a confidence interval: range for which any random sample from the population will contain $\mu$ with probability $1 - \alpha$.
+
+-   if $\alpha = .05$, we have a 95% confidence interval.
+
+Interpretation:
+
+-   95% of intervals (across repeated samples) will contain $\mu$
+
+-   If we treated any value inside the 95% confidence interval as the null, we could not reject it at $\alpha = .05$
+
+## 20 Confidence Intervals
+
+```{r}
+set.seed(29)
+rep <- 1:20
+lb <- ub <- numeric(20)
+for(i in 1:20){
+  x <- rnorm(10)
+  lb[i] <- mean(x) + qnorm(.025) / sqrt(10)
+  ub[i] <- mean(x) + qnorm(.975) / sqrt(10)
+}
+
+d <- tibble(rep = rep, x = rep, lb = lb, ub = ub) %>%
+  mutate(zero_in_interval = as.numeric(ub < 0 | lb > 0))
+d <- d %>% pivot_longer(lb:ub, names_to = "bound", values_to = "limit")
+d <- d %>% mutate(bound = as.numeric(as_factor(bound)))
+
+ggplot(d, aes(limit, x, group = rep, col = factor(zero_in_interval))) + geom_path(size = 1.5) +
+  theme_light() +
+  labs(x = "confidence interval", y = "repeated study #") + guides(col = "none") + scale_color_manual(values = c(my_green, my_red)) +
+  geom_vline(xintercept = 0, col = my_purple, linetype = "dashed", size = 1) + 
+  theme(axis.title = element_text(size = 14), axis.text.x = element_blank())
+```
+
+## General Procedure
+
+1.  Find the critical values of our reference distribution
+    -   Values on the distribution such that 2.5% is in the left tail and 2.5% in the right tail
+    -   These correspond to the "critical values" of the distribution
+2.  Transform these values back onto the scale of the original variable using the sample mean and standard error ($\sigma_{\bar{x}}$)
+
+-   Lower limit of $\mu$: $\bar{x} - \text{Critical Value} \times \sigma_{\bar{x}}$
+
+-   Upper limit of $\mu$: $\bar{x} + \text{Critical Value} \times \sigma_{\bar{x}}$
+
+This procedure corresponds to a **two-tailed test**
+
+## NBA Example
+
+-   $N = 44$
+-   $\bar{x} = 14.5$
+-   $\sigma = 6$
+-   $\sigma_{\bar{x}} = \frac{6}{\sqrt{44}} = 0.90$
+-   $df = N - 1 = 43$
+
+For a $t$-test, we can find the critical values as:
+
+```{r}
+qt(p = .025, df = 43, lower.tail = FALSE)
+
+```
+
+Why `p = .025`?
+
+[We want 2.5% of the distribution in both the lowr and upper tails]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+$95\% \text{CI} = 14.5 \pm 2.016 \times 0.90 = [12.69, 16.31]$
+
+## NBA Example Visual
+
+```{r}
+library(ggplot2)
+library(gridExtra)
+
+# Parameters
+df_val <- 43
+t_crit <- 2.016
+mean_val <- 14.5
+se_val <- 0.90
+ci_lower <- 12.69
+ci_upper <- 16.31
+
+# Scaled density function for Plot 2
+dt_scaled <- function(x, df, mean, se) {
+  dt((x - mean) / se, df = df) / se
+}
+
+# ---------------------------------------------------------
+# Plot 1: Standard t-distribution (Critical Values)
+# ---------------------------------------------------------
+p1 <- ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
+  # Curve
+  stat_function(fun = dt, args = list(df = df_val), color = "#2B5C8F", linewidth = 1) +
+  
+  # Left Tail
+  stat_function(
+    fun = dt, args = list(df = df_val),
+    xlim = c(-4, -t_crit),
+    geom = "area", fill = "#C0392B", alpha = 0.35
+  ) +
+  
+  # Right Tail
+  stat_function(
+    fun = dt, args = list(df = df_val),
+    xlim = c(t_crit, 4),
+    geom = "area", fill = "#C0392B", alpha = 0.35
+  ) +
+  
+  # Lines
+  geom_vline(xintercept = c(-t_crit, t_crit), linetype = "dashed", color = "#C0392B", linewidth = 0.8) +
+  geom_vline(xintercept = 0, linetype = "dotted", color = "grey50") +
+  
+  # Axes & Labels
+  scale_x_continuous(
+    breaks = c(-4, -t_crit, 0, t_crit, 4),
+    labels = c("-4", "-2.016", "0", "2.016", "4")
+  ) +
+  labs(
+    title = expression(paste("Standard ", t, "-Distribution (df = 43)")),
+    subtitle = "Critical values at t = \u00B1 2.016",
+    x = "t-statistic",
+    y = NULL
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 12),
+    axis.text.x = element_text(
+      color = c("grey30", "#C0392B", "grey30", "#C0392B", "grey30"), 
+      face = c("plain", "bold", "plain", "bold", "plain")
+    ), axis.text.y = element_blank()
+  )
+
+# ---------------------------------------------------------
+# Plot 2: Transformed Scale (Confidence Interval)
+# ---------------------------------------------------------
+p2 <- ggplot(data.frame(x = c(10.5, 18.5)), aes(x = x)) +
+  # Curve
+  stat_function(
+    fun = dt_scaled, 
+    args = list(df = df_val, mean = mean_val, se = se_val), 
+    color = "#27AE60", 
+    linewidth = 1
+  ) +
+  
+  # Center 95% Area
+  stat_function(
+    fun = dt_scaled, 
+    args = list(df = df_val, mean = mean_val, se = se_val),
+    xlim = c(ci_lower, ci_upper),
+    geom = "area", fill = "#27AE60", alpha = 0.25
+  ) +
+  
+  # Lines
+  geom_vline(xintercept = c(ci_lower, ci_upper), linetype = "dashed", color = "#C0392B", linewidth = 0.8) +
+  geom_vline(xintercept = mean_val, linetype = "dotted", color = "grey50") +
+  
+  # Axes & Labels
+  scale_x_continuous(
+    breaks = c(10.5, ci_lower, mean_val, ci_upper, 18.5), 
+    labels = c("10.5", "12.69", "14.5", "16.31", "18.5")
+  ) +
+  labs(
+    title = expression(paste("Transformed Scale (", bar(x), " = 14.5, SE = 0.90)")),
+    subtitle = "95% Confidence Interval [12.69, 16.31]",
+    x = expression(bar(x)),
+    y = NULL
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 12),
+    axis.text.x = element_text(
+      color = c("grey30", "#C0392B", "grey30", "#C0392B", "grey30"), 
+      face = c("plain", "bold", "plain", "bold", "plain")
+    ), axis.text.y = element_blank()
+  )
+
+# Render side-by-side
+grid.arrange(p1, p2, ncol = 2)
+```
+
+## IMPORTANT
+
+We are not claiming the plot on the right is the "true" sampling distribution
+
+-   95% confidence intervals will vary sample to sample
+-   The true parameter does not vary, it is a single fixed value
+-   IF our assumptions hold, what we guarantee is that in 95% of samples, the 95% confidence interval (different in every sample) will contain the parameter 95% of the time
+
+We can also say:
+
+-   Any value inside the 95% confidence interval would be rejected if it were the null hypothesis
+-   Any value outside the 95% confidence interval would be rejected if it were the null hypothesis
+
+## Comparing Two Means
+
+We've motivated the $t$-test by considering a case where
+
+-   We have a hypothesis about a single population mean
+-   We want to test whether our sample is consistent with that hypothesis
+
+But what if we want to compare two means?
+
+-   Changes in one group over time
+-   Differences in paired observations
+-   Differences between experiment and control groups
+-   Differences in different existing groups
+
+## Paired Samples $t$-Test
+
+::: {style="font-size: 0.9em;"}
+The one-sample $t$-test assumes **independent observations**
+
+Some ways that independence can be violated:
+
+-   Measuring the same person more than once
+
+-   Measuring clusters of people
+
+The paired (matched, repeated) samples $t$-test "builds in" a dependence structure:
+
+-   Variable measured at two time points for the same $N$ persons
+
+-   Variable measured for pairs of subjects (younger/older siblings, husband/wife pairs)
+
+For the paired samples $t$-test, all observations are paired
+
+Take difference scores ($D$) for each pair of observations
+
+-   **A paired samples** $\boldsymbol t$-test is equivalent to a one sample $\boldsymbol t$-test on difference scores
+:::
+
+## Example
+
+**Original Study**:
+
+::: {style="font-size: 0.65em;"}
+Berry, C. J., Shanks, D. R., & Henson, R. N. A. (2008). A single-system account of the relationship between priming, recognition, and fluency. *Journal of Experimental Psychology: Learning, Memory, and Cognition*, *34*, 97-111.
+
+Replication study link: <https://osf.io/cbwgj/>
+:::
+
+::: {style="font-size: 0.85em;"}
+**Study phase**:
+
+Subjects were shown a series of words, and were instructed to click the mouse as soon as they could identify the word correctly
+
+**Test phase**:
+
+Subjects were shown another series of words and were asked to judge whether the word was "new" (not in the study phase) or "old" (already presented in the study phase)
+
+$N = 32$ subjects, 32 pairs of observations
+
+$$H_0: \mu_{old} = \mu_{new}  \text{ or } \mu_{new} - \mu_{old} = 0$$ $$H_a: \mu_{old} \neq \mu_{new} \text{ or } \mu_{new} - \mu_{old} \neq 0$$
+:::
+
+## The *Nil* Hypothesis
+
+This is an example of the test of a *nil* hypothesis
+
+-   There is no difference between old and new
+
+Setting the null hypothesis to a difference of zero is so common it has it's own term, but it is not strictly required.
+
+-   You could test $H_0: \mu_{new} - \mu_{old} = 5$ If you wanted!
+-   It is just unusual that a difference of 5 would have any special significance
+
+## Scope
+
+-   Two groups where individual observations are matched across groups
+
+    -   Same individuals observed on two occasions/conditions
+
+    -   Pairs of individuals that are related in some way
+
+-   Consider difference scores $D_{1} = x_1 - y_2, \ldots, D_{N} = x_n - y_n$ for $N$ pairs
+
+Null (nil) Hypothesis:
+
+$$H_0: \mu_{D} = \mu_0 = 0$$ $$t_{\bar{D}} = \frac{\bar{D} - \mu_0}{s_{D} / \sqrt{N}}$$
+
+Reference distribution:
+
+$$t \text{ with } df = N-1$$
+
+-   $N$ is the number of *pairs*
+
+## Our Data
+
+```{r}
+#| echo: true
+library(haven)
+
+dat <- read_sav("../../data/Berry Agg_priming_1.sav")
+
+dat |> glimpse()
+
+```
+
+## Evaluating Normality
+
+```{r fig.height = 3.5}
+p1 <- ggplot(dat) + geom_histogram(aes(priming_effect, y = ..density..), bins = 6) +
+  theme_light() + labs(x = "new - old") + 
+  stat_function(fun = dnorm, col = my_red, size = 1,
+                args = list(mean = mean(dat$priming_effect), sd = sd(dat$priming_effect)))
+p2 <- ggplot(dat, aes(sample = priming_effect)) + geom_qq() + 
+  stat_qq_line(col = my_red, size = 1) + theme_light()
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+Smaller number of observations, but not terribly non-normal, move forward
+
+## Sample Statistics
+
+Sample mean of differences $\bar{D}$:
+
+```{r}
+#| echo: true
+(D_bar <- mean(dat$mRT_new_items - dat$mRT_old_items))
+```
+
+Sample SD of differences $S_D$:
+
+```{r}
+#| echo: true
+(S_D <- sd(dat$mRT_new_items - dat$mRT_old_items))
+```
+
+Sample standard error of the mean differences $S_\bar{D}$:
+
+```{r}
+(SE <- S_D/sqrt(32))
+```
+
+$t$ statistic $t_D = \frac{\bar{D} = \mu_0}{S_{\bar{D}}}$
+
+```{r}
+(t_d <- (D_bar - 0)/SE)
+```
+
+Two-tailed $p$-value with $df = 32 - 1 = 31$
+
+```{r}
+pt(t_d, df = 31, lower.tail = FALSE) * 2
+```
+
+## 95% Confidence Interval
+
+Just like the one sample case, we can calculate a 95% confidence interval as
+
+$$95\% \text{ CI} = \bar{D} \pm \text{Critical Value} \times S_{\bar{D}}$$
+
+First we need to know our critical value ($t_{crit}$)
+
+```{r}
+#| echo: true
+t_crit <- qt(p = .025, df = 31, lower.tail = FALSE)
+```
+
+Then we plug into our formula
+
+```{r}
+#| echo: true
+D_bar - t_crit * SE
+D_bar + t_crit * SE
+```
+
+$$95\% \text{ CI} = 108.88 \pm 2.04 \times 59.21 = [87.53, 130.23]$$
+
+## Conclusion:
+
+What important value can we reject based on this confidence interval?
+
+-   [$\mu_{D} = 0$]{.answer .fragment .content-visible}
+
+Using the built in `R` function:
+
+```{r}
+#| echo: true
+t.test(dat$mRT_new_items, dat$mRT_old_items, paired = TRUE)
+```
+
+## APA Writeup
+
+For every participant, priming was calculated as the mean response time for new items minus the mean response time for old items. Using $\alpha = .05$, priming was significantly greater than zero overall, $t(31) = 10.40, p < .001$, indicating that the old items were identified more quickly at test than new items ($\bar{D} = 108.9\rm{ms, 95\%}$ $\rm{CI = [87.5, 130.2]).}$
+
+## Independent Groups
+
+In many cases, we may want to test whether two **independently sampled** groups have the same population mean
+
+-   Randomized experiments in which different groups get different treatments
+    -   Does a new experimental drug lead to better patient outcomes than a control?
+-   Differences in pre-existing groups
+    -   Do people with PhDs in psychology have higher average career earnings than people who do not?
+
+$$H_0: \mu_1 - \mu_2 = 0$$ $$H_a: \mu_1 - \mu_2 \neq 0$$
+
+Now we must consider the sampling distribution of the means of two separate (unpaired) groups: $\bar{x_1} - \bar{x_2}$
+
+## Sampling Differences
+
+If both $x_1$ and $x_2$ are normally distributed:
+
+```{r warning = FALSE}
+R <- 10000
+x1 <- rnorm(R, mean = 10)
+x2 <- rnorm(R, mean = 15)
+
+xbar5 <- sapply(1:R, function(i) mean(rnorm(5, mean = 15)) - mean(rnorm(5, mean = 10)))
+xbar20 <- sapply(1:R, function(i) mean(rnorm(20, mean = 15)) - mean(rnorm(20, mean = 10)))
+
+dat <- data.frame(x = c(x1, xbar5, x2, xbar20),
+                  type = rep(c("Group 1",
+                               "Sampling Distribution of Mean Difference, N =  5",
+                               "Group 2",
+                               "Sampling Distribution of Mean Difference, N = 20"), each = R))
+
+h1 <- ggplot(dat %>% filter(type == "Group 1"),
+             aes(x, fill = I(my_green))) + geom_histogram(aes(y = ..density..), bins = 20, na.rm = TRUE) + xlim(7, 18) +
+  labs(x = expression(italic(x)[1])) + theme_light()
+h2 <- ggplot(dat %>% filter(type == "Group 2"),
+             aes(x, fill = I(my_green))) + geom_histogram(aes(y = ..density..), bins = 20, na.rm = TRUE) + xlim(7, 18) +
+  labs(x = expression(italic(x)[2])) + theme_light()
+h3 <- ggplot(dat %>% filter(type == "Sampling Distribution of Mean Difference, N =  5"),
+             aes(x, fill = I(my_blue))) + geom_histogram(aes(y = ..density..), na.rm = TRUE, bins = 20) + xlim(3, 7) + ylim(0, 1.25) +
+  labs(x = expression(paste("Samp Dist of ", italic(bar(x)[2]), " - ", italic(bar(x)[1]), ", ", italic(N), " = 5"))) + theme_light()
+h4 <- ggplot(dat %>% filter(type == "Sampling Distribution of Mean Difference, N = 20"),
+             aes(x, fill = I(my_blue))) + geom_histogram(aes(y = ..density..), na.rm = TRUE, bins = 20) + xlim(3, 7) + ylim(0, 1.25) +
+  labs(x = expression(paste("Samp Dist of ", italic(bar(x)[2]), " - ", italic(bar(x)[1]), ", ", italic(N), " = 20"))) + theme_light()
+
+gridExtra::grid.arrange(h1, h2, h3, h4)
+```
+
+The sampling distribution of mean differences will be normal
+
+## A New Assumption
+
+An independent sample $t$-test has the same assumptions we've already established
+
+-   Normality of sampling distribution
+-   Indepence of observations
+-   No outliers
+-   Random sampling
+
+Plus one new one:
+
+-   **Homogeneity of Variance:** Even if the populations have different means, they have the same variance (SD) around those means
+-   We assume in the population both groups have the same variance: $\sigma^2_1 = \sigma^2_2$
+
+## Pooled Variance
+
+::: {style="font-size: 0.8em;"}
+Sample variances will differ (even if homogeneity holds) just due to sampling variation. To get the best estimate of the shared population variance, we need to **pool** (average) them
+
+**Pooled variance** ($s^2_p$): estimate of the common population variance
+
+$$s^2_p = \frac{(n_1 - 1)s^2_1 + (n_2 - 1)s^2_2}{n_1 + n_2 - 2}$$
+
+-   Weighted average of the two sample variances
+-   $n_1$: sample size for group 1 (lower-case $n$ for group sample size)
+-   $n_2$: sample size for group 2
+-   $s^2_1$: sample variance for group 1
+-   $s^2_2$: sample variance for group 2
+
+$s_p = \sqrt{s^2_p}$ is the **pooled standard deviation**
+:::
+
+## Homogeneity Example
+
+Homogeneity of Variance means two populations have the same variance, even if they have different means:
+
+$$\text{Population}_1 \sim \text{Normal}(10, 10) \ \ \text{Population}_2 \sim \text{Normal}(5, 10)$$
+
+-   $\mu_1 = 10 \neq \mu_2 = 5$
+-   $\sigma_1 = \sigma_2 = \sigma = 10$
+
+Let's simulate 10,000 samples of $N = 5$ from each population and calculate $s_1$, $s_2$, and $s_p$. Which do you think will be closest to $\sigma = 10$?
+
+## Simulated Homogeneity
+
+```{r}
+#| echo: true
+mu1 <- 10
+mu2 <- 5
+sigma1 <- sigma2 <- 10
+N <- 5
+samples <- 10000
+## Create empty data frame to save results
+sd_estimates <- data.frame(s1 = rep(NA, samples),
+                           s2 = rep(NA, samples),
+                           sp = rep(NA, samples))
+set.seed(4441)
+for(i in 1:samples){
+  ## Draw samples
+  sample1 <- rnorm(n = N, mean = mu1, sd = sigma1)
+  sample2 <- rnorm(n = N, mean = mu2, sd = sigma2)
+  
+  ## Calculate SDs
+  s1 <- sd(sample1)
+  s2 <- sd(sample2)
+  s2p <- ((N - 1) * s1^2 + (N - 1) * s2^2)/(N + N - 2) # pooled variance
+  sp <- sqrt(s2p) # pooled sd
+  
+  ## Save SDs
+  sd_estimates$s1[i] <- s1
+  sd_estimates$s2[i] <- s2
+  sd_estimates$sp[i] <- sp
+}
+
+
+head(sd_estimates)
+```
+
+## Visualized Estimates
+
+```{r}
+sd_estimates |> pivot_longer(1:3, names_to = "Estimate",
+                                        values_to = "SD") |>
+  ggplot(aes(x = SD, fill = Estimate)) + geom_density(alpha = .3) + 
+  xlim(c(0,20)) + geom_vline(xintercept = 10, linetype = 2) + theme_minimal()
+```
+
+::: {style="font-size: 0.8em;"}
+$s_p$ is doing a better job of estimating $\sigma$ than either $s_1$ or $s_2$ because the sample size used to calculate it is twice as large.
+:::
+
+## Test Statistic
+
+$$t_{\bar{x}_1 - \bar{x}_2} = \frac{\bar{x}_1 - \bar{x}_2 }{s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}$$
+
+Where
+
+$$s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}} = \sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}$$
+
+Is our **pooled standard error**
+
+-   Takes into account differences in group sample sizes
+
+Reference distribution:
+
+$$t \text{ with } df = n_1 + n_2 -2$$
+
+## Example
+
+**Original Study**:
+
+::: {style="font-size: 0.6em;"}
+McCrea, S. M. (2008). Self-handicapping, excuse making, and counterfactual thinking: Consequences for self-esteem and future motivation. *Journal of Personality and Social Psychology*, *2*, 274-292.
+:::
+
+::: {style="font-size: 0.95em;"}
+**Replication study link**: <https://osf.io/2kjgz>
+
+**Step 1**: Subject took a math exam and were told that they scored in the 35th percentile of university students
+
+**Step 2**: Subjects saw statements supposedly written by previous participants
+
+-   Self-handicap group: half of statements indicated that more practice would have improved their performance, half of statements were neutral
+
+-   Control group: all statements were neutral
+
+**Step 3**: Subjects took a second surprise math exam
+:::
+
+## Research Question
+
+Were scores different on the second exam between the self-handicap and control groups?
+
+$n_{\text{self-handicap}} = 32$, $n_{\text{control}} = 29$
+
+$$H_0: \mu_{self-handicap} = \mu_{control}$$ $$H_a: \mu_{self-handicap} \neq \mu_{control}$$
+
+or
+
+$$H_0: \mu_{self-handicap} - \mu_{control} = 0$$ $$H_a: \mu_{self-handicap} - \mu_{control} \neq 0$$
+
+## Reading in Data
+
+Variables of interest
+
+-   `Cond` is experimental condition
+    -   I'm going to recode this variable to have descriptive names first
+-   `percent` is the percent of items corrrect on the second test
+
+```{r}
+#| echo: true
+
+dat <- read.csv("../../data/McCrea.csv") |> 
+  mutate(Cond = recode(as_factor(Cond), 
+                       "1" = "self-handicap", 
+                       "2" = "control"))
+
+
+
+```
+
+## Calculating Statistics {.scrollable}
+
+```{r}
+#| echo: true
+
+(means <- dat |> group_by(Cond) |>
+  summarize(mean = mean(percent)))
+
+(sds <- dat |> group_by(Cond) |>
+  summarize(sd = sd(percent)))
+
+(ns <- dat |> group_by(Cond) |>
+  summarize(n = n()))
+
+## extract x_bar1, x_bar2, s1, s2, n1, and n2
+x_bar1 <- means$mean[1]
+x_bar2 <- means$mean[2]
+s1 <- sds$sd[1]
+s2 <- sds$sd[2]
+n1 <- ns$n[1]
+n2 <- ns$n[2]
+```
+
+## More Stats
+
+Calculate the pooled variance and then SD:
+
+```{r}
+#| echo: true
+
+(s2p <- ((n1 - 1) * s1^2 + (n2 - 1) * s2^2)/(n1 + n2 - 2))
+(sp <- sqrt(s2p))
+```
+
+Calculate the standard error $\sigma_{\bar{x}_1 - \bar{x}_2}$:
+
+```{r}
+#| echo: true
+(SE <- sp * sqrt((1/n1) + (1/n2)))
+```
+
+Calculate the $t_{\bar{x}_1 - \bar{x}_2}$-statistic:
+
+```{r}
+#| echo: true
+(t_xbar1_xbar2 <- (x_bar1 - x_bar2)/SE)
+```
+
+Calculate $p$-value (use absolute value of $t_{\bar{x}_1 - \bar{x}_2}$)
+
+```{r}
+#| echo: true
+
+pt(abs(t_xbar1_xbar2), df = n1 + n2 - 2, lower.tail = FALSE) * 2
+```
+
+## Confidence Interval
+
+The confidence interval follows the same formula we have seen
+
+$$\bar{x}_1 - \bar{x}_2 \pm \text{Critical Value} \times \sigma_{\bar{x}_1 - \bar{x}_2}$$
+
+Critical value:
+
+```{r}
+#| echo: true
+(t_crit <- qt(.025, df = n1 + n2 - 2, lower.tail = FALSE))
+```
+
+Confidence Interval:
+
+```{r}
+#| echo: true
+x_bar1 - x_bar2 - t_crit * SE
+x_bar1 - x_bar2 + t_crit * SE
+```
+
+## Using Built in `R`
+
+For an independent sample $t$-test in `R` we can use the formula syntax
+
+-   Outcome (dependent) variable first
+-   `~` next
+-   Grouping (independent) variable last
+-   For standard $t$-test, we specify `var.equal = TRUE`
+
+```{r}
+#| echo: true
+t.test(percent ~ Cond, data = dat, var.equal = TRUE)
+```
+
+## Behrens-Fisher Problem
+
+::: {style="font-size: 0.9em;"}
+If all assumptions hold, then
+
+$$t = \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} \sim t(n_1 + n_2 - 2)$$
+
+-   $s^2_p$ only makes sense to compute if $\sigma^2_1 = \sigma^2_2$
+
+-   What if the homogeneity assumption is not tenable (populations have different variances)?
+
+If we instead compute:
+
+$$t^\prime = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s^2_1}{n_1} + \frac{s^2_2}{n_2}}} \,\,\sim \,\,??$$
+
+**Problem:** $t^\prime$ follows a slightly different distribution
+:::
+
+## Welch-Satterthwaite Correction
+
+**Welch-Satterthwaite** corrected $t$-test:
+
+Test statistic (same as before):
+
+$$t(df) = \frac{\bar{x}_1 - \bar{x}_2}{s_{\bar{x}_1 - \bar{x}_2}}$$
+
+Standard error (does not pool variances):
+
+$$s_{\bar{x}_1 - \bar{x}_2} = \sqrt{\frac{s^2_1}{n_1} + \frac{s^2_2}{n_2}}$$
+
+Degrees of freedom (adjust downwards, can be fractional:
+
+$$df = \frac{\left(\frac{s^2_1}{n_1} + \frac{s^2_2}{n_2}\right)^2}{\left(\frac{s^2_1}{n_1}\right)^2 / (n_1 - 1) + \left(\frac{s^2_2}{n_2}\right)^2 / (n_2 - 1)}$$
+
+## In `R`
+
+The Welch-Satterthwaite correction is the default in `R`
+
+-   Virtually no "cost" if homogeneity of variance happens to hold
+-   Helps if homogeneity of variance does not hold
+-   **Just use this version in practice!**
+
+```{r}
+#| echo: true
+t.test(percent ~ Cond, data = dat)
+```
+
+## APA Writeup
+
+A two-tailed Welch-Satterthwaite $t$-test with $\alpha = .05$ indicated a significant difference between conditions, $t(51.9) = -2.29, p = .026$. Participants in the self-handicap condition correctly answered a lower percentage of items ($N = 32, M = .47, SD = .17$) than participants in the control condition ($N = 29, M = .58, SD = .22$), 95% CI of the difference $= [0.01, 0.22]$.

@@ -1,0 +1,733 @@
+---
+title: "Lecture 8: The Case of the Missing Poulation Variance"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: visual
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(gganimate)
+library(gifski)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+
+bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
+                                                draft_year != "")
+
+```
+
+## Previously....
+
+Let's imagine:
+
+-   I sample a group of 44 NBA basketball players
+-   On average, they score 14.5 points per game
+-   I want to test the hypothesis that on average, the population I sampled from scores 12 points per game
+-   In the population, the standard deviation of basketball player points per game is 6
+-   14.5 is not 12! But how do I know how likely or unlikely this *statistic* would be in my sampling distribution?
+
+## Sampling Distributions of Means
+
+In general....
+
+-   The sampling distribution of **means** across **samples** will follow a normal distribution
+-   The **mean** of this distribution will be $\mu$, the population mean from which we are sampling
+-   The standard deviation of this distribution will be the $\text{standard error (SE) =}\frac{\sigma}{\sqrt{N}}$
+    -   But what if we don't know $\sigma$?
+    -   The sample standard deviation $s$ is our best estimate of $\sigma$, so let's try that!
+    -   What would happen if we use $\text{standard error (SE) =}\frac{s}{\sqrt{N}}$?
+
+## Simulating Samples
+
+Let's imagine that I repeatedly sample basketball players from a population with $\mu = 12, \sigma = 6$
+
+-   Let's start by simulating 10000 repeated samples of $N = 5$
+-   In each sample, I will calculate my $Z$-statistic as $Z = \frac{\bar{x} - \mu}{\text{SE}}$
+-   In theory, the distribution of $Z$-statistics should follow a standard normal ($\mu = 0, \sigma = 1$) distribution.
+-   But how would this distribution actually look if I calculate $\text{SE}  = \frac{s}{\sqrt{N}}$ instead of $\text{SE} = \frac{\sigma}{\sqrt{N}}$
+
+## Simulation Code
+
+```{r}
+#| echo: true
+#| cache: true
+## Define number of samples
+Samples <- 10000
+
+## set sample size
+n <- 5
+
+## set mu and sigma
+mu <- 12
+sigma <- 6
+
+
+## Initialize empty vector
+z_statistic <- numeric(Samples)
+
+set.seed(1234)
+## Initialize Loop
+for(i in 1:Samples){
+  ## Draw random sample
+  sample <- rnorm(n, mean = mu, sd = sigma)
+  
+  ## calculate sample mean
+  x_bar <- mean(sample)
+  
+  ## calculate sample SD
+    s <- sd(sample)
+  
+  ## calculate standard error
+  SE <- s/sqrt(n)
+  
+  ## Save z-statistic
+  z_statistic[i] <- (x_bar - mu)/SE
+}
+
+```
+
+## Our Target Distribution
+
+```{r}
+# Base plot using stat_function
+ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
+  # Fill the area under the curve
+  stat_function(
+    fun = dnorm, 
+    geom = "area", 
+    fill = "#4682B4", 
+    alpha = 0.3
+  ) +
+  # Draw the outer line
+  stat_function(
+    fun = dnorm, 
+    color = "#4682B4", 
+    linewidth = 1
+  ) +
+  # Labels & Theme
+  labs(
+    x = "Z",
+    y = "Density"
+  ) +
+  theme_minimal()
+```
+
+## Overlaid $Z$'s
+
+```{r}
+
+df <- data.frame(val = z_statistic)
+
+ggplot(df, aes(x = val)) +
+  # 1. Standard Normal Area (Blue & Filled)
+  stat_function(
+    fun = dnorm,
+    geom = "area",
+    aes(fill = "Standard Normal N(0,1)", color = "Standard Normal N(0,1)"),
+    alpha = 0.3
+  ) +
+  # Outline for Standard Normal
+  stat_function(
+    fun = dnorm,
+    aes(color = "Standard Normal N(0,1)"),
+    linewidth = 1
+  ) +
+  # 2. Empirical Density (Red & Dashed Line)
+  geom_density(
+    aes(color = "Empirical Density"), 
+    linewidth = 1,
+    linetype = "dashed"
+  ) +
+  # Custom Colors & Fill for Legend
+  scale_color_manual(
+    name = "Legend", 
+    values = c("Standard Normal N(0,1)" = "#4682B4", "Empirical Density" = "#E74C3C")
+  ) +
+  scale_fill_manual(
+    name = "Legend", 
+    values = c("Standard Normal N(0,1)" = "#4682B4", "Empirical Density" = NA)
+  ) +
+  # Labels and Theme
+  labs(
+    x = "Z",
+    y = "Density"
+  ) +
+  xlim(c(-4, 4)) +
+  theme_minimal() + theme(legend.position = "none")
+```
+
+## What Went Wrong?
+
+-   [The distribution we got had "fatter tails" than the one we expected]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+What's the practical implication of this result?
+
+-   [A larger proprtion of sample means would get "counted" as extreme values than we expect, meaning we would incorrectly reject the null hypothesis more than 5% of the time (assuming it were true)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   [We are more likely to make a Type I error than we want]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+**Type 1 Error:** Rejecting a true null hypothesis. $\alpha = .05$ means we are comfortable incorrectly rejecting a true null hypothesis 5% of the time.
+
+## Type I Errors
+
+```{r}
+ggplot(df, aes(x = val)) +
+  # 1. Base Standard Normal Area
+  stat_function(
+    fun = dnorm,
+    geom = "area",
+    aes(fill = "Standard Normal N(0,1)", color = "Standard Normal N(0,1)"),
+    alpha = 0.3
+  ) +
+  # 2. Critical Region Tail Shading (Left & Right)
+  stat_function(
+    fun = dnorm,
+    xlim = c(-4, -1.96),
+    geom = "area",
+    fill = "#1B365D",
+    alpha = 0.5
+  ) +
+  stat_function(
+    fun = dnorm,
+    xlim = c(1.96, 4),
+    geom = "area",
+    fill = "#1B365D",
+    alpha = 0.5
+  ) +
+  # 3. Vertical Critical Cutoff Lines
+  geom_vline(
+    xintercept = c(-1.96, 1.96),
+    linetype = "dotted",
+    color = "#2C3E50",
+    linewidth = 0.8
+  ) +
+  # 4. Standard Normal Outline
+  stat_function(
+    fun = dnorm,
+    aes(color = "Standard Normal N(0,1)"),
+    linewidth = 1
+  ) +
+  # 5. Empirical Density (Red & Dashed Line)
+  geom_density(
+    aes(color = "Empirical Density"), 
+    linewidth = 1,
+    linetype = "dashed"
+  ) +
+  
+  # --- ANNOTATIONS ---
+  # Label inside the blue shaded tail region
+  annotate(
+    "text",
+    x = 1.25, y = 0.012,
+    label = "Expected\nType I errors",
+    color = "#1B365D",
+    size = 3.2,
+    fontface = "bold"
+  ) +
+  # Label in the white space above the standard normal tail
+  annotate(
+    "text",
+    x = 2.8, y = 0.07,
+    label = "Extra Type I errors",
+    color = "#E74C3C",
+    size = 3.8,
+    fontface = "bold",
+    hjust = 0
+  ) +
+  # Pointer arrow pointing to the space above the shaded curve
+  annotate(
+    "segment",
+    x = 2.75, xend = 2.4,
+    y = 0.065, yend = 0.04,
+    color = "#E74C3C",
+    linewidth = 0.6,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+    annotate(
+    "segment",
+    x = 1.5, xend = 1.9,
+    y = 0.012, yend = 0.012,
+    color = "#1B365D",
+    linewidth = 0.6,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  # -------------------
+
+  # Custom Colors & Fill
+  scale_color_manual(
+    name = "Legend", 
+    values = c("Standard Normal N(0,1)" = "#4682B4", "Empirical Density" = "#E74C3C")
+  ) +
+  scale_fill_manual(
+    name = "Legend", 
+    values = c("Standard Normal N(0,1)" = "#4682B4", "Empirical Density" = NA)
+  ) +
+  # Labels and Limits
+  labs(
+    x = "Z",
+    y = "Density"
+  ) +
+  coord_cartesian(xlim = c(-4, 4)) +
+  theme_minimal() + 
+  theme(legend.position = "none")
+
+```
+
+## Why Did This Happen?
+
+-   $Z$-tests are designed to account for one source of randomness: variation in sample means ($\bar{x}$'s)
+-   But our calculation had a second source of randomness: using $s$ to calculate our standard error rather than $\sigma$
+-   Like the mean, the amount of randomness in our sampling distribution of $s$'s will also follow the CLT, but:
+    -   The distribution of $s$ is skewed
+    -   In larger $N \rightarrow$ will look more normal, vary less from $\sigma$
+    -   In smaller $N \rightarrow$ will look less normal, vary more from $\sigma$
+
+## Sampling Distribution of $s$
+
+```{r}
+#| cache: true
+set.seed(214)
+R <- 10000
+mu <- 5
+sigma <- 6
+n1 <- 5
+n2 <- 30
+s2_1 <- sapply(1:R, function(i)
+  sd(rnorm(n1, mean = mu, sd = sigma)))
+s2_2 <- sapply(1:R, function(i)
+  sd(rnorm(n2, mean = mu, sd = sigma)))
+
+
+```
+
+```{r}
+res <- data.frame("n5" = s2_1, "n30" = s2_2)
+p1 <- ggplot(res) + 
+  geom_histogram(aes(n5, after_stat(density)), bins = 20, fill = my_blue, na.rm = TRUE) + 
+  lims(x = c(0, 15)) +
+  labs(x = "", title = "N = 5", y = "") + 
+  theme_light() +
+  stat_function(fun = dnorm, args = list(mean = mean(res$n5), sd = sd(res$n5)), col = my_red) + 
+  # Add vertical reference line
+  geom_vline(xintercept = 6, linetype = "dashed", color = "darkgray") +
+  # Add mathematical annotation (sigma = 6)
+  annotate("text", x = 6, y = Inf, label = "sigma == 6", parse = TRUE, vjust = 1.5, hjust = -0.1) +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+        plot.title = element_text(hjust = 0.5))
+
+p2 <- ggplot(res) + 
+  geom_histogram(aes(n30, after_stat(density)), bins = 30, fill = my_purple, na.rm = TRUE) + 
+  lims(x = c(0, 15)) +
+  labs(x = "", title = "N = 30", y = "") + 
+  theme_light() +
+  stat_function(fun = dnorm, args = list(mean = mean(res$n30), sd = sd(res$n30)), col = my_red) + 
+  # Add vertical reference line
+  geom_vline(xintercept = 6, linetype = "dashed", color = "darkgray") +
+  # Add mathematical annotation (sigma = 6)
+  annotate("text", x = 6, y = Inf, label = "sigma == 6", parse = TRUE, vjust = 1.5, hjust = -0.1) +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+        plot.title = element_text(hjust = 0.5))
+
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+## What About Larger Samples?
+
+## Simulation Code
+
+Let's redo our simulation for $N = 44$
+
+```{r}
+#| echo: true
+#| cache: true
+## Define number of samples
+Samples <- 10000
+
+## set sample size
+n <- 44
+
+## set mu and sigma
+mu <- 12
+sigma <- 6
+
+
+## Initialize empty vector
+z_statistic44 <- numeric(Samples)
+
+set.seed(124)
+## Initialize Loop
+for(i in 1:Samples){
+  ## Draw random sample
+  sample <- rnorm(n, mean = mu, sd = sigma)
+  
+  ## calculate sample mean
+  x_bar <- mean(sample)
+  
+  ## calculate sample SD
+    s <- sd(sample)
+  
+  ## calculate standard error
+  SE <- s/sqrt(n)
+  
+  ## Save z-statistic
+  z_statistic44[i] <- (x_bar - mu)/SE
+}
+
+```
+
+## Result
+
+```{r}
+
+df <- data.frame(val = z_statistic44)
+
+ggplot(df, aes(x = val)) +
+  # 1. Standard Normal Area (Blue & Filled)
+  stat_function(
+    fun = dnorm,
+    geom = "area",
+    aes(fill = "Standard Normal N(0,1)", color = "Standard Normal N(0,1)"),
+    alpha = 0.3
+  ) +
+  # Outline for Standard Normal
+  stat_function(
+    fun = dnorm,
+    aes(color = "Standard Normal N(0,1)"),
+    linewidth = 1
+  ) +
+  # 2. Empirical Density (Red & Dashed Line)
+  geom_density(
+    aes(color = "Empirical Density"), 
+    linewidth = 1,
+    linetype = "dashed"
+  ) +
+  # Custom Colors & Fill for Legend
+  scale_color_manual(
+    name = "Legend", 
+    values = c("Standard Normal N(0,1)" = "#4682B4", "Empirical Density" = "#E74C3C")
+  ) +
+  scale_fill_manual(
+    name = "Legend", 
+    values = c("Standard Normal N(0,1)" = "#4682B4", "Empirical Density" = NA)
+  ) +
+  # Labels and Theme
+  labs(
+    x = "Z",
+    y = "Density"
+  ) +
+  xlim(c(-4, 4)) +
+  theme_minimal() + theme(legend.position = "none")
+```
+
+## William Gosset
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+![](../../figs/Gosset.png){width="65%"}
+
+William Gosset (1867-1937)
+:::
+
+::: {.column width="50%"}
+-   Solution to this problem was discovered by William Gosset
+-   Worked at Guinness Brewing Company
+-   Did small-sample experiments in which he changed the ingredients in the Guinness beer recipe
+:::
+:::::
+
+## The $t$-distribution
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+![](../../figs/gossetmask.png){width="65%"}
+
+William Gosset (1867-1937)
+:::
+
+::: {.column width="50%"}
+-   Gosset corresponded with contemporary statistical titans in academia, including Ronald Fisher
+-   Published papers in *Biometrika* under pseudonym "Student" to avoid angering his employers
+-   Most famous for discovering the $t$ distribution, which allows us to account for the added uncertainty due to sampling variation in $s$
+:::
+:::::
+
+## What does the $t$-distribution do?
+
+-   Adds an extra parameter: degrees of freedom $df$
+    -   Same idea as $df$ in calculating the sample variance
+    -   Number of datapoints that can freely vary after accounting for estimated values
+-   Larger $df \rightarrow$ thinner tails, more similar to normal distribution
+    -   $t$-distribution with $df = \infty$ is equivalent to normal distribution
+-   Smaller $df \rightarrow$ fatter tails, less similar to normal distribution
+    -   We need to move more standard errors away from the mean to include 95% of the distribution in the center (thus 5% in the tails)
+    -   Need our sample mean to be further from hypothesized mean to reject null hypothesis
+
+## Comparing $df$
+
+```{r}
+
+
+
+# 1. Define range of standard errors (x-axis)
+x_vals <- seq(-4.5, 4.5, length.out = 1000)
+
+# 2. Build long data frame containing distribution densities
+df_plot <- data.frame(
+  x = rep(x_vals, 4),
+  y = c(
+    dt(x_vals, df = 1),
+    dt(x_vals, df = 5),
+    dt(x_vals, df = 30),
+    dnorm(x_vals)
+  ),
+  Distribution = factor(
+    rep(c("t (df = 1)", "t (df = 5)", "t (df = 30)", "Standard Normal N(0,1)"), 
+        each = length(x_vals)),
+    levels = c("t (df = 1)", "t (df = 5)", "t (df = 30)", "Standard Normal N(0,1)")
+  )
+)
+
+# 3. Critical value for standard normal at alpha = 0.05 (two-tailed)
+z_crit <- qnorm(0.975) # ~ 1.96
+
+# Data subsets for visual shading of the critical tails under standard normal
+shade_left  <- filter(df_plot, Distribution == "Standard Normal N(0,1)" & x <= -z_crit)
+shade_right <- filter(df_plot, Distribution == "Standard Normal N(0,1)" & x >= z_crit)
+
+# 4. Generate ggplot
+p <- ggplot(df_plot, aes(x = x, y = y, color = Distribution, linetype = Distribution)) +
+  
+  # Fill critical region tails
+  geom_area(data = shade_left, aes(x = x, y = y), fill = "#d95f02", alpha = 0.2, inherit.aes = FALSE) +
+  geom_area(data = shade_right, aes(x = x, y = y), fill = "#d95f02", alpha = 0.2, inherit.aes = FALSE) +
+  
+  # Density curves
+  geom_line(linewidth = 1) +
+  
+  # Critical region vertical lines (+/- 1.96 SEs)
+  geom_vline(xintercept = c(-z_crit, z_crit), linetype = "dashed", color = "#b2182b", linewidth = 0.8) +
+  
+  # Annotations for standard error distances
+  annotate("text", x = z_crit + 0.15, y = 0.25, 
+           label = paste0("+", round(z_crit, 2), " SEs\n(Upper Crit. Value)"), 
+           hjust = 0, color = "#b2182b", size = 3.5, fontface = "bold") +
+  
+  annotate("text", x = -z_crit - 0.15, y = 0.25, 
+           label = paste0("-", round(z_crit, 2), " SEs\n(Lower Crit. Value)"), 
+           hjust = 1, color = "#b2182b", size = 3.5, fontface = "bold") +
+  
+  # Color and line type styling
+  scale_color_manual(values = c(
+    "t (df = 1)" = "#e41a1c", 
+    "t (df = 5)" = "#377eb8", 
+    "t (df = 30)" = "#4daf4a", 
+    "Standard Normal N(0,1)" = "#000000"
+  )) +
+  scale_linetype_manual(values = c(
+    "t (df = 1)" = "dotted", 
+    "t (df = 5)" = "dotdash", 
+    "t (df = 30)" = "dashed", 
+    "Standard Normal N(0,1)" = "solid"
+  )) +
+  
+  # Plot labels & axes
+  labs(
+    subtitle = "Dashed red lines mark critical region thresholds for normal distribution",
+    x = "(z / t) statistic",
+    y = "Density",
+    color = "Distribution",
+    linetype = "Distribution"
+  ) +
+  coord_cartesian(ylim = c(0, 0.42), xlim = c(-4.5, 4.5)) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold", size = 14),
+    panel.grid.minor = element_blank()
+  )
+
+p
+```
+
+## Comparing Critical Values
+
+```{r}
+
+
+
+# 1. Configuration: set degrees of freedom (change to 1, 5, 30, etc.)
+df_val <- 5  
+
+# Calculate 2-tailed critical values (alpha = 0.05)
+norm_crit <- qnorm(0.975)                 # ±1.96 SEs
+t_crit    <- qt(0.975, df = df_val)       # ±2.57 SEs (for df=5) or ±12.71 (for df=1)
+
+# Set x-axis limit based on critical value so annotations fit cleanly
+x_max  <- max(4.5, t_crit + 0.8)
+x_vals <- seq(-x_max, x_max, length.out = 1000)
+
+# 2. Build long data frame
+df_plot <- data.frame(
+  x = rep(x_vals, 2),
+  y = c(dnorm(x_vals), dt(x_vals, df = df_val)),
+  Distribution = factor(
+    rep(c("Standard Normal N(0,1)", paste0("t (df = ", df_val, ")")), each = length(x_vals)),
+    levels = c("Standard Normal N(0,1)", paste0("t (df = ", df_val, ")"))
+  )
+)
+
+# Color scheme
+cols <- c("Standard Normal N(0,1)" = "#2b5c8f", "t (df = 5)" = "#d95f02") 
+names(cols)[2] <- paste0("t (df = ", df_val, ")")
+
+# 3. Create tail-shading data subsets
+shade_norm_left  <- filter(df_plot, Distribution == "Standard Normal N(0,1)" & x <= -norm_crit)
+shade_norm_right <- filter(df_plot, Distribution == "Standard Normal N(0,1)" & x >= norm_crit)
+
+shade_t_left  <- filter(df_plot, Distribution == paste0("t (df = ", df_val, ")") & x <= -t_crit)
+shade_t_right <- filter(df_plot, Distribution == paste0("t (df = ", df_val, ")") & x >= t_crit)
+
+# 4. Build ggplot
+ggplot(df_plot, aes(x = x, y = y, color = Distribution, linetype = Distribution)) +
+  
+  # Shading for Standard Normal Critical Regions (Blue)
+  geom_area(data = shade_norm_left,  aes(x = x, y = y), fill = cols[1], alpha = 0.25, inherit.aes = FALSE) +
+  geom_area(data = shade_norm_right, aes(x = x, y = y), fill = cols[1], alpha = 0.25, inherit.aes = FALSE) +
+  
+  # Shading for t-Distribution Critical Regions (Orange)
+  geom_area(data = shade_t_left,  aes(x = x, y = y), fill = cols[2], alpha = 0.25, inherit.aes = FALSE) +
+  geom_area(data = shade_t_right, aes(x = x, y = y), fill = cols[2], alpha = 0.25, inherit.aes = FALSE) +
+  
+  # Density lines
+  geom_line(linewidth = 1.1) +
+  
+  # Vertical Critical Value Lines
+  geom_vline(xintercept = c(-norm_crit, norm_crit), 
+             color = cols[1], linetype = "dashed", linewidth = 0.8) +
+  geom_vline(xintercept = c(-t_crit, t_crit), 
+             color = cols[2], linetype = "dashed", linewidth = 0.8) +
+  
+  # Annotations for Normal Critical Values
+  annotate("text", x = norm_crit - 0.1, y = 0.35, 
+           label = paste0("Normal Crit:\n±", round(norm_crit, 2), " SE"), 
+           color = cols[1], fontface = "bold", hjust = 1, size = 3.5) +
+  
+  # Annotations for t-distribution Critical Values
+  annotate("text", x = t_crit + 0.1, y = 0.28, 
+           label = paste0("t (df=", df_val, ") Crit:\n±", round(t_crit, 2), " SE"), 
+           color = cols[2], fontface = "bold", hjust = 0, size = 3.5) +
+  
+  # Styling & Scales
+  scale_color_manual(values = cols) +
+  scale_linetype_manual(values = c("solid", "dotdash")) +
+  labs(
+    subtitle = "Dashed vertical lines and shaded tails mark critical regions at α = 0.05",
+    x = "(z / t) statistic",
+    y = "Density",
+    color = "Distribution",
+    linetype = "Distribution"
+  ) +
+  coord_cartesian(xlim = c(-x_max, x_max), ylim = c(0, 0.42)) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold", size = 13),
+    panel.grid.minor = element_blank()
+  )
+```
+
+## Calculating our $t$-statistic
+
+The $t$-statistic is calculated *almost* exactly the same way as a $z$-statistic, just using $s$ instead of $\sigma$ in the standard error formula.
+
+Revisiting our NBA example, let's now assume
+
+-   I sample a group of 44 NBA basketball players
+-   On average, they score 14.5 points per game
+-   I want to test the hypothesis that on average, the population I sampled from scores 12 points per game
+-   **In the my sample, the standard deviation of basketball player points per game is 6**
+-   14.5 is not 12! But how do I know how likely or unlikely this *statistic* would be in my sampling distribution?
+
+## SE and $t$
+
+$$\text{standard error (SE)} = \frac{s}{\sqrt{N}} = \frac{6}{\sqrt{44}} = 0.90$$
+
+$$t_{df} = \frac{\bar{x} = \mu}{SE} = \frac{14.5-12}{0.90} = 2.78$$
+
+**Notice:** This is numerically identical to what we did when it was a $z$-test!
+
+-   This time $s = 6$ rather than $\sigma = 6$
+
+Where our procedure differs is our reference sampling distribution. Instead of a standard normal distribution, we will us a $t$ distribution with $df = N = 1$
+
+-   In our case $N - 1 = 44 - 1 = 43$
+
+## $p$-value
+
+```{r}
+#| echo: true
+
+pt(2.78, df = 43, lower.tail = FALSE)
+
+```
+
+If we repeatedly sampled 44 NBA players with mean points per game $\mu = 12$ and an unknown SD that we estimate to be $\s = 6$, only 0.40% of those samples would have a sample mean $\bar{x} = 14.5$ or larger.
+
+-   This is larger than the $p$-value from our $z$-test example (.0024), but not much!
+
+## Two-tailed test
+
+This result assumes a one-tailed test
+
+-   What is the probability that if $\mu = 12$ we would get a result at least as large as 14.5
+
+A two-tailed test would consider the possibility we get a result of equal magnitude in the other direction
+
+-   If our *a priori* alternative hypothesis wasn't that our sample was likely to be better than $\mu = 12$ we also need to consider the probability that a random sample might have had $\bar{x} = 9.5$
+-   This result would be equally (un)likely under the null hypothesis
+-   Conceptually, we just multiply $p$-value by 2
+    -   $.004 \times 2 = .008$

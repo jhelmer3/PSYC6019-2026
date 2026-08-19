@@ -1,0 +1,356 @@
+---
+title: "Lecture 10: Intro to Effect Size"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: visual
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(gganimate)
+library(gifski)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+
+dat <- read.csv("../../data/McCrea.csv") |> 
+  mutate(Cond = recode(as_factor(Cond), 
+                       "1" = "self-handicap", 
+                       "2" = "control"))
+
+means <- dat |> group_by(Cond) |>
+  summarize(mean = mean(percent))
+
+sds <- dat |> group_by(Cond) |>
+  summarize(sd = sd(percent))
+
+ns <- dat |> group_by(Cond) |>
+  summarize(n = n())
+
+## extract x_bar1, x_bar2, s1, s2, n1, and n2
+x_bar1 <- means$mean[1]
+x_bar2 <- means$mean[2]
+s1 <- sds$sd[1]
+s2 <- sds$sd[2]
+n1 <- ns$n[1]
+n2 <- ns$n[2]
+
+s2p <- ((n1 - 1) * s1^2 + (n2 - 1) * s2^2)/(n1 + n2 - 2)
+sp <- sqrt(s2p)
+t_crit <- qt(.025, df = n1 + n2 - 2, lower.tail = FALSE)
+```
+
+## APA Writeup From Last Time
+
+A two-tailed Welch-Satterthwaite $t$-test with $\alpha = .05$ indicated a significant difference between conditions, $t(51.9) = -2.29, p = .026$. Participants in the self-handicap condition correctly answered a lower percentage of items ($N = 32, M = .47, SD = .17$) than participants in the control condition ($N = 29, M = .58, SD = .22$), 95% CI of the difference $= [0.01, 0.22]$.
+
+[The observed difference between groups was $.58 - .47 = .11$. This is an **effect size**]{.fragment}
+
+-   [**Effect size:** a statistical **estimate** rather than a **test**]{.fragment}
+
+[**Problem:** How should we interpret this effect size?]{.fragment}
+
+## Standardized Effect Size
+
+In a vacuum, **raw** effect sizes are difficult to interpret and compare to one another
+
+-   Often because the scale of the original variable(s) can be hard to directly interpret
+-   What difference in proportion would be considered large?
+-   **Standardized** effect sizes put all effect sizes on a common scale to aid interpretation and comparison
+
+## Two Families
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+![](../../Figs/corleone.png)
+:::
+
+::: {.column width="50%"}
+![](../../Figs/sopranos.png)
+:::
+:::::
+
+[Not that type of family!]{.fragment}
+
+## Two Families of Effect
+
+The $D$-family
+
+-   Refers to standardized **differences** (or ratios)
+-   Cohen's $d$
+-   Risk, Odds, and Risk and Odds Ratios
+
+The $R$-family
+
+-   Refers to standardized **associations**
+-   Correlation (standardized covariance)
+-   $R^2$, $\eta^2$, $\omega^2$
+-   $W$ and Cramer's $V$
+
+## Cohen's $d$
+
+::: {style="font-size: 0.9em;"}
+General form:
+
+$$d = \frac{\text{raw difference}}{\text{standard deviation}}$$
+
+**Interpretation:** Transforms **raw difference** into $Z$ (standard deviation) units
+:::
+
+::::::: {style="font-size: 0.7em;"}
+:::::: {.columns .v-center-container}
+::: {.column width="33%"}
+**One Sample**
+
+$$d = \frac{\bar{x} - \mu_0}{s_x}$$
+
+Difference between observed and null hypothesized mean divided by standard deviation
+:::
+
+::: {.column width="33%"}
+**Paired Sample**
+
+$$d = \frac{\bar{D}}{s_D}$$
+
+Difference in paired sample means divided by standard deviation
+:::
+
+::: {.column width="33%"}
+**Independent Samples**
+
+$$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$$
+
+Difference in sample means divided by pooled standard deviation
+
+-   Can use other SDs besides pooled depending on desired interpretation
+:::
+::::::
+:::::::
+
+## Example
+
+This is using the same `McCrea.csv` we looked at last time. As a reminder, our means $\bar{x}_1$ and $\bar{x}_2$ were:
+
+```{r}
+#| echo: true
+
+x_bar1
+x_bar2
+```
+
+And our pooled standard deviation $s_p$
+
+```{r}
+#| echo: true
+
+sp
+```
+
+$$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$$
+
+```{r}
+#| echo: true
+
+(d <- (x_bar1 - x_bar2)/sp)
+
+```
+
+## Confidence Interval for $d$
+
+Cohen's $d$ changes our original units to $z$ score units, meaning we can just plug in $s_p = 1$ and calculate a confidence interval around $d$ as
+
+$\text{statistic} \pm \text{critical value} \times \text{standard error} = d \pm t_{crit} \times \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}$
+
+```{r}
+#| echo: true
+d - t_crit * sqrt(1/n1 + 1/n2)
+d + t_crit * sqrt(1/n1 + 1/n2)
+
+```
+
+## Benchmarks
+
+Jacob Cohen proposed the following (very loose!) benchmarks for $d$:
+
+-   $d \approx .2$ is a small effect
+-   $d \approx .5$ is a medium effect
+-   $d \approx .8$ is a large effect
+
+## Full APA Writeup
+
+A two-tailed Welch-Satterthwaite $t$-test with $\alpha = .05$ indicated a significant difference between conditions, $t(51.9) = -2.29, p = .026$. Participants in the self-handicap condition correctly answered a lower percentage of items ($N = 32, M = .47, SD = .17$) than participants in the control condition ($N = 29, M = .58, SD = .22$), 95% CI of the difference $= [0.01, 0.22]$, Cohen's $d = 0.60$, 95% CI($d$) = $[0.08, 1.11]$.
+
+## In `R`
+
+```{r}
+#| echo: true
+library(effectsize)
+cohens_d(percent ~ Cond, data = dat)
+
+```
+
+## Risk and Odds
+
+::: {style="font-size: 0.7em;"}
+Risk and Odds are ratio-based $d$-family effect sizes for categorical variables
+
+Below are some results from the Moderna Phase 3 clinical trial of the mRNA-1273 COVID vaccine (November, 2020)
+:::
+
+::: {style="font-size: 0.6em;"}
+Baden, L. R., El Sahly, H. M., Essink, B., Kotloff, K., Frey, S., Novak, R., ... & Zaks, T. (2021). Efficacy and safety of the mRNA-1273 SARS-CoV-2 vaccine. *New England Journal of Medicine*, *384*(5), 403-416.
+:::
+
+:::::: {style="font-size: 0.7em;"}
+|             | **COVID-19** | **No COVID-19** | **Total**  |
+|:------------|:------------:|:---------------:|:----------:|
+| **Vaccine** |      11      |     14,123      |   14,134   |
+| **Placebo** |     185      |     13,888      |   14,073   |
+| **Total**   |   **196**    |   **28,011**    | **28,207** |
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+**Risk** is the conditional probability of one outcome for a group
+
+-   Risk(COVID-19 \| Vaccine) $= \frac{11}{14,134} = .0008 = .08\%$
+
+-   Risk(COVID-19 \| Placebo) $= \frac{185}{14,073} = .0131 = 1.31\%$
+:::
+
+::: {.column width="50%"}
+**Odds** is the ratio of one outcome to another outcome for a group
+
+-   Odds(COVID-19 \| Vaccine) $= \frac{11}{14,123} = .0008$
+
+-   Odds(COVID-19 \| Placebo) $= \frac{185}{13,888} = .0133$
+:::
+:::::
+::::::
+
+## More Risk and Odds
+
+:::::: {style="font-size: 0.8em;"}
+|             | **COVID-19** | **No COVID-19** | **Total**  |
+|:------------|:------------:|:---------------:|:----------:|
+| **Vaccine** |      11      |     14,123      |   14,134   |
+| **Placebo** |     185      |     13,888      |   14,073   |
+| **Total**   |   **196**    |   **28,011**    | **28,207** |
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+**Risk** uses total \# in vaccine group as the denominator
+
+-   Risk(COVID-19 \| Vaccine) $= \frac{11}{14,134} = .0008 = .08\%$
+
+-   Conditional probability
+:::
+
+::: {.column width="50%"}
+**Odds** uses \# of vaccinated individuals who did not contract COVID-19 as the denominator
+
+-   Odds(COVID-19 \| Vaccine) \$ = \frac{11}{14,123} = .0008\$
+
+-   If outcomes are equally probable, odds = 1
+:::
+:::::
+::::::
+
+Risk and odds are not always similar - here they are because getting COVID-19 (in the given time frame) is highly unlikely in either group.
+
+## Risk Ratio
+
+|             | **COVID-19** | **No COVID-19** | **Total**  |
+|:------------|:------------:|:---------------:|:----------:|
+| **Vaccine** |      11      |     14,123      |   14,134   |
+| **Placebo** |     185      |     13,888      |   14,073   |
+| **Total**   |   **196**    |   **28,011**    | **28,207** |
+
+**Risk ratio** (also known as **relative risk**)
+
+$$\text{Risk ratio} = \text{Risk (COVID-19 | Placebo)} / \text{Risk (COVID-19 | Vaccine)}$$ $$= \left(\frac{185}{14,073}\right) \bigg/ \left(\frac{11}{14,134}\right) = 16.89$$
+
+The risk of contracting COVID-19 without a vaccine is 16.89$\times$ higher than if you get the Moderna vaccine
+
+If the two risks are equal, then the risk ratio equals 1
+
+## Odds Ratio
+
+**Odds ratio**
+
+$$\text{Odds ratio}  = \text{Odds (COVID-19 | Placebo)} / \text{Odds (COVID-19 | Vaccine)}$$ $$= \left(\frac{185}{13,388}\right) \bigg/ \left(\frac{11}{14,123}\right) = 17.10$$
+
+The odds of contracting COVID-19 without a vaccine is over 17$\times$ higher than if you get the Moderna vaccine
+
+## Risk vs. Odds
+
+In our example, risk (ratio) and odds (ratio) gave us very similar answers.
+
+Mathematically, the difference between risk and odds is what quantity goes in the denominator
+
+**Risk** of COVID-19 among vaccinated participants:
+
+-   .08% of those vaccinated contracted COVID-19
+
+-   1.31% of those unvaccinated contracted COVID-19
+
+-   Risks are probabilities: range from 0 to 1
+
+## Odds vs. Risk
+
+**Odds** of contracting COVID-19 in vaccine condition:
+
+-   Among those vaccinated, the ratio of those who contracted COVID-19 to those who did not attack is .008
+
+-   Odds $\approx$ 1 indicate roughly equally likely outcomes
+
+-   Odds \> 1 indicates higher probability for the group in the numerator
+
+-   Odds \< 1 indicates higher probability for the group in the denominator
+
+-   The odds of **no** COVID-19 for those vaccinated is $\frac{14,123}{11} = 1284$
+
+-   The odds of **no** COVID-19 for those unvaccinated is $\frac{13,888}{185} = 75$
+
+    -   A vaccinated person is 1284$\times$ more likely to *not* contract COVID-19 than to do so, whereas an unvaccinated person is only 75$\times$ more likely to *not* (in study's given time frame, pre-variants)
