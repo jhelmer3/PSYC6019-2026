@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mark Himmelstein">
+
+<title>Lecture 3: Visualizing Data – PSYC 6019</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-2733e4e43f174e581facd0a5ada7dfd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">PSYC 6019</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Statistical Analysis I</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../syllabus.html"> 
+<span class="menu-text">Syllabus</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../lecture/lecture-index.html"> 
+<span class="menu-text">Lecture</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../lab/lab-index.html"> 
+<span class="menu-text">Lab</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/jhelmer3/PSYC6019-2026" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link active" data-scroll-target="#data-visualization">Data Visualization</a></li>
+  <li><a href="#the-dataink-ratio" id="toc-the-dataink-ratio" class="nav-link" data-scroll-target="#the-dataink-ratio">The Data/Ink Ratio</a></li>
+  <li><a href="#example-the-dataink-ratio" id="toc-example-the-dataink-ratio" class="nav-link" data-scroll-target="#example-the-dataink-ratio">Example: The Data/Ink Ratio</a></li>
+  <li><a href="#can-you-identify-chartjunk" id="toc-can-you-identify-chartjunk" class="nav-link" data-scroll-target="#can-you-identify-chartjunk">Can You Identify Chartjunk?</a></li>
+  <li><a href="#chartjunk-answers" id="toc-chartjunk-answers" class="nav-link" data-scroll-target="#chartjunk-answers">Chartjunk Answers</a></li>
+  <li><a href="#axis-distortions" id="toc-axis-distortions" class="nav-link" data-scroll-target="#axis-distortions">Axis Distortions</a></li>
+  <li><a href="#violent-crime-per-capita" id="toc-violent-crime-per-capita" class="nav-link" data-scroll-target="#violent-crime-per-capita">Violent Crime per Capita</a></li>
+  <li><a href="#temperature" id="toc-temperature" class="nav-link" data-scroll-target="#temperature">Temperature</a></li>
+  <li><a href="#lie-factor" id="toc-lie-factor" class="nav-link" data-scroll-target="#lie-factor">Lie Factor (?)</a></li>
+  <li><a href="#answers" id="toc-answers" class="nav-link" data-scroll-target="#answers">Answers</a></li>
+  <li><a href="#the-lie-factor" id="toc-the-lie-factor" class="nav-link" data-scroll-target="#the-lie-factor">The Lie Factor</a></li>
+  <li><a href="#principles-of-axis-scaling" id="toc-principles-of-axis-scaling" class="nav-link" data-scroll-target="#principles-of-axis-scaling">Principles of Axis Scaling</a></li>
+  <li><a href="#types-of-data-and-graphs" id="toc-types-of-data-and-graphs" class="nav-link" data-scroll-target="#types-of-data-and-graphs">Types of Data and Graphs</a></li>
+  <li><a href="#discrete-data-bar-charts" id="toc-discrete-data-bar-charts" class="nav-link" data-scroll-target="#discrete-data-bar-charts">Discrete Data: Bar Charts</a></li>
+  <li><a href="#better-bar-chart" id="toc-better-bar-chart" class="nav-link" data-scroll-target="#better-bar-chart">Better Bar Chart</a></li>
+  <li><a href="#important-changes" id="toc-important-changes" class="nav-link" data-scroll-target="#important-changes">Important Changes</a></li>
+  <li><a href="#what-about-this" id="toc-what-about-this" class="nav-link" data-scroll-target="#what-about-this">What About This?</a></li>
+  <li><a href="#continuous-data" id="toc-continuous-data" class="nav-link" data-scroll-target="#continuous-data">Continuous Data</a></li>
+  <li><a href="#bar-graphs-for-means" id="toc-bar-graphs-for-means" class="nav-link" data-scroll-target="#bar-graphs-for-means">Bar Graphs for Means</a></li>
+  <li><a href="#thoughts" id="toc-thoughts" class="nav-link" data-scroll-target="#thoughts">Thoughts?</a></li>
+  <li><a href="#histograms" id="toc-histograms" class="nav-link" data-scroll-target="#histograms">Histograms</a></li>
+  <li><a href="#histogram-of-points-per-game" id="toc-histogram-of-points-per-game" class="nav-link" data-scroll-target="#histogram-of-points-per-game">Histogram of Points Per Game</a></li>
+  <li><a href="#choosing-bins" id="toc-choosing-bins" class="nav-link" data-scroll-target="#choosing-bins">Choosing Bins</a></li>
+  <li><a href="#too-few-bins" id="toc-too-few-bins" class="nav-link" data-scroll-target="#too-few-bins">Too few bins</a></li>
+  <li><a href="#too-many-bins" id="toc-too-many-bins" class="nav-link" data-scroll-target="#too-many-bins">Too many bins</a></li>
+  <li><a href="#sturges-bins" id="toc-sturges-bins" class="nav-link" data-scroll-target="#sturges-bins">Sturges Bins</a></li>
+  <li><a href="#kernel-density-plot" id="toc-kernel-density-plot" class="nav-link" data-scroll-target="#kernel-density-plot">Kernel Density Plot</a></li>
+  <li><a href="#kernel-density-plot-1" id="toc-kernel-density-plot-1" class="nav-link" data-scroll-target="#kernel-density-plot-1">Kernel Density Plot</a></li>
+  <li><a href="#kernel-density-plot-2" id="toc-kernel-density-plot-2" class="nav-link" data-scroll-target="#kernel-density-plot-2">Kernel Density Plot</a></li>
+  <li><a href="#kernel-density-plot-3" id="toc-kernel-density-plot-3" class="nav-link" data-scroll-target="#kernel-density-plot-3">Kernel Density Plot</a></li>
+  <li><a href="#kernel-density-plot-4" id="toc-kernel-density-plot-4" class="nav-link" data-scroll-target="#kernel-density-plot-4">Kernel Density Plot</a></li>
+  <li><a href="#modality" id="toc-modality" class="nav-link" data-scroll-target="#modality">Modality</a></li>
+  <li><a href="#modality-1" id="toc-modality-1" class="nav-link" data-scroll-target="#modality-1">Modality</a></li>
+  <li><a href="#boxplots" id="toc-boxplots" class="nav-link" data-scroll-target="#boxplots">Boxplots</a></li>
+  <li><a href="#comparing-groups" id="toc-comparing-groups" class="nav-link" data-scroll-target="#comparing-groups">Comparing Groups</a></li>
+  <li><a href="#overlaid-histogram" id="toc-overlaid-histogram" class="nav-link" data-scroll-target="#overlaid-histogram">Overlaid Histogram</a></li>
+  <li><a href="#overlaid-histogram-1" id="toc-overlaid-histogram-1" class="nav-link" data-scroll-target="#overlaid-histogram-1">Overlaid Histogram</a></li>
+  <li><a href="#multiple-boxplots" id="toc-multiple-boxplots" class="nav-link" data-scroll-target="#multiple-boxplots">Multiple Boxplots</a></li>
+  <li><a href="#boxplots-1" id="toc-boxplots-1" class="nav-link" data-scroll-target="#boxplots-1">Boxplots</a></li>
+  <li><a href="#violin-plots" id="toc-violin-plots" class="nav-link" data-scroll-target="#violin-plots">Violin Plots</a></li>
+  <li><a href="#just-violins" id="toc-just-violins" class="nav-link" data-scroll-target="#just-violins">Just Violins</a></li>
+  <li><a href="#violins-and-boxes" id="toc-violins-and-boxes" class="nav-link" data-scroll-target="#violins-and-boxes">Violins and Boxes</a></li>
+  <li><a href="#what-else-can-we-do" id="toc-what-else-can-we-do" class="nav-link" data-scroll-target="#what-else-can-we-do">What Else Can We Do?</a></li>
+  <li><a href="#more-stuff" id="toc-more-stuff" class="nav-link" data-scroll-target="#more-stuff">More Stuff?</a></li>
+  <li><a href="#violins-and-boxes-with-means" id="toc-violins-and-boxes-with-means" class="nav-link" data-scroll-target="#violins-and-boxes-with-means">Violins and Boxes with Means</a></li>
+  <li><a href="#and-with-jittered-points" id="toc-and-with-jittered-points" class="nav-link" data-scroll-target="#and-with-jittered-points">And with Jittered Points</a></li>
+  <li><a href="#beeswarm-plots" id="toc-beeswarm-plots" class="nav-link" data-scroll-target="#beeswarm-plots">Beeswarm Plots</a></li>
+  <li><a href="#beeswarm-plot" id="toc-beeswarm-plot" class="nav-link" data-scroll-target="#beeswarm-plot">Beeswarm Plot</a></li>
+  <li><a href="#major-takehome" id="toc-major-takehome" class="nav-link" data-scroll-target="#major-takehome">Major Takehome</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="Lecture 3 Visualizing Data.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Lecture 3: Visualizing Data</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Mark Himmelstein </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="data-visualization" class="level2">
+<h2 class="anchored" data-anchor-id="data-visualization">Data Visualization</h2>
+<p>This lecture will discuss….</p>
+<p>From Poldrack:</p>
+<ul>
+<li>General principles of good data visualization</li>
+</ul>
+<p>From me:</p>
+<ul>
+<li>Types of plots for summarizing discrete data</li>
+<li>Types of plots for summarizing continuous data</li>
+</ul>
+</section>
+<section id="the-dataink-ratio" class="level2">
+<h2 class="anchored" data-anchor-id="the-dataink-ratio">The Data/Ink Ratio</h2>
+<p>Edmund Tufte proposed maximizing the following general guideline:</p>
+<p><span class="math display">\[\text{data/ink ratio} = \frac{\text{amount of ink used on data}}{\text{total ink used}}\]</span></p>
+<ul>
+<li>Minimize visual clutter</li>
+<li>Avoid Chartjunk</li>
+<li>Ensure the data speaks</li>
+<li>Only use extra plot features to help emphasize relevant features of the data</li>
+</ul>
+</section>
+<section id="example-the-dataink-ratio" class="level2">
+<h2 class="anchored" data-anchor-id="example-the-dataink-ratio">Example: The Data/Ink Ratio</h2>
+<p><img src="../../Figs/dataink.png" class="img-fluid"></p>
+</section>
+<section id="can-you-identify-chartjunk" class="level2">
+<h2 class="anchored" data-anchor-id="can-you-identify-chartjunk">Can You Identify Chartjunk?</h2>
+<p><img src="../../Figs/chartjunk.png" class="img-fluid"></p>
+</section>
+<section id="chartjunk-answers" class="level2">
+<h2 class="anchored" data-anchor-id="chartjunk-answers">Chartjunk Answers</h2>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">Weird graphics overlaid on bars</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">Unnecessarily textured background</span>?</li>
+<li><span class="answer fragment" data-unless-meta="params.v0">3D bars might distort the data</span>?</li>
+</ul>
+</section>
+<section id="axis-distortions" class="level2">
+<h2 class="anchored" data-anchor-id="axis-distortions">Axis Distortions</h2>
+<p>Choosing the appropriate scale for chart axes is one of the most important decisions in appropriately representing data.</p>
+<p>The following slides will show some examples of pairs of graphs of the same data. Which do you think is the better representation of the data?</p>
+</section>
+<section id="violent-crime-per-capita" class="level2">
+<h2 class="anchored" data-anchor-id="violent-crime-per-capita">Violent Crime per Capita</h2>
+<p><img src="../../Figs/crime.png" class="img-fluid"></p>
+</section>
+<section id="temperature" class="level2">
+<h2 class="anchored" data-anchor-id="temperature">Temperature</h2>
+<p><img src="../../Figs/temp.png" class="img-fluid"></p>
+</section>
+<section id="lie-factor" class="level2">
+<h2 class="anchored" data-anchor-id="lie-factor">Lie Factor (?)</h2>
+<p><img src="../../Figs/lie.png" class="img-fluid"></p>
+</section>
+<section id="answers" class="level2">
+<h2 class="anchored" data-anchor-id="answers">Answers</h2>
+<p><strong>Violent Crime</strong></p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">Can violent crime be negative?</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">What amount of change in violent crime would matter? Do you care about a change from .007 (0.7%) to .004 (0.4%)?</span></li>
+</ul>
+<p><strong>Body Temperature</strong></p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">Is a zero point meaningful here?</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">We probably want to know if the temperature changes from high 90s to low 100s!</span></li>
+</ul>
+</section>
+<section id="the-lie-factor" class="level2">
+<h2 class="anchored" data-anchor-id="the-lie-factor">The Lie Factor</h2>
+<div style="font-size: 0.8em;">
+<p>Also proposed by Tufte</p>
+<p><span class="math display">\[\text{lie factor} = \frac{\text{size of effect in graphic}}{\text{actual size of effect}}\]</span></p>
+<p>Where, in our example</p>
+<ul>
+<li><strong>Size of effect in graphic:</strong> Difference in area between the two bars</li>
+<li><strong>Actual size of effect:</strong> Numerical difference between two bars</li>
+</ul>
+<p>The difference in areas in the second panel is 2.8x as large as the numerical difference. This is misleading!</p>
+</div>
+</section>
+<section id="principles-of-axis-scaling" class="level2">
+<h2 class="anchored" data-anchor-id="principles-of-axis-scaling">Principles of Axis Scaling</h2>
+<ul>
+<li>Axis should represent a plausible range of values of data</li>
+<li>Don’t “zoom in” to exaggerate the size of an effect</li>
+<li>Don’t “zoom out” to de-emphasize size of effect</li>
+<li>Scale should be chosen such that it reasonably represents effect size
+<ul>
+<li>More on effect sizes later</li>
+</ul></li>
+</ul>
+</section>
+<section id="types-of-data-and-graphs" class="level2">
+<h2 class="anchored" data-anchor-id="types-of-data-and-graphs">Types of Data and Graphs</h2>
+<div style="font-size: 0.8em;">
+<p>Discrete data</p>
+<ul>
+<li>Bar charts</li>
+</ul>
+<p>Continuous data</p>
+<ul>
+<li>Histograms</li>
+<li>Kernel Density Plots</li>
+<li>Box plots</li>
+<li>Violin Plots</li>
+<li>Beeswarms</li>
+</ul>
+</div>
+</section>
+<section id="discrete-data-bar-charts" class="level2">
+<h2 class="anchored" data-anchor-id="discrete-data-bar-charts">Discrete Data: Bar Charts</h2>
+<p>This is the default of players by position in <code>ggplot2</code> if I don’t do any manual tweaks. How could I make this better?</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-3-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="better-bar-chart" class="level2">
+<h2 class="anchored" data-anchor-id="better-bar-chart">Better Bar Chart</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-4-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="important-changes" class="level2">
+<h2 class="anchored" data-anchor-id="important-changes">Important Changes</h2>
+<div style="font-size: 0.8em;">
+<ul>
+<li>Informative labels</li>
+<li>Made x-axis labels diagonal so they are readable but don’t overlap</li>
+<li>Set a scale for the y-axis
+<ul>
+<li>If you don’t do this, it will only go as large as it needs to and no larger</li>
+</ul></li>
+<li>Added enough horizontal reference lines to make the values clear</li>
+<li>While color wasn’t necessary, I chose a colorblind friendly palette
+<ul>
+<li>Focuses on contrast rather than hue</li>
+</ul></li>
+<li>I ordered the x-axis in a sensible way. I could have also done something like this (arguably better!)</li>
+</ul>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="what-about-this" class="level2">
+<h2 class="anchored" data-anchor-id="what-about-this">What About This?</h2>
+<div style="font-size: 0.65em;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:75.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div style="margin-top: -30px;">
+<p><span class="answer fragment" data-unless-meta="params.v0">Can you tell from this graph whether there were more point guards or power forwards?</span></p>
+<p><span class="answer fragment" data-unless-meta="params.v0">Avoid pie charts!</span></p>
+</div>
+</div>
+</section>
+<section id="continuous-data" class="level2">
+<h2 class="anchored" data-anchor-id="continuous-data">Continuous Data</h2>
+<p>With continuous data, we have a huge amount of flexibility in how we construct visuals.</p>
+<ul>
+<li>In statistics, we often want to compare the <strong>means</strong> of different groups</li>
+<li>A natural way to do this is to take our bar graphs and use them to show the means</li>
+</ul>
+</section>
+<section id="bar-graphs-for-means" class="level2">
+<h2 class="anchored" data-anchor-id="bar-graphs-for-means">Bar Graphs for Means</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-7-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="thoughts" class="level2">
+<h2 class="anchored" data-anchor-id="thoughts">Thoughts?</h2>
+<div style="font-size: 0.85em;">
+<p>What does the mean tell you?</p>
+<p>What do the bars imply?</p>
+<p><span class="answer fragment" data-unless-meta="params.v0">The mean is a measure of <em>centrality</em>. Bars imply there is a difference between values below the bar (colored) and above the bar (not colored)</span></p>
+<p><span class="answer fragment" data-unless-meta="params.v0"><strong>The-Bar Tip Limit Error:</strong> About one in five people interpret the top of a bar to indicate a <em>limit</em> even when it is meant to indicate an <em>average</em></span></p>
+<p><span class="answer fragment" data-unless-meta="params.v0"><strong>Bar charts are inappropriate for continuous data!</strong></span></p>
+</div>
+<div style="font-size: 0.6em;">
+<p>Kerns, S. H., &amp; Wilmer, J. B. (2021). Two graphs walk into a bar: Readout-based measurement reveals the Bar-Tip Limit error, a common, categorical misinterpretation of mean bar graphs. <em>Journal of Vision</em>, <em>21</em>(12), Article 17. <a href="https://doi.org/10.1167/jov.21.12.17" class="uri">https://doi.org/10.1167/jov.21.12.17</a></p>
+</div>
+</section>
+<section id="histograms" class="level2">
+<h2 class="anchored" data-anchor-id="histograms">Histograms</h2>
+<p>Histograms look a bit <em>like</em> bar charts, but they are different</p>
+<ul>
+<li>Meant to represent <strong>full distribution of data</strong>
+<ul>
+<li>Not averages!</li>
+</ul></li>
+<li>Group values into equal-interval “bins”</li>
+<li>Histograms show the frequency of observations in each bin</li>
+</ul>
+</section>
+<section id="histogram-of-points-per-game" class="level2">
+<h2 class="anchored" data-anchor-id="histogram-of-points-per-game">Histogram of Points Per Game</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="choosing-bins" class="level2">
+<h2 class="anchored" data-anchor-id="choosing-bins">Choosing Bins</h2>
+<p><code>ggplot2</code> defaults to 30 bins regardless of the data, but you should think more carefully!</p>
+<ul>
+<li>Too few bins will mask the shape of the distribution</li>
+<li>Too many bins will look jagged and hard to read</li>
+<li>Trial and error is OK!</li>
+<li>Sturges’ rule:
+<ul>
+<li>Number of bins = <span class="math inline">\(1 + \text{log}_2(N)\)</span></li>
+<li>Width of bins = </li>
+</ul></li>
+</ul>
+</section>
+<section id="too-few-bins" class="level2">
+<h2 class="anchored" data-anchor-id="too-few-bins">Too few bins</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-9-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="too-many-bins" class="level2">
+<h2 class="anchored" data-anchor-id="too-many-bins">Too many bins</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-10-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="sturges-bins" class="level2">
+<h2 class="anchored" data-anchor-id="sturges-bins">Sturges Bins</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="kernel-density-plot" class="level2">
+<h2 class="anchored" data-anchor-id="kernel-density-plot">Kernel Density Plot</h2>
+<div style="font-size: 0.9em;">
+<p>Kernel density plots produce a <strong>smooth curve</strong> of a distribution</p>
+<ul>
+<li><p>Horizontal axis (<span class="math inline">\(x\)</span>-axis): values</p></li>
+<li><p>Vertical axis (<span class="math inline">\(y\)</span>-axis): density/frequency</p></li>
+</ul>
+<p>Conceptually:</p>
+<ul>
+<li><p>Sort scores on the <span class="math inline">\(x\)</span>-axis</p></li>
+<li><p>Assume that <strong>every</strong> value represents an underlying distribution (kernel function) (e.g., normal)</p></li>
+<li><p>Kernel density function sums these underlying distributions</p></li>
+</ul>
+</div>
+</section>
+<section id="kernel-density-plot-1" class="level2">
+<h2 class="anchored" data-anchor-id="kernel-density-plot-1">Kernel Density Plot</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="kernel-density-plot-2" class="level2">
+<h2 class="anchored" data-anchor-id="kernel-density-plot-2">Kernel Density Plot</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-13-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="kernel-density-plot-3" class="level2">
+<h2 class="anchored" data-anchor-id="kernel-density-plot-3">Kernel Density Plot</h2>
+<div style="font-size: 0.8em;">
+<p>Two Considerations:</p>
+<p>Kernel function:</p>
+<ul>
+<li><p>Assumed distribution of each value</p></li>
+<li><p>Two common options: normal and Epanechnikov</p></li>
+<li><p>Epanechnikov kernel function is the most efficient method for kernel density plot</p></li>
+</ul>
+<p>Width or Bandwidth:</p>
+<ul>
+<li><p>A parameter that smooths the kernel density curve</p></li>
+<li><p>Larger bandwidth <span class="math inline">\(\rightarrow\)</span> smoother curve</p></li>
+<li><p>Too much smoothing can lose too much information</p></li>
+<li><p>Rules of thumb given by Silverman (<code>ggplot2</code> default, pretty smart!), Scott, others</p></li>
+</ul>
+</div>
+</section>
+<section id="kernel-density-plot-4" class="level2">
+<h2 class="anchored" data-anchor-id="kernel-density-plot-4">Kernel Density Plot</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-14-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="modality" class="level2">
+<h2 class="anchored" data-anchor-id="modality">Modality</h2>
+<div style="font-size: 0.9em;">
+<p>It’s almost impossible to infer the <strong>mode</strong> from numerical summaries of continuous data. Plots are a huge help here!</p>
+<p>Modality: number of peaks</p>
+<ul>
+<li><p>Example of unimodality (one peak): Normal distribution</p></li>
+<li><p>Example of bimodality (two peaks): Clinical diagnostic scores (aberrant group, non-aberrant group)</p></li>
+</ul>
+<p>Mean, SD, skewness, and kurtosis do not indicate modality</p>
+<ul>
+<li>Bimodal distributions often have kurtosis &lt; 0 (but not necessarily)</li>
+</ul>
+<p>In addition to descriptive statistics, this one reason we <strong>always</strong> want to graph the distributions of variables</p>
+</div>
+</section>
+<section id="modality-1" class="level2">
+<h2 class="anchored" data-anchor-id="modality-1">Modality</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-15-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="boxplots" class="level2">
+<h2 class="anchored" data-anchor-id="boxplots">Boxplots</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-16-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div style="font-size: 0.65em;">
+<ul>
+<li>Middle line: median</li>
+<li>Box boundaries: interquartile range</li>
+<li>Whiskers: lower/upper quartile <span class="math inline">\(\pm 1.5\text{IQR}\)</span> OR min/max value (whichever is more extreme)</li>
+<li>Points: Anything exceeding lower/upper quartile <span class="math inline">\(\pm 1.5\text{IQR}\)</span></li>
+</ul>
+</div>
+</section>
+<section id="comparing-groups" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-groups">Comparing Groups</h2>
+<p>We started by talking about how bar plots are inappropriate for continuous data.</p>
+<ul>
+<li>We were comparing group <strong>means</strong></li>
+<li>The techniques we are using here show distributions</li>
+<li>We can use these to compare group <strong>distributions</strong></li>
+<li>Overlay histograms or density plots</li>
+<li>Put box plots next to each other</li>
+</ul>
+</section>
+<section id="overlaid-histogram" class="level2">
+<h2 class="anchored" data-anchor-id="overlaid-histogram">Overlaid Histogram</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-17-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Overlaid histograms don’t always look very nice when you have many groups</p>
+</section>
+<section id="overlaid-histogram-1" class="level2">
+<h2 class="anchored" data-anchor-id="overlaid-histogram-1">Overlaid Histogram</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-18-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Density plots tend to look nicer!</p>
+</section>
+<section id="multiple-boxplots" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-boxplots">Multiple Boxplots</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-19-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="boxplots-1" class="level2">
+<h2 class="anchored" data-anchor-id="boxplots-1">Boxplots</h2>
+<ul>
+<li>What do we lose with boxplots?
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">We lose detail about the shape of the distribution</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">e.g.&nbsp;we can’t see modality</span></li>
+</ul></li>
+<li>What do we gain?
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">Can clearly see the median and IQR</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">Have a (semi) formal definition and representation of outliers</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="violin-plots" class="level2">
+<h2 class="anchored" data-anchor-id="violin-plots">Violin Plots</h2>
+<ul>
+<li>Same as density plots</li>
+<li>Add mirror image to create symmetrical “violin” shape</li>
+<li>Preserves full distribution</li>
+<li>Can add box plots and more for additional information</li>
+</ul>
+</section>
+<section id="just-violins" class="level2">
+<h2 class="anchored" data-anchor-id="just-violins">Just Violins</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-20-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="violins-and-boxes" class="level2">
+<h2 class="anchored" data-anchor-id="violins-and-boxes">Violins and Boxes</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-21-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="what-else-can-we-do" class="level2">
+<h2 class="anchored" data-anchor-id="what-else-can-we-do">What Else Can We Do?</h2>
+<p><img src="../../Figs/more.gif" class="img-fluid"></p>
+</section>
+<section id="more-stuff" class="level2">
+<h2 class="anchored" data-anchor-id="more-stuff">More Stuff?</h2>
+<p>Goals:</p>
+<ul>
+<li>Maximize information conveyed</li>
+<li>Minimize Clutter</li>
+</ul>
+<p>What else can we add?</p>
+<ul>
+<li>Representation of Means</li>
+<li>“Jitter” points for actual data
+<ul>
+<li>Jittering just means randomly placing points along an axis to “spread them out”</li>
+</ul></li>
+</ul>
+</section>
+<section id="violins-and-boxes-with-means" class="level2">
+<h2 class="anchored" data-anchor-id="violins-and-boxes-with-means">Violins and Boxes with Means</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-22-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="and-with-jittered-points" class="level2">
+<h2 class="anchored" data-anchor-id="and-with-jittered-points">And with Jittered Points</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-23-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="beeswarm-plots" class="level2">
+<h2 class="anchored" data-anchor-id="beeswarm-plots">Beeswarm Plots</h2>
+<p>In beeswarm plots, the points <strong>are</strong> the shape</p>
+<ul>
+<li>Use points to construct violins</li>
+<li>Combine information from
+<ul>
+<li>Violin plots</li>
+<li>Jittered points</li>
+</ul></li>
+</ul>
+</section>
+<section id="beeswarm-plot" class="level2">
+<h2 class="anchored" data-anchor-id="beeswarm-plot">Beeswarm Plot</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-24-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="major-takehome" class="level2">
+<h2 class="anchored" data-anchor-id="major-takehome">Major Takehome</h2>
+<ul>
+<li>Maximize data/ink ratio</li>
+<li>Preserve <strong>distributions</strong>
+<ul>
+<li>don’t just plot means/summary statistics</li>
+</ul></li>
+<li>Get creative
+<ul>
+<li>Color, contrast, density, overlays can all help convey information clearly (and pleasantly)</li>
+</ul></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+
+
+<script>
+
+  // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+  // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+  // slide changes (different for each slide format).
+
+  (function () {
+
+    // dispatch for htmlwidgets
+
+    function fireSlideEnter() {
+
+      const event = window.document.createEvent("Event");
+
+      event.initEvent("slideenter", true, true);
+
+      window.document.dispatchEvent(event);
+
+    }
+
+
+
+    function fireSlideChanged(previousSlide, currentSlide) {
+
+      fireSlideEnter();
+
+
+
+      // dispatch for shiny
+
+      if (window.jQuery) {
+
+        if (previousSlide) {
+
+          window.jQuery(previousSlide).trigger("hidden");
+
+        }
+
+        if (currentSlide) {
+
+          window.jQuery(currentSlide).trigger("shown");
+
+        }
+
+      }
+
+    }
+
+
+
+    // hookup for slidy
+
+    if (window.w3c_slidy) {
+
+      window.w3c_slidy.add_observer(function (slide_num) {
+
+        // slide_num starts at position 1
+
+        fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+      });
+
+    }
+
+
+
+  })();
+
+</script>
+
+
+
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/jhelmer3\.github\.io\/PSYC6019-2026\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>This page is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
