@@ -13,8 +13,10 @@ list(
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
   ## lab 02
-  tar_target(world_cup_player_stats_full, read.csv("lab/raw_data/world_cup_player_stats.csv")),
-  tar_target(world_cup_teams_full, read.csv("lab/raw_data/world_cup_teams.csv")),
+  tar_target(world_cup_player_stats_file, "lab/raw_data/world_cup_player_stats.csv", format = "file"),
+  tar_target(world_cup_teams_file, "lab/raw_data/world_cup_teams.csv", format = "file"),
+  tar_target(world_cup_player_stats_full, read.csv(world_cup_player_stats_file)),
+  tar_target(world_cup_teams_full, read.csv(world_cup_teams_file)),
   tar_target(player_stats, 
              clean_world_cup_player_stats(world_cup_player_stats_full, world_cup_teams_full)),
   tar_target(player_stats_csv, 
