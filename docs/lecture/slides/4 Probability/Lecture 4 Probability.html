@@ -1,0 +1,3660 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mark Himmelstein">
+
+<title>Lecture 4: Probability – PSYC 6019</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-2733e4e43f174e581facd0a5ada7dfd6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">PSYC 6019</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Statistical Analysis I</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../syllabus.html"> 
+<span class="menu-text">Syllabus</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../lecture/lecture-index.html"> 
+<span class="menu-text">Lecture</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../lab/lab-index.html"> 
+<span class="menu-text">Lab</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/jhelmer3/PSYC6019-2026" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#probability-and-statistics" id="toc-probability-and-statistics" class="nav-link active" data-scroll-target="#probability-and-statistics">Probability and Statistics</a></li>
+  <li><a href="#terminology" id="toc-terminology" class="nav-link" data-scroll-target="#terminology">Terminology</a></li>
+  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation">Notation</a></li>
+  <li><a href="#axioms" id="toc-axioms" class="nav-link" data-scroll-target="#axioms">Axioms</a></li>
+  <li><a href="#gummy-bears" id="toc-gummy-bears" class="nav-link" data-scroll-target="#gummy-bears">Gummy Bears</a></li>
+  <li><a href="#the-classical-definition-of-probability" id="toc-the-classical-definition-of-probability" class="nav-link" data-scroll-target="#the-classical-definition-of-probability">The “Classical” Definition of Probability</a></li>
+  <li><a href="#bernoulli-trials" id="toc-bernoulli-trials" class="nav-link" data-scroll-target="#bernoulli-trials">Bernoulli Trials</a></li>
+  <li><a href="#the-bernoulli-distribution" id="toc-the-bernoulli-distribution" class="nav-link" data-scroll-target="#the-bernoulli-distribution">The Bernoulli Distribution</a></li>
+  <li><a href="#multiple-trials" id="toc-multiple-trials" class="nav-link" data-scroll-target="#multiple-trials">Multiple Trials</a></li>
+  <li><a href="#multiple-indepenent-trials" id="toc-multiple-indepenent-trials" class="nav-link" data-scroll-target="#multiple-indepenent-trials">Multiple Indepenent Trials</a></li>
+  <li><a href="#binomial-distribution" id="toc-binomial-distribution" class="nav-link" data-scroll-target="#binomial-distribution">Binomial Distribution</a></li>
+  <li><a href="#the-binomial-distribution" id="toc-the-binomial-distribution" class="nav-link" data-scroll-target="#the-binomial-distribution">The Binomial Distribution</a></li>
+  <li><a href="#counting-events" id="toc-counting-events" class="nav-link" data-scroll-target="#counting-events">Counting Events</a></li>
+  <li><a href="#the-poisson-distribution" id="toc-the-poisson-distribution" class="nav-link" data-scroll-target="#the-poisson-distribution">The Poisson Distribution</a></li>
+  <li><a href="#poisson-example" id="toc-poisson-example" class="nav-link" data-scroll-target="#poisson-example">Poisson Example</a></li>
+  <li><a href="#continuous-variables" id="toc-continuous-variables" class="nav-link" data-scroll-target="#continuous-variables">Continuous Variables</a></li>
+  <li><a href="#the-normal-distribution" id="toc-the-normal-distribution" class="nav-link" data-scroll-target="#the-normal-distribution">The Normal Distribution</a></li>
+  <li><a href="#normal-distribution-example" id="toc-normal-distribution-example" class="nav-link" data-scroll-target="#normal-distribution-example">Normal Distribution Example</a></li>
+  <li><a href="#visualizing-probability-distributions" id="toc-visualizing-probability-distributions" class="nav-link" data-scroll-target="#visualizing-probability-distributions">Visualizing Probability Distributions</a></li>
+  <li><a href="#bernoulli-probability-mass-function" id="toc-bernoulli-probability-mass-function" class="nav-link" data-scroll-target="#bernoulli-probability-mass-function">Bernoulli Probability Mass Function</a></li>
+  <li><a href="#binomial-probability-mass-function" id="toc-binomial-probability-mass-function" class="nav-link" data-scroll-target="#binomial-probability-mass-function">Binomial Probability Mass Function</a></li>
+  <li><a href="#poisson-probability-mass-function" id="toc-poisson-probability-mass-function" class="nav-link" data-scroll-target="#poisson-probability-mass-function">Poisson Probability Mass Function</a></li>
+  <li><a href="#normal-density-function" id="toc-normal-density-function" class="nav-link" data-scroll-target="#normal-density-function">Normal Density Function</a></li>
+  <li><a href="#independence" id="toc-independence" class="nav-link" data-scroll-target="#independence">Independence</a></li>
+  <li><a href="#joint-marginal-probability" id="toc-joint-marginal-probability" class="nav-link" data-scroll-target="#joint-marginal-probability">Joint &amp; Marginal Probability</a></li>
+  <li><a href="#contingency-table" id="toc-contingency-table" class="nav-link" data-scroll-target="#contingency-table">Contingency Table</a></li>
+  <li><a href="#marginal-probability" id="toc-marginal-probability" class="nav-link" data-scroll-target="#marginal-probability">Marginal Probability</a></li>
+  <li><a href="#joint-probability" id="toc-joint-probability" class="nav-link" data-scroll-target="#joint-probability">Joint Probability</a></li>
+  <li><a href="#conditional-probability" id="toc-conditional-probability" class="nav-link" data-scroll-target="#conditional-probability">Conditional Probability</a></li>
+  <li><a href="#calculating-conditional-probability" id="toc-calculating-conditional-probability" class="nav-link" data-scroll-target="#calculating-conditional-probability">Calculating Conditional Probability</a></li>
+  <li><a href="#flipped-conditional-probability" id="toc-flipped-conditional-probability" class="nav-link" data-scroll-target="#flipped-conditional-probability">Flipped Conditional Probability</a></li>
+  <li><a href="#bayes-theorem" id="toc-bayes-theorem" class="nav-link" data-scroll-target="#bayes-theorem">Bayes’ Theorem</a></li>
+  <li><a href="#more-bayes-theorem" id="toc-more-bayes-theorem" class="nav-link" data-scroll-target="#more-bayes-theorem">More Bayes’ Theorem</a></li>
+  <li><a href="#the-frequentist-approach" id="toc-the-frequentist-approach" class="nav-link" data-scroll-target="#the-frequentist-approach">The Frequentist Approach</a></li>
+  <li><a href="#the-bayesian-approach" id="toc-the-bayesian-approach" class="nav-link" data-scroll-target="#the-bayesian-approach">The Bayesian Approach</a></li>
+  <li><a href="#a-brief-history-of-bayesianism" id="toc-a-brief-history-of-bayesianism" class="nav-link" data-scroll-target="#a-brief-history-of-bayesianism">A Brief History of Bayesianism</a></li>
+  <li><a href="#bayes-and-laplace" id="toc-bayes-and-laplace" class="nav-link" data-scroll-target="#bayes-and-laplace">Bayes and Laplace</a></li>
+  <li><a href="#a-brief-history-of-frequentism" id="toc-a-brief-history-of-frequentism" class="nav-link" data-scroll-target="#a-brief-history-of-frequentism">A Brief History of Frequentism</a></li>
+  <li><a href="#fisher-and-neyman" id="toc-fisher-and-neyman" class="nav-link" data-scroll-target="#fisher-and-neyman">Fisher and Neyman</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="Lecture 4 Probability.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Lecture 4: Probability</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Mark Himmelstein </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="probability-and-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="probability-and-statistics">Probability and Statistics</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-4-Probability_files/figure-revealjs/unnamed-chunk-3-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div style="margin-top: -10px;">
+<p>Probability tells us how data are <em>randomly</em> <strong>generated</strong> based on some underlying facts about a population.</p>
+<ul>
+<li>Numerical language for describing how likely different events are to occur</li>
+<li>How we go from parameters <span class="math inline">\(\rightarrow\)</span> data</li>
+</ul>
+</div>
+</section>
+<section id="terminology" class="level2">
+<h2 class="anchored" data-anchor-id="terminology">Terminology</h2>
+<ul>
+<li><strong>Event</strong>: A possible outcome or combination of outcomes</li>
+<li><strong>Sample Space</strong>: All possible outcomes
+<ul>
+<li>Sample space for a coin flip is <span class="math inline">\(\text{{heads, tails}}\)</span>
+<ul>
+<li>Curly brackets indicate a set of individual elements</li>
+</ul></li>
+<li>Sample space for points in an NBA game <span class="math inline">\([0,\infty]\)</span>
+<ul>
+<li>Square brackets indicate an inclusive interval</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="notation" class="level2">
+<h2 class="anchored" data-anchor-id="notation">Notation</h2>
+<ul>
+<li><span class="math inline">\(P(A)\)</span>: The probability of event <span class="math inline">\(A\)</span></li>
+<li><span class="math inline">\(P(A \cap B)\)</span>: The probability of both event <span class="math inline">\(A\)</span> <em>and</em> <span class="math inline">\(B\)</span></li>
+<li><span class="math inline">\(P(A \cap \neg B)\)</span>: The probability of both event <span class="math inline">\(A\)</span> <em>and</em> NOT <span class="math inline">\(B\)</span></li>
+<li><span class="math inline">\(P(A \cup B)\)</span>: The probability of event <span class="math inline">\(A\)</span> <em>or</em> <span class="math inline">\(B\)</span></li>
+<li><span class="math inline">\(P(A|B)\)</span>: The probability that event <span class="math inline">\(A\)</span> happens <em>given</em> that event <span class="math inline">\(B\)</span> has happened</li>
+</ul>
+</section>
+<section id="axioms" class="level2">
+<h2 class="anchored" data-anchor-id="axioms">Axioms</h2>
+<p>Axiom (noun): <span class="answer fragment" data-unless-meta="params.v0">Statement that is taken to be true without need of proof</span></p>
+<ul>
+<li>For any <span class="math inline">\(A\)</span>, <span class="math inline">\(0 \leq P(A) \leq 1\)</span></li>
+<li>The sum of the probability of all elements of a sample space <span class="math inline">\(= 1\)</span></li>
+</ul>
+</section>
+<section id="gummy-bears" class="level2">
+<h2 class="anchored" data-anchor-id="gummy-bears">Gummy Bears</h2>
+<p>Haribo Gold Bears come in 5 flavors:</p>
+<p><img src="../../Figs/gummytypes.jpg" class="img-fluid"></p>
+</section>
+<section id="the-classical-definition-of-probability" class="level2">
+<h2 class="anchored" data-anchor-id="the-classical-definition-of-probability">The “Classical” Definition of Probability</h2>
+<p>Suppose we have a bag of gummy bears with exactly equal numbers of the 5 flavors</p>
+<p>If we randomly pick one gummy bear, what is the probability of picking a pineapple gummy?</p>
+<!-- This brings us to the **analytic** view of probability: -->
+<p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(P(\text{pineapple}) = \frac{\text{\# of pineapple gummy bears}}{\text{total \# of gummy bears}}\)</span></span></p>
+<p><span class="answer fragment" data-unless-meta="params.v0"><strong>Classical Definition of Probability:</strong> <em>Proportion</em> ways a particular outcome can occur out of all possible outcomes</span></p>
+</section>
+<section id="bernoulli-trials" class="level2">
+<h2 class="anchored" data-anchor-id="bernoulli-trials">Bernoulli Trials</h2>
+<p>Drawing a pineapple gummy bear is known as a <strong>Bernoulli trial</strong>:</p>
+<ul>
+<li><p>“Experiment” with exactly two possible outcomes</p></li>
+<li><p>e.g., heads vs.&nbsp;tails, pass vs.&nbsp;fail this class, diagnosis vs.&nbsp;no diagnosis, pineapple vs.&nbsp;other flavor gummy</p></li>
+</ul>
+<p>If we code a “success” as “1” and a “failure” as “0”, then the probability of success in any Bernoulli trial equals</p>
+<p><span class="math inline">\(\pi = \frac{\text{\# of ways to succeed}}{\text{\# of ways to succeed} + \text{\# of ways to fail}}\)</span></p>
+</section>
+<section id="the-bernoulli-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="the-bernoulli-distribution">The Bernoulli Distribution</h2>
+<div style="font-size: 0.8em;">
+<p>Note than <span class="math inline">\(\pi\)</span> is not a <em>statistic</em> but a <em>parameter</em></p>
+<ul>
+<li>Represents an underlying truth: the proportion of ways a success can happen out of how many ways successes and failures can both happen</li>
+</ul>
+<p>If we imagine we were to start drawing gummy bears, we can define the outcomes as a <em>probability distribution</em> defined by the parameter <span class="math inline">\(\pi\)</span></p>
+<p><span class="math display">\[\text{Pineapple Bear} \sim \text{Bernoulli}(\pi)\]</span></p>
+<p><strong>Read:</strong> Pineapple bears are distributed Bernoulli (follow a Bernoulli distribution) with probability <span class="math inline">\(\pi\)</span></p>
+<p>In the population, the Bernoulli distribution has</p>
+<ul>
+<li>Mean <span class="math inline">\(\mu= pi\)</span></li>
+<li>Variance <span class="math inline">\(\sigma^2 = \pi(1-\pi)\)</span></li>
+</ul>
+</div>
+</section>
+<section id="multiple-trials" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-trials">Multiple Trials</h2>
+<p>What if we sample more than one gummy bear?</p>
+<p>Two ways:</p>
+<ul>
+<li><p>Without replacement</p>
+<ul>
+<li><p>Probability of a pineapple on the 2nd draw depends on the outcome of the first draw</p></li>
+<li><p>Outcomes are <strong>dependent</strong></p></li>
+<li><p>The probability of an event change depends on earlier events</p></li>
+</ul></li>
+<li><p>With replacement</p>
+<ul>
+<li><p>Probability of pineapple on the 2nd draw is the same as for the 1st draw</p></li>
+<li><p>Outcomes are <strong>independent</strong></p></li>
+<li><p>The same probabilities apply to all events</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="multiple-indepenent-trials" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-indepenent-trials">Multiple Indepenent Trials</h2>
+<p>What if we want to know the probability we would get five pineapple bears from 10 different bags (each has <span class="math inline">\(\pi = .2\)</span>)?</p>
+<ul>
+<li>This is known as the <em>binomial</em> distribution</li>
+<li>Two parameters, sample size (<span class="math inline">\(n\)</span>) and probability of success (<span class="math inline">\(\pi\)</span>)</li>
+<li>For any number of <span class="math inline">\(k\)</span> successes</li>
+</ul>
+<p><span class="math display">\[\begin{pmatrix} n \\ k\end{pmatrix}\pi^k (1-\pi)^{n-k}\]</span></p>
+<p>Where</p>
+<p><span class="math display">\[\begin{pmatrix} n \\ k\end{pmatrix} = \frac{n!}{k!(n-k)!}\]</span></p>
+</section>
+<section id="binomial-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="binomial-distribution">Binomial Distribution</h2>
+<div style="font-size: 0.9em;">
+<p><strong>What this means:</strong> If we repeatedly sampled 10 bags of gummy bears, we would expect to get exactly five pineapples with probability</p>
+<p><span class="math display">\[P(\text{five pineapples}) = \frac{n!}{k!(n-k)!}\pi^k (1-\pi)^{n-k} =\]</span> <span class="math display">\[\frac{10!}{5!(10-5)!}.2^5 (1-.2)^{10-5} = .03\]</span></p>
+<p>For every 100 times we repeated this exercise, we would expect to get exactly five pineapples in 10 draws three times.</p>
+</div>
+</section>
+<section id="the-binomial-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="the-binomial-distribution">The Binomial Distribution</h2>
+<p>We can write that variable <span class="math inline">\(X\)</span> follows a binomial distribution with <span class="math inline">\(n\)</span> draws and <span class="math inline">\(\pi\)</span> probability of success on each draw as:</p>
+<p><span class="math display">\[X \sim \text{Binomial}(n, \pi)\]</span></p>
+<p>In the population, the binomial distribution has</p>
+<ul>
+<li>Mean <span class="math inline">\(\mu= n\pi\)</span></li>
+<li>Variance <span class="math inline">\(\sigma^2 = n\pi(1-\pi)\)</span></li>
+</ul>
+</section>
+<section id="counting-events" class="level2">
+<h2 class="anchored" data-anchor-id="counting-events">Counting Events</h2>
+<ul>
+<li>The binomial distribution tells us the probability of a given number of successes in a fixed number of trials. Examples:
+<ul>
+<li>Number of pineapple gummies in 10 independent bags</li>
+<li>Number of heads in five independent coin flips</li>
+</ul></li>
+<li>The <strong>Poisson distribution</strong> tells us how many “successes” occur (specific type of event happens) in a fixed time period. Examples:
+<ul>
+<li>Number of Ph.D.&nbsp;applications Georgia Tech receives in an application cycle</li>
+<li>Number of calls a fire station gets on a given day</li>
+</ul></li>
+</ul>
+</section>
+<section id="the-poisson-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="the-poisson-distribution">The Poisson Distribution</h2>
+<p>The Poisson distribution has the following form:</p>
+<p><span class="math display">\[P(x) = \frac{e^{-\mu}\mu^x}{x!}\]</span></p>
+<p>Where</p>
+<ul>
+<li><span class="math inline">\(e\)</span> is Euler’s number (base of natural logarithm)</li>
+<li><span class="math inline">\(\mu\)</span> is the mean number of successes in the population</li>
+<li><span class="math inline">\(x\)</span> is the number of observed counts</li>
+</ul>
+</section>
+<section id="poisson-example" class="level2">
+<h2 class="anchored" data-anchor-id="poisson-example">Poisson Example</h2>
+<p>If the mean number of calls to the fire station is 8, the probability of getting exactly 11 calls would be</p>
+<p><span class="math display">\[P(x = 11) = \frac{e^{-8}8^11}{11!} = .072\]</span></p>
+<p>In the Poisson distribution</p>
+<ul>
+<li>The population mean is <span class="math inline">\(\mu\)</span></li>
+<li>The population variance <span class="math inline">\(\sigma^2\)</span> <em>also</em> <span class="math inline">\(= \mu\)</span></li>
+</ul>
+</section>
+<section id="continuous-variables" class="level2">
+<h2 class="anchored" data-anchor-id="continuous-variables">Continuous Variables</h2>
+<div style="font-size: 0.85em;">
+<p>The Bernoulli, Binomial, and Poisson distributions all involve <em>discrete</em> variables. What about continuous variables?</p>
+<ul>
+<li><strong>The Normal Distribution</strong> will be our major focus</li>
+<li>Symmetrical with parameters <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span></li>
+<li>The lognormal distribution: <span class="math inline">\(e^{\text{normal distribution}}\)</span>
+<ul>
+<li>Creates distribution with lower boundary of zero and no upper boundary</li>
+</ul></li>
+<li>The gamma distribution
+<ul>
+<li>A different distribution with a lower boundary of zero and no upper boundary</li>
+</ul></li>
+<li>The beta distribution
+<ul>
+<li>Continuous distribution on the interval <span class="math inline">\([0, 1]\)</span></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="the-normal-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="the-normal-distribution">The Normal Distribution</h2>
+<div style="font-size: 0.85em;">
+<p>The formula for the <em>density</em> of the normal distribution is</p>
+<p><span class="math display">\[P(x) = \frac{1}{\sqrt{2\pi \sigma^2}}e^{\frac{(-x-\mu)^2}{2\sigma^2}}\]</span></p>
+<p>There are two parameters (here <span class="math inline">\(\pi\)</span> is the number not a parameter!): <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span>. We can write that <span class="math inline">\(x\)</span> is normally distributed with mean <span class="math inline">\(\mu\)</span> and variance <span class="math inline">\(\sigma^2\)</span> as</p>
+<p><span class="math display">\[x \sim \text{normal}(\mu, \sigma^2)\]</span></p>
+<p><strong>Simple interpretation:</strong> In the population, the average value of <span class="math inline">\(x\)</span> is <span class="math inline">\(\mu\)</span> and the average amount of <strong>squared error</strong> between all members of the population and <span class="math inline">\(\mu\)</span> is <span class="math inline">\(\sigma^2\)</span></p>
+</div>
+</section>
+<section id="normal-distribution-example" class="level2">
+<h2 class="anchored" data-anchor-id="normal-distribution-example">Normal Distribution Example</h2>
+<p>Let’s imagine in the population of all <strong>possible</strong> basketball players, the average player height is <span class="math inline">\(\mu = 200\)</span>cm and the variance is <span class="math inline">\(\sigma^2 = 64\text{cm}^2\)</span>.</p>
+<p>That means, if I randomly sampled a group of basketball players, I would expect:</p>
+<ul>
+<li>The average height of players in my sample to be 200cm</li>
+<li>The average <strong>squared difference</strong> between each players’ height and 200cm would be 64</li>
+</ul>
+</section>
+<section id="visualizing-probability-distributions" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-probability-distributions">Visualizing Probability Distributions</h2>
+<p>Two types of probability distributions</p>
+<ul>
+<li><p>Probability mass functions (PMFs)</p>
+<ul>
+<li><p>Appropriate for discrete variables</p></li>
+<li><p>PMFs give the probability of a particular event</p></li>
+<li><p>Think: bar plots (relative frequency on <span class="math inline">\(y\)</span> axis)</p></li>
+</ul></li>
+<li><p>Probability density functions (PDFs)</p>
+<ul>
+<li><p>The probability of any specific event (technically) equals zero</p></li>
+<li><p>PDFs give the relative probability of an event in the region</p>
+<p>-<span class="math inline">\(\rightarrow\)</span> higher values in more likely regions</p></li>
+<li><p>Think: histograms &amp; kernel density plots (density on <span class="math inline">\(y\)</span> axis)</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="bernoulli-probability-mass-function" class="level2">
+<h2 class="anchored" data-anchor-id="bernoulli-probability-mass-function">Bernoulli Probability Mass Function</h2>
+<div style="font-size: 0.7em;">
+<p>If I sample one gummy bear and <span class="math inline">\(\pi_\text{pineapple} = .2\)</span>, then the distribution (PMF) of whether I draw a pineapple gummy bear in my sample is:</p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-4-Probability_files/figure-revealjs/unnamed-chunk-4-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="binomial-probability-mass-function" class="level2">
+<h2 class="anchored" data-anchor-id="binomial-probability-mass-function">Binomial Probability Mass Function</h2>
+<div style="font-size: 0.7em;">
+<p>If I sample 10 gummy bears and <span class="math inline">\(\pi_\text{pineapple} = .2\)</span>, then the distribution (PMF) of the number of Pineapple bears I draw is:</p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-4-Probability_files/figure-revealjs/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="poisson-probability-mass-function" class="level2">
+<h2 class="anchored" data-anchor-id="poisson-probability-mass-function">Poisson Probability Mass Function</h2>
+<div style="font-size: 0.7em;">
+<p>If I sample calls to a fire station on a given day when the mean number of calls is <span class="math inline">\(\mu = 8\)</span>, then the distribution (PMF) of the number of calls is:</p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-4-Probability_files/figure-revealjs/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="normal-density-function" class="level2">
+<h2 class="anchored" data-anchor-id="normal-density-function">Normal Density Function</h2>
+<div style="font-size: 0.7em;">
+<p>If I NBA players and measure their heights with population mean <span class="math inline">\(\mu = 200\)</span>cm and variance <span class="math inline">\(\sigma^2 = 64\text{cm}^2\)</span>, then the <strong>density</strong> (PDF) of player heights is:</p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Lecture-4-Probability_files/figure-revealjs/unnamed-chunk-7-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="independence" class="level2">
+<h2 class="anchored" data-anchor-id="independence">Independence</h2>
+<div style="font-size: 0.85em;">
+<p><strong>Independent Events</strong>: The probability of one event happening does not depend on whether or not another event has happened</p>
+<p>If <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent events:</p>
+<ul>
+<li><span class="math inline">\(P(A \cap B) = P(A)P(B)\)</span></li>
+<li><span class="math inline">\(P(A|B) = P(A)\)</span></li>
+</ul>
+<p>Most statistical methods make use of the idea of independence</p>
+<ul>
+<li>“Independence of observations” assumption</li>
+<li>Assumes that if you know one data point, it doesn’t give you any new information about probability distribution of other data points</li>
+</ul>
+</div>
+</section>
+<section id="joint-marginal-probability" class="level2">
+<h2 class="anchored" data-anchor-id="joint-marginal-probability">Joint &amp; Marginal Probability</h2>
+<p>probability: The probability of two events both occurring</p>
+<p><span class="math display">\[P(A \cap B)\]</span></p>
+<ul>
+<li><p>If <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are <strong>independent</strong>, <span class="math inline">\(P(A \cap B) = P(A)P(B)\)</span></p></li>
+<li><p>If <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are <strong>mutually exclusive</strong>, <span class="math inline">\(P(A \cap B) = 0\)</span></p></li>
+</ul>
+<p><strong>Marginal probability</strong>: The probability of one event occurring</p>
+<p><span class="math display">\[P(A)\]</span></p>
+<ul>
+<li><p>Irrespective of other events</p></li>
+<li><p><span class="math inline">\(P(A) = P(A \cap B) + P(A \cap \text{ not } B)\)</span></p></li>
+</ul>
+</section>
+<section id="contingency-table" class="level2">
+<h2 class="anchored" data-anchor-id="contingency-table">Contingency Table</h2>
+<div style="font-size: 0.85em;">
+<p>Contingency tables show us how frequently events occur jointly (cells) and marginally (margins)</p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="rkpecltpvy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#rkpecltpvy table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#rkpecltpvy thead, #rkpecltpvy tbody, #rkpecltpvy tfoot, #rkpecltpvy tr, #rkpecltpvy td, #rkpecltpvy th {
+  border-style: none;
+}
+
+#rkpecltpvy p {
+  margin: 0;
+  padding: 0;
+}
+
+#rkpecltpvy .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 24px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#rkpecltpvy .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#rkpecltpvy .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#rkpecltpvy .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#rkpecltpvy .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rkpecltpvy .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rkpecltpvy .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rkpecltpvy .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#rkpecltpvy .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#rkpecltpvy .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#rkpecltpvy .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#rkpecltpvy .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#rkpecltpvy .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#rkpecltpvy .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#rkpecltpvy .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rkpecltpvy .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#rkpecltpvy .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#rkpecltpvy .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#rkpecltpvy .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rkpecltpvy .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#rkpecltpvy .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#rkpecltpvy .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#rkpecltpvy .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rkpecltpvy .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#rkpecltpvy .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#rkpecltpvy .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rkpecltpvy .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rkpecltpvy .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#rkpecltpvy .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rkpecltpvy .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#rkpecltpvy .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rkpecltpvy .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rkpecltpvy .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rkpecltpvy .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rkpecltpvy .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rkpecltpvy .gt_left {
+  text-align: left;
+}
+
+#rkpecltpvy .gt_center {
+  text-align: center;
+}
+
+#rkpecltpvy .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rkpecltpvy .gt_font_normal {
+  font-weight: normal;
+}
+
+#rkpecltpvy .gt_font_bold {
+  font-weight: bold;
+}
+
+#rkpecltpvy .gt_font_italic {
+  font-style: italic;
+}
+
+#rkpecltpvy .gt_super {
+  font-size: 65%;
+}
+
+#rkpecltpvy .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#rkpecltpvy .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#rkpecltpvy .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#rkpecltpvy .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#rkpecltpvy .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#rkpecltpvy .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#rkpecltpvy .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#rkpecltpvy .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#rkpecltpvy div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="a::stub" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="Cancer" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">Cancer</th>
+<th id="No-Cancer" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">No Cancer</th>
+<th id="Total" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">Total</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td id="stub_1_1" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Positive Test</td>
+<td class="gt_row gt_right" headers="stub_1_1 Cancer">94</td>
+<td class="gt_row gt_right" headers="stub_1_1 No Cancer">46</td>
+<td class="gt_row gt_right" headers="stub_1_1 Total" style="background-color: #E1BEE7; font-weight: bold">140</td>
+</tr>
+<tr class="even">
+<td id="stub_1_2" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Negative Test</td>
+<td class="gt_row gt_right" headers="stub_1_2 Cancer">6</td>
+<td class="gt_row gt_right" headers="stub_1_2 No Cancer">854</td>
+<td class="gt_row gt_right" headers="stub_1_2 Total" style="background-color: #E1BEE7; font-weight: bold">860</td>
+</tr>
+<tr class="odd">
+<td id="stub_1_3" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Total</td>
+<td class="gt_row gt_right" headers="stub_1_3 Cancer" style="background-color: #E1BEE7; font-weight: bold">100</td>
+<td class="gt_row gt_right" headers="stub_1_3 No Cancer" style="background-color: #E1BEE7; font-weight: bold">900</td>
+<td class="gt_row gt_right" headers="stub_1_3 Total" style="background-color: #E1BEE7; font-weight: bold">1000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="marginal-probability" class="level2">
+<h2 class="anchored" data-anchor-id="marginal-probability">Marginal Probability</h2>
+<div style="font-size: 0.85em;">
+<p>We can calculate marginal probabilities from a contingency table</p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="vrqlptgsie" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#vrqlptgsie table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#vrqlptgsie thead, #vrqlptgsie tbody, #vrqlptgsie tfoot, #vrqlptgsie tr, #vrqlptgsie td, #vrqlptgsie th {
+  border-style: none;
+}
+
+#vrqlptgsie p {
+  margin: 0;
+  padding: 0;
+}
+
+#vrqlptgsie .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 24px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#vrqlptgsie .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#vrqlptgsie .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#vrqlptgsie .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#vrqlptgsie .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#vrqlptgsie .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vrqlptgsie .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#vrqlptgsie .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#vrqlptgsie .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#vrqlptgsie .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#vrqlptgsie .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#vrqlptgsie .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#vrqlptgsie .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#vrqlptgsie .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#vrqlptgsie .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#vrqlptgsie .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#vrqlptgsie .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#vrqlptgsie .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#vrqlptgsie .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vrqlptgsie .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#vrqlptgsie .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#vrqlptgsie .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#vrqlptgsie .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vrqlptgsie .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#vrqlptgsie .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#vrqlptgsie .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vrqlptgsie .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vrqlptgsie .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#vrqlptgsie .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vrqlptgsie .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#vrqlptgsie .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vrqlptgsie .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#vrqlptgsie .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vrqlptgsie .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#vrqlptgsie .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vrqlptgsie .gt_left {
+  text-align: left;
+}
+
+#vrqlptgsie .gt_center {
+  text-align: center;
+}
+
+#vrqlptgsie .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#vrqlptgsie .gt_font_normal {
+  font-weight: normal;
+}
+
+#vrqlptgsie .gt_font_bold {
+  font-weight: bold;
+}
+
+#vrqlptgsie .gt_font_italic {
+  font-style: italic;
+}
+
+#vrqlptgsie .gt_super {
+  font-size: 65%;
+}
+
+#vrqlptgsie .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#vrqlptgsie .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#vrqlptgsie .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#vrqlptgsie .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#vrqlptgsie .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#vrqlptgsie .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#vrqlptgsie .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#vrqlptgsie .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#vrqlptgsie div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="a::stub" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="Cancer" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">Cancer</th>
+<th id="No-Cancer" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">No Cancer</th>
+<th id="Total" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">Total</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td id="stub_1_1" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Positive Test</td>
+<td class="gt_row gt_right" headers="stub_1_1 Cancer">94</td>
+<td class="gt_row gt_right" headers="stub_1_1 No Cancer">46</td>
+<td class="gt_row gt_right" headers="stub_1_1 Total" style="background-color: #E1BEE7; font-weight: bold">140</td>
+</tr>
+<tr class="even">
+<td id="stub_1_2" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Negative Test</td>
+<td class="gt_row gt_right" headers="stub_1_2 Cancer">6</td>
+<td class="gt_row gt_right" headers="stub_1_2 No Cancer">854</td>
+<td class="gt_row gt_right" headers="stub_1_2 Total" style="background-color: #E1BEE7; font-weight: bold">860</td>
+</tr>
+<tr class="odd">
+<td id="stub_1_3" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Total</td>
+<td class="gt_row gt_right" headers="stub_1_3 Cancer" style="background-color: #E1BEE7; font-weight: bold">100</td>
+<td class="gt_row gt_right" headers="stub_1_3 No Cancer" style="background-color: #E1BEE7; font-weight: bold">900</td>
+<td class="gt_row gt_right" headers="stub_1_3 Total" style="background-color: #E1BEE7; font-weight: bold">1000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div style="font-size: 0.85em;">
+<p><span class="math inline">\(P(\text{positive test}) = \frac{\text{\# with a positive test}}{\text{Total \#}} = \frac{140}{1000} = .14\)</span></p>
+<p>What is the marginal probability of having a negative test?</p>
+<p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(P(\text{negative test}) = \frac{\text{\# with a negative test}}{\text{Total \#}} = \frac{860}{1000} = .86\)</span></span></p>
+</div>
+</section>
+<section id="joint-probability" class="level2">
+<h2 class="anchored" data-anchor-id="joint-probability">Joint Probability</h2>
+<div style="font-size: 0.85em;">
+<p>We can calculate joint probabilities from a contingency table</p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="ldbzonjedd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ldbzonjedd table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ldbzonjedd thead, #ldbzonjedd tbody, #ldbzonjedd tfoot, #ldbzonjedd tr, #ldbzonjedd td, #ldbzonjedd th {
+  border-style: none;
+}
+
+#ldbzonjedd p {
+  margin: 0;
+  padding: 0;
+}
+
+#ldbzonjedd .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 24px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ldbzonjedd .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ldbzonjedd .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ldbzonjedd .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ldbzonjedd .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ldbzonjedd .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ldbzonjedd .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ldbzonjedd .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ldbzonjedd .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ldbzonjedd .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ldbzonjedd .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ldbzonjedd .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ldbzonjedd .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ldbzonjedd .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ldbzonjedd .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ldbzonjedd .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ldbzonjedd .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ldbzonjedd .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ldbzonjedd .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ldbzonjedd .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ldbzonjedd .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ldbzonjedd .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ldbzonjedd .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ldbzonjedd .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ldbzonjedd .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ldbzonjedd .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ldbzonjedd .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ldbzonjedd .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ldbzonjedd .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ldbzonjedd .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ldbzonjedd .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ldbzonjedd .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ldbzonjedd .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ldbzonjedd .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ldbzonjedd .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ldbzonjedd .gt_left {
+  text-align: left;
+}
+
+#ldbzonjedd .gt_center {
+  text-align: center;
+}
+
+#ldbzonjedd .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ldbzonjedd .gt_font_normal {
+  font-weight: normal;
+}
+
+#ldbzonjedd .gt_font_bold {
+  font-weight: bold;
+}
+
+#ldbzonjedd .gt_font_italic {
+  font-style: italic;
+}
+
+#ldbzonjedd .gt_super {
+  font-size: 65%;
+}
+
+#ldbzonjedd .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ldbzonjedd .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ldbzonjedd .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ldbzonjedd .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ldbzonjedd .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ldbzonjedd .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ldbzonjedd .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#ldbzonjedd .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#ldbzonjedd div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="a::stub" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="Cancer" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">Cancer</th>
+<th id="No-Cancer" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">No Cancer</th>
+<th id="Total" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">Total</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td id="stub_1_1" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Positive Test</td>
+<td class="gt_row gt_right" headers="stub_1_1 Cancer">94</td>
+<td class="gt_row gt_right" headers="stub_1_1 No Cancer">46</td>
+<td class="gt_row gt_right" headers="stub_1_1 Total" style="background-color: #E1BEE7; font-weight: bold">140</td>
+</tr>
+<tr class="even">
+<td id="stub_1_2" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Negative Test</td>
+<td class="gt_row gt_right" headers="stub_1_2 Cancer">6</td>
+<td class="gt_row gt_right" headers="stub_1_2 No Cancer">854</td>
+<td class="gt_row gt_right" headers="stub_1_2 Total" style="background-color: #E1BEE7; font-weight: bold">860</td>
+</tr>
+<tr class="odd">
+<td id="stub_1_3" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Total</td>
+<td class="gt_row gt_right" headers="stub_1_3 Cancer" style="background-color: #E1BEE7; font-weight: bold">100</td>
+<td class="gt_row gt_right" headers="stub_1_3 No Cancer" style="background-color: #E1BEE7; font-weight: bold">900</td>
+<td class="gt_row gt_right" headers="stub_1_3 Total" style="background-color: #E1BEE7; font-weight: bold">1000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div style="font-size: 0.775em;">
+<p><strong>Joint</strong> probability of having cancer and receiving a positive test:</p>
+<p><span class="math inline">\(P(\text{cancer } \cap \text{ positive test}) = \frac{\text{\# with cancer AND a positive test}}{\text{Total \#}} =\)</span> <span class="math inline">\(\frac{94}{1000} = .094\)</span></p>
+<p>What is the joint probability of not having cancer and receiving a positive test?</p>
+<p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(P(\text{no cancer } \cap \text{ positive test}) = \frac{\text{\# with no cancer AND a positive test}}{\text{Total \#}} =\)</span></span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{46}{1000} = .046\)</span></span></p>
+</div>
+</section>
+<section id="conditional-probability" class="level2">
+<h2 class="anchored" data-anchor-id="conditional-probability">Conditional Probability</h2>
+<p><strong>Conditional probability</strong>: The probability of an event happening once another event is known</p>
+<p>Conditional probability looks something like</p>
+<p><span class="math display">\[P(A | B)  =   \frac{\text{\# of ways for } A \text{ to happen when } B \text{ happens}}{\text{\# of ways for } B \text{ to happen}}\]</span></p>
+</section>
+<section id="calculating-conditional-probability" class="level2">
+<h2 class="anchored" data-anchor-id="calculating-conditional-probability">Calculating Conditional Probability</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="doyafxqbaf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#doyafxqbaf table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#doyafxqbaf thead, #doyafxqbaf tbody, #doyafxqbaf tfoot, #doyafxqbaf tr, #doyafxqbaf td, #doyafxqbaf th {
+  border-style: none;
+}
+
+#doyafxqbaf p {
+  margin: 0;
+  padding: 0;
+}
+
+#doyafxqbaf .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 24px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#doyafxqbaf .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#doyafxqbaf .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#doyafxqbaf .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#doyafxqbaf .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#doyafxqbaf .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#doyafxqbaf .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#doyafxqbaf .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#doyafxqbaf .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#doyafxqbaf .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#doyafxqbaf .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#doyafxqbaf .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#doyafxqbaf .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#doyafxqbaf .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#doyafxqbaf .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#doyafxqbaf .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#doyafxqbaf .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#doyafxqbaf .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#doyafxqbaf .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#doyafxqbaf .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#doyafxqbaf .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#doyafxqbaf .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#doyafxqbaf .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#doyafxqbaf .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#doyafxqbaf .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#doyafxqbaf .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#doyafxqbaf .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#doyafxqbaf .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#doyafxqbaf .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#doyafxqbaf .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#doyafxqbaf .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#doyafxqbaf .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#doyafxqbaf .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#doyafxqbaf .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#doyafxqbaf .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#doyafxqbaf .gt_left {
+  text-align: left;
+}
+
+#doyafxqbaf .gt_center {
+  text-align: center;
+}
+
+#doyafxqbaf .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#doyafxqbaf .gt_font_normal {
+  font-weight: normal;
+}
+
+#doyafxqbaf .gt_font_bold {
+  font-weight: bold;
+}
+
+#doyafxqbaf .gt_font_italic {
+  font-style: italic;
+}
+
+#doyafxqbaf .gt_super {
+  font-size: 65%;
+}
+
+#doyafxqbaf .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#doyafxqbaf .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#doyafxqbaf .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#doyafxqbaf .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#doyafxqbaf .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#doyafxqbaf .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#doyafxqbaf .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#doyafxqbaf .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#doyafxqbaf div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="a::stub" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="Cancer" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">Cancer</th>
+<th id="No-Cancer" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">No Cancer</th>
+<th id="Total" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">Total</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td id="stub_1_1" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Positive Test</td>
+<td class="gt_row gt_right" headers="stub_1_1 Cancer">94</td>
+<td class="gt_row gt_right" headers="stub_1_1 No Cancer">46</td>
+<td class="gt_row gt_right" headers="stub_1_1 Total" style="background-color: #E1BEE7; font-weight: bold">140</td>
+</tr>
+<tr class="even">
+<td id="stub_1_2" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Negative Test</td>
+<td class="gt_row gt_right" headers="stub_1_2 Cancer">6</td>
+<td class="gt_row gt_right" headers="stub_1_2 No Cancer">854</td>
+<td class="gt_row gt_right" headers="stub_1_2 Total" style="background-color: #E1BEE7; font-weight: bold">860</td>
+</tr>
+<tr class="odd">
+<td id="stub_1_3" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Total</td>
+<td class="gt_row gt_right" headers="stub_1_3 Cancer" style="background-color: #E1BEE7; font-weight: bold">100</td>
+<td class="gt_row gt_right" headers="stub_1_3 No Cancer" style="background-color: #E1BEE7; font-weight: bold">900</td>
+<td class="gt_row gt_right" headers="stub_1_3 Total" style="background-color: #E1BEE7; font-weight: bold">1000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div style="font-size: 0.85em;">
+<p><strong>conditional probability</strong> of having cancer given a positive test is</p>
+<p><span class="math inline">\(P(\text{cancer} \vert \text{positive test}) = \frac{\text{\# with cancer and a positive test}}{\text{\# with a positive test}} = \frac{94}{140} = .67\)</span></p>
+<p>What is the conditional probability of not having cancer given a positive test?</p>
+<p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(P(\text{no cancer} \vert \text{positive test}) = \frac{\text{\# with no cancer and a positive test}}{\text{\# with a positive test}}=\)</span></span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{46}{140} = .33\)</span></span></p>
+</div>
+</section>
+<section id="flipped-conditional-probability" class="level2">
+<h2 class="anchored" data-anchor-id="flipped-conditional-probability">Flipped Conditional Probability</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="caikkuducb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#caikkuducb table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#caikkuducb thead, #caikkuducb tbody, #caikkuducb tfoot, #caikkuducb tr, #caikkuducb td, #caikkuducb th {
+  border-style: none;
+}
+
+#caikkuducb p {
+  margin: 0;
+  padding: 0;
+}
+
+#caikkuducb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 24px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#caikkuducb .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#caikkuducb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#caikkuducb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#caikkuducb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#caikkuducb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#caikkuducb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#caikkuducb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#caikkuducb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#caikkuducb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#caikkuducb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#caikkuducb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#caikkuducb .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#caikkuducb .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#caikkuducb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#caikkuducb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#caikkuducb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#caikkuducb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#caikkuducb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#caikkuducb .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#caikkuducb .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#caikkuducb .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#caikkuducb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#caikkuducb .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#caikkuducb .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#caikkuducb .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#caikkuducb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#caikkuducb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#caikkuducb .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#caikkuducb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#caikkuducb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#caikkuducb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#caikkuducb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#caikkuducb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#caikkuducb .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#caikkuducb .gt_left {
+  text-align: left;
+}
+
+#caikkuducb .gt_center {
+  text-align: center;
+}
+
+#caikkuducb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#caikkuducb .gt_font_normal {
+  font-weight: normal;
+}
+
+#caikkuducb .gt_font_bold {
+  font-weight: bold;
+}
+
+#caikkuducb .gt_font_italic {
+  font-style: italic;
+}
+
+#caikkuducb .gt_super {
+  font-size: 65%;
+}
+
+#caikkuducb .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#caikkuducb .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#caikkuducb .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#caikkuducb .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#caikkuducb .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#caikkuducb .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#caikkuducb .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#caikkuducb .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#caikkuducb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="a::stub" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="Cancer" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">Cancer</th>
+<th id="No-Cancer" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">No Cancer</th>
+<th id="Total" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold" scope="col">Total</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td id="stub_1_1" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Positive Test</td>
+<td class="gt_row gt_right" headers="stub_1_1 Cancer">94</td>
+<td class="gt_row gt_right" headers="stub_1_1 No Cancer">46</td>
+<td class="gt_row gt_right" headers="stub_1_1 Total" style="background-color: #E1BEE7; font-weight: bold">140</td>
+</tr>
+<tr class="even">
+<td id="stub_1_2" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Negative Test</td>
+<td class="gt_row gt_right" headers="stub_1_2 Cancer">6</td>
+<td class="gt_row gt_right" headers="stub_1_2 No Cancer">854</td>
+<td class="gt_row gt_right" headers="stub_1_2 Total" style="background-color: #E1BEE7; font-weight: bold">860</td>
+</tr>
+<tr class="odd">
+<td id="stub_1_3" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #6A1B9A; color: #FFFFFF; font-weight: bold">Total</td>
+<td class="gt_row gt_right" headers="stub_1_3 Cancer" style="background-color: #E1BEE7; font-weight: bold">100</td>
+<td class="gt_row gt_right" headers="stub_1_3 No Cancer" style="background-color: #E1BEE7; font-weight: bold">900</td>
+<td class="gt_row gt_right" headers="stub_1_3 Total" style="background-color: #E1BEE7; font-weight: bold">1000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div style="font-size: 0.85em;">
+<p>What if we reverse it. What is the probability receiving a positive test given that we have do not have cancer?</p>
+<p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(P(\text{positive test} \vert \text{no cancer}) = \frac{\text{\# with no cancer and a positive test}}{\text{\# with no cancer}}=\)</span></span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{46}{900} = .05\)</span></span></p>
+</div>
+</section>
+<section id="bayes-theorem" class="level2">
+<h2 class="anchored" data-anchor-id="bayes-theorem">Bayes’ Theorem</h2>
+<div style="font-size: 0.75em;">
+<p>A better (more technical) definition of conditional probability:</p>
+<p><span class="math display">\[P(A | B)  =   \frac{P(A\cap B)}{P(B)} = \frac{P(B \vert A) P(A)}{P(B)}\]</span></p>
+<p>This is known as <strong>Bayes’ Theorem</strong></p>
+<p><span style="color: red;"><strong>VERY IMPORTANT!</strong></span> In general:</p>
+<p><span class="math display">\[P(A | B)  \neq    P(B | A)\]</span></p>
+<ul>
+<li><p><span class="math inline">\(P(\text{no cancer} \vert \text{positive test}) =\frac{\text{\# with no cancer and a positive test}}{\text{\# with a positive test}} = \frac{46}{140} = .33\)</span></p></li>
+<li><p><span class="math inline">\(P(\text{positive test} \vert \text{no cancer}) = \frac{\text{\# with no cancer and a positive test}}{\text{\# with cancer}} = \frac{46}{900} = .05\)</span></p></li>
+</ul>
+<p>Which one of these do you think is more important to know when taking a diagnostic test?</p>
+</div>
+</section>
+<section id="more-bayes-theorem" class="level2">
+<h2 class="anchored" data-anchor-id="more-bayes-theorem">More Bayes’ Theorem</h2>
+<div style="font-size: 0.85em;">
+<p>A better (more technical) definition of conditional probability:</p>
+<p><span class="math display">\[P(A | B)  =   \frac{P(A\cap B)}{P(B)} = \frac{P(B \vert A) P(A)}{P(B)}\]</span></p>
+<p>This is known as <strong>Bayes’ Theorem</strong></p>
+<p><span style="color: red;"><strong>VERY IMPORTANT!</strong></span> In general:</p>
+<p><span class="math display">\[P(A | B)  \neq    P(B | A)\]</span></p>
+<ul>
+<li><span class="math inline">\(P\)</span>(guilty | evidence) <span class="math inline">\(\neq P\)</span>(evidence | guilty)</li>
+<li><span class="math inline">\(P\)</span>(data | hypothesis) <span class="math inline">\(\neq P\)</span>(hypothesis | data)</li>
+</ul>
+</div>
+</section>
+<section id="the-frequentist-approach" class="level2">
+<h2 class="anchored" data-anchor-id="the-frequentist-approach">The Frequentist Approach</h2>
+<p>There are two predominant ways of doing statistical inference, and both rely <strong>heavily</strong> on probability theory.</p>
+<p>Historically, the most popular is the <strong>frequentist</strong> approach:</p>
+<ul>
+<li>Generate a hypothesis (or competing hypotheses) about parameters</li>
+<li>Collect some data</li>
+<li>Use what we know about probability to determine how (im)plausible our data are under the assumption they were governed by our hypothesized parameters</li>
+</ul>
+</section>
+<section id="the-bayesian-approach" class="level2">
+<h2 class="anchored" data-anchor-id="the-bayesian-approach">The Bayesian Approach</h2>
+<p>Less historically popular, but rapidly gaining momentum is the <strong>Bayesian</strong> approach</p>
+<ul>
+<li>Start with a prior belief (probability distribution) over all different possible sets of parameters (<span class="math inline">\(\theta\)</span>): <span class="math inline">\(P(\theta)\)</span></li>
+<li>Look at how likely our data (<span class="math inline">\(D\)</span>) are under all different possible sets of parameters: <span class="math inline">\(P(D|\theta)\)</span></li>
+<li>Use Bayes’ rule to revise our beliefs (probability distribution) about the parameters given the data we have observed: <span class="math inline">\(P(\theta|D)\)</span></li>
+</ul>
+</section>
+<section id="a-brief-history-of-bayesianism" class="level2">
+<h2 class="anchored" data-anchor-id="a-brief-history-of-bayesianism">A Brief History of Bayesianism</h2>
+<div style="font-size: 0.85em;">
+<ul>
+<li>Bayes theorem was first discovered by Reverend Thomas Bayes in 18th century
+<ul>
+<li>English Presbyterian Minister</li>
+<li>Published defenses of science against religious claims they were heretical</li>
+<li>Theorem didn’t make big waves until….</li>
+</ul></li>
+<li>It was independently redisocvered by Pierre Simon Laplace
+<ul>
+<li>Gave much more formal mathematical definition</li>
+<li>Later learned of Bayes and unselfishly gave Bayes credit for the discovery</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="bayes-and-laplace" class="level2">
+<h2 class="anchored" data-anchor-id="bayes-and-laplace">Bayes and Laplace</h2>
+<div style="font-size: 0.7em;">
+<div class="columns v-center-container">
+<div class="column" style="width:50%;">
+<p><img src="../../Figs/bayes.gif" class="img-fluid" style="width:80.0%"></p>
+<p>Thomas Bayes (1701-1761)</p>
+</div><div class="column" style="width:50%;">
+<p><img src="../../Figs/laplace.jpg" class="img-fluid" style="width:80.0%"></p>
+<p>Pierre Simon Laplace (1749-1827)</p>
+</div>
+</div>
+</div>
+</section>
+<section id="a-brief-history-of-frequentism" class="level2">
+<h2 class="anchored" data-anchor-id="a-brief-history-of-frequentism">A Brief History of Frequentism</h2>
+<div style="font-size: 0.8em;">
+<ul>
+<li>Post-enlightenment, there was strong desire for “objective” science</li>
+<li>Bayesian inference <strong>requires</strong> subjectivity in the form of a prior belief</li>
+<li>This was considered “perverse” by modern standards</li>
+<li>Sir Ronald Fisher is responsible for the core philosophy behind contemporary frequentist statistics
+<ul>
+<li>Rejected Bayesianism</li>
+<li>Highly prone to becoming polemic</li>
+<li>Even had a very famous intellectual war with contemporary Jerzy Neyman over the “right” way to do frequentism</li>
+</ul></li>
+<li>Even if Bayesianism was accepted, rigorous Bayesian inference required computational technology unavailable until the late 20th century</li>
+</ul>
+</div>
+</section>
+<section id="fisher-and-neyman" class="level2">
+<h2 class="anchored" data-anchor-id="fisher-and-neyman">Fisher and Neyman</h2>
+<div style="font-size: 0.65em;">
+<div class="columns v-center-container">
+<div class="column" style="width:50%;">
+<p><img src="../../Figs/fisher.jpeg" class="img-fluid" style="width:70.0%"></p>
+<p>Ronald Fisher (1890-1962)</p>
+</div><div class="column" style="width:50%;">
+<p><img src="../../Figs/neyman.jpg" class="img-fluid" style="width:60.0%"></p>
+<p>Jerzy Neyman (1895-1980)</p>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+
+
+<script>
+
+  // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+  // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+  // slide changes (different for each slide format).
+
+  (function () {
+
+    // dispatch for htmlwidgets
+
+    function fireSlideEnter() {
+
+      const event = window.document.createEvent("Event");
+
+      event.initEvent("slideenter", true, true);
+
+      window.document.dispatchEvent(event);
+
+    }
+
+
+
+    function fireSlideChanged(previousSlide, currentSlide) {
+
+      fireSlideEnter();
+
+
+
+      // dispatch for shiny
+
+      if (window.jQuery) {
+
+        if (previousSlide) {
+
+          window.jQuery(previousSlide).trigger("hidden");
+
+        }
+
+        if (currentSlide) {
+
+          window.jQuery(currentSlide).trigger("shown");
+
+        }
+
+      }
+
+    }
+
+
+
+    // hookup for slidy
+
+    if (window.w3c_slidy) {
+
+      window.w3c_slidy.add_observer(function (slide_num) {
+
+        // slide_num starts at position 1
+
+        fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+      });
+
+    }
+
+
+
+  })();
+
+</script>
+
+
+
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/jhelmer3\.github\.io\/PSYC6019-2026\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>This page is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
