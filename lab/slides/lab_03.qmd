@@ -1,5 +1,5 @@
 ---
-title: "Data Simulations and Chi-Squared Tests"
+title: "Simulations and Chi-Squared Tests"
 subtitle: "PSYC 6019-A01 / PSYC 6022-A01 \n 2025-09-11 | Lab 3"
 author: "Jess Helmer"
 footer: "[jhelmer3.github.io/PSYC6019-2026/](https://jhelmer3.github.io/PSYC6019-2026/)"
@@ -52,9 +52,11 @@ Let's say we're not so sure, and we want to test this out with different distrib
 
 ## Simulation Example: CLT
 
+Before simulating, define your goals / questions.
+
 :::: {.columns}
 ::: {.column width="50%"}
-Before simulating, define your goals / questions.
+### Questions
 
 Does the sampling distribution of the mean really converge to normal for wonky asymmetrical distributions like the $\chi^2$ distribution?
 
@@ -62,34 +64,291 @@ At what sample sizes does this fail?
 :::
 
 ::: {.column width="50%"}
-Then, consider your plan.
+### Goals
 
+See if the distribution of means from repeatedly sampling data looks normal
+
+::: subpoint-narrow
+○ Does this change with different original distributions from which the data is drawn?
+:::
+
+::: subpoint-narrow
+○ Does this change with sample size? 
+:::
 
 :::
 ::::
 
 
+## Simulation Example: CLT
 
+Then, sketch out a plan. Try to build things up step-by-step, not all at once.
+
+1. Start with data sampled from a normal distribution. Generate one sample of data, take its mean.
+
+2. Repeat this process multiple times, generating replications of data samples and sample means.
+
+3. Visualize both: the original distribution of the data (sample distribution), the distribution of the the samples' means (sampling distribution).
+
+4. Incorporate different distributions.
+
+5. Incorporate different sample sizes.
 
 
 ## Simulation Example: CLT
 
+1. Start with data sampled from a normal distribution. Generate one sample of data, take its mean.
 
+
+:::: {.columns style="font-size:80%"}
+::: {.column width="50%"}
+`rnorm(x, mean, sd)` where `x` is the number of samples
 
 ```{r}
+#| message: false
+library(tidyverse)
+samples <- rnorm(3, mean = 0, sd = 1)
+samples
+mean(samples)
+```
+:::
 
+::: {.column width="50%"}
+Instead of having it in a vector by itself, lets put it in a dataframe
+
+```{r}
+sim_data <- tibble(x = rnorm(3, mean = 0, sd = 1))
+sim_data
+mean(sim_data$x)
 ```
 
+:::
+::::
+
+::: {.callout-note style="font-size:80%"}
+### `tibble()`
+A `tibble()` is just like a dataframe, but better. The best part is its printing---`tibble()`s will never crowd your screen by trying to show every single value of a dataframe. Also, they work better with making `tibble`s in `tibble`s in `tibble`s... [More on `tibble`s here](https://tibble.tidyverse.org/articles/tibble.html).
+:::
 
 
+## Simulation Example: CLT
+
+2. Repeat this process multiple times, generating replications of data samples and sample means.
+
+:::: {.columns style="font-size:80%"}
+::: {.column width="50%"}
+Let's specify the sample size and how many replications we want. Start small!
+
+```{r}
+n_reps <- 2
+sample_size <- 3
+# total number of simulated draws
+total_n <- n_reps * sample_size
+```
+:::
+
+::: {.column width="50%"}
+Let's create a `tibble` with a row for every index in every replication.
+```{r}
+sim_data <- tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+) |>
+  uncount(n_reps, .id = "rep") |>
+  uncount(sample_size, .id = "index")
+sim_data
+```
+
+:::
+::::
 
 
+## Simulation Example: CLT
+
+2. Repeat this process multiple times, generating replications of data samples and sample means.
+
+:::: {.columns style="font-size:80%"}
+::: {.column width="50%"}
+We can then draw `n_reps * sample_size = total_n` values from a normal distribution with `rnorm()`.
+
+```{r}
+sim_data <- tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+) |>
+  uncount(n_reps, .id = "rep") |>
+  uncount(sample_size, .id = "index") |>
+  mutate(
+    draw = rnorm(total_n, mean = 0, sd = 1)
+  )
+sim_data
+```
+:::
+
+::: {.column width="50%"}
+And, we can plot those draws (getting a head start on #3).
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+sim_data |>
+  ggplot(aes(x = draw)) +
+  geom_density()
+```
+
+:::
+::::
 
 
+## Simulation Example: CLT
+
+2. Repeat this process multiple times, generating replications of data samples and sample means.
+
+3. Visualize both: the original distribution of the data (sample distribution), the distribution of the the samples' means (sampling distribution).
+
+:::: {.columns style="font-size:80%"}
+::: {.column width="50%"}
+Let' finish out #2 by `summarize()`ing our `sim_data` into one sample mean per replication.
+
+```{r}
+means <- sim_data |>
+  summarize(.by = rep,
+            sample_mean = mean(draw))
+means
+```
+:::
+
+::: {.column width="50%"}
+And, we can plot those draws (getting a head start on #4).
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+means |>
+  ggplot(aes(x = sample_mean)) +
+  geom_density()
+```
+:::
+::::
 
 
+## Simulation Example: CLT
+
+Before we start incorporating other conditions, let's scale this up.
+
+:::: {.columns style="font-size:80%"}
+::: {.column width="50%"}
+We can then draw `n_reps * sample_size = total_n` values from a normal distribution with `rnorm()`.
+
+```{r}
+n_reps <- 1000
+sample_size <- 10
+total_n <- n_reps * sample_size
+
+sim_data <- tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+) |>
+  uncount(n_reps, .id = "rep") |>
+  uncount(sample_size, .id = "index") |>
+  mutate(
+    draw = rnorm(total_n, mean = 0, sd = 1)
+  )
+sim_data
+```
+:::
+
+::: {.column width="50%"}
+And grab their means.
+
+```{r}
+means <- sim_data |>
+  summarize(.by = rep,
+            sample_mean = mean(draw))
+means
+```
+:::
+::::
 
 
+## Simulation Example: CLT
+
+Plotting both the sample distribution and sampling distributions...
+
+:::: {.columns}
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+#| layout-ncol: 1
+
+sim_data |>
+  ggplot(aes(x = draw)) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  coord_cartesian(xlim = c(-4, 4)) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  labs(title = "Sample Distribution")
+```
+
+### Code
+```{r}
+#| eval: false
+sim_data |>
+  ggplot(aes(x = draw)) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  coord_cartesian(xlim = c(-4, 4)) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  labs(title = "Sample Distribution")
+```
+:::
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+means |>
+  ggplot(aes(x = sample_mean)) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  coord_cartesian(xlim = c(-4, 4)) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  labs(title = "Sampling Distribution")
+```
+
+### Code
+```{r}
+#| eval: false
+means |>
+  ggplot(aes(x = sample_mean)) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  coord_cartesian(xlim = c(-4, 4)) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  labs(title = "Sampling Distribution")
+```
+:::
+:::
+
+::::
 
 
 

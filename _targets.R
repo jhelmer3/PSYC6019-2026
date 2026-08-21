@@ -15,6 +15,9 @@ list(
   ## index page
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
+  ## lab 03
+  tar_quarto(lab_03_slides, "lab/slides/lab_03.qmd", quiet =F),
+  
   ## lab 02
   tar_target(world_cup_player_stats_file, "lab/raw_data/world_cup_player_stats.csv", format = "file"),
   tar_target(world_cup_teams_file, "lab/raw_data/world_cup_teams.csv", format = "file"),

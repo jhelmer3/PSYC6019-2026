@@ -4513,5 +4513,82 @@
     "title": "Syllabus",
     "section": "Software and IT help",
     "text": "Software and IT help\n\nOffice of Information Technology\noit.gatech.edu\n404-385-1111\nsupport@cos.gatech.edu\nFree access to Microsoft Word at https://oit.gatech.edu/email\n\n\nDigital Reader Supports\nBeeline Reader\nDyslexie Font"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#outline",
+    "href": "lab/slides/lab_03.html#outline",
+    "title": "Simulations and Chi-Squared Tests",
+    "section": "Outline",
+    "text": "Outline\n\nSimulating data introduction\nCentral Limit Theorem example\n\n\\(\\chi^2\\) distribution"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#simulation",
+    "href": "lab/slides/lab_03.html#simulation",
+    "title": "Simulations and Chi-Squared Tests",
+    "section": "Simulation",
+    "text": "Simulation\nwhy do we like sims"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#simulation-example-clt",
+    "href": "lab/slides/lab_03.html#simulation-example-clt",
+    "title": "Simulations and Chi-Squared Tests",
+    "section": "Simulation Example: CLT",
+    "text": "Simulation Example: CLT\nThe Central Limit Theorem (CLT) says that the sampling distribution of the mean of any distribution with finite mean and variance will converge to be normal with increasing sample size.\n\n○ Imagine: take a sample of \\(N\\) observations from the population, calculate some statistics (e.g., the mean), and toss them back.\n\n\n○ Repeat a whole bunch of times\n\n\n○ Sampling distribution: the distribution of those calculated statistics (e.g., means)\n\nLet’s say we’re not so sure, and we want to test this out with different distributions and sample sizes \\(N\\)."
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#simulation-example-clt-1",
+    "href": "lab/slides/lab_03.html#simulation-example-clt-1",
+    "title": "Simulations and Chi-Squared Tests",
+    "section": "Simulation Example: CLT",
+    "text": "Simulation Example: CLT\nBefore simulating, define your goals / questions.\n\n\nQuestions\nDoes the sampling distribution of the mean really converge to normal for wonky asymmetrical distributions like the \\(\\chi^2\\) distribution?\nAt what sample sizes does this fail?\n\nGoals\nSee if the distribution of means from repeatedly sampling data looks normal\n\n○ Does this change with different original distributions from which the data is drawn?\n\n\n○ Does this change with sample size?"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#simulation-example-clt-2",
+    "href": "lab/slides/lab_03.html#simulation-example-clt-2",
+    "title": "Simulations and Chi-Squared Tests",
+    "section": "Simulation Example: CLT",
+    "text": "Simulation Example: CLT\nThen, sketch out a plan. Try to build things up step-by-step, not all at once.\n\nStart with data sampled from a normal distribution. Generate one sample of data, take its mean.\nRepeat this process multiple times, generating replications of data samples and sample means.\nVisualize both: the original distribution of the data (sample distribution), the distribution of the the samples’ means (sampling distribution).\nIncorporate different distributions.\nIncorporate different sample sizes."
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#simulation-example-clt-3",
+    "href": "lab/slides/lab_03.html#simulation-example-clt-3",
+    "title": "Simulations and Chi-Squared Tests",
+    "section": "Simulation Example: CLT",
+    "text": "Simulation Example: CLT\n\nStart with data sampled from a normal distribution. Generate one sample of data, take its mean.\n\n\n\nrnorm(x, mean, sd) where x is the number of samples\n\nlibrary(tidyverse)\nsamples &lt;- rnorm(3, mean = 0, sd = 1)\nsamples\n\n[1] -0.06092228 -0.49645480 -0.64553939\n\nmean(samples)\n\n[1] -0.4009722\n\n\n\nInstead of having it in a vector by itself, lets put it in a dataframe\n\nsim_data &lt;- tibble(x = rnorm(3, mean = 0, sd = 1))\nsim_data\n\n# A tibble: 3 × 1\n       x\n   &lt;dbl&gt;\n1  1.12 \n2  1.06 \n3 -0.413\n\nmean(sim_data$x)\n\n[1] 0.5900396\n\n\n\n\n\n\n\n\n\ntibble()\n\n\nA tibble() is just like a dataframe, but better. The best part is its printing—tibble()s will never crowd your screen by trying to show every single value of a dataframe. Also, they work better with making tibbles in tibbles in tibbles… More on tibbles here."
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#simulation-example-clt-4",
+    "href": "lab/slides/lab_03.html#simulation-example-clt-4",
+    "title": "Simulations and Chi-Squared Tests",
+    "section": "Simulation Example: CLT",
+    "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\n\n\n\nLet’s specify the sample size and how many replications we want. Start small!\n\nn_reps &lt;- 2\nsample_size &lt;- 3\n# total number of simulated draws\ntotal_n &lt;- n_reps * sample_size\n\n\nLet’s create a tibble with a row for every index in every replication.\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\")\nsim_data\n\n# A tibble: 6 × 2\n    rep index\n  &lt;int&gt; &lt;int&gt;\n1     1     1\n2     1     2\n3     1     3\n4     2     1\n5     2     2\n6     2     3"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#simulation-example-clt-5",
+    "href": "lab/slides/lab_03.html#simulation-example-clt-5",
+    "title": "Simulations and Chi-Squared Tests",
+    "section": "Simulation Example: CLT",
+    "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\n\n\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw = rnorm(total_n, mean = 0, sd = 1)\n  )\nsim_data\n\n# A tibble: 6 × 3\n    rep index   draw\n  &lt;int&gt; &lt;int&gt;  &lt;dbl&gt;\n1     1     1  0.263\n2     1     2  2.97 \n3     1     3  1.70 \n4     2     1 -0.487\n5     2     2 -1.19 \n6     2     3 -1.83 \n\n\n\nAnd, we can plot those draws (getting a head start on #3).\n\nsim_data |&gt;\n  ggplot(aes(x = draw)) +\n  geom_density()"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#simulation-example-clt-6",
+    "href": "lab/slides/lab_03.html#simulation-example-clt-6",
+    "title": "Simulations and Chi-Squared Tests",
+    "section": "Simulation Example: CLT",
+    "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\nVisualize both: the original distribution of the data (sample distribution), the distribution of the the samples’ means (sampling distribution).\n\n\n\nLet’ finish out #2 by summarize()ing our sim_data into one sample mean per replication.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = rep,\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 2 × 2\n    rep sample_mean\n  &lt;int&gt;       &lt;dbl&gt;\n1     1        1.65\n2     2       -1.17\n\n\n\nAnd, we can plot those draws (getting a head start on #4).\n\nmeans |&gt;\n  ggplot(aes(x = sample_mean)) +\n  geom_density()"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#simulation-example-clt-7",
+    "href": "lab/slides/lab_03.html#simulation-example-clt-7",
+    "title": "Simulations and Chi-Squared Tests",
+    "section": "Simulation Example: CLT",
+    "text": "Simulation Example: CLT\nBefore we start incorporating other conditions, let’s scale this up.\n\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw = rnorm(total_n, mean = 0, sd = 1)\n  )\nsim_data\n\n# A tibble: 10,000 × 3\n     rep index    draw\n   &lt;int&gt; &lt;int&gt;   &lt;dbl&gt;\n 1     1     1 -1.14  \n 2     1     2  0.111 \n 3     1     3  0.251 \n 4     1     4 -1.16  \n 5     1     5  1.00  \n 6     1     6  0.105 \n 7     1     7  0.0387\n 8     1     8 -1.55  \n 9     1     9 -0.312 \n10     1    10  0.434 \n# ℹ 9,990 more rows\n\n\n\nAnd grab their means.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = rep,\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 1,000 × 2\n     rep sample_mean\n   &lt;int&gt;       &lt;dbl&gt;\n 1     1     -0.223 \n 2     2     -0.304 \n 3     3     -0.0214\n 4     4      0.270 \n 5     5      0.0595\n 6     6     -0.108 \n 7     7     -0.502 \n 8     8     -0.188 \n 9     9     -0.0625\n10    10      0.531 \n# ℹ 990 more rows"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#simulation-example-clt-8",
+    "href": "lab/slides/lab_03.html#simulation-example-clt-8",
+    "title": "Simulations and Chi-Squared Tests",
+    "section": "Simulation Example: CLT",
+    "text": "Simulation Example: CLT\nPlotting both the sample distribution and sampling distributions…\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsim_data |&gt;\n  ggplot(aes(x = draw)) +\n  geom_density() +\n  theme_classic(base_size = 14) +\n  coord_cartesian(xlim = c(-4, 4)) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  labs(title = \"Sample Distribution\")\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmeans |&gt;\n  ggplot(aes(x = sample_mean)) +\n  geom_density() +\n  theme_classic(base_size = 14) +\n  coord_cartesian(xlim = c(-4, 4)) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  labs(title = \"Sampling Distribution\")"
   }
 ]
