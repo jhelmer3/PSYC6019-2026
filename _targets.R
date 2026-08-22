@@ -16,6 +16,11 @@ list(
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
   ## lab 03
+  tar_target(gatech_admissions_data, make_gatech_admissions_data()),
+  tar_target(gatech_admissions_data_file, 
+             write.csv(gatech_admissions_data, "lab/data/gatech_admissions.csv",
+                       row.names = F),
+             format = "file"),
   tar_quarto(lab_03_slides, "lab/slides/lab_03.qmd", quiet = F),
   
   ## lab 02

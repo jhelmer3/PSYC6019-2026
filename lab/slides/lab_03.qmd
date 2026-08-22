@@ -22,7 +22,8 @@ execute:
 ```{r setup}
 #| echo: false
 #| output: false
-# targets::tar_load(store = here::here("_targets"))
+library(gt)
+targets::tar_load(gatech_admissions_data_file, store = here::here("_targets"))
 ```
 
 
@@ -355,8 +356,6 @@ means |>
 
 4. Incorporate different distributions.
 
-<br>
-
 :::: {.columns}
 ::: {.column width="50%"}
 `runif(x, min, max)` where all values between `min` and `max` have an equal chance of being sampled
@@ -380,9 +379,7 @@ chisquared_samples
 
 ## Simulation Example: CLT
 
-<br>
-
-4. Incorporate different distributions.
+Incorporate different distributions.
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -1024,11 +1021,1067 @@ means |>
 
 
 
+# Chi-Squared Tests
+
+## Chi-Squared ($\chi^2$) Test
+
+Testing inferences about proportions
+
+[○ Involve categorical variables]{.subpoint}
+
+Comparing observed frequencies (counts) to some expected (null hypothesis) frequencies
+
+**$\chi^2$ Test of Goodness of Fit**: expected frequencies are set by researcher (e.g., null hypothesis is equal frequencies across all groups)
+
+**$\chi^2$ Test of Independence**: expected frequencies are those implied by independence
+
+
+## Chi-Squared ($\chi^2$) Test
+
+Instead of a continuous variable, our outcome is a **count**
+
+:::: {.columns}
+::: {.column width="50%"}
+**Continuous**
+
+* Height
+
+* Petal length
+
+* Test score
+
+:::
+
+::: {.column width="50%"}
+**Counts**
+
+* Coin flip being heads
+
+* Number of pets
+
+* Goals scored
+
+Only integers
+
+:::
+::::
 
 
 
+# $\chi^2$ Test of Goodness of Fit
+
+
+## $\chi^2$ Test of Goodness of Fit
+
+Do the observed frequencies of a categorical variable differ from what expected *a priori*?
+
+Typically, this expectation is equal occurrence across groups (but doesn't have to be).
+
+If equal occurrence, what would be our expected frequencies?
+
+:::: {.columns}
+::: {.column .fragment width="45%"}
+**100 coin flips**
+
+| Heads           | Tails           |
+|-----------------|-----------------|
+| [50]{.fragment} | [50]{.fragment} |
+:::
+
+::: {.column .fragment width="55%"}
+**Favorite primary color of 33 students**
+
+| [Red]{.red}     | [Blue]{.blue}   | [Yellow]{.yellow} |
+|-----------------|-----------------|-------------------|
+| [11]{.fragment} | [11]{.fragment} | [11]{.fragment}   |
+:::
+::::
+
+[Can also hypothesize proportions and convert to frequencies once you have a sample size.]{.fragment}
+
+
+## $\chi^2$ Test of Goodness of Fit: Hypotheses
+
+$H_0$: Observed data match the expected frequencies for the population
+
+$H_1$: Observed data do not match the expected frequencies for the population
+
+[○ Observed frequency is significantly different than expected]{.subpoint}
+
+::: fragment
+$H_0$: $\pi_j = \pi_{j_0}$  for all categories $j$ (i.e., difference for all categories is 0), where
+
+[$\pi_j$ = observed proportion]{.subpoint}
+
+[$\pi_{j_0}$ = expected proportion]{.subpoint}
+
+$H_1$: $\pi_j \neq \pi_{j_0}$ for any category $j$
+:::
+
+
+## $\chi^2$ Test of Goodness of Fit Generally
+
+$$ \chi^2 = \sum_{j=1}^{J} \frac{(O_j – N\pi_{j_0})^2}{N\pi_{j_0}} = \sum_{j=1}^{J} \frac{(O_j – E_j)^2}{E_j} $$
+
+where 
+
+[$O_j$ = observed frequency]{.subpoint}
+
+[$N$ = total sample size]{.subpoint}
+
+[$E_j$ = expected frequency]{.subpoint}
+
+[$j$ = individual category out of $J$ total categories]{.subpoint}
+
+[*The sum of the squared differences between the observed and expected frequencies, divided by the expected frequency, for each group.*]{.fragment}
+
+
+## $\chi^2$ Test of Goodness of Fit Generally
+
+$\text{df} = J - 1$, where
+
+[$J$ = number of categories]{.subpoint}
+
+Use to identify critical $\chi^2$ value from $\chi^2$ table, R, etc.
+
+For $\chi^2$, as $\text{df}$ increases, so does the critical-$\chi^2$ value (at same $\alpha$)
+
+Only ever a one-tailed test! For the upper end of the distribution.
+
+
+## $\chi^2$ Distribution
+
+```{r}
+#| echo: false
+#| fig-align: center
+data.frame(i = seq(1, 35, length.out = 1000)) |>
+  mutate(chi1 = dchisq(i, 1),
+         chi2 = dchisq(i, 2),
+         chi4 = dchisq(i, 4),
+         chi8 = dchisq(i, 8),
+         chi16 = dchisq(i, 16)) |>
+  ggplot(aes(x = i)) +
+  scale_x_continuous(breaks = c(1, 10, 20, 30, 35)) +
+  coord_cartesian(clip = "off", xlim = c(1, 35), expand = F) +
+  guides(y = "none", x = guide_axis(cap = T)) +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_size = 16) 
+```
+
+
+## $\chi^2$ Distribution
+
+```{r}
+#| echo: false
+#| fig-align: center
+data.frame(i = seq(1, 35, length.out = 1000)) |>
+  mutate(chi1 = dchisq(i, 1),
+         chi2 = dchisq(i, 2),
+         chi4 = dchisq(i, 4),
+         chi8 = dchisq(i, 8),
+         chi16 = dchisq(i, 16)) |>
+  ggplot(aes(x = i)) +
+  geomtextpath::geom_textline(aes(y = chi1, label = "chi^{2}*'(df=1)'"), parse = T,
+                              hjust = .125, size = 6, linewidth = 1.5, color = "skyblue",
+                              padding = unit(15, "points")) +
+  scale_x_continuous(breaks = c(1, 10, 20, 30, 35)) +
+  coord_cartesian(clip = "off", xlim = c(1, 35), ylim = c(0, 0.3), expand = F) +
+  guides(y = "none", x = guide_axis(cap = T)) +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_size = 16) 
+```
+
+
+## $\chi^2$ Distribution
+
+```{r}
+#| echo: false
+#| fig-align: center
+data.frame(i = seq(1, 35, length.out = 1000)) |>
+  mutate(chi1 = dchisq(i, 1),
+         chi2 = dchisq(i, 2),
+         chi4 = dchisq(i, 4),
+         chi8 = dchisq(i, 8),
+         chi16 = dchisq(i, 16)) |>
+  ggplot(aes(x = i)) +
+  geomtextpath::geom_textline(aes(y = chi1, label = "chi^{2}*'(df=1)'"), parse = T,
+                              hjust = .125, size = 6, linewidth = 1.5, color = "skyblue",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi2, label = "chi^{2}*'(df=2)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue",
+                              padding = unit(15, "points")) +
+  scale_x_continuous(breaks = c(1, 10, 20, 30, 35)) +
+  coord_cartesian(clip = "off", xlim = c(1, 35), ylim = c(0, 0.3), expand = F) +
+  guides(y = "none", x = guide_axis(cap = T)) +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_size = 16) 
+```
+
+
+## $\chi^2$ Distribution
+
+```{r}
+#| echo: false
+#| fig-align: center
+data.frame(i = seq(1, 35, length.out = 1000)) |>
+  mutate(chi1 = dchisq(i, 1),
+         chi2 = dchisq(i, 2),
+         chi4 = dchisq(i, 4),
+         chi8 = dchisq(i, 8),
+         chi16 = dchisq(i, 16)) |>
+  ggplot(aes(x = i)) +
+  geomtextpath::geom_textline(aes(y = chi1, label = "chi^{2}*'(df=1)'"), parse = T,
+                              hjust = .125, size = 6, linewidth = 1.5, color = "skyblue",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi2, label = "chi^{2}*'(df=2)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi4, label = "chi^{2}*'(df=4)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue4",
+                              padding = unit(15, "points")) +
+  scale_x_continuous(breaks = c(1, 10, 20, 30, 35)) +
+  coord_cartesian(clip = "off", xlim = c(1, 35), ylim = c(0, 0.3), expand = F) +
+  guides(y = "none", x = guide_axis(cap = T)) +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_size = 16) 
+```
+
+
+## $\chi^2$ Distribution
+
+```{r}
+#| echo: false
+#| fig-align: center
+data.frame(i = seq(1, 35, length.out = 1000)) |>
+  mutate(chi1 = dchisq(i, 1),
+         chi2 = dchisq(i, 2),
+         chi4 = dchisq(i, 4),
+         chi8 = dchisq(i, 8),
+         chi16 = dchisq(i, 16)) |>
+  ggplot(aes(x = i)) +
+  geomtextpath::geom_textline(aes(y = chi1, label = "chi^{2}*'(df=1)'"), parse = T,
+                              hjust = .125, size = 6, linewidth = 1.5, color = "skyblue",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi2, label = "chi^{2}*'(df=2)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi4, label = "chi^{2}*'(df=4)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue4",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi8, label = "chi^{2}*'(df=8)'"), parse = T,
+                              hjust = .435, size = 6, linewidth = 1.5, color = "royalblue4",
+                              padding = unit(15, "points")) +
+  scale_x_continuous(breaks = c(1, 10, 20, 30, 35)) +
+  coord_cartesian(clip = "off", xlim = c(1, 35), ylim = c(0, 0.3), expand = F) +
+  guides(y = "none", x = guide_axis(cap = T)) +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_size = 16) 
+```
+
+
+## $\chi^2$ Distribution
+
+```{r}
+#| echo: false
+#| fig-align: center
+data.frame(i = seq(1, 35, length.out = 1000)) |>
+  mutate(chi1 = dchisq(i, 1),
+         chi2 = dchisq(i, 2),
+         chi4 = dchisq(i, 4),
+         chi8 = dchisq(i, 8),
+         chi16 = dchisq(i, 16)) |>
+  ggplot(aes(x = i)) +
+  geomtextpath::geom_textline(aes(y = chi1, label = "chi^{2}*'(df=1)'"), parse = T,
+                              hjust = .125, size = 6, linewidth = 1.5, color = "skyblue",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi2, label = "chi^{2}*'(df=2)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi4, label = "chi^{2}*'(df=4)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue4",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi8, label = "chi^{2}*'(df=8)'"), parse = T,
+                              hjust = .435, size = 6, linewidth = 1.5, color = "royalblue4",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi16, label = "chi^{2}*'(df=16)'"), parse = T,
+                              hjust = .65, size = 6, linewidth = 1.5, color = "navy",
+                              padding = unit(15, "points")) +
+  scale_x_continuous(breaks = c(1, 10, 20, 30, 35)) +
+  coord_cartesian(clip = "off", xlim = c(1, 35), ylim = c(0, 0.3), expand = F) +
+  guides(y = "none", x = guide_axis(cap = T)) +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_size = 16) 
+```
+
+
+## $\chi^2$ Test of Goodness of Fit Cutoffs
+
+:::: {.columns}
+::: {.column width="50%"}
+Cutoff for test of heads vs. tails
+
+<br>
+
+::: fragment
+$J =$ 2
+
+$\text{df} = J - 1 =$ 1
+:::
+
+::: fragment
+```{r}
+qchisq(.95, 1)
+
+qchisq(.05, 1, lower.tail = F)
+```
+:::
+:::
+
+::: {.column width="50%"}
+Cutoff for test of favorite color in the rainbow
+
+::: fragment
+$J =$ 7 (ROYGBIV)
+
+$\text{df} = J - 1 =$ 6
+:::
+
+::: fragment
+```{r}
+qchisq(.95, 6)
+
+qchisq(.05, 6, lower.tail = F)
+```
+:::
+:::
+::::
+
+
+## $\chi^2$ Test of Goodness of Fit Example
+
+::: {style="font-size:80%"}
+You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.
+
+[First, what are your expected frequencies for each category?]{.fragment}
+:::
+
+```{r}
+#| echo: false
+data.frame(type = c("Expected", "Observed"),
+           STEM = c(NA, NA),
+           `Social Sciences` = c(NA, NA),
+           Humanities = c(NA, NA),
+           Arts = c(NA, NA), 
+           Business = c(NA, NA)) |>
+  gt(rowname_col = "type") |>
+  cols_label(`Social.Sciences` = "Social Sciences") |>
+  tab_style(style = cell_text(weight = "bold"),
+              locations = cells_column_labels()) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+
+## $\chi^2$ Test of Goodness of Fit Example
+
+::: {style="font-size:80%"}
+You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.
+
+First, what are your expected frequencies for each category?
+:::
+
+```{r}
+#| echo: false
+data.frame(type = c("Expected", "Observed"),
+           STEM = c(20, NA),
+           `Social Sciences` = c(20, NA),
+           Humanities = c(20, NA),
+           Arts = c(20, NA), 
+           Business = c(20, NA)) |>
+  gt(rowname_col = "type") |>
+  cols_label(`Social.Sciences` = "Social Sciences") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = cells_column_labels()) |>
+  tab_style(style = cell_text(color = "steelblue3", style = "italic"),
+            locations = list(cells_body(rows = "Expected"))) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+
+## $\chi^2$ Test of Goodness of Fit Example
+
+::: {style="font-size:80%"}
+You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.
+
+[Next, what is your $\chi^2$ cutoff value?]{.fragment}
+:::
+
+```{r}
+#| echo: false
+data.frame(type = c("Expected", "Observed"),
+           STEM = c(20, NA),
+           `Social Sciences` = c(20, NA),
+           Humanities = c(20, NA),
+           Arts = c(20, NA), 
+           Business = c(20, NA)) |>
+  gt(rowname_col = "type") |>
+  cols_label(`Social.Sciences` = "Social Sciences") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = cells_column_labels()) |>
+  tab_style(style = cell_text(color = "steelblue3", style = "italic"),
+            locations = list(cells_body(rows = "Expected"))) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+
+## $\chi^2$ Test of Goodness of Fit Example
+
+Cutoff in R
+
+::: fragment
+```{r}
+df <- 5 - 1
+chisq_crit <- qchisq(.95, df)
+chisq_crit
+```
+:::
+
+
+## $\chi^2$ Test of Goodness of Fit Example
+
+::: {style="font-size:80%"}
+You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.
+
+Here are the observed values:
+:::
+
+```{r}
+#| echo: false
+data.frame(type = c("Expected", "Observed"),
+           STEM = c(20, 65),
+           `Social Sciences` = c(20, 10),
+           Humanities = c(20, 5),
+           Arts = c(20, 5), 
+           Business = c(20, 15)) |>
+  gt(rowname_col = "type") |>
+  cols_label(`Social.Sciences` = "Social Sciences") |>
+  tab_style(style = cell_text(weight = "bold"),
+              locations = cells_column_labels()) |>
+  tab_style(style = cell_text(color = "steelblue3", style = "italic"),
+            locations = list(cells_body(rows = "Expected"))) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+
+## $\chi^2$ Test of Goodness of Fit Example
+
+$$ \chi^2 = \sum_{j=0}^{J} \frac{(O_j – N\pi_j)^2}{N\pi_j} = \sum_{j=0}^{J} \frac{(O_j – E_j)^2}{E_j} $$
+
+::: fragment
+```{r}
+obs_chisq <- (65 - 20)^2 / 20 +
+  (10 - 20)^2 / 20 +
+  (5 - 20)^2 / 20 +
+  (5 - 20)^2 / 20 +
+  (15 - 20)^2 / 20
+obs_chisq
+
+obs_chisq > chisq_crit
+```
+:::
+
+[We can reject the null in favor of the alternative that the number of students is not the same across majors.]{.fragment}
+
+## $\chi^2$ Test of Goodness of Fit R Function
+
+::: fragment
+```{r}
+admissions_data <- read.csv(here::here("lab", "data", "gatech_admissions.csv"))
+
+admissions_data_2025 <- admissions_data |>
+  filter(year == 2025)
+
+chisq <- admissions_data_2025 |>
+  select(applied) |>
+  chisq.test()
+chisq
+```
+:::
+
+<br>
+
+:::: {.columns .fragment }
+::: {.column width="33%"}
+```{r}
+chisq$expected
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+chisq$statistic
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+chisq$p.value
+```
+:::
+::::
+
+
+## $\chi^2$ Test of Goodness of Fit Example
+
+::: {style="font-size:80%"}
+Let's restart and say that you were a educational psychologist interested in how students in STEM schools choose their major. In this situation, you had expected more students to select a STEM major than other majors.
+
+These are your new expected frequencies (60% STEM, evenly divided across the rest):
+:::
+
+```{r}
+#| echo: false
+data.frame(type = c("Expected", "Observed"),
+           STEM = c(60, 65),
+           `Social Sciences` = c(10, 10),
+           Humanities = c(10, 5),
+           Arts = c(10, 5), 
+           Business = c(10, 15)) |>
+  gt(rowname_col = "type") |>
+  cols_label(`Social.Sciences` = "Social Sciences") |>
+  tab_style(style = cell_text(weight = "bold"),
+              locations = cells_column_labels()) |>
+  tab_style(style = cell_text(color = "steelblue3", style = "italic"),
+            locations = list(cells_body(rows = "Expected"))) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+
+## $\chi^2$ Test of Goodness of Fit R Function
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| code-line-numbers: false
+chisq.test(x = c(65, 10, 5, 5, 15),
+           p = c(60, 10, 10, 10, 10),
+           rescale.p = T)
+
+chisq.test(x = c(65, 10, 5, 5, 15),
+           p = c(.60, .10, .10, .10, .10))
+```
+:::
+
+::: {.column width="50%"}
+[○ `x` = data of frequencies]{.subpoint}
+
+[○ `p` = expected probabilities]{.subpoint}
+
+[○ `rescale.p` = [`T`/`F`], will rescale `p` to probabilities if you prefer to input frequencies]{.subpoint}
+:::
+::::
 
 
 
+# $\chi^2$ Test of Independence
 
+
+## $\chi^2$ Test of Independence
+
+Do the observed frequencies of a categorical variable differ from what expected via properties of independence?
+
+[○ Now considering more than one type of category]{.subpoint}
+
+[○ E.g., Number of pets by cat vs. dog people and undergrad vs. post-graduate]{.subpoint}
+
+::: {style="font-size:80%"}
+|               | Cat Person | Dog Person |
+|---------------|------------|------------|
+| Undergrad     |            |            | 
+| Post-Graduate |            |            |
+:::
+
+Expected frequencies calculated from the marginal totals of the contingency table
+
+[○ Expected values determined from data]{.subpoint}
+
+
+## $\chi^2$ Test of Independence: Hypotheses
+
+$H_0$: Categorical Variable 1 and Categorical Variable 2 are independent (i.e., have no association)
+
+$H_1$: Categorical Variable 1 and Categorical Variable 2 are not independent (i.e., have some association)
+
+[○ Do expected frequencies match those expected via independence?]{.subpoint}
+
+::: fragment
+Mathematically the same as before: 
+
+$H_0$: $\pi_j = \pi_{j_0}$  for all categories $j$; difference for all categories is 0, where
+
+[$\pi_j$ = observed proportion]{.subpoint}
+
+[$\pi_{j_0}$ = expected proportion]{.subpoint}
+
+$H_1$: $\pi_j \neq \pi_{j_0}$ for any category $j$
+:::
+
+::: {.my-callout .fragment .absolute bottom=0 right=0 width="400px"}
+Just changing the expected frequencies
+:::
+
+## $\chi^2$ Test of Independence Generally
+
+$$ \chi^2 = \sum_{j_1=1}^{J_1}\sum_{j_2=1}^{J_2} \frac{(O_j – N\pi_{j_0})^2}{N\pi_{j_0}} = \sum_{j_1=1}^{J_1}\sum_{j_2=1}^{J_2} \frac{(O_j – E_j)^2}{E_j} $$
+
+Basically identical formula to calculate the $\chi^2$.
+
+The difference is that our expected frequencies $E_j$ are derived from the data. Just like before, we calculate the difference from each cell, but now we have two categories that make up the cell.
+
+[*The sum of the squared differences between the observed and expected frequencies, divided by the expected frequency, for each cell.*]{.fragment}
+
+
+## $\chi^2$ Test of Independence Cutoffs
+
+What is the critical $\chi^2$ value in a test of independence for a 3x2?
+
+<br>
+
+::: fragment
+$\text{df} = (J_1 - 1) \times (J_2 - 1)$ or
+
+$\text{df} = (n_{rows} - 1) \times (n_{cols} - 1)$
+:::
+
+<br>
+
+::: fragment
+```{r}
+df <- (3 - 1) * (2 - 1)
+df
+qchisq(.95, df)
+```
+:::
+
+
+## $\chi^2$ Test of Independence Example
+
+::: {style="font-size:80%"}
+You are another educational psychologist, and you're interested in examining your department's student body makeup. You wonder whether there is an association between students' level (graduate vs. undergraduate) and whether they are an in-state student or not. You sample 50 students from your department, and these are the frequencies you observe. 
+:::
+
+```{r}
+#| echo: false
+data.frame(type = c("Undergrad", "Graduate"),
+           `In-State` = c(25, 5),
+           `Out-of-State` = c(10, 10)) |>
+  gt(rowname_col = "type") |>
+  cols_label(`In.State` = "In-State",
+             `Out.of.State` = "Out-of-State") |>
+  tab_style(style = cell_text(weight = "bold"),
+              locations = list(cells_column_labels(), cells_stub())) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+::: {.fragment style="font-size:80%"}
+First, what are your expected frequencies for each category?
+:::
+
+
+## $\chi^2$ Test of Independence Example: Calculating Expected Frequencies
+
+First, get the marginal totals for each column
+
+```{r}
+#| echo: false
+data.frame(type = c("Undergrad", "Graduate", "Total"),
+           `In-State` = c(25, 5, NA),
+           `Out-of-State` = c(10, 10, NA),
+           Total = c(NA, NA, NA)) |>
+  gt(rowname_col = "type") |>
+  cols_label(`In.State` = "In-State",
+             `Out.of.State` = "Out-of-State") |>
+  tab_style(style = cell_text(weight = "bold"),
+              locations = list(cells_column_labels(), cells_stub())) |>
+  tab_style(style = cell_text(color = "steelblue3", style = "italic"),
+              locations = list(cells_column_labels(columns = "Total"),
+                               cells_body(columns = "Total"),
+                               cells_body(rows = In.State >= 30),
+                               cells_stub(rows = "Total"))) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+
+## $\chi^2$ Test of Independence Example: Calculating Expected Frequencies
+
+First, get the marginal totals for each column
+
+```{r}
+#| echo: false
+data.frame(type = c("Undergrad", "Graduate", "Total"),
+           `In-State` = c(25, 5, 30),
+           `Out-of-State` = c(10, 10, 20),
+           Total = c(35, 15, 50)) |>
+  gt(rowname_col = "type") |>
+  cols_label(`In.State` = "In-State",
+             `Out.of.State` = "Out-of-State") |>
+  tab_style(style = cell_text(weight = "bold"),
+              locations = list(cells_column_labels(), cells_stub())) |>
+  tab_style(style = cell_text(color = "steelblue3", style = "italic"),
+              locations = list(cells_column_labels(columns = "Total"),
+                               cells_body(columns = "Total"),
+                               cells_body(rows = In.State >= 30),
+                               cells_stub(rows = "Total"))) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+
+## $\chi^2$ Test of Independence Example: Calculating Expected Frequencies
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| echo: false
+data.frame(type = c("Undergrad", "Graduate", "Total"),
+           `In-State` = c(25, 5, 30),
+           `Out-of-State` = c(10, 10, 20),
+           Total = c(35, 15, 50)) |>
+  gt(rowname_col = "type") |>
+  cols_label(`In.State` = "In-State",
+             `Out.of.State` = "Out-of-State") |>
+  tab_style(style = cell_text(weight = "bold"),
+              locations = list(cells_column_labels(), cells_stub())) |>
+  tab_style(style = cell_text(color = "steelblue3", style = "italic"),
+              locations = list(cells_column_labels(columns = "Total"),
+                               cells_body(columns = "Total"),
+                               cells_body(rows = In.State >= 30),
+                               cells_stub(rows = "Total"))) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+:::
+
+::: {.column .fragment width="50%"}
+```{r}
+#| echo: false
+data.frame(type = c("Undergrad", "Graduate", "Total"),
+           `In-State` = c(21, 9, 30),
+           `Out-of-State` = c(14, 6, 20),
+           Total = c(35, 15, 50)) |>
+  gt(rowname_col = "type") |>
+  cols_label(`In.State` = "In-State",
+             `Out.of.State` = "Out-of-State") |>
+  tab_style(style = cell_text(weight = "bold"),
+              locations = list(cells_column_labels(), cells_stub())) |>
+  tab_style(style = cell_text(color = "steelblue3", style = "italic"),
+              locations = list(cells_column_labels(),
+                               cells_body(),
+                               cells_stub())) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+:::
+::::
+
+Expected cell frequency = $E_j$ = $\frac{\text{column total} \times \text{row total}}{N}$
+
+[○ Undergrad & In-State = $\frac{35 \times 30}{50} = 21$]{.subpoint}
+
+[○ Undergrad & Out-of-State = $\frac{35 \times 20}{50} = 14$]{.subpoint}
+
+[○ Graduate & In-State = $\frac{15 \times 30}{50} = 9$]{.subpoint}
+
+[○ Graduate & Out-of-State = $\frac{15 \times 20}{50} = 6$]{.subpoint}
+
+
+## $\chi^2$ Test of Goodness of Fit Example
+
+$$ \chi^2 = \sum_{j=0}^{J} \frac{(O_j – N\pi_j)^2}{N\pi_j} = \sum_{j=0}^{J} \frac{(O_j – E_j)^2}{E_j} $$
+
+::: fragment
+:::: {.columns}
+::: {.column width="66%"}
+```{r}
+#| code-line-numbers: false
+data.frame(type = c("Undergrad", "Graduate", "Total"),
+           `In-State` = c(25, 5, 30),
+           `Out-of-State` = c(10, 10, 20),
+           Total = c(35, 15, 50)) 
+
+chisq_crit <- qchisq(.95, df = (2 - 1) * (2 - 1))
+chisq_crit
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+#| code-line-numbers: false
+obs_chisq <- (25 - 21)^2 / 21 +
+  (10 - 14)^2 / 14 +
+  (5 - 9)^2 / 9 +
+  (10 - 6)^2 / 6
+obs_chisq
+
+obs_chisq > chisq_crit
+```
+:::
+::::
+
+:::
+
+## $\chi^2$ Test of Independence R Function
+
+:::: {.columns}
+::: {.column width="60%"}
+```{r}
+#| code-line-numbers: false
+studdat <- data.frame(type = c("Undergrad", "Graduate"),
+           `In-State` = c(25, 5),
+           `Out-of-State` = c(10, 10))
+studdat |>
+  select(-type) |>
+  chisq.test(correct = F)
+```
+:::
+
+::: {.column width="40%"}
+[○ `correct` = [`T`/`F`], applies a "continuity correction" to the $\chi^2$ value. Default is `T`. Change to `F`!]{.subpoint}
+:::
+::::
+
+[We can reject the null in favor of the alternative that students' level (graduate vs. undergraduate) and whether they are an in-state student or not are not independent.]{.fragment}
+
+
+
+# Count Data
+
+
+## Working With Count Data
+
+```{r}
+#| echo: false
+untallied_admissions_data <- admissions_data |>
+  select(-applied) |>
+  uncount(accepted) |>
+  mutate(student_id = row_number())
+```
+
+```{r}
+untallied_admissions_data |> head(12)
+```
+
+
+## Working With Count Data: `table()`
+
+Some ways to generate frequencies from categorical variables
+
+```{r}
+table(untallied_admissions_data$college)
+```
+
+```{r}
+table(untallied_admissions_data$college) |>
+  data.frame()
+```
+
+
+## Working With Count Data: `table()`
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+table(untallied_admissions_data$college, untallied_admissions_data$year)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+table(untallied_admissions_data$college, untallied_admissions_data$year) |>
+  data.frame()
+```
+:::
+::::
+
+
+## Working With Count Data: `summarize()`
+
+Some ways to generate frequencies from categorical variables
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+untallied_admissions_data |>
+  summarize(.by = c(college, year),
+            n = n())
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+untallied_admissions_data |>
+  summarize(.by = c(college, year),
+            n = n()) |>
+  arrange(college, year)
+```
+:::
+::::
+
+
+## Working With Count Data: `count()`
+
+`count(x, grouping_var1, grouping_var2, etc.)`
+
+[○ `x` = dataframe]{.subpoint}
+
+<div class="subpoint">○ `grouping_vars` = variable names to group by</div>
+
+Basically shorthand for:
+
+```{r}
+#| eval: false
+df |>
+  summarise(.by = c(a, b),
+            n = n())
+```
+
+Also seems to `arrange` by default
+
+
+## Working With Count Data: `count()`
+
+`count(x, grouping_var1, grouping_var2, etc.)`
+
+[○ `x` = dataframe]{.subpoint}
+
+<div class="subpoint">○ `grouping_vars` = variable names to group by</div>
+
+::: {.columns}
+::: {.column width="50%"}
+```{r}
+untallied_admissions_data |>
+  summarize(.by = c(college, year),
+            n = n())
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+untallied_admissions_data |>
+  count(college, year)
+```
+:::
+::::
+
+
+## Working With Count Data: `summarize()`
+
+If going to put into the `chisq.test()` function, want to pivot and get rid of additional columns.
+
+Many ways to do this, but one example:
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+chisqdat <- untallied_admissions_data |>
+  count(college, year) |>
+  pivot_wider(names_from = college,
+              values_from = n) |>
+  select(-year)
+chisqdat
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+chisq.test(chisqdat)
+chisq.test(chisqdat, correct = F)
+```
+:::
+::::
+
+
+## Working With Count Data: `geom_bar()`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+untallied_admissions_data |>
+  ggplot(aes(x = college)) +
+  geom_bar() +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 15, vjust = .7))
+```
+
+### Code
+```{r}
+#| eval: false
+untallied_admissions_data |>
+  ggplot(aes(x = college)) +
+  geom_bar() +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 15, vjust = .7))
+```
+:::
+
+## Working With Count Data: `geom_bar()`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+untallied_admissions_data |>
+  ggplot(aes(y = college)) +
+  geom_bar() +
+  theme_classic(base_size = 14)
+```
+
+### Code
+```{r}
+#| eval: false
+untallied_admissions_data |>
+  ggplot(aes(y = college)) +
+  geom_bar() +
+  theme_classic(base_size = 14)
+```
+:::
+
+
+## Working With Count Data: `geom_bar()`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 4
+#| fig-align: center
+untallied_admissions_data |>
+  ggplot(aes(y = college, fill = factor(year))) +
+  geom_bar(position = "dodge") +
+  theme_classic(base_size = 14)
+```
+
+### Code
+```{r}
+#| eval: false
+untallied_admissions_data |>
+  ggplot(aes(y = college, fill = factor(year))) +
+  geom_bar(position = "dodge") +
+  theme_classic(base_size = 14)
+```
+:::
 
