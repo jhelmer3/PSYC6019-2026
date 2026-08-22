@@ -107,7 +107,7 @@ Then, sketch out a plan. Try to build things up step-by-step, not all at once.
 ```{r}
 #| message: false
 library(tidyverse)
-samples <- rnorm(3, mean = 0, sd = 1)
+samples <- rnorm(3, mean = 1, sd = 0.5)
 samples
 mean(samples)
 ```
@@ -117,7 +117,7 @@ mean(samples)
 Instead of having it in a vector by itself, lets put it in a dataframe
 
 ```{r}
-sim_data <- tibble(x = rnorm(3, mean = 0, sd = 1))
+sim_data <- tibble(x = rnorm(3, mean = 1, sd = 0.5))
 sim_data
 mean(sim_data$x)
 ```
@@ -179,7 +179,7 @@ sim_data <- tibble(
   uncount(n_reps, .id = "rep") |>
   uncount(sample_size, .id = "index") |>
   mutate(
-    draw = rnorm(total_n, mean = 0, sd = 1)
+    draw = rnorm(total_n, mean = 1, sd = 0.5)
   )
 sim_data
 ```
@@ -252,7 +252,7 @@ sim_data <- tibble(
   uncount(n_reps, .id = "rep") |>
   uncount(sample_size, .id = "index") |>
   mutate(
-    draw = rnorm(total_n, mean = 0, sd = 1)
+    draw = rnorm(total_n, mean = 1, sd = 0.5)
   )
 sim_data
 ```
@@ -275,8 +275,8 @@ means
 
 Plotting both the sample distribution and sampling distributions...
 
-:::: {.columns}
-::: {.column width="50%"}
+::::: {.columns}
+:::: {.column width="50%"}
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -290,7 +290,7 @@ sim_data |>
   ggplot(aes(x = draw)) +
   geom_density() +
   theme_classic(base_size = 14) +
-  coord_cartesian(xlim = c(-4, 4)) +
+  coord_cartesian(xlim = c(-1, 3)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T),
          color = guide_none()) +
@@ -304,16 +304,16 @@ sim_data |>
   ggplot(aes(x = draw)) +
   geom_density() +
   theme_classic(base_size = 14) +
-  coord_cartesian(xlim = c(-4, 4)) +
+  coord_cartesian(xlim = c(-1, 3)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T),
          color = guide_none()) +
   labs(title = "Sample Distribution")
 ```
 :::
-:::
+::::
 
-::: {.column width="50%"}
+:::: {.column width="50%"}
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -325,7 +325,7 @@ means |>
   ggplot(aes(x = sample_mean)) +
   geom_density() +
   theme_classic(base_size = 14) +
-  coord_cartesian(xlim = c(-4, 4)) +
+  coord_cartesian(xlim = c(-1, 3)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T),
          color = guide_none()) +
@@ -339,23 +339,688 @@ means |>
   ggplot(aes(x = sample_mean)) +
   geom_density() +
   theme_classic(base_size = 14) +
-  coord_cartesian(xlim = c(-4, 4)) +
+  coord_cartesian(xlim = c(-1, 3)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T),
          color = guide_none()) +
   labs(title = "Sampling Distribution")
 ```
 :::
+::::
+
+:::::
+
+
+## Simulation Example: CLT
+
+4. Incorporate different distributions.
+
+<br>
+
+:::: {.columns}
+::: {.column width="50%"}
+`runif(x, min, max)` where all values between `min` and `max` have an equal chance of being sampled
+
+```{r}
+uniform_samples <- runif(5, min = -1, max = 3)
+uniform_samples
+```
+:::
+
+::: {.column width="50%"}
+`rchisq(x, df)` where `df` is the degrees of freedom for the distribution
+
+```{r}
+chisquared_samples <- rchisq(5, df = 1)
+chisquared_samples
+```
+:::
+::::
+
+
+## Simulation Example: CLT
+
+<br>
+
+4. Incorporate different distributions.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+n_reps <- 1000
+sample_size <- 10
+total_n <- n_reps * sample_size
+
+sim_data <- tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+) |>
+  uncount(n_reps, .id = "rep") |>
+  uncount(sample_size, .id = "index") |>
+  mutate(
+    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),
+    draw_uniform = runif(total_n, min = -1, max = 3),
+    draw_chisquared = rchisq(total_n, df = 1)
+  )
+sim_data
+```
+:::
+
+::: {.column width="50%"}
+We want to plot these draws as distributions, but `facet_wrap(~ grouping_var)` or `aes(fill / color)` are all expecting the values to be in one column, and a grouping variable that distinguishes them in another column.
+
+```{r}
+#| echo: false
+tibble(grouping_var = rep(c("group_1", "group_2"), times = 3),
+       y = runif(6, -3, 3) |> round(1))
+```
+
+:::
+::::
+
+
+## Let Us Review...
+
+What are the tidy principles?
+
+::: fragment
+Three rules to a tidy dataset
+
+<div style="font-size:70%">
+1. Each variable is a column; each column is a variable.
+
+2. Each observation is a row; each row is an observation.
+
+3. Each value is a cell; each cell is a single value.
+</div>
+
+![](https://r4ds.hadley.nz/images/tidy-1.png)
+:::
+
+
+## Long vs. Wide Data
+
+Long: each observation is a row (tidy)
+
+<div class="subpoint">○ Observation does not necessarily mean "person" </div>
+
+<div class="subpoint">○ Can be within-person measurements over time </div>
+
+Wide: columns might represent different "values" of a variables
+
+
+## Long vs. Wide Data
+
+:::: {.columns}
+::: {.column}
+```{r}
+#| echo: false
+dat <- data.frame(person = c("Harry", "Ron", "Hermione")) %>%
+  expand_grid(book = c("book 1", "book 2", "book 3")) %>%
+  mutate(score = rbinom(book, 3, .7))
+dat
+```
+:::
+
+::: {.column}
+```{r}
+#| echo: false
+dat <- dat %>%
+  pivot_wider(id_cols = person,
+              names_from = book, values_from = score)
+dat
+```
+:::
+::::
+
+Wide data common in spreadsheets, data from survey platforms
+
+Long data typically easier to work with
+
+
+## Key Functions
+
+:::: {.columns}
+::: {.column}
+#### Wide to Long
+
+`pivot_longer()`
+```{r}
+longdat <- dat %>%
+  pivot_longer(cols = c("book 1", "book 2", "book 3"),
+               names_to = "book", values_to = "score")
+longdat
+```
+:::
+
+::: {.column}
+#### Long to Wide
+
+`pivot_wider()`
+```{r}
+widedat <- longdat %>%
+  pivot_wider(names_from = book, values_from = score)
+widedat
+```
+:::
+::::
+
+
+## Key Functions
+
+:::: {.columns}
+::: {.column}
+##### Wide to Long
+
+`pivot_longer()`
+
+<div class="subpoint">○ `cols` = set of columns to pivot </div>
+
+<div class="subpoint">○ `names_to` = name of new column with the column names from before </div>
+
+<div class="subpoint">○ `values_to` = name of new column with the values from before </div>
+:::
+
+::: {.column}
+##### Long to Wide
+
+`pivot_wider()`
+
+<div class="subpoint">○ `names_from` = column with values to be column names </div>
+
+<div class="subpoint">○ `values_from` = column with values to be in those columns </div>
+:::
+::::
+
+
+## Selecting Functions
+
+Sometimes, we want to select many columns (to pivot, to remove, etc.)
+
+Notice the documentation for `pivot_longer()`
+
+`<tidy-select>` functions
+
+<div class="subpoint">○ `starts_with()` and `ends_with()` </div>
+
+
+## Selecting Functions
+
+:::: {.columns}
+::: {.column}
+Simple example, but...
+```{r}
+dat <- data.frame(id = 1:5,
+           q1 = rbinom(5, 1, .1),
+           q2 = rbinom(5, 1, .2),
+           q3 = rbinom(5, 1, .3),
+           q4 = rbinom(5, 1, .4),
+           q5 = rbinom(5, 1, .5))
+dat
+```
+:::
+
+::: {.column}
+```{r}
+dat |>
+  pivot_longer(cols = starts_with("q"),
+               names_to = "question", values_to = "correct")
+```
+:::
+::::
+
+::: fragment
+Now, back to our simulation.
+:::
+
+
+## Simulation Example: CLT
+
+4. Incorporate different distributions.
+
+:::: {.columns}
+::: {.column}
+```{r}
+n_reps <- 1000
+sample_size <- 10
+total_n <- n_reps * sample_size
+
+sim_data <- tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+) |>
+  uncount(n_reps, .id = "rep") |>
+  uncount(sample_size, .id = "index") |>
+  mutate(
+    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),
+    draw_uniform = runif(total_n, min = -1, max = 3),
+    draw_chisquared = rchisq(total_n, df = 1)
+  )
+sim_data
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+sim_data |>
+  pivot_longer(starts_with("draw"),
+               names_to = "distribution", values_to = "draw")
+```
+:::
+::::
+
+
+## Simulation Example: CLT
+
+4. Incorporate different distributions.
+
+:::: {.columns style="font-size:80%"}
+::: {.column width="50%"}
+We can then draw `n_reps * sample_size = total_n` values from a normal distribution with `rnorm()`.
+
+```{r}
+n_reps <- 1000
+sample_size <- 10
+total_n <- n_reps * sample_size
+
+sim_data <- tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+) |>
+  uncount(n_reps, .id = "rep") |>
+  uncount(sample_size, .id = "index") |>
+  mutate(
+    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),
+    draw_uniform = runif(total_n, min = -1, max = 3),
+    draw_chisquared = rchisq(total_n, df = 1)
+  ) |>
+  pivot_longer(starts_with("draw"),
+               names_to = "distribution", values_to = "draw")
+sim_data
+```
+:::
+
+::: {.column width="50%"}
+And grab their means.
+
+```{r}
+means <- sim_data |>
+  summarize(.by = c(rep, distribution),
+            sample_mean = mean(draw))
+means
+```
+:::
+::::
+
+
+## Simulation Example: CLT
+
+Plotting both the sample distribution and sampling distributions...
+
+::::: {.columns}
+:::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+#| layout-ncol: 1
+distribution_labels = c(
+  "draw_normal" = "Normal",
+  "draw_uniform" = "Uniform",
+  "draw_chisquared" = "Chi-Squared"
+)
+
+sim_data |>
+  ggplot(aes(x = draw)) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  coord_cartesian(xlim = c(-1, 3)) +
+  facet_wrap(~ distribution, labeller = as_labeller(distribution_labels)) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  labs(title = "Sample Distribution")
+```
+
+### Code
+```{r}
+#| eval: false
+distribution_labels = c(
+  "draw_normal" = "Normal",
+  "draw_uniform" = "Uniform",
+  "draw_chisquared" = "Chi-Squared"
+)
+
+sim_data |>
+  ggplot(aes(x = draw)) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  coord_cartesian(xlim = c(-1, 3)) +
+  facet_wrap(~ distribution, labeller = as_labeller(distribution_labels)) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  labs(title = "Sample Distribution")
+```
+:::
+::::
+
+:::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+means |>
+  ggplot(aes(x = sample_mean)) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  coord_cartesian(xlim = c(-1, 3)) +
+  facet_wrap(~ distribution, labeller = as_labeller(distribution_labels)) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  labs(title = "Sampling Distribution")
+```
+
+### Code
+```{r}
+#| eval: false
+means |>
+  ggplot(aes(x = sample_mean)) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  coord_cartesian(xlim = c(-1, 3)) +
+  facet_wrap(~ distribution, labeller = as_labeller(distribution_labels)) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  labs(title = "Sampling Distribution")
+```
+:::
+::::
+
+:::::
+
+
+## Simulation Example: CLT
+
+5. Incorporate different sample sizes.
+
+::::: {.columns style="font-size:80%"}
+:::: {.column width="50%"}
+::: {.panel-tabset}
+### Our Sim
+
+We can expand `sample_size` to be a vector of desired sample sizes
+
+Because `n_reps` is length one, it will be "recycled" (repeated) to match the length of `sample_size`
+
+For more complicated designs, we might have to use an `expand()` function
+
+```{r}
+n_reps <- 3
+sample_size <- c(1, 3)
+total_n <- n_reps * sample_size
+
+tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+)
+```
+
+### `expand_grid()`
+
+Let's say we also wanted to vary `n_reps`
+
+```{r}
+n_reps <- c(100, 1000)
+sample_size <- c(1, 3)
+
+tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+)
+
+tibble(n_reps = n_reps) |>
+  expand_grid(sample_size = sample_size)
+```
+:::
+::::
+
+:::: {.column width="50%"}
+```{r}
+n_reps <- 3
+sample_size <- c(1, 3)
+
+tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+) |>
+  uncount(n_reps, .id = "rep") |>
+  uncount(sample_size, .id = "sample_id", .remove = F)
+```
+::::
+:::::
+
+
+## Simulation Example: CLT
+
+5. Incorporate different sample sizes.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+n_reps <- 1000
+sample_size <- c(3, 10, 30, 100)
+total_n <- sum(n_reps * sample_size)
+
+sim_data <- tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+) |>
+  uncount(n_reps, .id = "rep") |>
+  uncount(sample_size, .id = "index", .remove = F) |>
+  mutate(
+    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),
+    draw_uniform = runif(total_n, min = -1, max = 3),
+    draw_chisquared = rchisq(total_n, df = 1)
+  ) |>
+  pivot_longer(starts_with("draw"),
+               names_to = "distribution", values_to = "draw")
+sim_data
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+means <- sim_data |>
+  summarize(.by = c(rep, distribution, sample_size),
+            sample_mean = mean(draw))
+means
+```
+:::
+::::
+
+
+## Simulation Example: CLT
+
+5. Incorporate different sample sizes.
+
+Now, let's think about how we want to visualize these results. We now have two condition variables (`sample_size` and `distribution`). We need to plot in a way that distinguishes both factors.
+
+::::: {.columns}
+:::: {.column width="50%"}
+### `facet_grid()`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 5
+#| fig-align: center
+sim_data |>
+  filter(rep %in% sample(n_reps, size = 30)) |>
+  ggplot(aes(x = draw, group = interaction(distribution, rep))) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  facet_grid(sample_size ~ distribution) +
+  labs(title = "Sample Distribution")
+```
+
+### Code
+```{r}
+#| eval: false
+sim_data |>
+  filter(rep %in% sample(n_reps, size = 30)) |>
+  ggplot(aes(x = draw, group = interaction(distribution, rep))) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  facet_grid(sample_size ~ distribution) +
+  labs(title = "Sample Distribution")
+```
 :::
 
 ::::
 
+:::: {.column width="50%"}
+### `{ggridges}`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+sim_data |>
+  filter(rep %in% sample(n_reps, size = 30)) |>
+  ggplot(aes(x = draw, y = distribution,
+             color = distribution, group = interaction(distribution, rep))) +
+  ggridges::geom_density_ridges(alpha = 0.8, fill = NA) +
+  theme_classic(base_size = 14) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  facet_wrap(~ sample_size) +
+  labs(title = "Sample Distribution")
+```
+
+### Code
+```{r}
+#| eval: false
+# install.packages("ggridges")
+sim_data |>
+  filter(rep %in% sample(n_reps, size = 30)) |>
+  ggplot(aes(x = draw, y = distribution,
+             color = distribution, group = interaction(distribution, rep))) +
+  ggridges::geom_density_ridges(alpha = 0.8, fill = NA) +
+  theme_classic(base_size = 14) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  facet_wrap(~ sample_size) +
+  labs(title = "Sample Distribution")
+```
+:::
+
+::::
+:::::
 
 
 
+## Simulation Example: CLT
 
+::::: {.columns}
+:::: {.column width="50%"}
+### `facet_grid()`
 
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 5
+#| fig-align: center
+means |>
+  ggplot(aes(x = sample_mean)) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  facet_grid(sample_size ~ distribution, scales = "free_y") +
+  labs(title = "Samplng Distribution")
+```
 
+### Code
+```{r}
+#| eval: false
+means |>
+  ggplot(aes(x = sample_mean)) +
+  geom_density() +
+  theme_classic(base_size = 14) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  facet_grid(sample_size ~ distribution, scales = "free_y") +
+  labs(title = "Samplng Distribution")
+```
+:::
+
+::::
+
+:::: {.column width="50%"}
+### `{ggridges}`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+means |>
+  ggplot(aes(x = sample_mean, y = distribution, color = distribution)) +
+  ggridges::geom_density_ridges(alpha = 0.8, fill = NA) +
+  theme_classic(base_size = 14) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  facet_wrap(~ sample_size) +
+  labs(title = "Sampling Distribution")
+```
+
+### Code
+```{r}
+#| eval: false
+# install.packages("ggridges")
+means |>
+  ggplot(aes(x = sample_mean, y = distribution, color = distribution)) +
+  ggridges::geom_density_ridges(alpha = 0.8, fill = NA) +
+  theme_classic(base_size = 14) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         color = guide_none()) +
+  facet_wrap(~ sample_size) +
+  labs(title = "Sampling Distribution")
+```
+:::
+
+::::
+:::::
 
 
 

@@ -118,9 +118,10 @@ means <- draws |>
   summarize(.by = c(rep, distribution, sample_size),
             sample_mean = mean(draw))
 means |>
-  ggplot(aes(x = sample_mean, y = distribution, fill = distribution)) +
+  ggplot(aes(x = sample_mean, 
+             y = factor(sample_size), fill = factor(sample_size))) +
   ggridges::geom_density_ridges() +
-  facet_wrap(~ sample_size, nrow = 1)
+  facet_wrap(~ distribution, nrow = 1)
 
 
 
