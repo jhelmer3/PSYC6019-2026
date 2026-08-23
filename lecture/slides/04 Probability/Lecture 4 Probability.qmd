@@ -1,0 +1,904 @@
+---
+title: "Lecture 4: Probability"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+```
+
+```{r}
+
+bball <- read.csv("C:/Users/markh/OneDrive - Georgia Institute of Technology/Documents/Grad Stat I/Fall 2026/Lecture 3/2026NBA_data.csv") |> filter(G >= max(G)/2,
+                                                draft_year != "")
+```
+
+## Probability and Statistics
+
+```{r}
+#| fig.width: 6
+#| fig.height: 2
+#| out.width: "100%"
+
+# Zero out standard plot margins
+par(mar = c(0, 0, 0, 0))
+
+# Initialize empty canvas
+plot(0, 0, col = "white", xlim = c(0, 5), ylim = c(0, 3.5),
+     bty = "n", xlab = "", ylab = "", xaxt = "n", yaxt = "n")
+
+# --- Left Box (Population) ---
+polygon(x = c(0.2, 1.7, 1.7, 0.2), y = c(2, 2, 3, 3), border = my_blue, lwd = 2)
+
+# --- Right Box (Sample) ---
+polygon(x = c(3.3, 4.8, 4.8, 3.3), y = c(.5, .5, 1.5, 1.5), border = my_purple, lwd = 2)
+
+# --- Top Curve (Probability) ---
+x_top <- seq(0.95, 4.05, length = 30)
+y_top <- -0.478 * x_top^2 + 1.905 * x_top + 1.621
+points(x_top, y_top, type = 'l', col = my_blue, lwd = 2)
+
+# Top Arrow (pointing to Sample)
+arrows(x0 = x_top[28], x1 = x_top[30], 
+       y0 = y_top[28], y1 = y_top[30], 
+       col = my_blue, lwd = 2)
+
+# --- Bottom Curve (Statistics) ---
+x_bot <- seq(0.95, 4.05, length = 30)
+y_bot <- 0.435 * x_bot^2 - 2.656 * x_bot + 4.132
+points(x_bot, y_bot, type = 'l', col = my_purple, lwd = 2)
+
+# Bottom Arrow (pointing to Population)
+arrows(x0 = x_bot[3], x1 = x_bot[1], 
+       y0 = y_bot[3], y1 = y_bot[1], 
+       col = my_purple, lwd = 2)
+
+# --- Text Labels ---
+text(x = 0.95, y = 2.65, "Population", col = my_blue)
+text(x = 0.95, y = 2.35, "(Parameter)", col = my_blue)
+
+text(x = 4.05, y = 1.15, "Sample", col = my_purple)
+text(x = 4.05, y = 0.85, "(Data)", col = my_purple)
+
+text(x = 3.1, y = 3.3, "Probability", col = my_blue)
+text(x = 1.9, y = 0.3, "Statistics", col = my_purple)
+```
+
+::: {style="margin-top: -10px;"}
+Probability tells us how data are *randomly* **generated** based on some underlying facts about a population.
+
+-   Numerical language for describing how likely different events are to occur
+-   How we go from parameters $\rightarrow$ data
+:::
+
+## Terminology
+
+-   **Event**: A possible outcome or combination of outcomes
+-   **Sample Space**: All possible outcomes
+    -   Sample space for a coin flip is $\text{{heads, tails}}$
+        -   Curly brackets indicate a set of individual elements
+    -   Sample space for points in an NBA game $[0,\infty]$
+        -   Square brackets indicate an inclusive interval
+
+## Notation
+
+-   $P(A)$: The probability of event $A$
+-   $P(A \cap B)$: The probability of both event $A$ *and* $B$
+-   $P(A \cap \neg B)$: The probability of both event $A$ *and* NOT $B$
+-   $P(A \cup B)$: The probability of event $A$ *or* $B$
+-   $P(A|B)$: The probability that event $A$ happens *given* that event $B$ has happened
+
+## Axioms
+
+Axiom (noun): [Statement that is taken to be true without need of proof]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   For any $A$, $0 \leq P(A) \leq 1$
+-   The sum of the probability of all elements of a sample space $= 1$
+
+## Gummy Bears
+
+Haribo Gold Bears come in 5 flavors:
+
+![](../../Figs/gummytypes.jpg)
+
+## The "Classical" Definition of Probability
+
+Suppose we have a bag of gummy bears with exactly equal numbers of the 5 flavors
+
+If we randomly pick one gummy bear, what is the probability of picking a pineapple gummy?
+
+<!-- This brings us to the **analytic** view of probability: -->
+
+[$P(\text{pineapple}) = \frac{\text{\# of pineapple gummy bears}}{\text{total \# of gummy bears}}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+[**Classical Definition of Probability:** *Proportion* ways a particular outcome can occur out of all possible outcomes]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Bernoulli Trials
+
+Drawing a pineapple gummy bear is known as a **Bernoulli trial**:
+
+-   "Experiment" with exactly two possible outcomes
+
+-   e.g., heads vs. tails, pass vs. fail this class, diagnosis vs. no diagnosis, pineapple vs. other flavor gummy
+
+If we code a "success" as "1" and a "failure" as "0", then the probability of success in any Bernoulli trial equals
+
+$\pi = \frac{\text{\# of ways to succeed}}{\text{\# of ways to succeed} + \text{\# of ways to fail}}$
+
+## The Bernoulli Distribution
+
+::: {style="font-size: 0.8em;"}
+Note than $\pi$ is not a *statistic* but a *parameter*
+
+-   Represents an underlying truth: the proportion of ways a success can happen out of how many ways successes and failures can both happen
+
+If we imagine we were to start drawing gummy bears, we can define the outcomes as a *probability distribution* defined by the parameter $\pi$
+
+$$\text{Pineapple Bear} \sim \text{Bernoulli}(\pi)$$
+
+**Read:** Pineapple bears are distributed Bernoulli (follow a Bernoulli distribution) with probability $\pi$
+
+In the population, the Bernoulli distribution has
+
+-   Mean $\mu= pi$
+-   Variance $\sigma^2 = \pi(1-\pi)$
+:::
+
+## More Bernoulli
+
+Let's code successes on a given trial $i$ as $y_i = \text{Pineapple Bear} = 1$ and $\text{any other flavor} = 0$
+
+We can write the Bernoulli distribution as
+
+$$P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i}$$
+
+That means, if  $y_i = \text{Pineapple Bear} = 1$
+
+- $\pi^{y_i} = \pi^{1} = \pi$ 
+- $(1-\pi)^{1-y_i} = (1 - \pi)^{1 - 1} = 1$ 
+- $P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = \pi(1) = \pi$
+
+And if $y_i = \text{any other flavor} = 0$
+
+- $\pi^{y_i} = \pi^{0} = 1$ 
+- $(1-\pi)^{1-y_i} = (1 - \pi)^{1 - 0} = (1 - \pi$ 
+- $P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = 1(1 - \pi) = 1 -\pi$
+
+## Alternate Bernoulli
+
+You might also see it written this way:
+
+$$P(y_i | \pi) = \pi(y_i) + (1 - \pi)(1 - y_i)$$
+
+That means, if  $y_i = \text{Pineapple Bear} = 1$
+
+- $\pi(y_i) = \pi(1) = \pi$ 
+- $(1 - \pi)(1 - y_i) = (1 \pi)(1 - 1) = 0$ 
+- $P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = \pi + 0 = \pi$
+
+And if $y_i = \text{any other flavor} = 0$
+
+- $\pi(y_i) = \pi(0) = 0$ 
+- $(1 - \pi)(1 - y_i) = (1 - \pi)(1 - 0) = 1 -\pi$ 
+- $P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = 0 + 1 -\pi = 1- \pi$
+
+## Multiple Trials
+
+What if we sample more than one gummy bear?
+
+Two ways:
+
+-   Without replacement
+
+    -   Probability of a pineapple on the 2nd draw depends on the outcome of the first draw
+
+    -   Outcomes are **dependent**
+
+    -   The probability of an event change depends on earlier events
+
+-   With replacement
+
+    -   Probability of pineapple on the 2nd draw is the same as for the 1st draw
+
+    -   Outcomes are **independent**
+
+    -   The same probabilities apply to all events
+
+## Multiple Indepenent Trials
+
+What if we want to know the probability we would get five pineapple bears from 10 different bags (each has $\pi = .2$)?
+
+-   This is known as the *binomial* distribution
+-   Two parameters, sample size ($n$) and probability of success ($\pi$)
+-   For any number of $k$ successes
+
+$$\begin{pmatrix} n \\ k\end{pmatrix}\pi^k (1-\pi)^{n-k}$$
+
+Where
+
+$$\begin{pmatrix} n \\ k\end{pmatrix} = \frac{n!}{k!(n-k)!}$$
+
+## Binomial Distribution
+
+::: {style="font-size: 0.9em;"}
+**What this means:** If we repeatedly sampled 10 bags of gummy bears, we would expect to get exactly five pineapples with probability
+
+$$P(\text{five pineapples}) = \frac{n!}{k!(n-k)!}\pi^k (1-\pi)^{n-k} =$$ $$\frac{10!}{5!(10-5)!}.2^5 (1-.2)^{10-5} = .03$$
+
+For every 100 times we repeated this exercise, we would expect to get exactly five pineapples in 10 draws three times.
+:::
+
+## The Binomial Distribution
+
+We can write that variable $X$ follows a binomial distribution with $n$ draws and $\pi$ probability of success on each draw as:
+
+$$X \sim \text{Binomial}(n, \pi)$$
+
+In the population, the binomial distribution has
+
+-   Mean $\mu= n\pi$
+-   Variance $\sigma^2 = n\pi(1-\pi)$
+
+## Counting Events
+
+-   The binomial distribution tells us the probability of a given number of successes in a fixed number of trials. Examples:
+    -   Number of pineapple gummies in 10 independent bags
+    -   Number of heads in five independent coin flips
+-   The **Poisson distribution** tells us how many "successes" occur (specific type of event happens) in a fixed time period. Examples:
+    -   Number of Ph.D. applications Georgia Tech receives in an application cycle
+    -   Number of calls a fire station gets on a given day
+
+## The Poisson Distribution
+
+The Poisson distribution has the following form:
+
+$$P(x) = \frac{e^{-\mu}\mu^x}{x!}$$
+
+Where
+
+-   $e$ is Euler's number (base of natural logarithm)
+-   $\mu$ is the mean number of successes in the population
+-   $x$ is the number of observed counts
+
+## Poisson Example
+
+If the mean number of calls to the fire station is 8, the probability of getting exactly 11 calls would be
+
+$$P(x = 11) = \frac{e^{-8}8^11}{11!} = .072$$
+
+In the Poisson distribution
+
+-   The population mean is $\mu$
+-   The population variance $\sigma^2$ *also* $= \mu$
+
+## Continuous Variables
+
+::: {style="font-size: 0.85em;"}
+The Bernoulli, Binomial, and Poisson distributions all involve *discrete* variables. What about continuous variables?
+
+-   **The Normal Distribution** will be our major focus
+-   Symmetrical with parameters $\mu$ and $\sigma$
+-   The lognormal distribution: $e^{\text{normal distribution}}$
+    -   Creates distribution with lower boundary of zero and no upper boundary
+-   The gamma distribution
+    -   A different distribution with a lower boundary of zero and no upper boundary
+-   The beta distribution
+    -   Continuous distribution on the interval $[0, 1]$
+:::
+
+## The Normal Distribution
+
+::: {style="font-size: 0.85em;"}
+The formula for the *density* of the normal distribution is
+
+$$P(x) = \frac{1}{\sqrt{2\pi \sigma^2}}e^{\frac{(-x-\mu)^2}{2\sigma^2}}$$
+
+There are two parameters (here $\pi$ is the number not a parameter!): $\mu$ and $\sigma$. We can write that $x$ is normally distributed with mean $\mu$ and variance $\sigma^2$ as
+
+$$x \sim \text{normal}(\mu, \sigma^2)$$
+
+**Simple interpretation:** In the population, the average value of $x$ is $\mu$ and the average amount of **squared error** between all members of the population and $\mu$ is $\sigma^2$
+:::
+
+## Normal Distribution Example
+
+Let's imagine in the population of all **possible** basketball players, the average player height is $\mu = 200$cm and the variance is $\sigma^2 = 64\text{cm}^2$.
+
+That means, if I randomly sampled a group of basketball players, I would expect:
+
+-   The average height of players in my sample to be 200cm
+-   The average **squared difference** between each players' height and 200cm would be 64
+
+## Visualizing Probability Distributions
+
+Two types of probability distributions
+
+-   Probability mass functions (PMFs)
+
+    -   Appropriate for discrete variables
+
+    -   PMFs give the probability of a particular event
+
+    -   Think: bar plots (relative frequency on $y$ axis)
+
+-   Probability density functions (PDFs)
+
+    -   The probability of any specific event (technically) equals zero
+
+    -   PDFs give the relative probability of an event in the region
+
+        \-$\rightarrow$ higher values in more likely regions
+
+    -   Think: histograms & kernel density plots (density on $y$ axis)
+
+## Bernoulli Probability Mass Function
+
+::: {style="font-size: 0.7em;"}
+If I sample one gummy bear and $\pi_\text{pineapple} = .2$, then the distribution (PMF) of whether I draw a pineapple gummy bear in my sample is:
+:::
+
+```{r, fig.height = 4}
+x <- 0:1
+probability <- dbinom(x, size = 1, prob = .2)
+ggplot(data.frame(x, probability), aes(x, probability)) +
+  geom_col(fill = my_purple) + theme_light() +
+  labs(x = "Number of Pineapple Gummy Bears", y = "Probability") +
+  scale_x_continuous(breaks = c(0, 1)) + scale_y_continuous(limits = c(0,1),
+                                                            n.breaks = 6) + 
+  theme(axis.title = element_text(size = 14))
+```
+
+## Binomial Probability Mass Function
+
+::: {style="font-size: 0.7em;"}
+If I sample 10 gummy bears and $\pi_\text{pineapple} = .2$, then the distribution (PMF) of the number of Pineapple bears I draw is:
+:::
+
+```{r}
+
+
+# 1. Set parameters
+n <- 10
+pi <- 0.2
+
+# 2. Generate data frame of outcomes (k) and probabilities P(X = k)
+binom_df <- data.frame(
+  k = 0:n,
+  prob = dbinom(0:n, size = n, prob = pi)
+) |>
+  mutate(prob_label = ifelse(prob >= .001, round(prob, 3), "<.001"))
+
+# 3. Create the PMF plot
+ggplot(binom_df, aes(x = k, y = prob)) +
+  geom_col(fill = my_purple, width = 0.7) +
+  geom_text(aes(label = prob_label), vjust = -0.5, size = 3.5) +
+  scale_x_continuous(breaks = 0:n) +
+  scale_y_continuous(limits = c(0, max(binom_df$prob) * 1.15)) +
+  xlab("Number of Pineapple Bears in 10 Trials") + 
+  ylab("Probability") +
+   theme_light() +
+  theme(axis.title = element_text(size = 14))
+
+```
+
+## Poisson Probability Mass Function
+
+::: {style="font-size: 0.7em;"}
+If I sample calls to a fire station on a given day when the mean number of calls is $\mu = 8$, then the distribution (PMF) of the number of calls is:
+:::
+
+```{r}
+# 1. Set parameters
+mu <- 8
+max_k <- 20 # upper bound to capture the tail
+
+# 2. Generate data frame of outcomes (k) and probabilities P(X = k)
+pois_df <- data.frame(
+  k = 0:max_k,
+  prob = dpois(0:max_k, lambda = mu)
+) |>
+  mutate(prob_label = ifelse(prob >= .001, round(prob, 3), "<.001"))
+
+# 3. Create the PMF plot
+ggplot(pois_df, aes(x = k, y = prob)) +
+  geom_col(fill = my_purple, width = 0.7) +
+  geom_text(aes(label = prob_label), vjust = -0.5, size = 3) +
+  scale_x_continuous(breaks = 0:max_k) +
+  scale_y_continuous(limits = c(0, max(pois_df$prob) * 1.15)) +
+  xlab("Number of Fire Station Calls") + 
+  ylab("Probability") +
+  theme_light() +
+  theme(axis.title = element_text(size = 14))
+```
+
+## Normal Density Function
+
+::: {style="font-size: 0.7em;"}
+If I NBA players and measure their heights with population mean $\mu = 200$cm and variance $\sigma^2 = 64\text{cm}^2$, then the **density** (PDF) of player heights is:
+:::
+
+```{r}
+
+
+# 1. Set parameters (dnorm requires standard deviation, so sd = sqrt(variance))
+mu <- 200
+variance <- 64
+sd_val <- sqrt(variance) # sd = 8
+
+# 2. Generate continuous data frame over 4 standard deviations on each side
+norm_df <- data.frame(
+  height = seq(mu - 4 * sd_val, mu + 4 * sd_val, length.out = 500)
+) |>
+  mutate(density = dnorm(height, mean = mu, sd = sd_val))
+
+# 3. Create the PDF plot
+ggplot(norm_df, aes(x = height, y = density)) +
+  geom_area(fill = my_purple, alpha = 0.3) +  # Optional subtle fill
+  geom_line(color = my_purple, linewidth = 1) +
+  scale_x_continuous(breaks = seq(mu - 4 * sd_val, mu + 4 * sd_val, by = sd_val)) +
+  scale_y_continuous(limits = c(0, max(norm_df$density) * 1.15)) +
+  xlab("NBA Player Heights (cm)") + 
+  ylab("Density") +
+  theme_light() +
+  theme(axis.title = element_text(size = 14))
+```
+
+## Independence
+
+::: {style="font-size: 0.85em;"}
+**Independent Events**: The probability of one event happening does not depend on whether or not another event has happened
+
+If $A$ and $B$ are independent events:
+
+-   $P(A \cap B) = P(A)P(B)$
+-   $P(A|B) = P(A)$
+
+Most statistical methods make use of the idea of independence
+
+-   "Independence of observations" assumption
+-   Assumes that if you know one data point, it doesn't give you any new information about probability distribution of other data points
+:::
+
+## Joint & Marginal Probability
+
+\Joint probability: The probability of two events both occurring
+
+$$P(A \cap B)$$
+
+-   If $A$ and $B$ are **independent**, $P(A \cap B) = P(A)P(B)$
+
+-   If $A$ and $B$ are **mutually exclusive**, $P(A \cap B) = 0$
+
+**Marginal probability**: The probability of one event occurring
+
+$$P(A)$$
+
+-   Irrespective of other events
+
+-   $P(A) = P(A \cap B) + P(A \cap \text{ not } B)$
+
+## Contingency Table
+
+::: {style="font-size: 0.85em;"}
+Contingency tables show us how frequently events occur jointly (cells) and marginally (margins)
+:::
+
+```{r}
+#| echo: false
+library(gt)
+
+
+data.frame(
+  Test = c("Positive Test", "Negative Test", "Total"),
+  Cancer = c(94, 6, 100),
+  `No Cancer` = c(46, 854, 900),
+  Total = c(140, 860, 1000),
+  check.names = FALSE
+) %>%
+  gt(rowname_col = "Test") %>%
+  # Apply primary purple color to headers and row labels
+  tab_style(
+    style = list(
+      cell_fill(color = "#6a1b9a"),
+      cell_text(color = "white", weight = "bold")
+    ),
+    locations = list(
+      cells_column_labels(),
+      cells_stub()
+    )
+  ) %>%
+  # Apply secondary purple color to total column and total row
+  tab_style(
+    style = list(
+      cell_fill(color = "#e1bee7"),
+      cell_text(weight = "bold")
+    ),
+    locations = list(
+      cells_body(columns = Total),
+      cells_body(rows = 3)
+    )
+  )%>%
+  # --- INCREASE FONT SIZE HERE ---
+  tab_options(
+    table.font.size = px(24) # Adjust pixel size as needed (e.g., 20, 24, 28)
+)
+```
+
+## Marginal Probability
+
+::: {style="font-size: 0.85em;"}
+We can calculate marginal probabilities from a contingency table
+:::
+
+```{r}
+#| echo: false
+library(gt)
+
+
+data.frame(
+  Test = c("Positive Test", "Negative Test", "Total"),
+  Cancer = c(94, 6, 100),
+  `No Cancer` = c(46, 854, 900),
+  Total = c(140, 860, 1000),
+  check.names = FALSE
+) %>%
+  gt(rowname_col = "Test") %>%
+  # Apply primary purple color to headers and row labels
+  tab_style(
+    style = list(
+      cell_fill(color = "#6a1b9a"),
+      cell_text(color = "white", weight = "bold")
+    ),
+    locations = list(
+      cells_column_labels(),
+      cells_stub()
+    )
+  ) %>%
+  # Apply secondary purple color to total column and total row
+  tab_style(
+    style = list(
+      cell_fill(color = "#e1bee7"),
+      cell_text(weight = "bold")
+    ),
+    locations = list(
+      cells_body(columns = Total),
+      cells_body(rows = 3)
+    )
+  )%>%
+  # --- INCREASE FONT SIZE HERE ---
+  tab_options(
+    table.font.size = px(24) # Adjust pixel size as needed (e.g., 20, 24, 28)
+)
+```
+
+::: {style="font-size: 0.85em;"}
+$P(\text{positive test}) = \frac{\text{\# with a positive test}}{\text{Total \#}} = \frac{140}{1000} = .14$
+
+What is the marginal probability of having a negative test?
+
+[$P(\text{negative test}) = \frac{\text{\# with a negative test}}{\text{Total \#}} = \frac{860}{1000} = .86$]{.answer .fragment .content-visible unless-meta="params.v0"}
+:::
+
+## Joint Probability
+
+::: {style="font-size: 0.85em;"}
+We can calculate joint probabilities from a contingency table
+:::
+
+```{r}
+#| echo: false
+
+data.frame(
+  Test = c("Positive Test", "Negative Test", "Total"),
+  Cancer = c(94, 6, 100),
+  `No Cancer` = c(46, 854, 900),
+  Total = c(140, 860, 1000),
+  check.names = FALSE
+) %>%
+  gt(rowname_col = "Test") %>%
+  # Apply primary purple color to headers and row labels
+  tab_style(
+    style = list(
+      cell_fill(color = "#6a1b9a"),
+      cell_text(color = "white", weight = "bold")
+    ),
+    locations = list(
+      cells_column_labels(),
+      cells_stub()
+    )
+  ) %>%
+  # Apply secondary purple color to total column and total row
+  tab_style(
+    style = list(
+      cell_fill(color = "#e1bee7"),
+      cell_text(weight = "bold")
+    ),
+    locations = list(
+      cells_body(columns = Total),
+      cells_body(rows = 3)
+    )
+  )%>%
+  # --- INCREASE FONT SIZE HERE ---
+  tab_options(
+    table.font.size = px(24) # Adjust pixel size as needed (e.g., 20, 24, 28)
+)
+```
+
+::: {style="font-size: 0.775em;"}
+**Joint** probability of having cancer and receiving a positive test:
+
+$P(\text{cancer } \cap \text{ positive test}) = \frac{\text{\# with cancer AND a positive test}}{\text{Total \#}} =$ $\frac{94}{1000} = .094$
+
+What is the joint probability of not having cancer and receiving a positive test?
+
+[$P(\text{no cancer } \cap \text{ positive test}) = \frac{\text{\# with no cancer AND a positive test}}{\text{Total \#}} =$]{.answer .fragment .content-visible unless-meta="params.v0"} [$\frac{46}{1000} = .046$]{.answer .fragment .content-visible unless-meta="params.v0"}
+:::
+
+## Conditional Probability
+
+**Conditional probability**: The probability of an event happening once another event is known
+
+Conditional probability looks something like
+
+$$P(A | B)  =   \frac{\text{\# of ways for } A \text{ to happen when } B \text{ happens}}{\text{\# of ways for } B \text{ to happen}}$$
+
+## Calculating Conditional Probability
+
+```{r}
+#| echo: false
+
+data.frame(
+  Test = c("Positive Test", "Negative Test", "Total"),
+  Cancer = c(94, 6, 100),
+  `No Cancer` = c(46, 854, 900),
+  Total = c(140, 860, 1000),
+  check.names = FALSE
+) %>%
+  gt(rowname_col = "Test") %>%
+  # Apply primary purple color to headers and row labels
+  tab_style(
+    style = list(
+      cell_fill(color = "#6a1b9a"),
+      cell_text(color = "white", weight = "bold")
+    ),
+    locations = list(
+      cells_column_labels(),
+      cells_stub()
+    )
+  ) %>%
+  # Apply secondary purple color to total column and total row
+  tab_style(
+    style = list(
+      cell_fill(color = "#e1bee7"),
+      cell_text(weight = "bold")
+    ),
+    locations = list(
+      cells_body(columns = Total),
+      cells_body(rows = 3)
+    )
+  )%>%
+  # --- INCREASE FONT SIZE HERE ---
+  tab_options(
+    table.font.size = px(24) # Adjust pixel size as needed (e.g., 20, 24, 28)
+)
+```
+
+::: {style="font-size: 0.85em;"}
+**conditional probability** of having cancer given a positive test is
+
+$P(\text{cancer} \vert \text{positive test}) = \frac{\text{\# with cancer and a positive test}}{\text{\# with a positive test}} = \frac{94}{140} = .67$
+
+What is the conditional probability of not having cancer given a positive test?
+
+[$P(\text{no cancer} \vert \text{positive test}) = \frac{\text{\# with no cancer and a positive test}}{\text{\# with a positive test}}=$]{.answer .fragment .content-visible unless-meta="params.v0"} [$\frac{46}{140} = .33$]{.answer .fragment .content-visible unless-meta="params.v0"}
+:::
+
+## Flipped Conditional Probability
+
+```{r}
+#| echo: false
+
+data.frame(
+  Test = c("Positive Test", "Negative Test", "Total"),
+  Cancer = c(94, 6, 100),
+  `No Cancer` = c(46, 854, 900),
+  Total = c(140, 860, 1000),
+  check.names = FALSE
+) %>%
+  gt(rowname_col = "Test") %>%
+  # Apply primary purple color to headers and row labels
+  tab_style(
+    style = list(
+      cell_fill(color = "#6a1b9a"),
+      cell_text(color = "white", weight = "bold")
+    ),
+    locations = list(
+      cells_column_labels(),
+      cells_stub()
+    )
+  ) %>%
+  # Apply secondary purple color to total column and total row
+  tab_style(
+    style = list(
+      cell_fill(color = "#e1bee7"),
+      cell_text(weight = "bold")
+    ),
+    locations = list(
+      cells_body(columns = Total),
+      cells_body(rows = 3)
+    )
+  )%>%
+  # --- INCREASE FONT SIZE HERE ---
+  tab_options(
+    table.font.size = px(24) # Adjust pixel size as needed (e.g., 20, 24, 28)
+)
+```
+
+::: {style="font-size: 0.85em;"}
+What if we reverse it. What is the probability receiving a positive test given that we have do not have cancer?
+
+[$P(\text{positive test} \vert \text{no cancer}) = \frac{\text{\# with no cancer and a positive test}}{\text{\# with no cancer}}=$]{.answer .fragment .content-visible unless-meta="params.v0"} [$\frac{46}{900} = .05$]{.answer .fragment .content-visible unless-meta="params.v0"}
+:::
+
+## Bayes' Theorem
+
+::: {style="font-size: 0.75em;"}
+A better (more technical) definition of conditional probability:
+
+$$P(A | B)  =   \frac{P(A\cap B)}{P(B)} = \frac{P(B \vert A) P(A)}{P(B)}$$
+
+This is known as **Bayes' Theorem**
+
+[**VERY IMPORTANT!**]{style="color: red;"} In general:
+
+$$P(A | B)  \neq    P(B | A)$$
+
+-   $P(\text{no cancer} \vert \text{positive test}) =\frac{\text{\# with no cancer and a positive test}}{\text{\# with a positive test}} = \frac{46}{140} = .33$
+
+-   $P(\text{positive test} \vert \text{no cancer}) = \frac{\text{\# with no cancer and a positive test}}{\text{\# with cancer}} = \frac{46}{900} = .05$
+
+Which one of these do you think is more important to know when taking a diagnostic test?
+:::
+
+## More Bayes' Theorem
+
+::: {style="font-size: 0.85em;"}
+A better (more technical) definition of conditional probability:
+
+$$P(A | B)  =   \frac{P(A\cap B)}{P(B)} = \frac{P(B \vert A) P(A)}{P(B)}$$
+
+This is known as **Bayes' Theorem**
+
+[**VERY IMPORTANT!**]{style="color: red;"} In general:
+
+$$P(A | B)  \neq    P(B | A)$$
+
+-   $P$(guilty \| evidence) $\neq P$(evidence \| guilty)
+-   $P$(data \| hypothesis) $\neq P$(hypothesis \| data)
+:::
+
+## The Frequentist Approach
+
+There are two predominant ways of doing statistical inference, and both rely **heavily** on probability theory.
+
+Historically, the most popular is the **frequentist** approach:
+
+-   Generate a hypothesis (or competing hypotheses) about parameters
+-   Collect some data
+-   Use what we know about probability to determine how (im)plausible our data are under the assumption they were governed by our hypothesized parameters
+
+## The Bayesian Approach
+
+Less historically popular, but rapidly gaining momentum is the **Bayesian** approach
+
+-   Start with a prior belief (probability distribution) over all different possible sets of parameters ($\theta$): $P(\theta)$
+-   Look at how likely our data ($D$) are under all different possible sets of parameters: $P(D|\theta)$
+-   Use Bayes' rule to revise our beliefs (probability distribution) about the parameters given the data we have observed: $P(\theta|D)$
+
+## A Brief History of Bayesianism
+
+::: {style="font-size: 0.85em;"}
+-   Bayes theorem was first discovered by Reverend Thomas Bayes in 18th century
+    -   English Presbyterian Minister
+    -   Published defenses of science against religious claims they were heretical
+    -   Theorem didn't make big waves until....
+-   It was independently redisocvered by Pierre Simon Laplace
+    -   Gave much more formal mathematical definition
+    -   Later learned of Bayes and unselfishly gave Bayes credit for the discovery
+:::
+
+## Bayes and Laplace
+
+:::::: {style="font-size: 0.7em;"}
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+![](../../Figs/bayes.gif){width="80%"}
+
+Thomas Bayes (1701-1761)
+:::
+
+::: {.column width="50%"}
+![](../../Figs/laplace.jpg){width="80%"}
+
+Pierre Simon Laplace (1749-1827)
+:::
+:::::
+::::::
+
+## A Brief History of Frequentism
+
+::: {style="font-size: 0.8em;"}
+-   Post-enlightenment, there was strong desire for "objective" science
+-   Bayesian inference **requires** subjectivity in the form of a prior belief
+-   This was considered "perverse" by modern standards
+-   Sir Ronald Fisher is responsible for the core philosophy behind contemporary frequentist statistics
+    -   Rejected Bayesianism
+    -   Highly prone to becoming polemic
+    -   Even had a very famous intellectual war with contemporary Jerzy Neyman over the "right" way to do frequentism
+-   Even if Bayesianism was accepted, rigorous Bayesian inference required computational technology unavailable until the late 20th century
+:::
+
+## Fisher and Neyman
+
+:::::: {style="font-size: 0.65em;"}
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+![](../../Figs/fisher.jpeg){width="70%"}
+
+Ronald Fisher (1890-1962)
+:::
+
+::: {.column width="50%"}
+![](../../Figs/neyman.jpg){width="60%"}
+
+Jerzy Neyman (1895-1980)
+:::
+:::::
+::::::

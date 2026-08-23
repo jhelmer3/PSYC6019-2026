@@ -1,0 +1,379 @@
+---
+title: "Lecture 7: More Chi-Square"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(gganimate)
+library(gifski)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+
+bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
+                                                draft_year != "")
+
+```
+
+## Last Time
+
+-   We learned the conceptual foundation of null hypothesis significance testing (NHST)
+-   We saw two examples
+    -   $Z$-test
+        -   Test of a hypothesis about a continuous variable
+        -   Were our sampled NBA players consistent with a population that scored 12 points per game?
+    -   $\chi^2$ test (aka $\chi^2$ "goodness of fit" test)
+        -   Were our sampled gummy bears consistent with equal categories, or consistent with the more raspberries hypothesis?
+
+## Setting Up Hypotheses
+
+-   Set up a null hypothesis $H_0$
+
+    -   $H_0: \mu_{PPG} = 12$
+    -   $H_0: \pi_{raspberry} = \pi_{pineapple} = \pi_{orange} = \pi_{strawberry} = \pi_{lemon} = \frac{1}{5}$
+        -   $\pi$ = notation for parameter representing probability in the population
+
+-   Set up alternative hypothesis $H_a$
+
+    -   $H_0: \mu_{PPG} \neq 12$
+    -   $H_0: \text{At least one } \pi_k \neq \frac{1}{5}$
+        -   $\pi$ = notation for parameter representing probability in the population
+
+## Conducting Test
+
+-   Construct sampling distribution
+-   Calculate test statistic
+-   Determine how unlikely test statistic is for sampling distribution
+-   If $P(\text{statistic}) < .05$, reject null hypothesis.
+    -   For a "two-tailed" test (e.g. a $Z$-test) we multiply by two to account for possibility that under the proposed sampling distribution the statistic was equally likely to have been above or below $\mu$
+
+## More Tests
+
+-   The $Z$-test allows us to test a specific hypothesis about a continuous variable, but **assumes we know the population value of** $\sigma$
+    -   Major limitation! But good for building a conceptual foundation
+-   The $\chi^2$ goodness of fit test allows us to test a hypothesis about the probability of each category for a categorical variable in the population
+    -   E.g. hypothesis about how common each flavor of gummy bears are
+
+In this module we're going to discuss more things you can do with a $\chi^2$ sampling distribution:
+
+-   The $\chi^2$ test of independence for two categorical variables
+
+## Contingency Tables
+
+What if we have more than one categorical variable?
+
+We can arrange these data in a **contingency table**.
+
+*Example: Race and death penalty sentences*\
+*Data from Unah & Boger (2001), death-eligible cases in North Carolina from 1993 to 1997, white victim.*
+
+|                      | Death Sentence |         |           |
+|:---------------------|:--------------:|:-------:|:---------:|
+| **Defendant's Race** |    **Yes**     | **No**  | **Total** |
+| Nonwhite             |       33       |   251   |  **284**  |
+| White                |       33       |   508   |  **541**  |
+| **Total**            |     **66**     | **759** |  **825**  |
+
+What might we want to compare in this table?
+
+## Contingency Tables
+
+::: {style="font-size: 0.825em;"}
+Contingency tables give information about the joint, marginal, and conditional distributions of the observed variables
+
+|                      | Death Sentence |         |           |
+|:---------------------|:--------------:|:-------:|:---------:|
+| **Defendant's Race** |    **Yes**     | **No**  | **Total** |
+| Nonwhite             |       33       |   251   |  **284**  |
+| White                |       33       |   508   |  **541**  |
+| **Total**            |     **66**     | **759** |  **825**  |
+
+-   $P(\text{white} \cap \text{death sentence}) =$ [$\frac{33}{825} = .04$ (joint)]{.fragment}
+
+-   $P(\text{nonwhite} \cap \text{death sentence}) =$ [$\frac{33}{825} = .04$ (joint)]{.fragment}
+
+-   $P(\text{white}) =$ [$\frac{541}{825} = .66$ (marginal)]{.fragment}
+
+-   $P(\text{nonwhite}) =$ [$\frac{284}{825} = .34$ (marginal)]{.fragment}
+
+-   $P(\text{death sentence} | \text{white}) =$ [$\frac{33}{541} = .06$ (conditional)]{.fragment}
+
+-   $P(\text{death sentence} | \text{nonwhite}) =$ [$\frac{33}{284} = .12$ (conditional)]{.fragment}
+:::
+
+## Independence
+
+:::::: {style="font-size: 0.95em;"}
+In the $\chi^2$ test of independence, we want to know if two categorical variables are related (dependent on each other)
+
+$$H_0: \text{Categorical variables are independent}$$
+
+$$H_1: \text{Categorical variables are related}$$
+
+How do we define **independence**?
+
+::::: {.content-visible .answer unless-meta="params.v0"}
+:::: answer
+::: fragment
+If variables $X$ and $Y$ are **independent**, then $P(X \cap Y) = P(X)P(Y)$
+
+-   Joint distribution is the product of marginal distributions
+
+-   Similar to flipping two coins:
+
+$$P\left[\text{(flip 1 = heads)} \cap \text{(flip 2 = heads)}\right] = \frac{1}{2}\times\frac{1}{2} = \frac{1}{4}$$
+:::
+::::
+:::::
+::::::
+
+## Expected Frequency Calculations
+
+We next need to calculate expected frequencies based on $H_0$
+
+First, a bit of notation: We often index *rows* with a subscript *i*, and *columns* with a subscript *j*
+
+-   $R_i$: category $i$ of row variable $R$
+
+-   $C_j$: category $j$ of column variable $C$
+
+-   $N$: total number of observations
+
+-   $f_{Oi}$: observed marginal frequency for row $i$
+
+-   $f_{Oj}$: observed marginal frequency for column $j$
+
+-   $f_{Eij}$: expected joint frequency for row $i$ and column $j$
+
+## Expected Frequency Calculations
+
+We next need to calculate expected frequencies based on $H_0$
+
+To get expected frequencies, we use the **observed marginal** frequencies to determine the **expected joint** frequencies.
+
+Thus, under the assumption of independence,
+
+$$P(R_i \cap C_j) = P(R_i)P(C_j) = \bigg(\frac{f_{Oi}}{N}\bigg) \bigg(\frac{f_{Oj}}{N}\bigg) = \frac{f_{Oi}f_{Oj}}{N^2}$$ $$f_{Eij} = N\times P(R_i \cap C_j) = N\bigg(\frac{f_{Oi}f_{Oj}}{N^2}\bigg) =  \frac{f_{Oi}f_{Oj}}{N}$$
+
+## [Expected Frequency Calculations]{style="font-size: 0.667em;"}
+
+::: {style="font-size: 0.85em;"}
+|                      | Death Sentence |         |           |
+|:---------------------|:--------------:|:-------:|:---------:|
+| **Defendant's Race** |    **Yes**     | **No**  | **Total** |
+| Nonwhite             |       33       |   251   |  **284**  |
+| White                |       33       |   508   |  **541**  |
+| **Total**            |     **66**     | **759** |  **825**  |
+
+$$f_{Eij} = \frac{f_{Oi}f_{Oj}}{N}$$
+
+-   $f_{E}$ (nonwhite, death) = [$\frac{284 \times 66}{825} = \boldsymbol{22.72}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   $f_{E}$ (white, death) = [$\frac{541 \times 66}{825} = \boldsymbol{43.28}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   $f_{E}$ (nonwhite, no death) = [$\frac{284 \times 759}{825} = \boldsymbol{261.28}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   $f_{E}$ (white, no death) = [$\frac{541 \times 759}{825} = \boldsymbol{497.72}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+:::
+
+## $\chi^2$ Test of Independence
+
+The $\chi^2$ test statistic is computed in the same way as for the GoF test
+
+$$\chi^2_{\text{obs}} = \sum_{i=1}^R \sum_{j=1}^C \frac{(f_{Oij} - f_{Eij})^2}{f_{Eij}}$$
+
+-   sum over all cells
+
+::: {style="font-size: 0.85em;"}
+$$\frac{(33 - 22.72)^2}{22.72} + \frac{(33 - 43.28)^2}{43.28} + \frac{(251 - 261.28)^2}{261.28} + \frac{(508 - 497.72)^2}{497.72} = 7.71$$
+:::
+
+## Degrees of Freedom
+
+Given the marginal counts, how many cell counts can be freely chosen?
+
+|   | $C_1$ | $C_2$ | $C_3$ | **Total** |
+|:--------------|:-------------:|:-------------:|:-------------:|:-------------:|
+| $R_1$ | [**1**]{.fragment style="color: blue;"} | [**4**]{.fragment style="color: blue;"} |  | 10 |
+| $R_2$ |  |  |  | 15 |
+| **Total** | 5 | 5 | 15 | 25 |
+
+## None Left
+
+Given the marginal counts, how many cell counts can be freely chosen?
+
+|   | $C_1$ | $C_2$ | $C_3$ | **Total** |
+|:--------------|:-------------:|:-------------:|:-------------:|:-------------:|
+| $R_1$ | [**1**]{style="color: blue;"} | [**4**]{style="color: blue;"} | [**5**]{style="color: red;"} | 10 |
+| $R_2$ | [**4**]{style="color: red;"} | [**1**]{style="color: red;"} | [**5**]{style="color: red;"} | 15 |
+| **Total** | 5 | 5 | 15 | 25 |
+
+The degrees of freedom for the $\chi^2$ test of independence equals $(R-1)(C-1)$
+
+## Our Test
+
+$$df = (R-1)(C-1) = (2-1)(2-1) = 1$$
+
+```{r}
+pchisq(7.71, df = 1, lower.tail = FALSE)
+
+```
+
+## Visual of Our Test
+
+```{r}
+
+
+x <- data.frame(x = c(0, 8.5))
+
+ggplot(x, aes(x)) +
+  stat_function(fun = dchisq, args = list(df = 1), color = "black", linewidth = 0.6) +
+  stat_function(fun = dchisq, args = list(df = 1), xlim = c(0, qchisq(.95, 1)), geom = "area", fill = my_blue, alpha = 0.8) +
+  stat_function(fun = dchisq, args = list(df = 1), xlim = c(qchisq(.95, 1), 8.5), geom = "area", fill = my_red, alpha = 0.8) +
+  geom_vline(xintercept = qchisq(.95, 1), color = my_orange, linewidth = 1) +
+  geom_text(aes(label = paste0("Critical Value\n(", round(qchisq(.95, 1), 2), ")"), 
+                x = qchisq(.95, 1) + 0.3, y = 0.18), size = 4, color = my_orange, hjust = 0) +
+
+  geom_vline(xintercept = 7.71, color = my_purple, linewidth = 1, linetype = "dashed") +
+  geom_text(aes(label = "Observed Statistic\n(x = 7.71, p = 0.005)", 
+                x = 5, y = 0.5), size = 4, color = my_purple, hjust = 0) +
+  geom_segment(aes(x = 6.7, xend = 7.5, y = 0.35, yend = 0.09), 
+               color = my_purple, arrow = arrow(length = unit(.1, "inches"))) +
+  labs(x = expression(chi^2), y = "density", title = expression(paste("Chi-Square Distribution (", df == 1, ")"))) +
+ 
+  theme_light()
+```
+
+## Yates' Correction
+
+::: {style="font-size: 0.8em;"}
+With small sample sizes, the $\chi^2$ test of independence may be **overly liberal**
+
+-   We will be more likely to reject the null hypothesis even if it's true than we want
+
+Yates' correction attempts to correct for the "discontinuity" implied by having small frequencies
+
+-   i.e., marginal probabilities that are closer to discrete (0 or 1 exactly) rather than continuous
+
+$$\chi^2_{\text{obs}} = \sum_{i=1}^R \sum_{j=1}^C \frac{(|f_{Oij} - f_{Eij}| - 0.5)^2}{f_{Eij}}$$
+
+Yates' correction is **conservative**
+
+-   We will be more likely to retain the null hypothesis even if it's false than we want
+
+The corrected $p$-value is necessarily higher than the uncorrected $p$-value
+:::
+
+## Father and Son
+
+Ordinary $\chi^2$ test developed by Karl Pearson
+
+Egon Pearson is K. Pearson's son, another leader of early statistics!
+
+Same $H_0$ and $H_1$ as Pearson's $\chi^2$ test of independence
+
+Test statistic:
+
+$$\chi^2(df) = \frac{\text{Pearson's } \chi^2 \times N}{N - 1}$$
+
+-   $\chi^2$: test statistic from ordinary test of independence
+
+-   $df$: $(R - 1) \times (C - 1)$
+
+-   $N$ total frequency
+
+## Egon Pearson's Adjusted $\chi^2$ Test
+
+E. Pearson's adjusted $\chi^2$ test statistic is always larger than Pearson's $\chi^2$
+
+$p$-value of E. Pearson's test is always smaller than Pearson's $p$-value
+
+-   We say that E. Pearson's test is **liberal**
+
+-   E. Pearson's test has **higher statistical power** to reject the false $H_0$
+
+$$\chi^2_{\text{KP}} < \chi^2_{\text{EP}}$$
+
+$$p_{_\text{KP}} > p_{_\text{EP}}$$
+
+Slightly better performance when \underline{one} cell has a small expected frequency
+
+## Fisher's Exact Test
+
+::: {style="font-size: 0.9em;"}
+Yates' $\chi^2$ and E. Pearson's adjusted $\chi^2$ change the calculation of $\chi^2$. Fisher's exact test uses another method to overcome limitations of the $\chi^2$ test of independence.
+
+1.  Treat the observed marginals as fixed
+
+2.  Find all possible sets of cell counts
+
+3.  Calculate the probability of each set of cell counts (hypergeometric distribution)
+
+4.  Sum the probabilities corresponding to cell count sets that are more extreme (further from $H_0$) than the observed data $\rightarrow$ this is the $p$-value
+
+Limitations:
+
+-   Complicated for tables larger than $2 \times 2$
+-   Can be very slow when marginal frequencies are large
+:::
+
+## Recommendations by Campbell (2007)
+
+-   For large sample sizes, the standard $\chi^2$ test is best.
+
+-   Default in R uses Yates' correction, which helps with smaller samples and will have minimal cost in larger samples.
+
+-   When at least one cell has expected frequency \< 5, instead consider:
+
+    -   If one cell has expected frequency = 1, choose E. Pearson's adjusted $\chi^2$
+
+    -   If all cells have expected frequency \> 1, choose Fisher's exact test
+
+::: {style="font-size: 0.65em;"}
+Campbell, I. (2007). Chi-square and Fisher-Irwin tests of two-by-two tables with small sample recommendations. *Statistics in Medicine*, *26*, 3661-3675.
+:::
