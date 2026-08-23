@@ -9,10 +9,12 @@ tar_option_set(
 tar_source("lab/R")
 
 list(
-  ## syllabus
+  ## main pages
+  tar_quarto(index, "index.qmd"),
   tar_quarto(syllabus, "syllabus.qmd"),
+  tar_quarto(extra_credit, "extra-credit.qmd"),
   
-  ## index page
+  ## lab index page
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
   ## lab 03
