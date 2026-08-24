@@ -11,7 +11,7 @@
     "href": "lab/slides/lab_01.html#instructor-introduction",
     "title": "Introduction to R",
     "section": "Instructor Introduction",
-    "text": "Instructor Introduction\nHi! I’m Jess Helmer. I’m a third-year PhD student in Quantitative Psychology.\nMy research focuses on the measurement and modeling of psychological data.\n\n\n\n○ Email: jhelmer3@gatech.edu\n\n\n○ Office: J.S. Coon Rm 240\n\n\n○ Office Hours: Fridays, 1–2pm, my office / Zoom\n\n\n○ Or by appointment"
+    "text": "Instructor Introduction\nHi! I’m Jess Helmer. I’m a third-year PhD student in Quantitative Psychology.\nMy research focuses on the measurement and modeling of psychological data.\n\n\n\n○ Email: jhelmer3@gatech.edu\n\n\n○ Office: J.S. Coon Rm 240\n\n\n○ Office Hours: Fridays, 1–2pm, my office / Zoom\n\n\n\n○ Or by appointment"
   },
   {
     "objectID": "lab/slides/lab_01.html#what-you-can-expect-from-me",
@@ -7810,5 +7810,33 @@
     "title": "Lab 03 Activity Key",
     "section": "Chi-Squared Test of Independence",
     "text": "Chi-Squared Test of Independence\n\n5a) You now want to see if leaf color and whether or not the leaf had fallen from the tree are independent variables. What are the null and alternative hypotheses for this test?\n\\(H_0\\): Leaf color and whether or not the leaf had fallen have no association.\n\\(H_A\\): Leaf color and whether or not the leaf had fallen have some association.\n\n\n5b) What are the observed frequencies of each color given whether or not they had fallen?\n\ntable(leaves$color, leaves$fallen)\n\n        \n          no yes\n  green  100   9\n  red    202  95\n  orange 246 253\n  brown   28  67\n\n\n\n\n5c) What is the chi-squared statistic for this test?\n\nleaves |&gt;\n  summarize(.by = c(color, fallen),\n            n = n()) |&gt;\n  pivot_wider(names_from = fallen, values_from = n) |&gt;\n  select(-color) |&gt;\n  chisq.test()\n\n\n    Pearson's Chi-squared test\n\ndata:  select(pivot_wider(summarize(leaves, .by = c(color, fallen),     n = n()), names_from = fallen, values_from = n), -color)\nX-squared = 110.07, df = 3, p-value &lt; 2.2e-16\n\n\n\n\n5d) Provide a brief interpretation of these results.\nWe reject the null in favor of the alternative that there is an association between leaf color and whether or not they had fallen."
+  },
+  {
+    "objectID": "lab/slides/lab_01.html#dataframes-1",
+    "href": "lab/slides/lab_01.html#dataframes-1",
+    "title": "Introduction to R",
+    "section": "Dataframes",
+    "text": "Dataframes\nIf you already have vector objects saved, you don’t have to type them in again\n\na &lt;- c(1, 2, 3)\nb &lt;- c(2, 3, 4)\nc &lt;- c(3, 4, 5)\n\n\n\n\n\ndata.frame(a = a,\n           b = b,\n           c = c)\n\n  a b c\n1 1 2 3\n2 2 3 4\n3 3 4 5\n\n\n\n\ndata.frame(a, b, c)\n\n  a b c\n1 1 2 3\n2 2 3 4\n3 3 4 5\n\n\n\n\ndata.frame(A = a, b, c)\n\n  A b c\n1 1 2 3\n2 2 3 4\n3 3 4 5"
+  },
+  {
+    "objectID": "lab/slides/lab_01.html#adding-math-equations",
+    "href": "lab/slides/lab_01.html#adding-math-equations",
+    "title": "Introduction to R",
+    "section": "Adding Math Equations",
+    "text": "Adding Math Equations\nIn Quarto, we can use LaTeX (pronounced “lah-tech” or “lay-tech”) to render nice-looking math symbols and equations\n\\[\ny_i = \\beta_0 + \\beta_1 x_i + \\epsilon_i \\qquad \\quad \\bar{x} = \\frac{\\sum x}{N} \\qquad \\quad s^2 = \\frac{\\sum\\limits_{i=1}^{N} (x_i - \\bar{x})^2}{N-1}\n\\]\nFor inline LaTeX (e.g., \\(a^2 = b^2 + c^2\\)), wrap the equation in single dollar signs $a^2 = b^2 + c^2$.\nFor LaTeX on its own line, like above, wrap the equation in double dollar signs $$y_i = \\beta_0 + \\beta_1 x_i$$\n\\[y_i = \\beta_0 + \\beta_1 x_i\\]"
+  },
+  {
+    "objectID": "lab/slides/lab_01.html#common-latex-syntax",
+    "href": "lab/slides/lab_01.html#common-latex-syntax",
+    "title": "Introduction to R",
+    "section": "Common LaTeX Syntax",
+    "text": "Common LaTeX Syntax\n\n\n\n\nsubscript\na_i\n\\(a_i\\)\n\n\nsuperscript\na^2\n\\(a^2\\)\n\n\nNeed brackets if more than one character:\n\n\nx_ij\n\\(x_ij\\)\n\n\nx_{ij}\n\\(x_{ij}\\)\n\n\n\n\\ is an escape character: tells LaTeX to interpret the following text differently than normally\n\n\nsum\n\\(sum\\)\n\n\n\\sum\n\\(\\sum\\)\n\n\n\\frac{a}{b}\n\\(\\frac{a}{b}\\)\n\n\n\\bar{x}\n\\(\\bar{x}\\)\n\n\n\\times\n\\(\\times\\)\n\n\n\nGreek characters\n\n\n\\alpha\n\\(\\alpha\\)\n\n\n\\beta\n\\(\\beta\\)\n\n\n\\mu\n\\(\\mu\\)\n\n\n\\sigma\n\\(\\sigma\\)"
+  },
+  {
+    "objectID": "lab/slides/lab_01.html#latex-resources",
+    "href": "lab/slides/lab_01.html#latex-resources",
+    "title": "Introduction to R",
+    "section": "LaTeX Resources",
+    "text": "LaTeX Resources\nAn live in-browser LaTeX editor I use: latexeditor.lagrida.com\nMath symbols cheat sheet: cmor-faculty.rice.edu/~heinken/latex/symbols.pdf\nUsually pretty easy to find answers just by Googling (e.g., me looking up the summation syntax earlier) and on Stack Overflow\nNo expectation of memorizing LaTeX syntax"
   }
 ]

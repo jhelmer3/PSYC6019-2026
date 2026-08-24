@@ -6,6 +6,10 @@ tar_option_set(
   packages = c("tidyverse")
 )
 
+tar_config_set(
+  as_job = T
+)
+
 tar_source("lab/R")
 
 list(
