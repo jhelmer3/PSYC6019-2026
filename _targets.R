@@ -9,10 +9,12 @@ tar_option_set(
 tar_source("lab/R")
 
 list(
-  ## syllabus
+  ## main pages
+  tar_quarto(index, "index.qmd"),
   tar_quarto(syllabus, "syllabus.qmd"),
+  tar_quarto(extra_credit, "extra-credit.qmd"),
   
-  ## index page
+  ## lab index page
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
   ## lab 03
@@ -21,7 +23,11 @@ list(
              write.csv(gatech_admissions_data, "lab/data/gatech_admissions.csv",
                        row.names = F),
              format = "file"),
+  tar_target(leaves_data, make_leaves_data()),
+  tar_target(leaves_data_file, 
+             write.csv(leaves_data, "lab/data/leaves.csv", row.names = F)),
   tar_quarto(lab_03_slides, "lab/slides/lab_03.qmd", quiet = F),
+  tar_quarto(lab_03_activity, "lab/activities/activity_keys/lab_03_activity_key.qmd"),
   
   ## lab 02
   tar_target(world_cup_player_stats_file, "lab/raw_data/world_cup_player_stats.csv", format = "file"),
