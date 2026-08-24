@@ -1,0 +1,377 @@
+---
+title: "Lecture 14: Introduction and Syllabus Overview"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+```
+
+## Probability and Statistics
+
+```{r}
+#| fig.width: 6
+#| fig.height: 2
+#| out.width: "100%"
+
+# Zero out standard plot margins
+par(mar = c(0, 0, 0, 0))
+
+# Initialize empty canvas
+plot(0, 0, col = "white", xlim = c(0, 5), ylim = c(0, 3.5),
+     bty = "n", xlab = "", ylab = "", xaxt = "n", yaxt = "n")
+
+# --- Left Box (Population) ---
+polygon(x = c(0.2, 1.7, 1.7, 0.2), y = c(2, 2, 3, 3), border = my_blue, lwd = 2)
+
+# --- Right Box (Sample) ---
+polygon(x = c(3.3, 4.8, 4.8, 3.3), y = c(.5, .5, 1.5, 1.5), border = my_purple, lwd = 2)
+
+# --- Top Curve (Probability) ---
+x_top <- seq(0.95, 4.05, length = 30)
+y_top <- -0.478 * x_top^2 + 1.905 * x_top + 1.621
+points(x_top, y_top, type = 'l', col = my_blue, lwd = 2)
+
+# Top Arrow (pointing to Sample)
+arrows(x0 = x_top[28], x1 = x_top[30], 
+       y0 = y_top[28], y1 = y_top[30], 
+       col = my_blue, lwd = 2)
+
+# --- Bottom Curve (Statistics) ---
+x_bot <- seq(0.95, 4.05, length = 30)
+y_bot <- 0.435 * x_bot^2 - 2.656 * x_bot + 4.132
+points(x_bot, y_bot, type = 'l', col = my_purple, lwd = 2)
+
+# Bottom Arrow (pointing to Population)
+arrows(x0 = x_bot[3], x1 = x_bot[1], 
+       y0 = y_bot[3], y1 = y_bot[1], 
+       col = my_purple, lwd = 2)
+
+# --- Text Labels ---
+text(x = 0.95, y = 2.65, "Population", col = my_blue)
+text(x = 0.95, y = 2.35, "(Parameter)", col = my_blue)
+
+text(x = 4.05, y = 1.15, "Sample", col = my_purple)
+text(x = 4.05, y = 0.85, "(Data)", col = my_purple)
+
+text(x = 3.1, y = 3.3, "Probability", col = my_blue)
+text(x = 1.9, y = 0.3, "Statistics", col = my_purple)
+```
+
+
+::: {style="font-size: 0.75em;"}
+Probability is all about moving from cause to effect
+
+-   Known fact about the world $\rightarrow$ probabilistic outcome
+    -   **Example:** What is the chance I roll a fair die five times in a row and get five straight sixes?
+
+Statistics is about how infer facts about the world based on observed data
+
+-   Probabilistic outcome $\rightarrow$ unknown fact about the world
+    -   **Example:** If I observe a die land on six five times in a row, how likely is it that the dice is loaded (unfair)?
+    
+:::
+
+## The Story so Far
+
+Until now, we've approached this probably with a particular style of thought experiment
+
+- Make a supposition (null hypothesis) about the true probability
+- Collect data
+- Consider how unlikely our data are for that supposition
+- Five straight sixes are possible for a fair die, but unlikely
+- Unlikely enough to reject that as a model of the world?
+
+## Enter: Bayes
+
+:::::: {style="font-size: 0.8em;"}
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+![](../../Figs/bayes.gif){width="80%"}
+
+Thomas Bayes (1701-1761)
+:::
+
+::: {.column width="50%"}
+Almost 200 years before Sir Ronald Fisher laid the foundation for the frequentist approach, A relatively obscure English reverend had a different idea
+
+-   Born to a wealthy nonconformist Presbyterian minister in England
+-   Studied theology and logic at University of Edinburgh
+    -   Presbyterians were not permitted to study in England
+-   Published pamphlets in defense of science and math against more conventional religious accusations that they were heretical
+
+:::
+:::::
+::::::
+
+
+
+## A Bayesian Thought Experiment
+
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+![](../../Figs/billiard.jpg)
+:::
+
+::: {.column width="50%"}
+-   Imagine you're standing at a billiard table, facing **away** from the table
+-   I roll a cue ball, and I don't tell you where it lands
+-   Indicate where you think the cue ball is likely to be on the table
+    -   Think range, not point!
+:::
+:::::
+
+
+
+## Thought Experiment Continued
+
+
+::: fragment
+-   I then roll a 9-ball. I tell you it landed to the right of the cue ball
+    -   Indicate where you think the cue ball is on the table
+:::
+
+::: fragment
+-   I now roll a 4-ball. I tell you it landed to the right of the cue ball
+    -   Indicate where you think the cue ball is on the table
+:::
+
+::: fragment
+-   I now roll a 15-ball. I tell you it landed to the right of the cue ball
+    -   Indicate where you think the cue ball is on the table
+:::
+
+::: fragment
+-   Finally, I roll an 8-ball. I tell you it landed to the right of the cue ball
+    -   Indicate where you think the cue ball is on the table
+:::
+
+
+## Bayes' Rule Mark 1
+
+
+This was the earliest iteration of Bayes rule
+
+-   Think of the cue ball as the true (unknown) parameter
+    -   Defines whether subsequent throws will be to the right (success) or left (failure)
+-   Bayes suggested we take one of two options to start
+    -   "Guess" where the cue ball is
+        -   What would later be known as a "subjective prior"
+    -   Allow for the cue ball to be anywhere
+        -   What would later be known as a "uniform prior"
+        
+## Competing Calculi
+
+
+Two different notions of calculus were simultaneously emerging during Bayes' time
+
+-   Newtonian calculus: focused on geometric representations
+-   Lebnitzian calculus: focused on algebriac representations
+
+Newton's calculus had much more difficult notation, so Lebnitz's ultimately won out.
+
+-   During Bayes' time, Newton's calculus was prominent in England (and Scotland)
+-   We will not use Newton's notation, so what we will describe is quite different than Bayes' formal representation
+
+
+## Review: Probability Notation
+
+-   A **Marginal Probability** is the probability of some event all on its own, written $P(X)$
+-   A **Conditional Probability** is the probability that some event occurs, given that some other event has also occurred, written $P(X|Y)$
+-   A **Joint Probability** is the probability that one event and another event have both occurred $P(X \cap Y)$
+
+## Joint and Conditional Probability
+
+We can move between conditional and joint probabilities as follows
+
+$$P(X|Y) = \frac{P(X\cap Y)}{P(Y)}$$
+
+$$P(X\cap Y) = P(X) \times P(Y|X)$$
+
+## General Representation
+
+::: {style="font-size: 0.9em;"}
+Let's say we have two events, $\color{blue}{A}$ and $\color{red}{B}$.
+
+-   $\color{blue}{A}$ is the location of the cue ball.
+    -   More precisely, $P(\color{blue}{A})$ is **the probability a randomly rolled ball will land to its right**
+    -   We do not know $P(\color{blue}{A})$
+-   $\color{red}{B}$ is the location of the nine ball
+    -   More precisely, $P(\color{red}{B})$ is the is probability a thrown ball will land to the right of the cue ball **for any possible cue ball location**
+    -   $P(\color{red}{B} | \color{blue}{A})$ is the is probability a thrown ball will land to the right of the cue ball **for a specific possible cue ball location**
+
+**Inverse Probability** is the **conditional probability** of $\color{blue}{A}$ given what we know about $\color{red}{B}$ $\color{#BAA53D}{P(A|B)}$. It's what we *learn* about $\color{blue}{A}$ by observing $\color{red}{B}$
+:::
+
+## Inverting Probability I
+
+
+So how can we get to $\color{#BAA53D}{P(A|B)}$?
+
+-   We start with $P(\color{red}{B}|\color{blue}{A})$
+-   While $\color{blue}{A}$ is unknown, we can consider **every possibility of** $\color{blue}{A}$
+-   Then we weight each possibility by our prior probability $P(\color{blue}{A})$
+    -   Either our "guess" about the likely possible positions (subjective prior)
+    -   Or we treat all possible $\color{blue}{A}$'s as equally likely (uniform prior)
+
+
+## Inverting Probability II
+
+
+This gives us the **joint** probability of $\color{blue}{A}$ and $\color{red}{B}$:
+
+$$\color{purple}{P(A \cap B)} = P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})$$
+
+-   This is the probability that both $A$ and $B$ occur simultaneously for all possibilities of $A$
+
+::: {style="text-align: center;"}
+**Joint Probability is the product of a conditional probability and the marginal probability to the event condition on**
+:::
+
+## Inverting Probability III
+
+
+This formula works in both directions!
+
+$$\color{purple}{P(A \cap B)} = P(\color{red}{B}) \times \color{#BAA53D}{P(A|B)}$$
+
+And if we divide both sides of this equation by $P(\color{red}{B})$ we get
+
+$$\frac{\color{purple}{P(A\cap B)}}{P(\color{red}{B})} = \color{#BAA53D}{P(A|B)}$$
+
+But what is $P(\color{red}{B})$?
+
+
+## Inverting Probability IV
+
+One way to think of $P(\color{red}{B})$ is the probability of our known event (9-ball to the right of the cue ball) for all possibilities of our unknown event $\color{blue}{A}$ (location of the cue ball)
+
+$$P(\color{red}B) = P(\color{red}B|\color{blue}{A_1}) + P(\color{red}B|\color{blue}{A_2}) \dots P(\color{red}B|\color{blue}{A_k}) =$$ $$\sum_{i=1}^k P(\color{red}B|\color{blue}{A_i})$$
+
+## Recap
+
+We have established the following:
+
+$$\frac{\color{purple}{P(A\cap B)}}{P(\color{red}{B})} = \color{#BAA53D}{P(A|B)}$$ $$\color{purple}{P(A \cap B)} = P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})$$
+
+$$P(\color{red}{B}) = \sum_{i=1}^k P(\color{red}B|\color{blue}{A_i})$$
+
+## Substituting
+
+To get to Bayes' rule, all we have to do is substitute!
+
+$$\color{#BAA53D}{P(A|B)} = \frac{\color{purple}{P(A\cap B)}}{P(\color{red}{B})} =\frac{P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})}{P(\color{red}{B})} =$$ $$\frac{P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})}{\sum_{i=1}^k P(\color{red}B|\color{blue}{A_i})}$$
+
+Most commonly (and most generally) it is written as:
+
+$$\color{#BAA53D}{P(A|B)}  =\frac{P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})}{P(\color{red}{B})}$$
+
+
+## Read
+
+
+We can read Bayes' rule as saying:
+
+-   What we can learn about the unknown $\color{blue}{A}$ given the known $\color{red}{B}$ is:
+    -   All possible ways the known $\color{red}{B}$ could arise given a valid possible unknown $\color{blue}{A}$
+        -   All possible ways the 9-ball could wind up to the right of the cue ball
+    -   Weighted by our prior belief about the different possibilities for $\color{blue}{A}$
+        -   Weighted by all possible locations of the clue ball
+    -   Divided by all the ways the known $\color{red}{B}$ could arise from the unknown $\color{blue}{A}$
+        -   Divided by the sum of all possible ways the 9-ball could be to the right of the cue ball
+
+## Laplace vs. Bayes
+
+- Bayes himself was a relatively obscure figure in his time
+- Value of his work was recognized by a fellow minister, Richard Price
+- Bayes' rule was separately **rediscovered** by French statistician Pierre Simon Laplace
+    - Laplace is an S-tier figure in the history of science and statistics
+    - Could have easily called it "Laplace's rule" but he met Price, learned about Bayes, and that's why it's called Bayes' rule
+
+
+## What Happened?
+
+- Laplace appreciated Bayes' rule, but ultimately decided it was impractical
+- If you collect enough data, it will eventually overwhelm your prior
+- By the 20th century, science was rejecting all things subjective
+- Fisher and most early 20th century statisticians refused to incorporate subjective belief into objective analysis
+  - Offending Fisher was not wise!
+  
+## Likelihood $\rightarrow$ Posterior
+
+Using the likelihood notation we developed last time, we can write a more general version of Bayes' rule as
+
+$$P(\boldsymbol{\theta}|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{P(\boldsymbol{D})}$$
+
+- **Prior:** $P(\boldsymbol{\theta})$
+- **Likelihood:** $P(\boldsymbol{D}|\boldsymbol{\theta})$
+- **Scaling term:** $P(\boldsymbol{D})$
+- **Posterior:** $P(\boldsymbol{\theta}|\boldsymbol{D})$
+
+## The Other Wrinkle
+
+::: {style="font-size: 0.95em;"}
+
+Besides the issue of subjectivity, it turns out one of these elements is uniquely challenging to handle from a **computational** perspective.
+
+- Even if someone wanted to defy Fisher, there were sever logistical restrictions!
+
+Can you guess which one?
+
+
+
+[It's not the prior! Specifying priors is controversial, and not easy to do with technical sophistication, but they are relatively straightforward from a computational perspective]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+[It's not the likelihood! Computational algorithms made likelihood based analysis more accessible, but the computational hurdles to Bayes' rule go fay beyond these]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+[It's the innocuous looking **scaling term** in the denominator. We'll see how this got solved next time and start to implement Bayesian analyses]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+:::
