@@ -22,7 +22,7 @@ format:
         };
         </script>
 params:
-  v0: true 
+  v0: false 
 editor: source
 ---
 
@@ -216,7 +216,7 @@ d
 -   Ozer, D. J. (1986). *Consistency in personality: A methodological framework*. Springer-Verlag.
 :::
 
-## The Data Box
+## More Data Box
 
 :::::: {style="font-size: 0.8em;"}
 **Four dimensions:**
@@ -277,9 +277,9 @@ draw_databox(0, "Person 1")
 draw_databox(6.8, "Person 2")
 ```
 
-## The Data Box & Research Designs
+## Research Designs
 
-:::::: {style="font-size: 0.65em;"}
+:::::: {style="font-size: 0.75em;"}
 **Example:**
 
 ::::: columns
@@ -325,7 +325,7 @@ Stevens (1946) classified variables as being measured on one of four scales:
 Stevens, S. S. (1946). On the theory of scales of measurement. *Science*, *103*, 677--680. <https://doi.org/10.1126/science.103.2684.677>
 :::
 
-## Measurement Scales
+## Data $\rightarrow$ Method
 
 \small
 
@@ -335,7 +335,9 @@ Perhaps a more useful distinction:
 
 ::::: columns
 ::: {.column width="50%"}
-**Discrete/Categorical variables** - Frequencies
+**Discrete/Categorical variables** 
+
+- Frequencies
 
 -   Percentages
 
@@ -357,7 +359,7 @@ Perhaps a more useful distinction:
 :::
 :::::
 
--   Middle ground: count data, Likert scales
+-   **Middle ground:** count data, Likert scales
 
 Better to understand what statistical tests can and cannot tell you, and whether **interpretations** make sense
 
@@ -496,14 +498,19 @@ bbal_desc <- bball |>
   pivot_wider(names_from = draft_round, values_from = Freq., names_prefix = "Round ") %>%
   arrange(desc(`Round 1`)) |>
   rename("Undrafted" = "Round Undrafted")
-  
+
 bbal_desc[is.na(bbal_desc)] <- 0
+
+n_ball <- sum(colSums(bbal_desc[-1]))
+
+
+
 
 bbal_desc <- bbal_desc |> 
   mutate(
-    `Round 1` = paste0(`Round 1`, " (", round(`Round 1`/sum(`Round 1`), 4) * 100, "%)"),
-    `Round 2` = paste0(`Round 2`, " (", round(`Round 2`/sum(`Round 2`), 4) * 100, "%)"),
-    `Undrafted` = paste0(`Undrafted`, " (", round(`Undrafted`/sum(`Undrafted`), 4) * 100, "%)")
+    `Round 1` = paste0(`Round 1`, " (", round(`Round 1`/n_ball, 4) * 100, "%)"),
+    `Round 2` = paste0(`Round 2`, " (", round(`Round 2`/n_ball, 4) * 100, "%)"),
+    `Undrafted` = paste0(`Undrafted`, " (", round(`Undrafted`/n_ball, 4) * 100, "%)")
   )
 
 # 2. APA Formatting using flextable
@@ -722,7 +729,7 @@ Let's consider the following set of numbers \[1, 2, $x$\]. What is $x$?
 
 [$x$ could be anything!]{.answer .fragment .content-visible unless-meta="params.v0"}
 
-[How what if I told you that the mean of these three numbers was $\bar{X} = 2$. Now what is $x$?]{.fragment}
+[What if I told you that the mean of these three numbers was $\bar{X} = 2$. Now what is $x$?]{.fragment}
 
 [$x$ must be 3!]{.answer .fragment .content-visible unless-meta="params.v0"}
 
@@ -735,7 +742,7 @@ Let's consider the following set of numbers \[1, 2, $x$\]. What is $x$?
 ## [Degrees of Freedom Simulated]{style="font-size: 0.7em;"}
 
 ::: {style="font-size: 0.9em;"}
-Sometimes when you want to prove a concept to yourself, it helps to simulated it.
+Sometimes when you want to prove a concept to yourself, it helps to simulate it.
 
 In the following slides I:
 
@@ -748,7 +755,7 @@ In the following slides I:
 -   Repeated the process 100,000 times
 -   Plotted the results to compare how well the sample statistics from these two formulas reproduced the known variance parameter $\sigma^2 = 10$
 
-Our goal is to have $s^2$ equal to the $\sigma^2$ \textit{on average}
+Our goal is to have $s^2$ equal to the $\sigma^2$ *on average*
 :::
 
 ## Simulated Example
@@ -783,7 +790,7 @@ p1 <- ggplot(dt_l, aes(x = Variance, fill = Denominator)) +
 p2 <- ggplot(dt_l %>% filter(Denominator == "N"), aes(x = Variance, fill = Denominator)) + 
   geom_vline(xintercept = 10, linetype = 1) + 
   annotate(geom = "text", x = 14, y = .07, label = "sigma^2 == 10", parse = TRUE, size = 6) +
-  annotate(geom = "text", x = mb - 5, y = .0975, label = paste0("s^2 == ", mb), parse = TRUE, size = 6, color = "red") +
+  annotate(geom = "text", x = mb - 5, y = .0975, label = paste0("bar(s)^2 == ", mb), parse = TRUE, size = 6, color = "red") +
   geom_density(alpha = .5) + 
   scale_fill_manual(values = c("red", "blue")) + 
   geom_vline(xintercept = mb, linetype = 2, color = "red") +
@@ -796,8 +803,8 @@ p2 <- ggplot(dt_l %>% filter(Denominator == "N"), aes(x = Variance, fill = Denom
 p3 <- ggplot(dt_l, aes(x = Variance, fill = Denominator)) + 
   geom_vline(xintercept = 10, linetype = 1) + 
   annotate(geom = "text", x = 14, y = .07, label = "sigma^2 == 10", parse = TRUE, size = 6) +
-  annotate(geom = "text", x = mb - 5, y = .0975, label = paste0("s^2 == ", mb), parse = TRUE, size = 6, color = "red") +
-  annotate(geom = "text", x = 14, y = .055, label = paste0("s^2 == ", mu), parse = TRUE, size = 6, color = "blue") +
+  annotate(geom = "text", x = mb - 5, y = .0975, label = paste0("bar(s)^2 == ", mb), parse = TRUE, size = 6, color = "red") +
+  annotate(geom = "text", x = 16, y = .055, label = paste0("bar(s)^2 == ", mu), parse = TRUE, size = 6, color = "blue") +
   geom_density(alpha = .5) + 
   scale_fill_manual(values = c("red", "blue")) + 
   geom_vline(xintercept = mb, linetype = 2, color = "red") + 
@@ -841,13 +848,43 @@ Consider the binary variable we created "Was the player drafted or not?"
 
 -   Smallest (zero) variance if $p = 0$ or $p = 1$
 
+## Binary Variables
+
+Let's create two binary variables
+
+```{r}
+#| echo: true
+p1 <- c(1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0)
+p2 <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+```
+
+Calculate means:
+
+```{r}
+#| echo: true
+p1_bar <- sum(p1)/length(p1)
+p2_bar <- sum(p2)/length(p2)
+```
+
+Calculate variances two different ways:
+
+```{r}
+#| echo: true
+sum((p1 - p1_bar)^2)/(length(p1))
+p1_bar * (1 - p1_bar)
+
+
+sum((p2 - p2_bar)^2)/(length(p2))
+p2_bar * (1 - p2_bar)
+
+```
 ## Summary Table in R {.scrollable}
 
 ```{r}
 #| echo: true
 
 bball |>
-  group_by(draft_round) %>% 
+  group_by(draft_round) |>
   summarize(N = n(),
     mean_Age = round(mean(Age), 2), 
     sd_Age   = round(sd(Age), 2),
@@ -862,7 +899,7 @@ bball |>
 
 ## In APA Format
 
-One hundred sixty players were drafted in the first round (mean age = 28.0 years, $SD$ = 4.16. From the second round, 52 players were drafted (mean age = 22.2 years, SD = 3.16). Forty-six were undrafted (mean age = 27.8 years, SD = 3.41).
+One hundred sixty players were drafted in the first round (mean age = 28.0 years, $SD$ = 4.16). From the second round, 52 players were drafted (mean age = 22.2 years, SD = 3.16). Forty-six were undrafted (mean age = 27.8 years, SD = 3.41).
 
 -   If a number has only one digit or begins a sentence, write it out. Otherwise, use the numeral.
 -   Round as much as possible while preserving relevant information
