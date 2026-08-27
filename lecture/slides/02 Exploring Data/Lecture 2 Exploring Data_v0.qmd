@@ -175,13 +175,13 @@ This course will begin and end with [**statistics**]{style="color: #984EA3;"}, w
 The difference between [**statistics**]{style="color: #984EA3;"} and [**probability**]{style="color: #377EB8;"} is in what is **known** or **held constant**
 
 -   In [**probability** parameters are assumed to be known]{style="color: #377EB8;"}
-    -   **Parameter:** A quantity that describes (a property of) an entire population
+    -   **Parameter:** A quantity that describes (a property of) an entire population, traditionally denoted with Greek letter ($\sigma$, $\mu$, $\beta$)
 -   In [**statistics** data are assumed to be known]{style="color: #984EA3;"}
 
 What IS/ARE data? (Singular: datum)
 
 -   Distinct pieces of **observed** information
--   **Statistic:** Quantity calculated from a finite amount of data to *estimate a parameter*
+-   **Statistic:** Quantity calculated from a finite amount of data to *estimate a parameter*, traditionally denoted with English letter ($s$, $M$, $b$)
 
 We often arrange data into rectangular **datasets**
 
@@ -311,6 +311,8 @@ draw_databox(6.8, "Person 2")
 
 ## Measurement Scales
 
+:::::: {style="font-size: 0.8em;"}
+
 Stevens (1946) classified variables as being measured on one of four scales:
 
 1.  **Nominal**: Variables with discrete categories
@@ -319,9 +321,17 @@ Stevens (1946) classified variables as being measured on one of four scales:
 
 3.  **Interval**: Distances between scale points are equal (zero has no special meaning)
 
+  - **Alternatively:** [Differences are constant $4 - 2 = 6 - 4$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
 4.  **Ratio**: Distances between scale points are equal (zero has a special meaning, usually the absence of the trait)
 
-::: {style="font-size: 0.8em;"}
+  - **Alternatively:** [Ratios are constant $\frac{10}{5} = \frac{100}{50}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+  
+    - [A 10 year old is 2x as old as a 5 year old, but 100 degrees is not 2x as hot as 50 degrees]{.answer .fragment .content-visible unless-meta="params.v0"}
+    
+::::::
+
+::: {style="font-size: 0.65em;"}
 Stevens, S. S. (1946). On the theory of scales of measurement. *Science*, *103*, 677--680. <https://doi.org/10.1126/science.103.2684.677>
 :::
 
@@ -329,7 +339,7 @@ Stevens, S. S. (1946). On the theory of scales of measurement. *Science*, *103*,
 
 \small
 
-My recommendation: Don't take measurement scales too seriously
+My recommendation: Don't take these precise measurement scales too seriously
 
 Perhaps a more useful distinction:
 
@@ -365,15 +375,26 @@ Better to understand what statistical tests can and cannot tell you, and whether
 
 ## Thinking it Through
 
+:::::: {style="font-size: 0.9em;"}
+
 It can also be helpful to think about how different types of data compare to one another. In what ways are the following variables different or similar in terms of their *data structure*?
 
 -   [**The number of siblings a person has**]{style="color: red;"} vs. [**a person's age**]{style="color: blue;"}
+    
+    - [non-negative integers vs. reals]{.answer .fragment .content-visible unless-meta="params.v0"}
+
 
 -   [**the number of points the home team scores**]{style="color: red;"} vs. [**the difference in score between the two teams**]{style="color: blue;"}
 
+    - [non-negative integers vs. negative or positive integers]{.answer .fragment .content-visible unless-meta="params.v0"}
+
 -   [**the probability a political incumbent wins election**]{style="color: red;"} vs. [**the number of votes they receive**]{style="color: blue;"}
 
+    - [proportion between zero and one vs. non-negative integers]{.answer .fragment .content-visible unless-meta="params.v0"}
+
 Thinking about these differences can be critical to understanding what statistical techniques and interpretations are appropriate.
+
+:::::: 
 
 ## 2026 NBA Data
 
@@ -451,8 +472,7 @@ knitr::kable(tab)
 bball <- bball |> mutate(draft_round = factor(draft_round),
                          # new variable for whether player was drafted:
                          drafted = draft_round != "Undrafted")
-bball |> 
-  glimpse()
+bball |>  glimpse()
 
 ```
 
@@ -462,7 +482,6 @@ bball |>
 
 ```{r}
 #| echo: TRUE
-
 table(bball$draft_round)
 ```
 
@@ -556,7 +575,7 @@ bbal_desc |>
 
     -   [$N$: sample size]{.answer .fragment .content-visible unless-meta="params.v0"}
 
-    -   [$\bar{x}$: sample mean calculated from data]{.answer .fragment .content-visible unless-meta="params.v0"}
+    -   [$\bar{x}$: sample mean calculated from data (sometimes $M$)]{.answer .fragment .content-visible unless-meta="params.v0"}
 
     -   [$\mu$: population mean, expected value of probability distribution]{.answer .fragment .content-visible unless-meta="params.v0"}
 
@@ -566,9 +585,9 @@ The **trimmed mean** is a robust statistic that reduces the two disadvantages of
 
 1.  Sensitivity to asymmetric distributions
 
-2.  Sensitivity to extreme scores
+2.  Sensitivity to extreme values
 
-**5% trimmed mean** is the mean of the data that discards the lowest 5% and the highest 5% of scores in the original data
+**5% trimmed mean** is the mean of the data that discards the lowest 5% and the highest 5% of values in the original data
 
 The **mode** is the value with the highest frequency
 
@@ -651,10 +670,10 @@ grid.arrange(p1, p2, nrow = 1)
 ::: {style="font-size: 0.8em;"}
 | Property | **Mode** | **Median** | **Mean** |
 |:-----------------|:-----------------|:-----------------|:-----------------|
-| **Score that is actually observed in the data** | Always | Not Necessarily | Not Necessarily |
-| **Affected by extreme scores** | Less Affected | Less Affected | More Affected |
+| **Value that is actually observed in the data** | Always | Not Necessarily | Not Necessarily |
+| **Affected by extreme values** | Less Affected | Less Affected | More Affected |
 | **Affected by asymmetric distribution** | Least Affected | Less Affected | Most Affected |
-| **Full use of all participants' scores** | No | No | Yes |
+| **Full use of all data** | No | No | Yes |
 | **Applications in other statistical analyses** | Few | Few | Many |
 :::
 
@@ -663,9 +682,9 @@ grid.arrange(p1, p2, nrow = 1)
 ::: {style="font-size: 0.8em;"}
 **Variability** measures how spread out the data are
 
--   **Range**: = maximum score - minimum score
+-   **Range**: = maximum value - minimum value
 
-    -   Highly sensitive to extreme scores
+    -   Highly sensitive to extreme values
 
     -   Does not use all of the information in the data
 
@@ -675,7 +694,7 @@ grid.arrange(p1, p2, nrow = 1)
 
     -   $75^\text{th}$ percentile = $3^\text{rd}$ quartile (3Q)
 
-    -   Less sensitive to extreme scores
+    -   Less sensitive to extreme values
 
     -   Does not use all of the information in the data
 
@@ -687,6 +706,8 @@ grid.arrange(p1, p2, nrow = 1)
 :::
 
 ## Variance and SD
+
+::: {style="font-size: 0.9em;"}
 
 **Variance** (sample: $s^2$, population: $\sigma^2$):
 
@@ -704,6 +725,8 @@ $$s^2 = \frac{\sum(x - \bar{x})^2}{N-1}\,\,\,\,\, \sigma^2 = \frac{\sum(x - \mu)
 
 -   Square root of the variance
 -   Variance is in squared units, SD is in the units of the original variable
+
+:::
 
 ## Pythathogrean Theorm of Statistics
 
@@ -729,31 +752,31 @@ Let's consider the following set of numbers \[1, 2, $x$\]. What is $x$?
 
 [$x$ could be anything!]{.answer .fragment .content-visible unless-meta="params.v0"}
 
-[What if I told you that the mean of these three numbers was $\bar{X} = 2$. Now what is $x$?]{.fragment}
+[What if I told you that the mean of these three numbers was $\bar{x} = 2$. Now what is $x$?]{.fragment}
 
 [$x$ must be 3!]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ## [Degrees of Freedom Explained]{style="font-size: 0.7em;"}
 
-[This is what degrees of freedom are: The number of elements that can freely vary. In the first example, there is one degree of freedom, because $x$ can be anything. In the second, there are zero, because there are no elements that can freely vary.]{.answer .fragment .content-visible unless-meta="params.v0"}
+[Degrees of freedom are the number of elements that can freely vary. In the first example, there is one degree of freedom, because $x$ can be anything. In the second, there are zero, because there are no elements that can freely vary.]{.answer .fragment .content-visible unless-meta="params.v0"}
 
-[Because we already account for the sample mean in estimating the variance, we are calculating the variance based on a sample that has $N - 1$ elements that can freely vary, so that's our appropriate sample size to average over]{.answer .fragment .content-visible unless-meta="params.v0"}
+[Because we already account for the sample mean in estimating the variance (as in our example on the previous page), we are calculating the variance based on a sample that has $N - 1$ elements that can freely vary, so that's our appropriate sample size to average over]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ## [Degrees of Freedom Simulated]{style="font-size: 0.7em;"}
 
-::: {style="font-size: 0.9em;"}
+::: {style="font-size: 0.85em;"}
 Sometimes when you want to prove a concept to yourself, it helps to simulate it.
 
 In the following slides I:
 
 -   Set the population mean $\mu = 0$
 -   Set the population variance $\sigma^2 = 10$
--   Randomly generated a sample of size $N = 5$ from these parameters
--   Calculated the variance using each of the following formulas
+-   Generated sets of $N = 5$ random numbers using these parameters
+-   Calculated the variance of each sample using each of the following formulas
     -   $\frac{\sum(x - \bar{x})^2}{N}$
     -   $\frac{\sum(x - \bar{x})^2}{N - 1}$
 -   Repeated the process 100,000 times
--   Plotted the results to compare how well the sample statistics from these two formulas reproduced the known variance parameter $\sigma^2 = 10$
+-   Plotted distribution of $s^2$ values to compare how well the sample statistics from these two formulas reproduced the known variance parameter $\sigma^2 = 10$
 
 Our goal is to have $s^2$ equal to the $\sigma^2$ *on average*
 :::
@@ -862,7 +885,7 @@ Calculate means:
 
 ```{r}
 #| echo: true
-p1_bar <- sum(p1)/length(p1)
+p1_bar <- sum(p1)/length(p1) 
 p2_bar <- sum(p2)/length(p2)
 ```
 
@@ -870,15 +893,18 @@ Calculate variances two different ways:
 
 ```{r}
 #| echo: true
-sum((p1 - p1_bar)^2)/(length(p1))
-p1_bar * (1 - p1_bar)
+sum((p1 - p1_bar)^2)/(length(p1)) # mean of squared deviations (standard population variance formula)
+p1_bar * (1 - p1_bar) # p x (1 - p)
 
 
-sum((p2 - p2_bar)^2)/(length(p2))
-p2_bar * (1 - p2_bar)
+sum((p2 - p2_bar)^2)/(length(p2)) # mean of squared deviations
+p2_bar * (1 - p2_bar) # p x (1 - p)
 
 ```
+
 ## Summary Table in R {.scrollable}
+
+We sometimes organize descriptive statistics into a summary table
 
 ```{r}
 #| echo: true
@@ -916,7 +942,7 @@ $$\text{Skew} = \frac{\sum(x - \bar{x})^3 / N}{[\sum(x - \bar{x})^2 / N]^{3/2}}$
 
 -   Negative or left skew: long left tail
 
--   Negative or right skew: long right tail
+-   Positive or right skew: long right tail
     - **Direction of skewness is where the long tail is**
 
 -   Higher magnitude of skew: more asymmetric variable

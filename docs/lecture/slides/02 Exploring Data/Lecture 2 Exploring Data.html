@@ -6,8 +6,8 @@
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.42">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.38">
 
   <meta name="author" content="Mark Himmelstein">
   <title>PSYC 6019 – Lecture 2: Exploring Data</title>
@@ -17,6 +17,9 @@
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
   <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -29,8 +32,9 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -41,7 +45,7 @@
     }
     @media print {
     pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
     }
     pre.numberSource code
       { counter-reset: source-line 0; }
@@ -94,7 +98,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-1a1f3d21782fc4857a415709dc9abfca.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-f4466831b980178684530f2fd43447de.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -260,14 +264,14 @@ Mark Himmelstein
 <ul>
 <li>In <span style="color: #377EB8;"><strong>probability</strong> parameters are assumed to be known</span>
 <ul>
-<li><strong>Parameter:</strong> A quantity that describes (a property of) an entire population</li>
+<li><strong>Parameter:</strong> A quantity that describes (a property of) an entire population, traditionally denoted with Greek letter (<span class="math inline">\(\sigma\)</span>, <span class="math inline">\(\mu\)</span>, <span class="math inline">\(\beta\)</span>)</li>
 </ul></li>
 <li>In <span style="color: #984EA3;"><strong>statistics</strong> data are assumed to be known</span></li>
 </ul>
 <p>What IS/ARE data? (Singular: datum)</p>
 <ul>
 <li>Distinct pieces of <strong>observed</strong> information</li>
-<li><strong>Statistic:</strong> Quantity calculated from a finite amount of data to <em>estimate a parameter</em></li>
+<li><strong>Statistic:</strong> Quantity calculated from a finite amount of data to <em>estimate a parameter</em>, traditionally denoted with English letter (<span class="math inline">\(s\)</span>, <span class="math inline">\(M\)</span>, <span class="math inline">\(b\)</span>)</li>
 </ul>
 <p>We often arrange data into rectangular <strong>datasets</strong></p>
 </section>
@@ -279,7 +283,7 @@ Mark Himmelstein
 </ul>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a></a><span class="co"># A tibble: 10 × 6</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a></a><span class="co"># A tibble: 10 × 6</span></span>
 <span id="cb1-2"><a></a>   <span class="ex">Participant_ID</span> Num_Siblings Gender   Age Shoe_Size    IQ</span>
 <span id="cb1-3"><a></a>            <span class="op">&lt;</span>int<span class="op">&gt;</span>        <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>fct<span class="op">&gt;</span>  <span class="op">&lt;</span>dbl<span class="op">&gt;</span>     <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>dbl<span class="op">&gt;</span></span>
 <span id="cb1-4"><a></a> <span class="ex">1</span>              1            1 M       18.1      10.5   121</span>
@@ -291,7 +295,7 @@ Mark Himmelstein
 <span id="cb1-10"><a></a> <span class="ex">7</span>              7            0 F       26.8       7.5   103</span>
 <span id="cb1-11"><a></a> <span class="ex">8</span>              8            3 F       18.3       8.5    99</span>
 <span id="cb1-12"><a></a> <span class="ex">9</span>              9            3 F       30.6       6.5   120</span>
-<span id="cb1-13"><a></a><span class="ex">10</span>             10            0 M       29.7       9.5    95</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-13"><a></a><span class="ex">10</span>             10            0 M       29.7       9.5    95</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -371,20 +375,33 @@ Mark Himmelstein
 </section>
 <section id="measurement-scales" class="slide level2">
 <h2>Measurement Scales</h2>
+<div style="font-size: 0.8em;">
 <p>Stevens (1946) classified variables as being measured on one of four scales:</p>
 <ol type="1">
 <li><p><strong>Nominal</strong>: Variables with discrete categories</p></li>
 <li><p><strong>Ordinal</strong>: Variables with ordering or ranking, distances between scale points are not equal</p></li>
 <li><p><strong>Interval</strong>: Distances between scale points are equal (zero has no special meaning)</p></li>
-<li><p><strong>Ratio</strong>: Distances between scale points are equal (zero has a special meaning, usually the absence of the trait)</p></li>
 </ol>
-<div style="font-size: 0.8em;">
+<ul>
+<li><strong>Alternatively:</strong> <span class="answer fragment" data-unless-meta="params.v0">Differences are constant <span class="math inline">\(4 - 2 = 6 - 4\)</span></span></li>
+</ul>
+<ol start="4" type="1">
+<li><strong>Ratio</strong>: Distances between scale points are equal (zero has a special meaning, usually the absence of the trait)</li>
+</ol>
+<ul>
+<li><p><strong>Alternatively:</strong> <span class="answer fragment" data-unless-meta="params.v0">Ratios are constant <span class="math inline">\(\frac{10}{5} = \frac{100}{50}\)</span></span></p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">A 10 year old is 2x as old as a 5 year old, but 100 degrees is not 2x as hot as 50 degrees</span></li>
+</ul></li>
+</ul>
+</div>
+<div style="font-size: 0.65em;">
 <p>Stevens, S. S. (1946). On the theory of scales of measurement. <em>Science</em>, <em>103</em>, 677–680. <a href="https://doi.org/10.1126/science.103.2684.677" class="uri">https://doi.org/10.1126/science.103.2684.677</a></p>
 </div>
 </section>
 <section id="data-rightarrow-method" class="slide level2">
 <h2>Data <span class="math inline">\(\rightarrow\)</span> Method</h2>
-<p>My recommendation: Don’t take measurement scales too seriously</p>
+<p>My recommendation: Don’t take these precise measurement scales too seriously</p>
 <p>Perhaps a more useful distinction:</p>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -411,22 +428,33 @@ Mark Himmelstein
 </section>
 <section id="thinking-it-through" class="slide level2">
 <h2>Thinking it Through</h2>
+<div style="font-size: 0.9em;">
 <p>It can also be helpful to think about how different types of data compare to one another. In what ways are the following variables different or similar in terms of their <em>data structure</em>?</p>
 <ul>
-<li><p><span style="color: red;"><strong>The number of siblings a person has</strong></span> vs.&nbsp;<span style="color: blue;"><strong>a person’s age</strong></span></p></li>
-<li><p><span style="color: red;"><strong>the number of points the home team scores</strong></span> vs.&nbsp;<span style="color: blue;"><strong>the difference in score between the two teams</strong></span></p></li>
-<li><p><span style="color: red;"><strong>the probability a political incumbent wins election</strong></span> vs.&nbsp;<span style="color: blue;"><strong>the number of votes they receive</strong></span></p></li>
+<li><p><span style="color: red;"><strong>The number of siblings a person has</strong></span> vs.&nbsp;<span style="color: blue;"><strong>a person’s age</strong></span></p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">non-negative integers vs.&nbsp;reals</span></li>
+</ul></li>
+<li><p><span style="color: red;"><strong>the number of points the home team scores</strong></span> vs.&nbsp;<span style="color: blue;"><strong>the difference in score between the two teams</strong></span></p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">non-negative integers vs.&nbsp;negative or positive integers</span></li>
+</ul></li>
+<li><p><span style="color: red;"><strong>the probability a political incumbent wins election</strong></span> vs.&nbsp;<span style="color: blue;"><strong>the number of votes they receive</strong></span></p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">proportion between zero and one vs.&nbsp;non-negative integers</span></li>
+</ul></li>
 </ul>
 <p>Thinking about these differences can be critical to understanding what statistical techniques and interpretations are appropriate.</p>
+</div>
 </section>
 <section id="nba-data" class="slide level2">
 <h2>2026 NBA Data</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>bball <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"2026NBA_data.csv"</span>) <span class="sc">|&gt;</span> <span class="fu">filter</span>(G <span class="sc">&gt;=</span> <span class="fu">max</span>(G)<span class="sc">/</span><span class="dv">2</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>bball <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"2026NBA_data.csv"</span>) <span class="sc">|&gt;</span> <span class="fu">filter</span>(G <span class="sc">&gt;=</span> <span class="fu">max</span>(G)<span class="sc">/</span><span class="dv">2</span>,</span>
 <span id="cb2-2"><a></a>                                                draft_year <span class="sc">!=</span> <span class="st">""</span>)</span>
-<span id="cb2-3"><a></a>bball <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a></a>bball <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a></a><span class="ex">Rows:</span> 258</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a></a><span class="ex">Rows:</span> 258</span>
 <span id="cb3-2"><a></a><span class="ex">Columns:</span> 29</span>
 <span id="cb3-3"><a></a><span class="ex">$</span> Player      <span class="op">&lt;</span>chr<span class="op">&gt;</span> <span class="st">"Luka Dončić"</span>, <span class="st">"Shai Gilgeous-Alexande…</span></span>
 <span id="cb3-4"><a></a><span class="st">$ Age         &lt;int&gt; 26, 27, 24, 29, 25, 34, 29, 30, 28, 37…</span></span>
@@ -456,7 +484,7 @@ Mark Himmelstein
 <span id="cb3-28"><a></a><span class="st">$ TRB         &lt;dbl&gt; 7.7, 4.3, 5.0, 6.9, 4.1, 6.4, 4.5, 12.…</span></span>
 <span id="cb3-29"><a></a><span class="st">$ AST         &lt;dbl&gt; 8.3, 6.6, 3.7, 5.1, 6.6, 3.6, 5.7, 10.…</span></span>
 <span id="cb3-30"><a></a><span class="st">$ STL         &lt;dbl&gt; 1.6, 1.4, 1.4, 1.0, 1.9, 1.9, 1.5, 1.4…</span></span>
-<span id="cb3-31"><a></a><span class="st">$ BLK         &lt;dbl&gt; 0.5, 0.8, 0.8, 0.4, 0.8, 0.4, 0.3, 0.8…</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-31"><a></a><span class="st">$ BLK         &lt;dbl&gt; 0.5, 0.8, 0.8, 0.4, 0.8, 0.4, 0.3, 0.8…</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -625,13 +653,12 @@ Mark Himmelstein
 <section id="factors-and-logicals" class="slide level2">
 <h2>Factors and Logicals</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>bball <span class="ot">&lt;-</span> bball <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">draft_round =</span> <span class="fu">factor</span>(draft_round),</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>bball <span class="ot">&lt;-</span> bball <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">draft_round =</span> <span class="fu">factor</span>(draft_round),</span>
 <span id="cb4-2"><a></a>                         <span class="co"># new variable for whether player was drafted:</span></span>
 <span id="cb4-3"><a></a>                         <span class="at">drafted =</span> draft_round <span class="sc">!=</span> <span class="st">"Undrafted"</span>)</span>
-<span id="cb4-4"><a></a>bball <span class="sc">|&gt;</span> </span>
-<span id="cb4-5"><a></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-4"><a></a>bball <span class="sc">|&gt;</span>  <span class="fu">glimpse</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a></a><span class="ex">Rows:</span> 258</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a></a><span class="ex">Rows:</span> 258</span>
 <span id="cb5-2"><a></a><span class="ex">Columns:</span> 30</span>
 <span id="cb5-3"><a></a><span class="ex">$</span> Player      <span class="op">&lt;</span>chr<span class="op">&gt;</span> <span class="st">"Luka Dončić"</span>, <span class="st">"Shai Gilgeous-Alexande…</span></span>
 <span id="cb5-4"><a></a><span class="st">$ Age         &lt;int&gt; 26, 27, 24, 29, 25, 34, 29, 30, 28, 37…</span></span>
@@ -662,7 +689,7 @@ Mark Himmelstein
 <span id="cb5-29"><a></a><span class="st">$ AST         &lt;dbl&gt; 8.3, 6.6, 3.7, 5.1, 6.6, 3.6, 5.7, 10.…</span></span>
 <span id="cb5-30"><a></a><span class="st">$ STL         &lt;dbl&gt; 1.6, 1.4, 1.4, 1.0, 1.9, 1.9, 1.5, 1.4…</span></span>
 <span id="cb5-31"><a></a><span class="st">$ BLK         &lt;dbl&gt; 0.5, 0.8, 0.8, 0.4, 0.8, 0.4, 0.3, 0.8…</span></span>
-<span id="cb5-32"><a></a><span class="st">$ drafted     &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TR…</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-32"><a></a><span class="st">$ drafted     &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TR…</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -670,29 +697,29 @@ Mark Himmelstein
 <h2><span style="font-size: 0.7em;">Descriptive Statistics: Discrete Data</span></h2>
 <p><strong>Frequencies:</strong> Counts of each category</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">table</span>(bball<span class="sc">$</span>draft_round)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">table</span>(bball<span class="sc">$</span>draft_round)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a></a></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a></a></span>
 <span id="cb7-2"><a></a>        <span class="ex">1</span>         2 Undrafted </span>
-<span id="cb7-3"><a></a>      <span class="ex">160</span>        52        46 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-3"><a></a>      <span class="ex">160</span>        52        46 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><strong>Proportions (Relative Frequencies)</strong>: Count in category divided by total</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">table</span>(bball<span class="sc">$</span>draft_round)), <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">table</span>(bball<span class="sc">$</span>draft_round)), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a></a></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a></a></span>
 <span id="cb9-2"><a></a>        <span class="ex">1</span>         2 Undrafted </span>
-<span id="cb9-3"><a></a>     <span class="ex">0.62</span>      0.20      0.18 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-3"><a></a>     <span class="ex">0.62</span>      0.20      0.18 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><strong>Percentages:</strong> Proportions <span class="math inline">\(\times\)</span> 100</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">table</span>(bball<span class="sc">$</span>draft_round)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">table</span>(bball<span class="sc">$</span>draft_round)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a></a></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a></a></span>
 <span id="cb11-2"><a></a>        <span class="ex">1</span>         2 Undrafted </span>
-<span id="cb11-3"><a></a>    <span class="ex">62.02</span>     20.16     17.83 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-3"><a></a>    <span class="ex">62.02</span>     20.16     17.83 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -706,7 +733,7 @@ Table&nbsp;1: Frequency Table of Players by Country
 </figcaption>
 <div aria-describedby="tbl-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div class="tabwid"><style>.cl-64a18336{}.cl-649a70c8{font-family:'Times New Roman';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-649d6936{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-649d831c{width:1.787in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0.75pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-649d8326{width:1.125in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0.75pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-649d8330{width:1.049in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0.75pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-649d8331{width:1.787in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-649d833a{width:1.125in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-649d8344{width:1.049in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-649d8345{width:1.787in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-649d834e{width:1.125in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-649d834f{width:1.049in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-64a18336"><thead><tr style="overflow-wrap:break-word;"><th class="cl-649d831c"><p class="cl-649d6936"><span class="cl-649a70c8">Country</span></p></th><th class="cl-649d8326"><p class="cl-649d6936"><span class="cl-649a70c8">Round 1</span></p></th><th class="cl-649d8330"><p class="cl-649d6936"><span class="cl-649a70c8">Round 2</span></p></th><th class="cl-649d8330"><p class="cl-649d6936"><span class="cl-649a70c8">Undrafted</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">USA</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">119 (46.12%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">38 (14.73%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">41 (15.89%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Canada</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">8 (3.1%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">3 (1.16%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">France</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">5 (1.94%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Australia</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">3 (1.16%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">2 (0.78%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Bahamas</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">3 (1.16%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Japan</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">2 (0.78%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Montenegro</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">2 (0.78%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Nigeria</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">2 (0.78%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Austria</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Bosnia and Herzegovina</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Cameroon</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Dominican Republic</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Finland</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Georgia</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Germany</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Israel</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Lithuania</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Poland</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Serbia</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Slovenia</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Spain</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Switzerland</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Turkey</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">United Kingdom</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Croatia</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">2 (0.78%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Czech Republic</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">2 (0.78%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Jamaica</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Portugal</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8331"><p class="cl-649d6936"><span class="cl-649a70c8">Ukraine</span></p></td><td class="cl-649d833a"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td><td class="cl-649d8344"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-649d8345"><p class="cl-649d6936"><span class="cl-649a70c8">Italy</span></p></td><td class="cl-649d834e"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d834f"><p class="cl-649d6936"><span class="cl-649a70c8">0 (0%)</span></p></td><td class="cl-649d834f"><p class="cl-649d6936"><span class="cl-649a70c8">1 (0.39%)</span></p></td></tr></tbody></table></div>
+<div class="tabwid"><style>.cl-089e3dce{}.cl-0894e6ac{font-family:'Times New Roman';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-08994684{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-08995fca{width:1.787in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0.75pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-08995fd4{width:1.125in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0.75pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-08995fd5{width:1.049in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0.75pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-08995fde{width:1.787in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-08995fdf{width:1.125in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-08995fe0{width:1.049in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-08995fe1{width:1.787in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-08995fe8{width:1.125in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-08995fe9{width:1.049in;background-color:transparent;vertical-align: middle;border-bottom: 0.75pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-089e3dce"><thead><tr style="overflow-wrap:break-word;"><th class="cl-08995fca"><p class="cl-08994684"><span class="cl-0894e6ac">Country</span></p></th><th class="cl-08995fd4"><p class="cl-08994684"><span class="cl-0894e6ac">Round 1</span></p></th><th class="cl-08995fd5"><p class="cl-08994684"><span class="cl-0894e6ac">Round 2</span></p></th><th class="cl-08995fd5"><p class="cl-08994684"><span class="cl-0894e6ac">Undrafted</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">USA</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">119 (46.12%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">38 (14.73%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">41 (15.89%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Canada</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">8 (3.1%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">3 (1.16%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">France</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">5 (1.94%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Australia</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">3 (1.16%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">2 (0.78%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Bahamas</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">3 (1.16%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Japan</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">2 (0.78%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Montenegro</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">2 (0.78%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Nigeria</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">2 (0.78%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Austria</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Bosnia and Herzegovina</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Cameroon</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Dominican Republic</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Finland</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Georgia</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Germany</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Israel</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Lithuania</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Poland</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Serbia</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Slovenia</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Spain</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Switzerland</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Turkey</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">United Kingdom</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Croatia</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">2 (0.78%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Czech Republic</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">2 (0.78%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Jamaica</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Portugal</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fde"><p class="cl-08994684"><span class="cl-0894e6ac">Ukraine</span></p></td><td class="cl-08995fdf"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td><td class="cl-08995fe0"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-08995fe1"><p class="cl-08994684"><span class="cl-0894e6ac">Italy</span></p></td><td class="cl-08995fe8"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe9"><p class="cl-08994684"><span class="cl-0894e6ac">0 (0%)</span></p></td><td class="cl-08995fe9"><p class="cl-08994684"><span class="cl-0894e6ac">1 (0.39%)</span></p></td></tr></tbody></table></div>
 </div>
 </div>
 </figure>
@@ -742,7 +769,7 @@ Table&nbsp;1: Frequency Table of Players by Country
 <ul>
 <li><p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\sum x\)</span>: sum of all the <span class="math inline">\(x\)</span> scores across all observations</span></p></li>
 <li><p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(N\)</span>: sample size</span></p></li>
-<li><p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\bar{x}\)</span>: sample mean calculated from data</span></p></li>
+<li><p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\bar{x}\)</span>: sample mean calculated from data (sometimes <span class="math inline">\(M\)</span>)</span></p></li>
 <li><p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\mu\)</span>: population mean, expected value of probability distribution</span></p></li>
 </ul></li>
 </ul>
@@ -752,9 +779,9 @@ Table&nbsp;1: Frequency Table of Players by Country
 <p>The <strong>trimmed mean</strong> is a robust statistic that reduces the two disadvantages of the mean</p>
 <ol type="1">
 <li><p>Sensitivity to asymmetric distributions</p></li>
-<li><p>Sensitivity to extreme scores</p></li>
+<li><p>Sensitivity to extreme values</p></li>
 </ol>
-<p><strong>5% trimmed mean</strong> is the mean of the data that discards the lowest 5% and the highest 5% of scores in the original data</p>
+<p><strong>5% trimmed mean</strong> is the mean of the data that discards the lowest 5% and the highest 5% of values in the original data</p>
 <p>The <strong>mode</strong> is the value with the highest frequency</p>
 <ul>
 <li><p>Often used for discrete data</p></li>
@@ -785,13 +812,13 @@ Table&nbsp;1: Frequency Table of Players by Country
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><strong>Score that is actually observed in the data</strong></td>
+<td style="text-align: left;"><strong>Value that is actually observed in the data</strong></td>
 <td style="text-align: left;">Always</td>
 <td style="text-align: left;">Not Necessarily</td>
 <td style="text-align: left;">Not Necessarily</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>Affected by extreme scores</strong></td>
+<td style="text-align: left;"><strong>Affected by extreme values</strong></td>
 <td style="text-align: left;">Less Affected</td>
 <td style="text-align: left;">Less Affected</td>
 <td style="text-align: left;">More Affected</td>
@@ -803,7 +830,7 @@ Table&nbsp;1: Frequency Table of Players by Country
 <td style="text-align: left;">Most Affected</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>Full use of all participants’ scores</strong></td>
+<td style="text-align: left;"><strong>Full use of all data</strong></td>
 <td style="text-align: left;">No</td>
 <td style="text-align: left;">No</td>
 <td style="text-align: left;">Yes</td>
@@ -823,16 +850,16 @@ Table&nbsp;1: Frequency Table of Players by Country
 <div style="font-size: 0.8em;">
 <p><strong>Variability</strong> measures how spread out the data are</p>
 <ul>
-<li><p><strong>Range</strong>: = maximum score - minimum score</p>
+<li><p><strong>Range</strong>: = maximum value - minimum value</p>
 <ul>
-<li><p>Highly sensitive to extreme scores</p></li>
+<li><p>Highly sensitive to extreme values</p></li>
 <li><p>Does not use all of the information in the data</p></li>
 </ul></li>
 <li><p><strong>Interquartile Range (IQR)</strong> = <span class="math inline">\(75^\text{th}\)</span> percentile - <span class="math inline">\(25^\text{th}\)</span> percentile</p>
 <ul>
 <li><p><span class="math inline">\(25^\text{th}\)</span> percentile = <span class="math inline">\(1^\text{st}\)</span> quartile (1Q)</p></li>
 <li><p><span class="math inline">\(75^\text{th}\)</span> percentile = <span class="math inline">\(3^\text{rd}\)</span> quartile (3Q)</p></li>
-<li><p>Less sensitive to extreme scores</p></li>
+<li><p>Less sensitive to extreme values</p></li>
 <li><p>Does not use all of the information in the data</p></li>
 </ul></li>
 <li><p>Some variables are commonly known to be asymmetric with extreme values. Example: household income</p></li>
@@ -843,6 +870,7 @@ Table&nbsp;1: Frequency Table of Players by Country
 </section>
 <section id="variance-and-sd" class="slide level2">
 <h2>Variance and SD</h2>
+<div style="font-size: 0.9em;">
 <p><strong>Variance</strong> (sample: <span class="math inline">\(s^2\)</span>, population: <span class="math inline">\(\sigma^2\)</span>):</p>
 <p><span class="math display">\[s^2 = \frac{\sum(x - \bar{x})^2}{N-1}\,\,\,\,\, \sigma^2 = \frac{\sum(x - \mu)^2}{N}\]</span></p>
 <ul>
@@ -856,6 +884,7 @@ Table&nbsp;1: Frequency Table of Players by Country
 <li>Square root of the variance</li>
 <li>Variance is in squared units, SD is in the units of the original variable</li>
 </ul>
+</div>
 </section>
 <section id="pythathogrean-theorm-of-statistics" class="slide level2">
 <h2>Pythathogrean Theorm of Statistics</h2>
@@ -876,30 +905,30 @@ Table&nbsp;1: Frequency Table of Players by Country
 </ul>
 <p>Let’s consider the following set of numbers [1, 2, <span class="math inline">\(x\)</span>]. What is <span class="math inline">\(x\)</span>?</p>
 <p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(x\)</span> could be anything!</span></p>
-<p><span class="fragment">What if I told you that the mean of these three numbers was <span class="math inline">\(\bar{X} = 2\)</span>. Now what is <span class="math inline">\(x\)</span>?</span></p>
+<p><span class="fragment">What if I told you that the mean of these three numbers was <span class="math inline">\(\bar{x} = 2\)</span>. Now what is <span class="math inline">\(x\)</span>?</span></p>
 <p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(x\)</span> must be 3!</span></p>
 </section>
 <section id="degrees-of-freedom-explained" class="slide level2">
 <h2><span style="font-size: 0.7em;">Degrees of Freedom Explained</span></h2>
-<p><span class="answer fragment" data-unless-meta="params.v0">This is what degrees of freedom are: The number of elements that can freely vary. In the first example, there is one degree of freedom, because <span class="math inline">\(x\)</span> can be anything. In the second, there are zero, because there are no elements that can freely vary.</span></p>
-<p><span class="answer fragment" data-unless-meta="params.v0">Because we already account for the sample mean in estimating the variance, we are calculating the variance based on a sample that has <span class="math inline">\(N - 1\)</span> elements that can freely vary, so that’s our appropriate sample size to average over</span></p>
+<p><span class="answer fragment" data-unless-meta="params.v0">Degrees of freedom are the number of elements that can freely vary. In the first example, there is one degree of freedom, because <span class="math inline">\(x\)</span> can be anything. In the second, there are zero, because there are no elements that can freely vary.</span></p>
+<p><span class="answer fragment" data-unless-meta="params.v0">Because we already account for the sample mean in estimating the variance (as in our example on the previous page), we are calculating the variance based on a sample that has <span class="math inline">\(N - 1\)</span> elements that can freely vary, so that’s our appropriate sample size to average over</span></p>
 </section>
 <section id="degrees-of-freedom-simulated" class="slide level2">
 <h2><span style="font-size: 0.7em;">Degrees of Freedom Simulated</span></h2>
-<div style="font-size: 0.9em;">
+<div style="font-size: 0.85em;">
 <p>Sometimes when you want to prove a concept to yourself, it helps to simulate it.</p>
 <p>In the following slides I:</p>
 <ul>
 <li>Set the population mean <span class="math inline">\(\mu = 0\)</span></li>
 <li>Set the population variance <span class="math inline">\(\sigma^2 = 10\)</span></li>
-<li>Randomly generated a sample of size <span class="math inline">\(N = 5\)</span> from these parameters</li>
-<li>Calculated the variance using each of the following formulas
+<li>Generated sets of <span class="math inline">\(N = 5\)</span> random numbers using these parameters</li>
+<li>Calculated the variance of each sample using each of the following formulas
 <ul>
 <li><span class="math inline">\(\frac{\sum(x - \bar{x})^2}{N}\)</span></li>
 <li><span class="math inline">\(\frac{\sum(x - \bar{x})^2}{N - 1}\)</span></li>
 </ul></li>
 <li>Repeated the process 100,000 times</li>
-<li>Plotted the results to compare how well the sample statistics from these two formulas reproduced the known variance parameter <span class="math inline">\(\sigma^2 = 10\)</span></li>
+<li>Plotted distribution of <span class="math inline">\(s^2\)</span> values to compare how well the sample statistics from these two formulas reproduced the known variance parameter <span class="math inline">\(\sigma^2 = 10\)</span></li>
 </ul>
 <p>Our goal is to have <span class="math inline">\(s^2\)</span> equal to the <span class="math inline">\(\sigma^2\)</span> <em>on average</em></p>
 </div>
@@ -938,38 +967,39 @@ Table&nbsp;1: Frequency Table of Players by Country
 <h2>Binary Variables</h2>
 <p>Let’s create two binary variables</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb12-2"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>p1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb12-2"><a></a>p2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Calculate means:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>p1_bar <span class="ot">&lt;-</span> <span class="fu">sum</span>(p1)<span class="sc">/</span><span class="fu">length</span>(p1)</span>
-<span id="cb13-2"><a></a>p2_bar <span class="ot">&lt;-</span> <span class="fu">sum</span>(p2)<span class="sc">/</span><span class="fu">length</span>(p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>p1_bar <span class="ot">&lt;-</span> <span class="fu">sum</span>(p1)<span class="sc">/</span><span class="fu">length</span>(p1) </span>
+<span id="cb13-2"><a></a>p2_bar <span class="ot">&lt;-</span> <span class="fu">sum</span>(p2)<span class="sc">/</span><span class="fu">length</span>(p2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Calculate variances two different ways:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">sum</span>((p1 <span class="sc">-</span> p1_bar)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>(<span class="fu">length</span>(p1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">sum</span>((p1 <span class="sc">-</span> p1_bar)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>(<span class="fu">length</span>(p1)) <span class="co"># mean of squared deviations (standard population variance formula)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a></a><span class="ex">[1]</span> 0.25</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a></a><span class="ex">[1]</span> 0.25</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>p1_bar <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p1_bar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>p1_bar <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p1_bar) <span class="co"># p x (1 - p)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a></a><span class="ex">[1]</span> 0.25</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a></a><span class="ex">[1]</span> 0.25</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">sum</span>((p2 <span class="sc">-</span> p2_bar)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>(<span class="fu">length</span>(p2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">sum</span>((p2 <span class="sc">-</span> p2_bar)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>(<span class="fu">length</span>(p2)) <span class="co"># mean of squared deviations</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a></a><span class="ex">[1]</span> 0.07638889</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a></a><span class="ex">[1]</span> 0.07638889</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>p2_bar <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p2_bar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>p2_bar <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p2_bar) <span class="co"># p x (1 - p)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a></a><span class="ex">[1]</span> 0.07638889</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a></a><span class="ex">[1]</span> 0.07638889</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="summary-table-in-r" class="slide level2 scrollable">
 <h2>Summary Table in R</h2>
+<p>We sometimes organize descriptive statistics into a summary table</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>bball <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>bball <span class="sc">|&gt;</span></span>
 <span id="cb22-2"><a></a>  <span class="fu">group_by</span>(draft_round) <span class="sc">|&gt;</span></span>
 <span id="cb22-3"><a></a>  <span class="fu">summarize</span>(<span class="at">N =</span> <span class="fu">n</span>(),</span>
 <span id="cb22-4"><a></a>    <span class="at">mean_Age =</span> <span class="fu">round</span>(<span class="fu">mean</span>(Age), <span class="dv">2</span>), </span>
@@ -980,15 +1010,15 @@ Table&nbsp;1: Frequency Table of Players by Country
 <span id="cb22-9"><a></a>    </span>
 <span id="cb22-10"><a></a>    <span class="at">mean_Weight =</span> <span class="fu">round</span>(<span class="fu">mean</span>(Weight), <span class="dv">2</span>), </span>
 <span id="cb22-11"><a></a>    <span class="at">sd_Weight   =</span> <span class="fu">round</span>(<span class="fu">sd</span>(Weight), <span class="dv">2</span>)</span>
-<span id="cb22-12"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-12"><a></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a></a><span class="co"># A tibble: 3 × 8</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a></a><span class="co"># A tibble: 3 × 8</span></span>
 <span id="cb23-2"><a></a>  <span class="ex">draft_round</span>     N mean_Age sd_Age mean_Height sd_Height</span>
 <span id="cb23-3"><a></a>  <span class="op">&lt;</span>fct<span class="op">&gt;</span>       <span class="op">&lt;</span>int<span class="op">&gt;</span>    <span class="op">&lt;</span>dbl<span class="op">&gt;</span>  <span class="op">&lt;</span>dbl<span class="op">&gt;</span>       <span class="op">&lt;</span>dbl<span class="op">&gt;</span>     <span class="op">&lt;</span>dbl<span class="op">&gt;</span></span>
 <span id="cb23-4"><a></a><span class="ex">1</span> 1             160     28.0   4.16        200.      7.83</span>
 <span id="cb23-5"><a></a><span class="ex">2</span> 2              52     27.2   3.16        200.      8.52</span>
 <span id="cb23-6"><a></a><span class="ex">3</span> Undrafted      46     27.8   3.41        198.      8.65</span>
-<span id="cb23-7"><a></a><span class="co"># ℹ 2 more variables: mean_Weight &lt;dbl&gt;, sd_Weight &lt;dbl&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-7"><a></a><span class="co"># ℹ 2 more variables: mean_Weight &lt;dbl&gt;, sd_Weight &lt;dbl&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -1009,7 +1039,7 @@ Table&nbsp;1: Frequency Table of Players by Country
 <ul>
 <li><p>Skew = 0 indicates a symmetric distribution</p></li>
 <li><p>Negative or left skew: long left tail</p></li>
-<li><p>Negative or right skew: long right tail</p>
+<li><p>Positive or right skew: long right tail</p>
 <ul>
 <li><strong>Direction of skewness is where the long tail is</strong></li>
 </ul></li>
@@ -1375,190 +1405,173 @@ Table&nbsp;1: Frequency Table of Players by Country
     
 
     <script id="quarto-html-after-body" type="application/javascript">
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-      const toggleBodyColorMode = (bsSheetEl) => {
-        const mode = bsSheetEl.getAttribute("data-mode");
-        const bodyEl = window.document.querySelector("body");
-        if (mode === "dark") {
-          bodyEl.classList.add("quarto-dark");
-          bodyEl.classList.remove("quarto-light");
-        } else {
-          bodyEl.classList.add("quarto-light");
-          bodyEl.classList.remove("quarto-dark");
-        }
-      }
-      const toggleBodyColorPrimary = () => {
-        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-        if (bsSheetEl) {
-          toggleBodyColorMode(bsSheetEl);
-        }
-      }
-      toggleBodyColorPrimary();  
-      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
-      tabsets.forEach(function(tabset) {
-        const tabby = new Tabby('#' + tabset.id);
-      });
-      const isCodeAnnotation = (el) => {
-        for (const clz of el.classList) {
-          if (clz.startsWith('code-annotation-')) {                     
-            return true;
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
           }
+          return false;
         }
-        return false;
-      }
-      const onCopySuccess = function(e) {
-        // button target
-        const button = e.trigger;
-        // don't keep focus
-        button.blur();
-        // flash "checked"
-        button.classList.add('code-copy-button-checked');
-        var currentTitle = button.getAttribute("title");
-        button.setAttribute("title", "Copied!");
-        let tooltip;
-        if (window.bootstrap) {
-          button.setAttribute("data-bs-toggle", "tooltip");
-          button.setAttribute("data-bs-placement", "left");
-          button.setAttribute("data-bs-title", "Copied!");
-          tooltip = new bootstrap.Tooltip(button, 
-            { trigger: "manual", 
-              customClass: "code-copy-button-tooltip",
-              offset: [0, -8]});
-          tooltip.show();    
-        }
-        setTimeout(function() {
-          if (tooltip) {
-            tooltip.hide();
-            button.removeAttribute("data-bs-title");
-            button.removeAttribute("data-bs-toggle");
-            button.removeAttribute("data-bs-placement");
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
           }
-          button.setAttribute("title", currentTitle);
-          button.classList.remove('code-copy-button-checked');
-        }, 1000);
-        // clear code selection
-        e.clearSelection();
-      }
-      const getTextToCopy = function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
           for (const childEl of codeEl.children) {
             if (isCodeAnnotation(childEl)) {
               childEl.remove();
             }
           }
           return codeEl.innerText;
-      }
-      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-        text: getTextToCopy
-      });
-      clipboard.on('success', onCopySuccess);
-      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-          text: getTextToCopy,
-          container: window.document.getElementById('quarto-embedded-source-code-modal')
-        });
-        clipboardModal.on('success', onCopySuccess);
-      }
-        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-        var mailtoRegex = new RegExp(/^mailto:/);
-          var filterRegex = new RegExp("https:\/\/jhelmer3\.github\.io\/PSYC6019-2026\/");
-        var isInternal = (href) => {
-            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
         }
-        // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-        for (var i=0; i<links.length; i++) {
-          const link = links[i];
-          if (!isInternal(link.href)) {
-            // undo the damage that might have been done by quarto-nav.js in the case of
-            // links that we want to consider external
-            if (link.dataset.originalHref !== undefined) {
-              link.href = link.dataset.originalHref;
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jhelmer3\.github\.io\/PSYC6019-2026\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
             }
           }
-        }
-      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-        const config = {
-          allowHTML: true,
-          maxWidth: 500,
-          delay: 100,
-          arrow: false,
-          appendTo: function(el) {
-              return el.closest('section.slide') || el.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'light-border',
-          placement: 'bottom-start',
-        };
-        if (contentFn) {
-          config.content = contentFn;
-        }
-        if (onTriggerFn) {
-          config.onTrigger = onTriggerFn;
-        }
-        if (onUntriggerFn) {
-          config.onUntrigger = onUntriggerFn;
-        }
-          config['offset'] = [0,0];
-          config['maxWidth'] = 700;
-        window.tippy(el, config); 
-      }
-      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-      for (var i=0; i<noterefs.length; i++) {
-        const ref = noterefs[i];
-        tippyHover(ref, function() {
-          // use id or data attribute instead here
-          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-          try { href = new URL(href).hash; } catch {}
-          const id = href.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note) {
-            return note.innerHTML;
-          } else {
-            return "";
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
           }
-        });
-      }
-      const findCites = (el) => {
-        const parentEl = el.parentElement;
-        if (parentEl) {
-          const cites = parentEl.dataset.cites;
-          if (cites) {
-            return {
-              el,
-              cites: cites.split(' ')
-            };
-          } else {
-            return findCites(el.parentElement)
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
           }
-        } else {
-          return undefined;
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
         }
-      };
-      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-      for (var i=0; i<bibliorefs.length; i++) {
-        const ref = bibliorefs[i];
-        const citeInfo = findCites(ref);
-        if (citeInfo) {
-          tippyHover(citeInfo.el, function() {
-            var popup = window.document.createElement('div');
-            citeInfo.cites.forEach(function(cite) {
-              var citeDiv = window.document.createElement('div');
-              citeDiv.classList.add('hanging-indent');
-              citeDiv.classList.add('csl-entry');
-              var biblioDiv = window.document.getElementById('ref-' + cite);
-              if (biblioDiv) {
-                citeDiv.innerHTML = biblioDiv.innerHTML;
-              }
-              popup.appendChild(citeDiv);
-            });
-            return popup.innerHTML;
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
           });
         }
-      }
-    });
-    </script>
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
     
 
 </body></html>
