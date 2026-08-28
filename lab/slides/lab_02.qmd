@@ -1,13 +1,15 @@
 ---
-title: "Data Workflow and Visualization with the `tidyverse`"
+title: "Data Visualization with `ggplot2`"
 subtitle: "PSYC 6019-A01 / PSYC 6022-A01 \n 2025-09-04 | Lab 2"
 author: "Jess Helmer"
 footer: "[jhelmer3.github.io/PSYC6019-2026/](https://jhelmer3.github.io/PSYC6019-2026/)"
 format: 
   revealjs:
     code-link: true
+    slide-number: true
     code-line-numbers: false
     theme: ../../gt-theme.scss
+    width: 1200
 execute: 
   freeze: auto
   echo: true
@@ -221,11 +223,12 @@ read.csv(here::here("data", "my_data.csv"))
 This file is a CSV file, so we can use the `read.csv(file)` function, where `file` is a path to the data file.
 
 ```{r}
+#| render: !expr function(x, ...) knitr::knit_print(x)
 here::here()
 
 here::here("lab", "data", "world_cup_player_stats.csv")
 
-head(read.csv(here::here("lab", "data", "world_cup_player_stats.csv")))
+head(read.csv(here::here("lab", "data", "world_cup_player_stats.csv")), 2)
 ```
 
 Good, we can successfully read in the data. Now, to keep using it, let's assign it to a variable.
@@ -297,108 +300,8 @@ Tidy data follow a consistent set of organizational principles
 
 Typically a bit more work up front but **much** easier to work with after
 
+We will discuss tidying data more next week!
 
-## Tidy
-
-:::: {.columns style="font-size:60%"}
-::: {.column width=32%}
-```{r, echo=F}
-player_stats |>
-  select(player_name, minutes_played, assists, goals) |>
-  head()
-```
-:::
-
-::: {.column width=2%}
-<!-- spacing -->
-:::
-
-::: {.column .fragment .fade-out width=32% data-fragment-index="1"}
-```{r, echo=F}
-player_stats |>
-  select(player_name, minutes_played, assists, goals) |>
-  pivot_longer(c(assists, goals), 
-               names_to = "type", values_to = "count") |>
-  head()
-```
-:::
-
-::: {.column width=2%}
-<!-- spacing -->
-:::
-
-::: {.column .fragment .fade-out width=32% data-fragment-index="1"}
-```{r, echo=F}
-player_stats |>
-  select(player_name, minutes_played, assists, goals) |>
-  mutate(assists_to_goals = paste0(assists, ":", goals),
-         .keep = "unused") |>
-  head()
-```
-:::
-::::
-
-All of these dataframes contain the same information, but one of them is much easier to work with...
-
-::: fragment
-Why?
-:::
-
-
-## Tidy: Principles
-
-Three rules to a tidy dataset
-
-1. Each variable is a column; each column is a variable.
-
-2. Each observation is a row; each row is an observation.
-
-3. Each value is a cell; each cell is a single value.
-
-![](https://r4ds.hadley.nz/images/tidy-1.png)
-
-::: footer
-<https://r4ds.hadley.nz/data-tidy.html#fig-tidy-structure>
-:::
-
-
-## Tidy: Why Tidy?
-
-1. Consistency! Any sort of consistency in your data management will be beneficial.
-
-::: fragment
-2. R loves vectors! Having variables in columns plays well with many functions.
-:::
-
-::: fragment
-3. Cohesion with an ecosystem of R packages that expect tidy data.
-:::
-
-
-## Tidy: Is Our Data Tidy?
-
-:::: {.columns style="font-size:70%"}
-::: {.column width=70%}
-```{r}
-head(player_stats, n = 10)
-```
-:::
-
-::: {.column width=30%}
-1. Each variable is a column; each column is a variable.
-
-2. Each observation is a row; each row is an observation.
-
-3. Each value is a cell; each cell is a single value.
-:::
-::::
-
-
-## Tidy: For Later...
-
-We will learn ways to make untidy data tidy in later classes
-
-For now, we are good, and can proceed with our work!
 
 
 # Whole Game
@@ -418,250 +321,8 @@ Sometimes we need...
 
 * Reordered variables
 
-* Etc., etc., etc. Any others?
+We will discuss transforming data more next week!
 
-
-## Transform: `tidyverse` syntax 
-
-The `tidyverse` website mentioned that each package shares a common language for their functions
-
-Based off of `dplyr` (one of the packages) verbs
-
-1. The first argument is always a dataframe.
-
-2. The subsequent arguments typically describe which columns to operate on using the variable names (without quotes).
-
-3. The output is always a new data frame.
-
-::: footer
-<https://r4ds.hadley.nz/data-transform.html#dplyr-basics>
-:::
-
-
-## Transform: More `tidyverse` syntax 
-
-One more thing...
-
-`tidyverse` verbs work best in a **pipe**: |>
-
-:::: {.columns}
-::: {.column}
-How we've been using functions:
-
-`output <- function(input)`
-:::
-
-::: {.column}
-Functions in a pipe:
-
-`output <- input |> function()`
-:::
-::::
-
-Why is this helpful?
-
-:::: {.columns}
-::: {.column .fragment}
-Many functions together:
-
-```
-another_function(other_function(function(input)))
-```
-:::
-
-::: {.column .fragment}
-Functions in a pipe:
-
-```
-input |>
-  function() |>
-  other_function() |>
-  another_function()
-```
-:::
-::::
-
-
-## Transform: Goals For Our Data
-
-My questions: 
-
-1. What team had the most goals overall?
-
-2. What goalie had the highest saves per match played?
-
-3. Class question!! (time pending)
-
-
-## Transform: Functions
-
-A core few of the `tidyverse` functions...
-
-::: panel-tabset
-### `select()`
-
-`select(df, columns)`
-
-Selects just the columns you specify. Helpful for paring down the data for easy viewing.
-
-```{r}
-player_minutes_played <- player_stats |>
-  select(player_name, minutes_played) 
-
-player_minutes_played |>
-  head()
-```
-
-### `mutate()`
-
-`mutate(df, new_column = ...)`
-
-Adds new columns to the dataframe, either from scratch or based on existing columns.
-
-```{r}
-player_minutes_played |>
-  mutate(hours_played = minutes_played / 60,
-         hours_played_rounded = round(hours_played, 2)) |>
-  head()
-```
-
-### `filter()`
-
-::: panel-tabset
-### Code Example
-
-:::: {.columns style="font-size:80%"}
-::: {.column width="50%"}
-`filter(df, condition_to_keep)`
-
-```{r}
-player_minutes_played |>
-  filter(minutes_played > quantile(minutes_played, probs = .99)) |>
-  head()
-```
-:::
-
-::: {.column width="50%"}
-`filter_out(df, condition_to_toss)` does the opposite (as you'd expect by the name)
-
-```{r}
-player_minutes_played |>
-  nrow()
-
-player_minutes_played |>
-  filter_out(minutes_played == 0) |>
-  nrow()
-```
-:::
-::::
-
-### Logical Operators
-
-| Symbol | Meaning                   |
-|--------|---------------------------|
-| `==`   | equal to                  |
-| `!=`   | not equal to              |
-| `<`    | less than                 |
-| `<=`   | less than or equal to     |
-| `>`    | greater than              |
-| `>=`   | greater than or equal to  |
-
-:::
-
-### `summarize()`
-
-`summarize(df, .by = optional_grouping_variable, new_column = ...)`
-
-:::: {.columns}
-
-::: {.column width="50%"}
-```{r}
-player_minutes_played |>
-  summarize(mean = mean(minutes_played),
-            median = median(minutes_played),
-            min  = min(minutes_played),
-            max = max(minutes_played))
-```
-:::
-
-::: {.column width="50%"}
-```{r}
-player_stats |>
-  summarize(.by = team_name,
-            total_minutes_played = sum(minutes_played)) |>
-  head()
-```
-:::
-
-### `arrange()`
-
-`arrange(ordering_var)`
-
-Orders data based on some variable. Can use `desc()` (descending) to flip.
-
-:::: {.columns}
-::: {.column width="50%"}
-```{r}
-player_stats |>
-  select(team_name, player_name, minutes_played) |>
-  arrange(player_name) |>
-  head()
-```
-:::
-
-::: {.column width="50%"}
-```{r}
-player_stats |>
-  select(team_name, player_name, minutes_played) |>
-  arrange(desc(minutes_played)) |>
-  head()
-```
-:::
-::::
-
-::::
-
-:::
-
-
-## Transform: Questions
-
-1. What team had the most goals overall?
-
-```{r}
-total_goals_df <- player_stats |>
-  summarize(.by = team_name,
-            total_goals = sum(goals))
-
-total_goals_df |>
-  arrange(desc(total_goals)) |>
-  head(10)
-
-total_goals_df |>
-  filter(total_goals == max(total_goals))
-```
-
-
-## Transform: Questions
-
-2. What goalie had the highest saves per match played?
-
-```{r}
-player_stats$position |> unique()
-
-player_stats |>
-  filter(when_all(position == "GK",
-                  matches_played > 0)) |>
-  select(team_name, player_name, saves, matches_played) |>
-  mutate(saves_per_match = saves / matches_played) |>
-  arrange(desc(saves_per_match)) |>
-  head()
-```
-
-
-## Transform: Questions
-
-3. Class question!! (time pending)
 
 
 # Whole Game
@@ -671,13 +332,11 @@ player_stats |>
 
 ## Visualize
 
-So many numbers! Can we please visualize our data?
-
 ::: {style="font-size:75%;"}
 > “The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey
 :::
 
-Yes! With the `ggplot2` package. `ggplot2` provides a very expansive and flexible plotting system. It is also at the core of a whole ecosystem of `ggplot2` extension packages, meaning so many plotting options are available.
+We can visualize our data with the `ggplot2` package. `ggplot2` provides a very expansive and flexible plotting system. It is also at the core of a whole ecosystem of `ggplot2` extension packages, meaning so many plotting options are available.
 
 
 ## Visualizations
@@ -738,7 +397,7 @@ ggplot(data, aes(x = V1, y = V2)) +
 
 ## Visualize: `ggplot2`
 
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
+Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
 :::: {.columns}
 ::: {.column width=33%}
@@ -748,7 +407,7 @@ Let's begin at the end:
 ::: {.column width=66%}
 ```{r, echo=F}
 #| fig-width: 7
-#| fig-height: 4.5
+#| fig-height: 5
 position_labels = c(
   "GK" = "Goalkeeper",
   "DEF" = "Defense",
@@ -908,11 +567,50 @@ Now, let's explore a different question: what is the relationship between player
 :::: {.columns style="font-size:60%"}
 
 ::: {.column width=33%}
-Still need to separate by position
+Can vary the bars by color to show different positions.
+
+Do we need to change the `mapping` or the `geom`?
+
+::: fragment
+Can modify the color of a `geom_bar()` by setting the `fill` mapping The `color` mapping is also an option, but that will just change the outline color.
+:::
+:::
+
+::: {.column width=66%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = goals, fill = position)) +
+  geom_bar()
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = goals, fill = position)) +
+  geom_bar()
+```
+:::
+:::
+
+::::
+
+
+## Visualize: `ggplot2`
+
+Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=33%}
+So crowded, and so hard to compare between groups! So, let's separate by position.
 
 Can use `facet_wrap(~ grouping_variable)` to make different panels
-
-Can add `position` to the `fill` mapping aesthetic, while we're at it, to add a bit of color.
 :::
 
 ::: {.column width=66%}
@@ -962,8 +660,8 @@ We can add a `mapping` argument to `geom_bar()` to tell it to plot proportions i
 #| fig-width: 7
 #| fig-height: 4.5
 ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position)) +
-  geom_bar(mapping = aes(y = after_stat(prop))) +
+       mapping = aes(x = goals, fill = position, y = after_stat(prop))) +
+  geom_bar() +
   facet_wrap(~ position)
 ```
 
@@ -971,8 +669,8 @@ ggplot(data = player_stats,
 ```{r}
 #| eval: false
 ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position)) +
-  geom_bar(mapping = aes(y = after_stat(prop))) +
+       mapping = aes(x = goals, fill = position, y = after_stat(prop))) +
+  geom_bar() +
   facet_wrap(~ position)
 ```
 :::
@@ -1092,7 +790,7 @@ To help anyone viewing our plot understand it, we can add some labels with the `
 ```{r}
 #| echo: false
 #| fig-width: 7
-#| fig-height: 4.5
+#| fig-height: 5.5
 position_labels = c(
   "GK" = "Goalkeeper",
   "DEF" = "Defense",
@@ -1220,7 +918,7 @@ I also like to cap the axes with the `guides()` and `guide_axis(cap = T)` functi
 ```{r}
 #| echo: false
 #| fig-width: 7
-#| fig-height: 4.5
+#| fig-height: 5
 position_labels = c(
   "GK" = "Goalkeeper",
   "DEF" = "Defense",
@@ -1279,6 +977,8 @@ ggplot(data = player_stats,
 
 That was a barplot created with `geom_bar()`, which plots discrete variables. To plot the distribution of continuous variables, we can use a histogram with `geom_histogram()` or a density plot with `geom_density()`. 
 
+::: fragment
+
 :::: {.columns style="font-size:60%"}
 
 ::: {.column width=50%}
@@ -1327,10 +1027,76 @@ ggplot(data = player_stats,
 
 ::::
 
+:::
+
 
 ## Some More `ggplot`s
 
-We can layer on the observed data by adding a point plot with `geom_point()`.
+Modify the number of bins in the histogram by either setting `binwidth` (width on the x-axis for each bin) or `bins` (number of bins).
+
+::: fragment
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=50%}
+`binwidth = 10`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played)) +
+  geom_histogram(binwidth = 10)
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played)) +
+  geom_histogram(binwidth = 10)
+```
+:::
+:::
+
+::: {.column width=50%}
+`bins = 15`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played)) +
+  geom_histogram(bins = 10)
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played)) +
+  geom_histogram(binwidth = 10)
+```
+:::
+:::
+
+::::
+
+:::
+
+
+## Some More `ggplot`s
+
+Violin plots help us easily compare distributions. Create them with `geom_violin()`. Specify the groups on the y-axis by specifying `aes(y = position)`.
+
+We can group the violins by specifying the `y` value in the `mapping`. [If we want to layer on the observed data by adding a point plot, do we need to change the `mapping` or the `geom`?]{.fragment} [`geom_jitter()`!]{.fragment}
+
 
 :::: {.columns style="font-size:60%"}
 
@@ -1343,8 +1109,7 @@ We can layer on the observed data by adding a point plot with `geom_point()`.
 #| fig-height: 4.5
 ggplot(data = player_stats,
        mapping = aes(x = minutes_played, y = position)) +
-  geom_violin() + 
-  geom_point()
+  geom_violin()
 ```
 
 ### Code
@@ -1358,6 +1123,7 @@ ggplot(data = player_stats,
 :::
 
 ::: {.column width=50%}
+::: fragment
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -1366,7 +1132,8 @@ ggplot(data = player_stats,
 #| fig-height: 4.5
 ggplot(data = player_stats,
        mapping = aes(y = minutes_played, x = position)) +
-  geom_violin()
+  geom_violin() +
+  geom_jitter()
 ```
 
 ### Code
@@ -1374,7 +1141,121 @@ ggplot(data = player_stats,
 #| eval: false
 ggplot(data = player_stats,
        mapping = aes(y = minutes_played, x = position)) +
-  geom_violin()
+  geom_violin() +
+  geom_jitter()
+```
+:::
+:::
+:::
+
+::::
+
+
+## Some More `ggplot`s
+
+An note about `geom_jitter()`: by default it will add noise in both the x- and y-direction (`width` and `height` arguments). This may not be appropriate for all cases: here, the default behavior hides that values in category 2 are rounded.
+
+```{r}
+#| echo: false
+d <- tibble(
+  category = rep(c("A", "B", "C"), each = 100),
+  measurement = round(
+    rnorm(300,
+          rep(c(10, 10.5, 11), each = 100),
+          0.3),
+    1
+  )
+)
+```
+
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=50%}
+`geom_jitter()`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+d |>
+  ggplot(aes(x = measurement, y = category)) +
+  geom_violin() +
+  geom_jitter()
+```
+
+### Code
+```{r}
+#| eval: false
+d |>
+  ggplot(aes(x = measurement, y = category)) +
+  geom_violin() +
+  geom_jitter()
+```
+:::
+:::
+
+::: {.column width=50%}
+::: fragment
+`geom_jitter(width = 0)`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+d |>
+  ggplot(aes(x = measurement, y = category)) +
+  geom_violin() +
+  geom_jitter(width = 0)
+```
+
+### Code
+```{r}
+#| eval: false
+d |>
+  ggplot(aes(x = measurement, y = category)) +
+  geom_violin() +
+  geom_jitter(width = 0)
+```
+:::
+:::
+:::
+
+::::
+
+
+## Some More `ggplot`s
+
+To plot two continuous variables, we can specify both the x- and y-axes in `aes()` and add a point plot with `geom_point()`. 
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=50%}
+If we wanted to add a trendline to this, would we need to change the `mapping` or `geom`? [`geom_smooth()`!]{.fragment}
+:::
+
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals)) +
+  geom_point()
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals)) +
+  geom_point()
 ```
 :::
 :::
@@ -1384,30 +1265,12 @@ ggplot(data = player_stats,
 
 ## Some More `ggplot`s
 
-To plot two continuous variables, we can specify both the x- and y-axes in `aes()` and add a point plot with `geom_point()`. We can also start to layer `geom`s, adding a trend line with `geom_smooth()`. Note that `geom_smooth()` picks up the same x and y assignment as already specified in `aes()`.
+We can add a trend line with `geom_smooth()`. Note that `geom_smooth()` picks up the same x and y assignment as already specified in `aes()`.
 
 :::: {.columns style="font-size:60%"}
 
 ::: {.column width=50%}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 7
-#| fig-height: 4.5
-ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = goals)) +
-  geom_point()
-```
-
-### Code
-```{r}
-#| eval: false
-ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = goals)) +
-  geom_point()
-```
-:::
+If we wanted to see the points with color representing player position, would we need to change the `mapping` or `geom`? [`aes(color = position)`!]{.fragment}
 :::
 
 ::: {.column width=50%}
@@ -1435,6 +1298,7 @@ ggplot(data = player_stats,
 :::
 
 ::::
+
 
 
 ## Some More `ggplot`s
@@ -1635,59 +1499,13 @@ ggplot(data = player_stats,
 ::::
 
 
-## Visualizations: Bonus
+## Lab 02 Activity
 
-:::: {.columns style="font-size:60%"}
+Objectives:
 
-::: {.column width=50%}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 7
-#| fig-height: 4.5
-ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = position)) +
-  geom_violin() + 
-  geom_point()
-```
+-   Do some basic R!
 
-### Code
-```{r}
-#| eval: false
-ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = position)) +
-  geom_violin() + 
-  geom_point()
-```
-:::
-:::
-
-::: {.column width=50%}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 7
-#| fig-height: 4.5
-ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = position)) +
-  geom_violin() + 
-  geom_jitter(width = 0)
-```
-
-### Code
-```{r}
-#| eval: false
-ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = position)) +
-  geom_violin() + 
-  geom_jitter(width = 0)
-```
-:::
-:::
-
-::::
+-   Get familiar with Quarto
 
 
 
