@@ -30,11 +30,6 @@ list(
   tar_target(leaves_data, make_leaves_data()),
   tar_target(leaves_data_file, 
              write.csv(leaves_data, "lab/data/leaves.csv", row.names = F)),
-  # tar_quarto(lab_03_slides, "lab/slides/lab_03.qmd", quiet = F),
-  # tar_target(lab_03_activity_key, {
-  #   quarto::quarto_render("lab/activities/activity_keys/lab_03_activity_key.qmd")
-  #   "lab/activities/activity_keys/lab_03_activity_key.html"
-  # }, format = "file"),  
    
   tar_target(lab_03_slides_qmd, 
              "lab/slides/lab_03.qmd", 
@@ -43,16 +38,6 @@ list(
     quarto::quarto_render(lab_03_slides_qmd)
     qmd_out(lab_03_slides_qmd)
   }, format = "file"),
-  
-  # tar_target(lab_03_activity_qmd, 
-  #            "lab/activities/lab_03_activity.qmd", 
-  #            format = "file"),
-  # tar_target(lab_03_activity, {
-  #   lab_03_activity_qmd
-  #   quarto::quarto_render(lab_03_activity_qmd)
-  #   qmd_out(lab_03_activity_qmd)
-  # }, format = "file"),
-  
   tar_target(lab_03_activity_key_qmd, 
              "lab/activities/activity_keys/lab_03_activity_key.qmd", 
              format = "file"),
@@ -96,26 +81,7 @@ list(
     qmd_out(lab_02_activity_key_qmd)
   }, format = "file"),
   
-  
-  # tar_target(lab_02_slides, {
-  #   player_stats 
-  #   quarto::quarto_render("lab/slides/lab_02.qmd", quiet = F)
-  #   "lab/slides/lab_02.html"
-  # }, format = "file"),
-  # tar_target(lab_02_activity, {
-  #   quarto::quarto_render("lab/activities/lab_02_activity.qmd")
-  #   "lab/activities/lab_02_activity.html"
-  # }, format = "file"),  
-  # tar_target(lab_02_activity_key, {
-  #   quarto::quarto_render("lab/activities/activity_keys/lab_02_activity_key.qmd")
-  #   "lab/activities/activity_keys/lab_02_activity_key.html"
-  # }, format = "file"),  
-  
   ## lab 01
-  # tar_target(lab_01_slides, {
-  #   quarto::quarto_render("lab/slides/lab_01.qmd", quiet = F)
-  #   "lab/slides/lab_01.html"
-  # }, format = "file"),
   tar_target(lab_01_slides_qmd, 
              "lab/slides/lab_01.qmd", 
              format = "file"),
