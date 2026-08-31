@@ -1,6 +1,6 @@
 ---
 title: "Data Visualization with `ggplot2`"
-subtitle: "PSYC 6019-A01 / PSYC 6022-A01 \n 2025-09-04 | Lab 2"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2025-09-04 | Lab 2"
 author: "Jess Helmer"
 footer: "[jhelmer3.github.io/PSYC6019-2026/](https://jhelmer3.github.io/PSYC6019-2026/)"
 format: 
@@ -14,6 +14,11 @@ execute:
   freeze: auto
   echo: true
   dpi: 600
+engine: knitr
+knitr:
+  opts_chunk: 
+    R.options:
+      width: 120
 ---
 
 ## Outline
@@ -54,45 +59,6 @@ A collection R packages made for data science, all working together in the same 
 ![](../media/lab_02/tidyverse-packages.png){.absolute bottom=0 left=0 height=40%}
 
 
-## The `tidyverse`
-
-::: {style="font-size:80%"}
-
-Let's get ready to use some `tidyverse` code!
-
-:::: {.columns}
-
-::: {.column width="50%"}
-We must first install the `tidyverse` with the `install.packages("packagename")` function.
-
-This will install all  packages within the `tidyverse`, so we don't have to install each manually.
-
-You only have to install packages once per R download (and then whenever you want to update a package).
-
-```{r}
-#| eval: false
-install.packages("tidyverse")
-```
-:::
-
-::: {.column width="50%"}
-To load the `tidyverse` packages into the R environment, we use the `library(package)` function. You will have to run this line once per R session (i.e., every time you restart R).
-
-```{r}
-#| message: true
-library(tidyverse)
-```
-:::
-
-::: {.callout-note}
-Note the `Conflicts` section! Remember when we talked about overwriting?
-:::
-
-::::
-
-:::
-
-
 ## Whole Game
 
 Pieces of the "whole game" of data science
@@ -106,7 +72,7 @@ Pieces of the "whole game" of data science, with corresponding `tidyverse` packa
 
 ![](../media/lab_02/tidyverse-packages-in-workflow.png)
 
-![](../media/lab_02/quarto-hex.png){.fragment .absolute right=88.3 bottom=208 height=9%}
+![](../media/lab_02/quarto-hex.png){.fragment .absolute right=101.5 bottom=213.8 height=10%}
 
 ::: footer
 [mareds.github.io/r_course/index.html](https://mareds.github.io/r_course/index.html)
@@ -138,7 +104,8 @@ data_citation <- format(refs, style = "text")
 
 read.csv(here::here("lab", "data", "world_cup_player_stats.csv")) |>
   tibble::tibble() |>
-  head()
+  head(5) |>
+  gt::gt()
 ```
 :::
 
@@ -151,6 +118,11 @@ read.csv(here::here("lab", "data", "world_cup_player_stats.csv")) |>
 3. Read it into R
 
 4. Assign it to a variable
+
+::: callout-note
+I found this dataset on [Kaggle](https://www.kaggle.com/), a website where people can share datasets (real or simulated). Helpful place to look for interesting datasets!
+:::
+
 :::
 ::::
 
@@ -171,7 +143,7 @@ Navigate to `lab/data/world_cup_player_stats.csv`, and download.
 
 Then, move the `.csv` file to the folder you want it in.
 
-I recommend either having a `data/` subfolder or a subfolder for each lab (e.g., `lab_01/`, `lab_02/`, ...).
+Within your folder for this class, I recommend either having a `data/` subfolder or a subfolder for each lab (e.g., `lab_01/`, `lab_02/`, ...).
 
 ![](../media/lab_02/github-icon.png){.absolute top=330 right=0 height="10%"}
 
@@ -213,14 +185,143 @@ Like the `here::here()` function
 read.csv(here::here("data", "my_data.csv"))
 ```
 
+::: fragment
+Not part of the `tidyverse`, so we have to install the `here` package next! It was created by the author of the [What They Forgot to Teach You About R](https://rstats.wtf/practice-safe-paths) book.
+
+```{r}
+#| eval: false
+install.packages("here")
+```
+:::
+
 ::: footer
 [What They Forgot to Teach You About R](https://rstats.wtf/practice-safe-paths), [Ode to the `here` Package](https://github.com/jennybc/here_here)
 :::
 
 
+## Aside: Packages in R
+
+Base R has a lot of great stuff, but *packages* made by the community have even more great stuff
+
+
+## Aside: Packages in R
+
+Steps of using an R package:
+
+#### 1. Installing
+
+`install.packages(package)`
+
+<div class="subpoint">○ `package` = (character) package name </div>
+
+```{r}
+#| eval: false
+install.packages("here")
+```
+
+Only have to do this once
+
+
+## Aside: Packages in R
+
+Steps of using an R package:
+
+#### 2. Loading
+
+:::: {.columns}
+
+:::{.column}
+`library(package)`
+<div class="subpoint">○ `package` = (not character) package name </div>
+
+At the top of your file
+
+```{r}
+library(here)
+```
+
+Better if you use many functions from that package in your script
+:::
+
+:::{.column}
+`package::package_function()`
+
+```{r}
+#| eval: false
+here::here()
+```
+
+Better if you use only a few functions from that package
+
+Or if you want to be more specific
+
+<div class="subpoint">○ Sometimes a function from one package will overwrite a function from a different package, and this calls the specific one </div>
+:::
+
+::::
+
+
+## Aside: Packages in R
+
+Steps of using an R package:
+
+#### 3. Using
+
+If you use `library()`, you can then call the function with just its name
+
+```{r}
+#| eval: false
+library(here)
+
+here()
+```
+
+
+## Import: Paths to Files
+
+`here::here()` specifies paths **relatively**, using the `.Rproj` file as the starting point.
+
+```
+PSYC6019/
+├── PSYC6019.Rproj
+├── data/
+│   ├── survey_data.csv
+│   └── participant_info.csv
+├── scripts/
+│   ├── clean_data.R
+│   └── fit_model.R
+├── media/
+│   └── results.png
+└── reports/
+    └── lab_report.qmd
+```
+
+How do we access each of these files from each of these starting places?
+
+:::: {.columns style="font-size:66%"}
+::: {.column width=33%}
+`participant_info.csv` from `clean_data.R`
+
+[`here::here("data", "participant_info.csv")`]{.fragment}
+:::
+
+::: {.column width=33%}
+`survey_data.csv` to `fit_model.R` 
+
+[`here::here("data", "survey_data.csv")`]{.fragment}
+:::
+
+::: {.column width=33%}
+`results.png` to `lab_report.qmd` 
+
+[`here::here("media", "lab_report.qmd")`]{.fragment}
+:::
+::::
+
+
 ## Import: Read Data into R
 
-This file is a CSV file, so we can use the `read.csv(file)` function, where `file` is a path to the data file.
+Let’s do this for real!
 
 ```{r}
 #| render: !expr function(x, ...) knitr::knit_print(x)
@@ -245,6 +346,41 @@ This file is a CSV file, so we can use the `read.csv(file)` function, where `fil
 ```{r}
 head(player_stats)
 ```
+
+
+## The `tidyverse`
+
+:::: {.columns style="font-size:80%"}
+
+::: {.column width="50%"}
+Let's get ready to use some `tidyverse` tools!
+
+We must first install the `tidyverse` with the `install.packages("packagename")` function.
+
+This will install all  packages within the `tidyverse`, so we don't have to install each manually.
+
+You only have to install packages once per R download (and then whenever you want to update a package).
+
+```{r}
+#| eval: false
+install.packages("tidyverse")
+```
+:::
+
+::: {.column width="50%"}
+To load the `tidyverse` packages into the R environment, we use the `library(package)` function. You will have to run this line once per R session (i.e., every time you restart R).
+
+```{r}
+#| message: true
+library(tidyverse)
+```
+:::
+
+::: {.callout-note}
+Note the `Conflicts` section! Remember when we talked about overwriting?
+:::
+
+::::
 
 
 ## Import: World Cup 2026
@@ -336,7 +472,8 @@ We will discuss transforming data more next week!
 > “The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey
 :::
 
-We can visualize our data with the `ggplot2` package. `ggplot2` provides a very expansive and flexible plotting system. It is also at the core of a whole ecosystem of `ggplot2` extension packages, meaning so many plotting options are available.
+We can visualize our data with the `ggplot2` package from the `tidyverse`. `ggplot2` provides a very expansive and flexible plotting system. It is also at the core of a whole ecosystem of `ggplot2` extension packages, meaning so many plotting options are available.
+
 
 
 ## Visualizations
@@ -408,17 +545,19 @@ Let's begin at the end:
 ```{r, echo=F}
 #| fig-width: 7
 #| fig-height: 5
-position_labels = c(
-  "GK" = "Goalkeeper",
-  "DEF" = "Defense",
-  "MID" = "Midfield",
-  "FWD" = "Forward"
-)
+player_stats$position_fct <- factor(player_stats$position,
+                                    levels = c("GK", "DEF", "MID", "FWD"),
+                                    labels = c(
+                                      "GK" = "Goalkeeper",
+                                      "DEF" = "Defense",
+                                      "MID" = "Midfield",
+                                      "FWD" = "Forward"
+                                    ))
 
 player_stats |>
-  ggplot(aes(x = goals, fill = position)) +
+  ggplot(aes(x = goals, fill = position_fct)) +
   geom_bar(aes(y = after_stat(prop))) +
-  facet_wrap(~ position, labeller = as_labeller(position_labels)) +
+  facet_wrap(~ position_fct) +
   scale_y_continuous("Proportion", limits = 0:1, labels = scales::label_percent()) +
   scale_x_continuous("Goals", breaks = 0:10) +
   guides(x = guide_axis(cap = T),
@@ -437,7 +576,7 @@ player_stats |>
 
 ## Visualize: `ggplot2`
 
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
+Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
 :::: {.columns style="font-size:60%"}
 
@@ -473,7 +612,7 @@ ggplot(data = player_stats)
 
 ## Visualize: `ggplot2`
 
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
+Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
 :::: {.columns style="font-size:60%"}
 
@@ -514,7 +653,7 @@ ggplot(data = player_stats,
 
 ## Visualize: `ggplot2`
 
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
+Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
 :::: {.columns style="font-size:60%"}
 
@@ -562,7 +701,7 @@ ggplot(data = player_stats,
 
 ## Visualize: `ggplot2`
 
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
+Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
 :::: {.columns style="font-size:60%"}
 
@@ -603,7 +742,7 @@ ggplot(data = player_stats,
 
 ## Visualize: `ggplot2`
 
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
+Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
 :::: {.columns style="font-size:60%"}
 
@@ -640,13 +779,94 @@ ggplot(data = player_stats,
 ::::
 
 
+## Data Types Interlude: Factors
+
+New data type (to us): **factor** variable: a built-in data type that R provides for categorical variables
+
+Sets fixed possibilities of values that the variable can take on 
+
+:::: {.columns}
+::: {.column}
+If you have a variable with days of the week...
+
+```{r}
+days <- c("Tues", "Wed", "Thurs")
+```
+
+Nothing preventing typos and no sensible sorting
+
+```{r}
+moredays <- c("Teus", "Wed", "Thrus")
+sort(days)
+```
+:::
+
+::: {.column .fragment}
+Factors help with both. Start by creating a vector of **levels**. Can also make **labels** for nicer printing.
+
+```{r}
+weekday_levels <- c("Mon", "Tues", "Wed", "Thurs", "Fri")
+weekday_labels <- c("Mon" = "Monday", 
+                    "Tues" = "Tuesday", 
+                    "Wed" = "Wednesday", 
+                    "Thurs" = "Thursday", 
+                    "Fri" = "Friday")
+```
+
+And now make a factor
+
+```{r}
+days_fct <- factor(days, levels = weekday_levels, 
+                   labels = weekday_labels)
+```
+:::
+::::
+
+
+## Transform: Factor Variables
+
+Will convert to `NA` if not valid level
+
+```{r}
+factor(moredays, levels = weekday_levels)
+```
+
+Better sorting
+
+```{r}
+sort(days_fct)
+```
+
+
+## Data Types Interlude: Factors
+
+Within a dataframe, we can modify or create columns by pulling the column out with `$` and assigning it to something new.
+
+```{r}
+position_levels <- c("GK", "DEF", "MID", "FWD")
+position_labels <- c("GK" = "Goalkeeper",
+                     "DEF" = "Defense",
+                     "MID" = "Midfield",
+                     "FWD" = "Forward")
+```
+
+```{r}
+player_stats$position_fct <- factor(player_stats$position,
+                                    levels = position_levels,
+                                    labels = position_labels)
+player_stats$position_fct |> head()
+```
+
+
 ## Visualize: `ggplot2`
 
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
+Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
 :::: {.columns style="font-size:60%"}
 
 ::: {.column width=33%}
+Swap `position` to `position_fct`
+
 The absolute number of goals might be a little harder to interpret, though.
 
 We can add a `mapping` argument to `geom_bar()` to tell it to plot proportions instead of counts.
@@ -660,18 +880,18 @@ We can add a `mapping` argument to `geom_bar()` to tell it to plot proportions i
 #| fig-width: 7
 #| fig-height: 4.5
 ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position, y = after_stat(prop))) +
+       mapping = aes(x = goals, fill = position_fct, y = after_stat(prop))) +
   geom_bar() +
-  facet_wrap(~ position)
+  facet_wrap(~ position_fct)
 ```
 
 ### Code
 ```{r}
 #| eval: false
 ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position, y = after_stat(prop))) +
+       mapping = aes(x = goals, fill = position_fct, y = after_stat(prop))) +
   geom_bar() +
-  facet_wrap(~ position)
+  facet_wrap(~ position_fct)
 ```
 :::
 :::
@@ -681,7 +901,7 @@ ggplot(data = player_stats,
 
 ## Visualize: `ggplot2`
 
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
+Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
 :::: {.columns style="font-size:60%"}
 
@@ -699,9 +919,9 @@ With each of these `scales_` functions, we can pass in an scale label as the fir
 #| fig-width: 7
 #| fig-height: 4.5
 ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position)) +
+       mapping = aes(x = goals, fill = position_fct)) +
   geom_bar(mapping = aes(y = after_stat(prop))) +
-  facet_wrap(~ position) +
+  facet_wrap(~ position_fct) +
   scale_y_continuous("Proportion", limits = 0:1, labels = scales::label_percent()) +
   scale_x_continuous("Goals Scored", breaks = 0:10)
 ```
@@ -710,9 +930,9 @@ ggplot(data = player_stats,
 ```{r}
 #| eval: false
 ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position)) +
+       mapping = aes(x = goals, fill = position_fct)) +
   geom_bar(mapping = aes(y = after_stat(prop))) +
-  facet_wrap(~ position) +
+  facet_wrap(~ position_fct) +
   scale_y_continuous("Proportion", limits = 0:1, labels = scales::label_percent()) +
   scale_x_continuous("Goals Scored", breaks = 0:10)
 ```
@@ -724,59 +944,7 @@ ggplot(data = player_stats,
 
 ## Visualize: `ggplot2`
 
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
-
-:::: {.columns style="font-size:60%"}
-
-::: {.column width=33%}
-Let's add some nicer-looking labels to the facets.
-
-We need to create a vector of the pattern `c(value_in_the_data = label_we_want, ...)`.
-
-Then, we can tell `facet_wrap()` how to interpret it with the `as_labeller()` function.
-:::
-
-::: {.column width=66%}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 7
-#| fig-height: 4.5
-position_labels = c(
-  "GK" = "Goalkeeper",
-  "DEF" = "Defense",
-  "MID" = "Midfield",
-  "FWD" = "Forward"
-)
-
-ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position)) +
-  geom_bar(mapping = aes(y = after_stat(prop))) +
-  facet_wrap(~ position, labeller = as_labeller(position_labels)) +
-  scale_y_continuous("Proportion", limits = 0:1, labels = scales::label_percent()) +
-  scale_x_continuous("Goals Scored", breaks = 0:10)
-```
-
-### Code
-```{r}
-#| eval: false
-ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position)) +
-  geom_bar(mapping = aes(y = after_stat(prop))) +
-  facet_wrap(~ position, labeller = as_labeller(position_labels)) +
-  scale_y_continuous("Proportion", limits = 0:1, labels = scales::label_percent()) +
-  scale_x_continuous("Goals Scored", breaks = 0:10)
-```
-:::
-:::
-
-::::
-
-
-## Visualize: `ggplot2`
-
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
+Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
 :::: {.columns style="font-size:60%"}
 
@@ -790,18 +958,11 @@ To help anyone viewing our plot understand it, we can add some labels with the `
 ```{r}
 #| echo: false
 #| fig-width: 7
-#| fig-height: 5.5
-position_labels = c(
-  "GK" = "Goalkeeper",
-  "DEF" = "Defense",
-  "MID" = "Midfield",
-  "FWD" = "Forward"
-)
-
+#| fig-height: 4.5
 ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position)) +
+       mapping = aes(x = goals, fill = position_fct)) +
   geom_bar(mapping = aes(y = after_stat(prop))) +
-  facet_wrap(~ position, labeller = as_labeller(position_labels)) +
+  facet_wrap(~ position_fct) +
   scale_y_continuous("Proportion", limits = 0:1, labels = scales::label_percent()) +
   scale_x_continuous("Goals Scored", breaks = 0:10) +
   labs(title = "2026 World Cup Goals by Player Position",
@@ -811,17 +972,10 @@ ggplot(data = player_stats,
 ### Code
 ```{r}
 #| eval: false
-position_labels = c(
-  "GK" = "Goalkeeper",
-  "DEF" = "Defense",
-  "MID" = "Midfield",
-  "FWD" = "Forward"
-)
-
 ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position)) +
+       mapping = aes(x = goals, fill = position_fct)) +
   geom_bar(mapping = aes(y = after_stat(prop))) +
-  facet_wrap(~ position, labeller = as_labeller(position_labels)) +
+  facet_wrap(~ position_fct) +
   scale_y_continuous("Proportion", limits = 0:1, labels = scales::label_percent()) +
   scale_x_continuous("Goals Scored", breaks = 0:10) +
   labs(title = "2026 World Cup Goals by Player Position",
@@ -835,7 +989,7 @@ ggplot(data = player_stats,
 
 ## Visualize: `ggplot2`
 
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
+Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
 :::: {.columns style="font-size:60%"}
 
@@ -852,17 +1006,10 @@ I like increasing the `base_size` argument to improve readability.
 #| echo: false
 #| fig-width: 7
 #| fig-height: 4.5
-position_labels = c(
-  "GK" = "Goalkeeper",
-  "DEF" = "Defense",
-  "MID" = "Midfield",
-  "FWD" = "Forward"
-)
-
 ggplot(data = player_stats,
        mapping = aes(x = goals, fill = position)) +
   geom_bar(mapping = aes(y = after_stat(prop))) +
-  facet_wrap(~ position, labeller = as_labeller(position_labels)) +
+  facet_wrap(~ position) +
   scale_y_continuous("Proportion", limits = 0:1, labels = scales::label_percent()) +
   scale_x_continuous("Goals Scored", breaks = 0:10) +
   labs(title = "2026 World Cup Goals by Player Position",
@@ -873,17 +1020,10 @@ ggplot(data = player_stats,
 ### Code
 ```{r}
 #| eval: false
-position_labels = c(
-  "GK" = "Goalkeeper",
-  "DEF" = "Defense",
-  "MID" = "Midfield",
-  "FWD" = "Forward"
-)
-
 ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position)) +
+       mapping = aes(x = goals, fill = position_fct)) +
   geom_bar(mapping = aes(y = after_stat(prop))) +
-  facet_wrap(~ position, labeller = as_labeller(position_labels)) +
+  facet_wrap(~ position_fct) +
   scale_y_continuous("Proportion", limits = 0:1, labels = scales::label_percent()) +
   scale_x_continuous("Goals Scored", breaks = 0:10) +
   labs(title = "2026 World Cup Goals by Player Position",
@@ -897,8 +1037,6 @@ ggplot(data = player_stats,
 
 
 ## Visualize: `ggplot2`
-
-Now, let's explore a different question: what is the relationship between players' positions and the number of goals they score?
 
 :::: {.columns style="font-size:60%"}
 
@@ -919,17 +1057,10 @@ I also like to cap the axes with the `guides()` and `guide_axis(cap = T)` functi
 #| echo: false
 #| fig-width: 7
 #| fig-height: 5
-position_labels = c(
-  "GK" = "Goalkeeper",
-  "DEF" = "Defense",
-  "MID" = "Midfield",
-  "FWD" = "Forward"
-)
-
 ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position)) +
+       mapping = aes(x = goals, fill = position_fct)) +
   geom_bar(mapping = aes(y = after_stat(prop))) +
-  facet_wrap(~ position, labeller = as_labeller(position_labels)) +
+  facet_wrap(~ position_fct) +
   scale_y_continuous("Proportion", limits = 0:1, labels = scales::label_percent()) +
   scale_x_continuous("Goals Scored", breaks = 0:10) +
   labs(title = "2026 World Cup Goals by Player Position",
@@ -945,17 +1076,10 @@ ggplot(data = player_stats,
 ### Code
 ```{r}
 #| eval: false
-position_labels = c(
-  "GK" = "Goalkeeper",
-  "DEF" = "Defense",
-  "MID" = "Midfield",
-  "FWD" = "Forward"
-)
-
 ggplot(data = player_stats,
-       mapping = aes(x = goals, fill = position)) +
+       mapping = aes(x = goals, fill = position_fct)) +
   geom_bar(mapping = aes(y = after_stat(prop))) +
-  facet_wrap(~ position, labeller = as_labeller(position_labels)) +
+  facet_wrap(~ position_fct) +
   scale_y_continuous("Proportion", limits = 0:1, labels = scales::label_percent()) +
   scale_x_continuous("Goals Scored", breaks = 0:10) +
   labs(title = "2026 World Cup Goals by Player Position",
@@ -1093,10 +1217,7 @@ ggplot(data = player_stats,
 
 ## Some More `ggplot`s
 
-Violin plots help us easily compare distributions. Create them with `geom_violin()`. Specify the groups on the y-axis by specifying `aes(y = position)`.
-
-We can group the violins by specifying the `y` value in the `mapping`. [If we want to layer on the observed data by adding a point plot, do we need to change the `mapping` or the `geom`?]{.fragment} [`geom_jitter()`!]{.fragment}
-
+Violin plots help us easily compare distributions. Create them with `geom_violin()`. Specify the groups on the y-axis by specifying `aes(y = position_fct)`.
 
 :::: {.columns style="font-size:60%"}
 
@@ -1108,7 +1229,7 @@ We can group the violins by specifying the `y` value in the `mapping`. [If we wa
 #| fig-width: 7
 #| fig-height: 4.5
 ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = position)) +
+       mapping = aes(x = minutes_played, y = position_fct)) +
   geom_violin()
 ```
 
@@ -1116,7 +1237,38 @@ ggplot(data = player_stats,
 ```{r}
 #| eval: false
 ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = position)) +
+       mapping = aes(x = minutes_played, y = position_fct)) +
+  geom_violin()
+```
+:::
+:::
+
+::::
+
+
+## Some More `ggplot`s
+
+If we want to layer on the observed data by adding a point plot, do we need to change the `mapping` or the `geom`? [`geom_jitter()`!]{.fragment}
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=50%}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position_fct)) +
+  geom_violin()
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position_fct)) +
   geom_violin()
 ```
 :::
@@ -1131,7 +1283,7 @@ ggplot(data = player_stats,
 #| fig-width: 7
 #| fig-height: 4.5
 ggplot(data = player_stats,
-       mapping = aes(y = minutes_played, x = position)) +
+       mapping = aes(x = minutes_played, y = position_fct)) +
   geom_violin() +
   geom_jitter()
 ```
@@ -1140,7 +1292,7 @@ ggplot(data = player_stats,
 ```{r}
 #| eval: false
 ggplot(data = player_stats,
-       mapping = aes(y = minutes_played, x = position)) +
+       mapping = aes(x = minutes_played, y = position_fct)) +
   geom_violin() +
   geom_jitter()
 ```
@@ -1153,7 +1305,8 @@ ggplot(data = player_stats,
 
 ## Some More `ggplot`s
 
-An note about `geom_jitter()`: by default it will add noise in both the x- and y-direction (`width` and `height` arguments). This may not be appropriate for all cases: here, the default behavior hides that values in category 2 are rounded.
+::: {style="font-size:90%"}
+An note about `geom_jitter()`: by default it will add noise in both the x- and y-direction (`width` and `height` arguments). This may not be appropriate for all cases: here, the default behavior hides that values in category B are rounded.
 
 ```{r}
 #| echo: false
@@ -1167,7 +1320,7 @@ d <- tibble(
   )
 )
 ```
-
+:::
 
 :::: {.columns style="font-size:60%"}
 
@@ -1270,7 +1423,7 @@ We can add a trend line with `geom_smooth()`. Note that `geom_smooth()` picks up
 :::: {.columns style="font-size:60%"}
 
 ::: {.column width=50%}
-If we wanted to see the points with color representing player position, would we need to change the `mapping` or `geom`? [`aes(color = position)`!]{.fragment}
+If we wanted to see the points with color representing player position, would we need to change the `mapping` or `geom`? [`aes(color = position_fct)`!]{.fragment}
 :::
 
 ::: {.column width=50%}
@@ -1315,7 +1468,7 @@ If we want to see the points labeled by player position, we can specify the `col
 #| fig-width: 7
 #| fig-height: 4.5
 ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = goals, color = position)) +
+       mapping = aes(x = minutes_played, y = goals, color = position_fct)) +
   geom_point() +
   geom_smooth()
 ```
@@ -1324,7 +1477,7 @@ ggplot(data = player_stats,
 ```{r}
 #| eval: false
 ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = goals, color = position)) +
+       mapping = aes(x = minutes_played, y = goals, color = position_fct)) +
   geom_point() +
   geom_smooth()
 ```
@@ -1338,9 +1491,8 @@ ggplot(data = player_stats,
 #| echo: false
 #| fig-width: 7
 #| fig-height: 4.5
-player_stats |>
-  filter_out(position == "GK") |>
-  ggplot(mapping = aes(x = minutes_played, y = goals, color = position)) +
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals, color = position_fct)) +
   geom_point() +
   geom_smooth()
 ```
@@ -1348,9 +1500,8 @@ player_stats |>
 ### Code
 ```{r}
 #| eval: false
-player_stats |>
-  filter_out(position == "GK") |>
-  ggplot(mapping = aes(x = minutes_played, y = goals, color = position)) +
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals, color = position_fct)) +
   geom_point() +
   geom_smooth()
 ```
@@ -1383,10 +1534,9 @@ I also like to cap the axes with the `guides()` and `guide_axis(cap = T)` functi
 #| echo: false
 #| fig-width: 7
 #| fig-height: 4.5
-player_stats |>
-  filter_out(position == "GK") |>
-  ggplot(mapping = aes(x = minutes_played, y = goals, 
-                     color = position, fill = position)) +
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals, 
+                     color = position_fct, fill = position_fct)) +
   geom_point() +
   geom_smooth() +
   guides(x = guide_axis(cap = T),
@@ -1408,10 +1558,9 @@ player_stats |>
 ### Code
 ```{r}
 #| eval: false
-player_stats |>
-  filter_out(position == "GK") |>
-  ggplot(mapping = aes(x = minutes_played, y = goals, 
-                     color = position, fill = position)) +
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = goals, 
+                     color = position_fct, fill = position_fct)) +
   geom_point() +
   geom_smooth() +
   guides(x = guide_axis(cap = T),
@@ -1439,17 +1588,13 @@ player_stats |>
 
 Plotting in `ggplot2` is very powerful and flexible but can take some getting used to. **None** of these functions or arguments need to be memorized. You will always have access to reference material and documentation.
 
-:::: {.columns}
+:::: {.columns .smaller-column-images}
 ::: {.column width="33%"}
-[R for Data Science (2e)](https://r4ds.hadley.nz/){target="blank"}
-
-[![](../media/lab_01/r4de.jpg)](https://r4ds.hadley.nz/){target="blank"}
+[![](../media/lab_01/r4de.jpg){width="100%"}](https://r4ds.hadley.nz/){target="blank"}
 :::
 
 ::: {.column width="33%"}
-[ggplot2: Elegant Graphics for Data Analysis (3e)](https://ggplot2-book.org/){target="blank"}
-
-[![](../media/lab_01/ggplot2.jpg)](https://ggplot2-book.org//){target="blank"}
+[![](../media/lab_01/ggplot2.jpg){width="100%"}](https://ggplot2-book.org//){target="blank"}
 :::
 
 ::: {.column width="33%"}
@@ -1458,45 +1603,22 @@ Plotting in `ggplot2` is very powerful and flexible but can take some getting us
 ::::
 
 
-## Visualizations: Bonus
+## Removing Missing Data
 
-Back to the violin plot, we can layer on the observed data by adding a point plot with `geom_point()`. 
+One more thing (relevant for Homework 1!)
 
-:::: {.columns style="font-size:60%"}
+R has a special type for missing data: `NA`. If there are `NA`s in your data, some common functions will not work as expected.
 
-::: {.column width=33%}
-But, the points are all overlapping and hard to see at the different levels of position.
-
-We can nudge them off their data value by using `geom_jitter()`. But, we only want it to nudge on the y-axis, not the x-axis.
-
-So, we will need to set `geom_jitter()`'s `width` argument to 0. Otherwise, it'll try to move the points on their `minutes_played` value, too.
-:::
-
-::: {.column width=66%}
-::: {.panel-tabset}
-### Plot
 ```{r}
-#| echo: false
-#| fig-width: 7
-#| fig-height: 4.5
-ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = position)) +
-  geom_violin() + 
-  geom_point()
+test_scores <- c(90, 82, 98, 76, 86, 98, NA, 93, 89)
+mean(test_scores); sd(test_scores)
 ```
 
-### Code
-```{r}
-#| eval: false
-ggplot(data = player_stats,
-       mapping = aes(x = minutes_played, y = position)) +
-  geom_violin() + 
-  geom_point()
-```
-:::
-:::
+Some functions (like these) have an `na.rm` function: tells it to remove the `NA`s before calculating.
 
-::::
+```{r}
+mean(test_scores, na.rm = T); sd(test_scores, na.rm = T)
+```
 
 
 ## Lab 02 Activity

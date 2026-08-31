@@ -101,7 +101,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-<link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-f4466831b980178684530f2fd43447de.css">
+<link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-310ee64b8d902485d7066f18a434f318.css">
 <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
 <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
 <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -200,7 +200,7 @@
 
 <section id="title-slide" class="quarto-title-block center"><h1 class="title">Data Visualization with <code>ggplot2</code>
 </h1>
-  <p class="subtitle">PSYC 6019-A01 / PSYC 6022-A01 2025-09-04 | Lab 2</p>
+  <p class="subtitle">PSYC 6019-A01 / PSYC 6022-A01 <br> 2025-09-04 | Lab 2</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -235,30 +235,778 @@ Jess Helmer
 <p><a href="https://r4ds.hadley.nz/" target="blank"><img data-src="../media/lab_01/r4de.jpg"></a></p>
 </div></div>
 <p><img data-src="../media/lab_02/tidyverse-packages.png" class="absolute" style="left: 0px; bottom: 0px; height: 40%; "></p>
+</section><section id="whole-game" class="slide level2"><h2>Whole Game</h2>
+<p>Pieces of the “whole game” of data science</p>
+
+<img data-src="../media/lab_02/tidyflow.png" class="r-stretch"></section><section id="whole-game-1" class="slide level2"><h2>Whole Game</h2>
+<p>Pieces of the “whole game” of data science, with corresponding <code>tidyverse</code> packages</p>
+<p><img data-src="../media/lab_02/tidyverse-packages-in-workflow.png"></p>
+<p><img data-src="../media/lab_02/quarto-hex.png" class="fragment absolute" style="bottom: 213.8px; right: 101.5px; height: 10%; "></p>
+<div class="footer">
+<p><a href="https://mareds.github.io/r_course/index.html">mareds.github.io/r_course/index.html</a></p>
+</div>
+</section><section id="import-todays-dataset" class="slide level2"><h2>Import: Today’s Dataset</h2>
+<p>Dataset on player stats from the 2026 World Cup</p>
+<div style="font-size:80%">
+<div class="columns">
+<div class="column" style="width:66%;">
+<div class="cell">
+<div class="cell-output-display">
+<div id="wxbvpfwult" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wxbvpfwult table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#wxbvpfwult thead, #wxbvpfwult tbody, #wxbvpfwult tfoot, #wxbvpfwult tr, #wxbvpfwult td, #wxbvpfwult th {
+  border-style: none;
+}
+
+#wxbvpfwult p {
+  margin: 0;
+  padding: 0;
+}
+
+#wxbvpfwult .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#wxbvpfwult .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#wxbvpfwult .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#wxbvpfwult .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#wxbvpfwult .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wxbvpfwult .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wxbvpfwult .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wxbvpfwult .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#wxbvpfwult .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#wxbvpfwult .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#wxbvpfwult .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#wxbvpfwult .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#wxbvpfwult .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#wxbvpfwult .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#wxbvpfwult .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wxbvpfwult .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#wxbvpfwult .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#wxbvpfwult .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#wxbvpfwult .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wxbvpfwult .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#wxbvpfwult .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#wxbvpfwult .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#wxbvpfwult .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wxbvpfwult .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#wxbvpfwult .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#wxbvpfwult .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wxbvpfwult .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wxbvpfwult .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#wxbvpfwult .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wxbvpfwult .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#wxbvpfwult .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wxbvpfwult .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wxbvpfwult .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wxbvpfwult .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wxbvpfwult .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wxbvpfwult .gt_left {
+  text-align: left;
+}
+
+#wxbvpfwult .gt_center {
+  text-align: center;
+}
+
+#wxbvpfwult .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#wxbvpfwult .gt_font_normal {
+  font-weight: normal;
+}
+
+#wxbvpfwult .gt_font_bold {
+  font-weight: bold;
+}
+
+#wxbvpfwult .gt_font_italic {
+  font-style: italic;
+}
+
+#wxbvpfwult .gt_super {
+  font-size: 65%;
+}
+
+#wxbvpfwult .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#wxbvpfwult .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#wxbvpfwult .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#wxbvpfwult .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#wxbvpfwult .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#wxbvpfwult .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#wxbvpfwult .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#wxbvpfwult .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#wxbvpfwult div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table caption-top" data-quarto-bootstrap="false">
+<thead><tr class="gt_col_headings header">
+<th id="team_name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">team_name</th>
+<th id="fifa_code" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">fifa_code</th>
+<th id="player_name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">player_name</th>
+<th id="position" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">position</th>
+<th id="matches_played" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">matches_played</th>
+<th id="matches_started" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">matches_started</th>
+<th id="minutes_played" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">minutes_played</th>
+<th id="goals" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">goals</th>
+<th id="assists" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">assists</th>
+<th id="yellow_cards" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">yellow_cards</th>
+<th id="red_cards" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">red_cards</th>
+<th id="own_goals" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">own_goals</th>
+<th id="saves" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">saves</th>
+<th id="goals_conceded" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">goals_conceded</th>
+</tr></thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="team_name">Mexico</td>
+<td class="gt_row gt_left" headers="fifa_code">MEX</td>
+<td class="gt_row gt_left" headers="player_name">José Raúl Rangel</td>
+<td class="gt_row gt_left" headers="position">GK</td>
+<td class="gt_row gt_right" headers="matches_played">5</td>
+<td class="gt_row gt_right" headers="matches_started">5</td>
+<td class="gt_row gt_right" headers="minutes_played">438</td>
+<td class="gt_row gt_right" headers="goals">0</td>
+<td class="gt_row gt_right" headers="assists">0</td>
+<td class="gt_row gt_right" headers="yellow_cards">0</td>
+<td class="gt_row gt_right" headers="red_cards">0</td>
+<td class="gt_row gt_right" headers="own_goals">0</td>
+<td class="gt_row gt_right" headers="saves">7</td>
+<td class="gt_row gt_right" headers="goals_conceded">3</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="team_name">Mexico</td>
+<td class="gt_row gt_left" headers="fifa_code">MEX</td>
+<td class="gt_row gt_left" headers="player_name">Jorge Eduardo Sanchez</td>
+<td class="gt_row gt_left" headers="position">DEF</td>
+<td class="gt_row gt_right" headers="matches_played">5</td>
+<td class="gt_row gt_right" headers="matches_started">5</td>
+<td class="gt_row gt_right" headers="minutes_played">439</td>
+<td class="gt_row gt_right" headers="goals">0</td>
+<td class="gt_row gt_right" headers="assists">1</td>
+<td class="gt_row gt_right" headers="yellow_cards">0</td>
+<td class="gt_row gt_right" headers="red_cards">0</td>
+<td class="gt_row gt_right" headers="own_goals">0</td>
+<td class="gt_row gt_right" headers="saves">NA</td>
+<td class="gt_row gt_right" headers="goals_conceded">NA</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="team_name">Mexico</td>
+<td class="gt_row gt_left" headers="fifa_code">MEX</td>
+<td class="gt_row gt_left" headers="player_name">César Jasib Montes</td>
+<td class="gt_row gt_left" headers="position">DEF</td>
+<td class="gt_row gt_right" headers="matches_played">3</td>
+<td class="gt_row gt_right" headers="matches_started">2</td>
+<td class="gt_row gt_right" headers="minutes_played">165</td>
+<td class="gt_row gt_right" headers="goals">0</td>
+<td class="gt_row gt_right" headers="assists">0</td>
+<td class="gt_row gt_right" headers="yellow_cards">0</td>
+<td class="gt_row gt_right" headers="red_cards">1</td>
+<td class="gt_row gt_right" headers="own_goals">0</td>
+<td class="gt_row gt_right" headers="saves">NA</td>
+<td class="gt_row gt_right" headers="goals_conceded">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="team_name">Mexico</td>
+<td class="gt_row gt_left" headers="fifa_code">MEX</td>
+<td class="gt_row gt_left" headers="player_name">Edson Omar Alvarez</td>
+<td class="gt_row gt_left" headers="position">DEF</td>
+<td class="gt_row gt_right" headers="matches_played">2</td>
+<td class="gt_row gt_right" headers="matches_started">0</td>
+<td class="gt_row gt_right" headers="minutes_played">75</td>
+<td class="gt_row gt_right" headers="goals">0</td>
+<td class="gt_row gt_right" headers="assists">0</td>
+<td class="gt_row gt_right" headers="yellow_cards">1</td>
+<td class="gt_row gt_right" headers="red_cards">0</td>
+<td class="gt_row gt_right" headers="own_goals">0</td>
+<td class="gt_row gt_right" headers="saves">NA</td>
+<td class="gt_row gt_right" headers="goals_conceded">NA</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="team_name">Mexico</td>
+<td class="gt_row gt_left" headers="fifa_code">MEX</td>
+<td class="gt_row gt_left" headers="player_name">Johan Felipe Vasquez</td>
+<td class="gt_row gt_left" headers="position">DEF</td>
+<td class="gt_row gt_right" headers="matches_played">2</td>
+<td class="gt_row gt_right" headers="matches_started">2</td>
+<td class="gt_row gt_right" headers="minutes_played">180</td>
+<td class="gt_row gt_right" headers="goals">0</td>
+<td class="gt_row gt_right" headers="assists">0</td>
+<td class="gt_row gt_right" headers="yellow_cards">0</td>
+<td class="gt_row gt_right" headers="red_cards">0</td>
+<td class="gt_row gt_right" headers="own_goals">0</td>
+<td class="gt_row gt_right" headers="saves">NA</td>
+<td class="gt_row gt_right" headers="goals_conceded">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:33%;">
+<ol type="1">
+<li><p>Download data onto your computer</p></li>
+<li><p>Move it to where you want it</p></li>
+<li><p>Read it into R</p></li>
+<li><p>Assign it to a variable</p></li>
+</ol>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>I found this dataset on <a href="https://www.kaggle.com/">Kaggle</a>, a website where people can share datasets (real or simulated). Helpful place to look for interesting datasets!</p>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+<div class="footer">
+<p>Islam M (2026). “The FIFA World Cup 2026 Master Dataset: A Normalized 3NF Relational Benchmark of the Expanded 48-Team International Football Tournament.” doi:10.5281/zenodo.21592427 <a href="https://doi.org/10.5281/zenodo.21592427" class="uri">https://doi.org/10.5281/zenodo.21592427</a>.</p>
+</div>
+</section><section id="import-download-data-and-move-it" class="slide level2"><h2>Import: Download Data and Move It</h2>
+<p>You can access the data through our <a href="https://github.com/jhelmer3/PSYC6019-2026">class GitHub source page</a></p>
+<p>Also accessible by clicking the GitHub icon on the class website</p>
+<p>Navigate to <code>lab/data/world_cup_player_stats.csv</code>, and download.</p>
+<p>Then, move the <code>.csv</code> file to the folder you want it in.</p>
+<p>Within your folder for this class, I recommend either having a <code>data/</code> subfolder or a subfolder for each lab (e.g., <code>lab_01/</code>, <code>lab_02/</code>, …).</p>
+<p><img data-src="../media/lab_02/github-icon.png" class="absolute" style="top: 330px; right: 0px; height: 10%; "></p>
+</section><section id="import-read-data-into-r" class="slide level2"><h2>Import: Read Data into R</h2>
+<p>This file is a CSV file, so we can use the <code>read.csv(file)</code> function</p>
+<div class="subpoint">
+<p><code>file</code> = a path to the data file.</p>
+</div>
+</section><section id="import-paths-to-files" class="slide level2"><h2>Import: Paths to Files</h2>
+<p>How do we specify paths to data files?</p>
+<p>Sometimes, you’ll see something like this</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html">setwd</a></span><span class="op">(</span><span class="st">"path/to/a/folder/that/only/works/on/my/computer/my_project_folder"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"data/my_data.csv"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Bad! This will never work on someone else’s computer. Or your own computer three months from now, if you decide to change your folder structure.</p>
+</section><section id="import-paths-to-files-1" class="slide level2"><h2>Import: Paths to Files</h2>
+<p>How do we specify paths to data files?</p>
+<p>Better: use a tool to automatically find your project root folder, and specify paths with that</p>
+<p>Like the <code><a href="https://here.r-lib.org/reference/here.html">here::here()</a></code> function</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"my_data.csv"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="fragment">
+<p>Not part of the <code>tidyverse</code>, so we have to install the <code>here</code> package next! It was created by the author of the <a href="https://rstats.wtf/practice-safe-paths">What They Forgot to Teach You About R</a> book.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"here"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div class="footer">
+<p><a href="https://rstats.wtf/practice-safe-paths">What They Forgot to Teach You About R</a>, <a href="https://github.com/jennybc/here_here">Ode to the <code>here</code> Package</a></p>
+</div>
+</section><section id="aside-packages-in-r" class="slide level2"><h2>Aside: Packages in R</h2>
+<p>Base R has a lot of great stuff, but <em>packages</em> made by the community have even more great stuff</p>
+</section><section id="aside-packages-in-r-1" class="slide level2"><h2>Aside: Packages in R</h2>
+<p>Steps of using an R package:</p>
+<h4 id="installing">1. Installing</h4>
+<p><code>install.packages(package)</code></p>
+<div class="subpoint">
+○ <code>package</code> = (character) package name
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"here"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Only have to do this once</p>
+</section><section id="aside-packages-in-r-2" class="slide level2"><h2>Aside: Packages in R</h2>
+<p>Steps of using an R package:</p>
+<h4 id="loading">2. Loading</h4>
+<div class="columns">
+<div class="column">
+<code><a href="https://rdrr.io/r/base/library.html">library(package)</a></code>
+<div class="subpoint">
+○ <code>package</code> = (not character) package name
+</div>
+<p>At the top of your file</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Better if you use many functions from that package in your script</p>
+</div><div class="column">
+<p><code>package::package_function()</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Better if you use only a few functions from that package</p>
+<p>Or if you want to be more specific</p>
+<div class="subpoint">
+○ Sometimes a function from one package will overwrite a function from a different package, and this calls the specific one
+</div>
+</div></div>
+</section><section id="aside-packages-in-r-3" class="slide level2"><h2>Aside: Packages in R</h2>
+<p>Steps of using an R package:</p>
+<h4 id="using">3. Using</h4>
+<p>If you use <code><a href="https://rdrr.io/r/base/library.html">library()</a></code>, you can then call the function with just its name</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/">here</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section><section id="import-paths-to-files-2" class="slide level2"><h2>Import: Paths to Files</h2>
+<p><code><a href="https://here.r-lib.org/reference/here.html">here::here()</a></code> specifies paths <strong>relatively</strong>, using the <code>.Rproj</code> file as the starting point.</p>
+<pre><code>PSYC6019/
+├── PSYC6019.Rproj
+├── data/
+│   ├── survey_data.csv
+│   └── participant_info.csv
+├── scripts/
+│   ├── clean_data.R
+│   └── fit_model.R
+├── media/
+│   └── results.png
+└── reports/
+    └── lab_report.qmd</code></pre>
+<p>How do we access each of these files from each of these starting places?</p>
+<div class="columns" style="font-size:66%">
+<div class="column" style="width:33%;">
+<p><code>participant_info.csv</code> from <code>clean_data.R</code></p>
+<p><span class="fragment"><code>here::here("data", "participant_info.csv")</code></span></p>
+</div><div class="column" style="width:33%;">
+<p><code>survey_data.csv</code> to <code>fit_model.R</code></p>
+<p><span class="fragment"><code>here::here("data", "survey_data.csv")</code></span></p>
+</div><div class="column" style="width:33%;">
+<p><code>results.png</code> to <code>lab_report.qmd</code></p>
+<p><span class="fragment"><code>here::here("media", "lab_report.qmd")</code></span></p>
+</div></div>
+</section><section id="import-read-data-into-r-1" class="slide level2"><h2>Import: Read Data into R</h2>
+<p>Let’s do this for real!</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "C:/Users/jessi/OneDrive - Georgia Institute of Technology/Courses/GTA/PSYC 6019/PSYC6019-2026"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"data"</span>, <span class="st">"world_cup_player_stats.csv"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "C:/Users/jessi/OneDrive - Georgia Institute of Technology/Courses/GTA/PSYC 6019/PSYC6019-2026/lab/data/world_cup_player_stats.csv"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"data"</span>, <span class="st">"world_cup_player_stats.csv"</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  team_name fifa_code           player_name position matches_played matches_started minutes_played goals assists
+1    Mexico       MEX      José Raúl Rangel       GK              5               5            438     0       0
+2    Mexico       MEX Jorge Eduardo Sanchez      DEF              5               5            439     0       1
+  yellow_cards red_cards own_goals saves goals_conceded
+1            0         0         0     7              3
+2            0         0         0    NA             NA</code></pre>
+</div>
+</div>
+<p>Good, we can successfully read in the data. Now, to keep using it, let’s assign it to a variable.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">player_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"data"</span>, <span class="st">"world_cup_player_stats.csv"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section><section id="import-read-data-into-r-2" class="slide level2"><h2>Import: Read Data into R</h2>
+<p>This file is a CSV file, so we can use the <code>read.csv(file)</code> function, where <code>file</code> is a path to the data file.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">player_stats</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  team_name fifa_code           player_name position matches_played matches_started minutes_played goals assists
+1    Mexico       MEX      José Raúl Rangel       GK              5               5            438     0       0
+2    Mexico       MEX Jorge Eduardo Sanchez      DEF              5               5            439     0       1
+3    Mexico       MEX    César Jasib Montes      DEF              3               2            165     0       0
+4    Mexico       MEX    Edson Omar Alvarez      DEF              2               0             75     0       0
+5    Mexico       MEX  Johan Felipe Vasquez      DEF              2               2            180     0       0
+6    Mexico       MEX     Erik Antonio Lira      MID              5               5            450     0       1
+  yellow_cards red_cards own_goals saves goals_conceded
+1            0         0         0     7              3
+2            0         0         0    NA             NA
+3            0         1         0    NA             NA
+4            1         0         0    NA             NA
+5            0         0         0    NA             NA
+6            1         0         0    NA             NA</code></pre>
+</div>
+</div>
 </section><section id="the-tidyverse-1" class="slide level2"><h2>The <code>tidyverse</code>
 </h2>
-<div style="font-size:80%">
-<p>Let’s get ready to use some <code>tidyverse</code> code!</p>
-<div class="columns">
+<div class="columns" style="font-size:80%">
 <div class="column" style="width:50%;">
+<p>Let’s get ready to use some <code>tidyverse</code> tools!</p>
 <p>We must first install the <code>tidyverse</code> with the <code>install.packages("packagename")</code> function.</p>
 <p>This will install all packages within the <code>tidyverse</code>, so we don’t have to install each manually.</p>
 <p>You only have to install packages once per R download (and then whenever you want to update a package).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div><div class="column" style="width:50%;">
 <p>To load the <code>tidyverse</code> packages into the R environment, we use the <code><a href="https://rdrr.io/r/base/library.html">library(package)</a></code> function. You will have to run this line once per R session (i.e., every time you restart R).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+<pre><code>── Attaching core tidyverse packages ──────────────────────────────────────────────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.2.1     ✔ readr     2.2.0
 ✔ forcats   1.0.1     ✔ stringr   1.6.0
 ✔ ggplot2   4.0.3     ✔ tibble    3.3.1
 ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
 ✔ purrr     1.2.2     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+── Conflicts ────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
@@ -278,136 +1026,6 @@ Jess Helmer
 </div>
 </div>
 </div>
-</div>
-</section><section id="whole-game" class="slide level2"><h2>Whole Game</h2>
-<p>Pieces of the “whole game” of data science</p>
-
-<img data-src="../media/lab_02/tidyflow.png" class="r-stretch"></section><section id="whole-game-1" class="slide level2"><h2>Whole Game</h2>
-<p>Pieces of the “whole game” of data science, with corresponding <code>tidyverse</code> packages</p>
-<p><img data-src="../media/lab_02/tidyverse-packages-in-workflow.png"></p>
-<p><img data-src="../media/lab_02/quarto-hex.png" class="fragment absolute" style="bottom: 208px; right: 88.3px; height: 9%; "></p>
-<div class="footer">
-<p><a href="https://mareds.github.io/r_course/index.html">mareds.github.io/r_course/index.html</a></p>
-</div>
-</section><section id="import-todays-dataset" class="slide level2"><h2>Import: Today’s Dataset</h2>
-<p>Dataset on player stats from the 2026 World Cup</p>
-<div style="font-size:80%">
-<div class="columns">
-<div class="column" style="width:66%;">
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 14
-  team_name fifa_code player_name        position matches_played matches_started
-  &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;              &lt;chr&gt;             &lt;int&gt;           &lt;int&gt;
-1 Mexico    MEX       José Raúl Rangel   GK                    5               5
-2 Mexico    MEX       Jorge Eduardo San… DEF                   5               5
-3 Mexico    MEX       César Jasib Montes DEF                   3               2
-4 Mexico    MEX       Edson Omar Alvarez DEF                   2               0
-5 Mexico    MEX       Johan Felipe Vasq… DEF                   2               2
-6 Mexico    MEX       Erik Antonio Lira  MID                   5               5
-# ℹ 8 more variables: minutes_played &lt;int&gt;, goals &lt;int&gt;, assists &lt;int&gt;,
-#   yellow_cards &lt;int&gt;, red_cards &lt;int&gt;, own_goals &lt;int&gt;, saves &lt;int&gt;,
-#   goals_conceded &lt;int&gt;</code></pre>
-</div>
-</div>
-</div><div class="column" style="width:33%;">
-<ol type="1">
-<li><p>Download data onto your computer</p></li>
-<li><p>Move it to where you want it</p></li>
-<li><p>Read it into R</p></li>
-<li><p>Assign it to a variable</p></li>
-</ol>
-</div></div>
-</div>
-<div class="footer">
-<p>Islam M (2026). “The FIFA World Cup 2026 Master Dataset: A Normalized 3NF Relational Benchmark of the Expanded 48-Team International Football Tournament.” doi:10.5281/zenodo.21592427 <a href="https://doi.org/10.5281/zenodo.21592427" class="uri">https://doi.org/10.5281/zenodo.21592427</a>.</p>
-</div>
-</section><section id="import-download-data-and-move-it" class="slide level2"><h2>Import: Download Data and Move It</h2>
-<p>You can access the data through our <a href="https://github.com/jhelmer3/PSYC6019-2026">class GitHub source page</a></p>
-<p>Also accessible by clicking the GitHub icon on the class website</p>
-<p>Navigate to <code>lab/data/world_cup_player_stats.csv</code>, and download.</p>
-<p>Then, move the <code>.csv</code> file to the folder you want it in.</p>
-<p>I recommend either having a <code>data/</code> subfolder or a subfolder for each lab (e.g., <code>lab_01/</code>, <code>lab_02/</code>, …).</p>
-<p><img data-src="../media/lab_02/github-icon.png" class="absolute" style="top: 330px; right: 0px; height: 10%; "></p>
-</section><section id="import-read-data-into-r" class="slide level2"><h2>Import: Read Data into R</h2>
-<p>This file is a CSV file, so we can use the <code>read.csv(file)</code> function</p>
-<div class="subpoint">
-<p><code>file</code> = a path to the data file.</p>
-</div>
-</section><section id="import-paths-to-files" class="slide level2"><h2>Import: Paths to Files</h2>
-<p>How do we specify paths to data files?</p>
-<p>Sometimes, you’ll see something like this</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html">setwd</a></span><span class="op">(</span><span class="st">"path/to/a/folder/that/only/works/on/my/computer/my_project_folder"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"data/my_data.csv"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Bad! This will never work on someone else’s computer. Or your own computer three months from now, if you decide to change your folder structure.</p>
-</section><section id="import-paths-to-files-1" class="slide level2"><h2>Import: Paths to Files</h2>
-<p>How do we specify paths to data files?</p>
-<p>Better: use a tool to automatically find your project root folder, and specify paths with that</p>
-<p>Like the <code><a href="https://here.r-lib.org/reference/here.html">here::here()</a></code> function</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"my_data.csv"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="footer">
-<p><a href="https://rstats.wtf/practice-safe-paths">What They Forgot to Teach You About R</a>, <a href="https://github.com/jennybc/here_here">Ode to the <code>here</code> Package</a></p>
-</div>
-</section><section id="import-read-data-into-r-1" class="slide level2"><h2>Import: Read Data into R</h2>
-<p>This file is a CSV file, so we can use the <code>read.csv(file)</code> function, where <code>file</code> is a path to the data file.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "C:/Users/jessi/OneDrive - Georgia Institute of Technology/Courses/GTA/PSYC 6019/PSYC6019-2026"</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"data"</span>, <span class="st">"world_cup_player_stats.csv"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "C:/Users/jessi/OneDrive - Georgia Institute of Technology/Courses/GTA/PSYC 6019/PSYC6019-2026/lab/data/world_cup_player_stats.csv"</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"data"</span>, <span class="st">"world_cup_player_stats.csv"</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  team_name fifa_code           player_name position matches_played
-1    Mexico       MEX      José Raúl Rangel       GK              5
-2    Mexico       MEX Jorge Eduardo Sanchez      DEF              5
-  matches_started minutes_played goals assists yellow_cards red_cards own_goals
-1               5            438     0       0            0         0         0
-2               5            439     0       1            0         0         0
-  saves goals_conceded
-1     7              3
-2    NA             NA</code></pre>
-</div>
-</div>
-<p>Good, we can successfully read in the data. Now, to keep using it, let’s assign it to a variable.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">player_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"data"</span>, <span class="st">"world_cup_player_stats.csv"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section><section id="import-read-data-into-r-2" class="slide level2"><h2>Import: Read Data into R</h2>
-<p>This file is a CSV file, so we can use the <code>read.csv(file)</code> function, where <code>file</code> is a path to the data file.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">player_stats</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  team_name fifa_code           player_name position matches_played
-1    Mexico       MEX      José Raúl Rangel       GK              5
-2    Mexico       MEX Jorge Eduardo Sanchez      DEF              5
-3    Mexico       MEX    César Jasib Montes      DEF              3
-4    Mexico       MEX    Edson Omar Alvarez      DEF              2
-5    Mexico       MEX  Johan Felipe Vasquez      DEF              2
-6    Mexico       MEX     Erik Antonio Lira      MID              5
-  matches_started minutes_played goals assists yellow_cards red_cards own_goals
-1               5            438     0       0            0         0         0
-2               5            439     0       1            0         0         0
-3               2            165     0       0            0         1         0
-4               0             75     0       0            1         0         0
-5               2            180     0       0            0         0         0
-6               5            450     0       1            1         0         0
-  saves goals_conceded
-1     7              3
-2    NA             NA
-3    NA             NA
-4    NA             NA
-5    NA             NA
-6    NA             NA</code></pre>
-</div>
-</div>
 </section><section id="import-world-cup-2026" class="slide level2"><h2>Import: World Cup 2026</h2>
 <p>Let’s get a look at this data…</p>
 <div class="panel-tabset">
@@ -420,47 +1038,39 @@ Jess Helmer
 <div id="tabset-1-1">
 <p>Provides descriptive statistics for all columns</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">player_stats</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">player_stats</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  team_name          fifa_code         player_name          position        
- Length:1248        Length:1248        Length:1248        Length:1248       
- Class :character   Class :character   Class :character   Class :character  
- Mode  :character   Mode  :character   Mode  :character   Mode  :character  
-                                                                            
-                                                                            
-                                                                            
-                                                                            
- matches_played  matches_started minutes_played     goals        
- Min.   :0.000   Min.   :0.000   Min.   :  0    Min.   : 0.0000  
- 1st Qu.:1.000   1st Qu.:0.000   1st Qu.: 23    1st Qu.: 0.0000  
- Median :3.000   Median :2.000   Median :146    Median : 0.0000  
- Mean   :2.564   Mean   :1.833   Mean   :169    Mean   : 0.2356  
- 3rd Qu.:4.000   3rd Qu.:3.000   3rd Qu.:270    3rd Qu.: 0.0000  
- Max.   :8.000   Max.   :8.000   Max.   :750    Max.   :10.0000  
-                                                                 
-    assists        yellow_cards       red_cards          own_goals      
- Min.   :0.0000   Min.   :0.00000   Min.   :0.000000   Min.   :0.00000  
- 1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.00000  
- Median :0.0000   Median :0.00000   Median :0.000000   Median :0.00000  
- Mean   :0.1635   Mean   :0.02804   Mean   :0.009615   Mean   :0.01122  
- 3rd Qu.:0.0000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.00000  
- Max.   :8.0000   Max.   :1.00000   Max.   :1.000000   Max.   :2.00000  
-                                                                        
-     saves        goals_conceded  
- Min.   : 0.000   Min.   : 0.000  
- 1st Qu.: 0.000   1st Qu.: 0.000  
- Median : 0.000   Median : 0.000  
- Mean   : 4.772   Mean   : 2.166  
- 3rd Qu.: 8.000   3rd Qu.: 4.000  
- Max.   :29.000   Max.   :10.000  
- NA's   :1103     NA's   :1103    </code></pre>
+<pre><code>     team_name        fifa_code       player_name        position    matches_played  matches_started minutes_played
+ Length   :1248   Length   :1248   Length   :1248   Length   :1248   Min.   :0.000   Min.   :0.000   Min.   :  0   
+ N.unique :  48   N.unique :  48   N.unique :1241   N.unique :   4   1st Qu.:1.000   1st Qu.:0.000   1st Qu.: 23   
+ N.blank  :   0   N.blank  :   0   N.blank  :   0   N.blank  :   0   Median :3.000   Median :2.000   Median :146   
+ Min.nchar:   3   Min.nchar:   3   Min.nchar:   2   Min.nchar:   2   Mean   :2.564   Mean   :1.833   Mean   :169   
+ Max.nchar:  22   Max.nchar:   3   Max.nchar:  42   Max.nchar:   3   3rd Qu.:4.000   3rd Qu.:3.000   3rd Qu.:270   
+                                                                     Max.   :8.000   Max.   :8.000   Max.   :750   
+                                                                                                                   
+     goals            assists        yellow_cards       red_cards          own_goals           saves       
+ Min.   : 0.0000   Min.   :0.0000   Min.   :0.00000   Min.   :0.000000   Min.   :0.00000   Min.   : 0.000  
+ 1st Qu.: 0.0000   1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.: 0.000  
+ Median : 0.0000   Median :0.0000   Median :0.00000   Median :0.000000   Median :0.00000   Median : 0.000  
+ Mean   : 0.2356   Mean   :0.1635   Mean   :0.02804   Mean   :0.009615   Mean   :0.01122   Mean   : 4.772  
+ 3rd Qu.: 0.0000   3rd Qu.:0.0000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.: 8.000  
+ Max.   :10.0000   Max.   :8.0000   Max.   :1.00000   Max.   :1.000000   Max.   :2.00000   Max.   :29.000  
+                                                                                           NAs    :1103    
+ goals_conceded  
+ Min.   : 0.000  
+ 1st Qu.: 0.000  
+ Median : 0.000  
+ Mean   : 2.166  
+ 3rd Qu.: 4.000  
+ Max.   :10.000  
+ NAs    :1103    </code></pre>
 </div>
 </div>
 </div>
 <div id="tabset-1-2">
 <p>Shows the ‘structure’ of the data</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">player_stats</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">player_stats</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   1248 obs. of  14 variables:
  $ team_name      : chr  "Mexico" "Mexico" "Mexico" "Mexico" ...
@@ -483,25 +1093,25 @@ Jess Helmer
 <div id="tabset-1-3">
 <p>Shows some information about our data, including variable types</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># our first `tidyverse` function</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># our first `tidyverse` function</span></span>
 <span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">player_stats</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 1,248
 Columns: 14
-$ team_name       &lt;chr&gt; "Mexico", "Mexico", "Mexico", "Mexico", "Mexico", "Mex…
-$ fifa_code       &lt;chr&gt; "MEX", "MEX", "MEX", "MEX", "MEX", "MEX", "MEX", "MEX"…
-$ player_name     &lt;chr&gt; "José Raúl Rangel", "Jorge Eduardo Sanchez", "César Ja…
-$ position        &lt;chr&gt; "GK", "DEF", "DEF", "DEF", "DEF", "MID", "MID", "MID",…
-$ matches_played  &lt;int&gt; 5, 5, 3, 2, 2, 5, 4, 2, 3, 0, 5, 0, 1, 0, 4, 4, 4, 1, …
-$ matches_started &lt;int&gt; 5, 5, 2, 0, 2, 5, 2, 0, 2, 0, 3, 0, 0, 0, 3, 2, 3, 0, …
-$ minutes_played  &lt;int&gt; 438, 439, 165, 75, 180, 450, 194, 41, 193, 0, 316, 0, …
-$ goals           &lt;int&gt; 0, 0, 0, 0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 4, 0, 0, …
-$ assists         &lt;int&gt; 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, …
-$ yellow_cards    &lt;int&gt; 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
-$ red_cards       &lt;int&gt; 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
-$ own_goals       &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
-$ saves           &lt;int&gt; 7, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, N…
-$ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, N…</code></pre>
+$ team_name       &lt;chr&gt; "Mexico", "Mexico", "Mexico", "Mexico", "Mexico", "Mexico", "Mexico", "Mexico", "Mexico", "Mex…
+$ fifa_code       &lt;chr&gt; "MEX", "MEX", "MEX", "MEX", "MEX", "MEX", "MEX", "MEX", "MEX", "MEX", "MEX", "MEX", "MEX", "ME…
+$ player_name     &lt;chr&gt; "José Raúl Rangel", "Jorge Eduardo Sanchez", "César Jasib Montes", "Edson Omar Alvarez", "Joha…
+$ position        &lt;chr&gt; "GK", "DEF", "DEF", "DEF", "DEF", "MID", "MID", "MID", "FWD", "FWD", "FWD", "GK", "GK", "FWD",…
+$ matches_played  &lt;int&gt; 5, 5, 3, 2, 2, 5, 4, 2, 3, 0, 5, 0, 1, 0, 4, 4, 4, 1, 5, 3, 0, 4, 5, 3, 4, 2, 4, 0, 0, 3, 4, 4…
+$ matches_started &lt;int&gt; 5, 5, 2, 0, 2, 5, 2, 0, 2, 0, 3, 0, 0, 0, 3, 2, 3, 0, 5, 3, 0, 3, 5, 3, 2, 0, 4, 0, 0, 3, 2, 4…
+$ minutes_played  &lt;int&gt; 438, 439, 165, 75, 180, 450, 194, 41, 193, 0, 316, 0, 12, 0, 280, 221, 280, 17, 390, 270, 0, 2…
+$ goals           &lt;int&gt; 0, 0, 0, 0, 0, 0, 1, 1, 3, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0…
+$ assists         &lt;int&gt; 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0…
+$ yellow_cards    &lt;int&gt; 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0…
+$ red_cards       &lt;int&gt; 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ own_goals       &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ saves           &lt;int&gt; 7, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…</code></pre>
 </div>
 </div>
 </div>
@@ -543,13 +1153,13 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <p>“The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey</p>
 </blockquote>
 </div>
-<p>We can visualize our data with the <code>ggplot2</code> package. <code>ggplot2</code> provides a very expansive and flexible plotting system. It is also at the core of a whole ecosystem of <code>ggplot2</code> extension packages, meaning so many plotting options are available.</p>
+<p>We can visualize our data with the <code>ggplot2</code> package from the <code>tidyverse</code>. <code>ggplot2</code> provides a very expansive and flexible plotting system. It is also at the core of a whole ecosystem of <code>ggplot2</code> extension packages, meaning so many plotting options are available.</p>
 </section><section id="visualizations" class="slide level2"><h2>Visualizations</h2>
 <p>In statistics, we are often calculating summary statistics: means, medians, SDs, etc.</p>
 <p>These are great, but don’t trust them alone!</p>
 <p>What do you think a dataset with these descriptives would look like?</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x_mean</span> <span class="op">&lt;-</span> <span class="fl">54.26</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x_mean</span> <span class="op">&lt;-</span> <span class="fl">54.26</span></span>
 <span><span class="va">y_mean</span> <span class="op">&lt;-</span> <span class="fl">47.83</span></span>
 <span></span>
 <span><span class="va">x_sd</span> <span class="op">&lt;-</span> <span class="fl">16.76</span></span>
@@ -559,7 +1169,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 </section><section id="visualizations-1" class="slide level2"><h2>Visualizations!</h2>
 
-<img data-src="lab_02_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" width="384"></section><section id="visualizations-2" class="slide level2"><h2>Visualizations!</h2>
+<img data-src="lab_02_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center r-stretch" width="384"></section><section id="visualizations-2" class="slide level2"><h2>Visualizations!</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure><p><img data-src="../media/lab_02/datasaurus.png" height="500"></p>
 <figcaption>Datasaurus Dozen</figcaption></figure>
@@ -577,7 +1187,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-14-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-19-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -585,7 +1195,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div></div>
 </section><section id="visualize-ggplot2-1" class="slide level2"><h2>Visualize: <code>ggplot2</code>
 </h2>
-<p>Now, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?</p>
+<p>Now, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:33%;">
 <p>When we just call the <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code> function with our data as the first argument, we get this blank area</p>
@@ -604,7 +1214,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-15-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-20-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -612,7 +1222,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-2-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -620,7 +1230,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div></div>
 </section><section id="visualize-ggplot2-2" class="slide level2"><h2>Visualize: <code>ggplot2</code>
 </h2>
-<p>Now, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?</p>
+<p>Now, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:33%;">
 <p>Next, we want to tell <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code> what information we want in our plot and where we want it</p>
@@ -639,7 +1249,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-17-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-22-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -647,7 +1257,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-3-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
 <span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -656,7 +1266,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div></div>
 </section><section id="visualize-ggplot2-3" class="slide level2"><h2>Visualize: <code>ggplot2</code>
 </h2>
-<p>Now, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?</p>
+<p>Now, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:33%;">
 <p>Still no data, though!</p>
@@ -693,7 +1303,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-19-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-24-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -701,7 +1311,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-4-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
 <span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -711,7 +1321,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div></div>
 </section><section id="visualize-ggplot2-4" class="slide level2"><h2>Visualize: <code>ggplot2</code>
 </h2>
-<p>Now, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?</p>
+<p>Now, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:33%;">
 <p>Can vary the bars by color to show different positions.</p>
@@ -730,7 +1340,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-21-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-26-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -738,7 +1348,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-5-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
 <span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -748,7 +1358,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div></div>
 </section><section id="visualize-ggplot2-5" class="slide level2"><h2>Visualize: <code>ggplot2</code>
 </h2>
-<p>Now, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?</p>
+<p>Now, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:33%;">
 <p>So crowded, and so hard to compare between groups! So, let’s separate by position.</p>
@@ -764,7 +1374,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-23-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-28-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -772,7 +1382,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-6-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
 <span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -781,11 +1391,81 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 </div>
 </div></div>
+</section><section id="data-types-interlude-factors" class="slide level2"><h2>Data Types Interlude: Factors</h2>
+<p>New data type (to us): <strong>factor</strong> variable: a built-in data type that R provides for categorical variables</p>
+<p>Sets fixed possibilities of values that the variable can take on</p>
+<div class="columns">
+<div class="column">
+<p>If you have a variable with days of the week…</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">days</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Tues"</span>, <span class="st">"Wed"</span>, <span class="st">"Thurs"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Nothing preventing typos and no sensible sorting</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">moredays</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Teus"</span>, <span class="st">"Wed"</span>, <span class="st">"Thrus"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">days</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Thurs" "Tues"  "Wed"  </code></pre>
+</div>
+</div>
+</div><div class="column fragment">
+<p>Factors help with both. Start by creating a vector of <strong>levels</strong>. Can also make <strong>labels</strong> for nicer printing.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">weekday_levels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Mon"</span>, <span class="st">"Tues"</span>, <span class="st">"Wed"</span>, <span class="st">"Thurs"</span>, <span class="st">"Fri"</span><span class="op">)</span></span>
+<span><span class="va">weekday_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Mon"</span> <span class="op">=</span> <span class="st">"Monday"</span>, </span>
+<span>                    <span class="st">"Tues"</span> <span class="op">=</span> <span class="st">"Tuesday"</span>, </span>
+<span>                    <span class="st">"Wed"</span> <span class="op">=</span> <span class="st">"Wednesday"</span>, </span>
+<span>                    <span class="st">"Thurs"</span> <span class="op">=</span> <span class="st">"Thursday"</span>, </span>
+<span>                    <span class="st">"Fri"</span> <span class="op">=</span> <span class="st">"Friday"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>And now make a factor</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">days_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">days</span>, levels <span class="op">=</span> <span class="va">weekday_levels</span>, </span>
+<span>                   labels <span class="op">=</span> <span class="va">weekday_labels</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div></div>
+</section><section id="transform-factor-variables" class="slide level2"><h2>Transform: Factor Variables</h2>
+<p>Will convert to <code>NA</code> if not valid level</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">moredays</span>, levels <span class="op">=</span> <span class="va">weekday_levels</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] &lt;NA&gt; Wed  &lt;NA&gt;
+Levels: Mon Tues Wed Thurs Fri</code></pre>
+</div>
+</div>
+<p>Better sorting</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">days_fct</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Tuesday   Wednesday Thursday 
+Levels: Monday Tuesday Wednesday Thursday Friday</code></pre>
+</div>
+</div>
+</section><section id="data-types-interlude-factors-1" class="slide level2"><h2>Data Types Interlude: Factors</h2>
+<p>Within a dataframe, we can modify or create columns by pulling the column out with <code>$</code> and assigning it to something new.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">position_levels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GK"</span>, <span class="st">"DEF"</span>, <span class="st">"MID"</span>, <span class="st">"FWD"</span><span class="op">)</span></span>
+<span><span class="va">position_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GK"</span> <span class="op">=</span> <span class="st">"Goalkeeper"</span>,</span>
+<span>                     <span class="st">"DEF"</span> <span class="op">=</span> <span class="st">"Defense"</span>,</span>
+<span>                     <span class="st">"MID"</span> <span class="op">=</span> <span class="st">"Midfield"</span>,</span>
+<span>                     <span class="st">"FWD"</span> <span class="op">=</span> <span class="st">"Forward"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">player_stats</span><span class="op">$</span><span class="va">position_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">player_stats</span><span class="op">$</span><span class="va">position</span>,</span>
+<span>                                    levels <span class="op">=</span> <span class="va">position_levels</span>,</span>
+<span>                                    labels <span class="op">=</span> <span class="va">position_labels</span><span class="op">)</span></span>
+<span><span class="va">player_stats</span><span class="op">$</span><span class="va">position_fct</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Goalkeeper Defense    Defense    Defense    Defense    Midfield  
+Levels: Goalkeeper Defense Midfield Forward</code></pre>
+</div>
+</div>
 </section><section id="visualize-ggplot2-6" class="slide level2"><h2>Visualize: <code>ggplot2</code>
 </h2>
-<p>Now, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?</p>
+<p>Now, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:33%;">
+<p>Swap <code>position</code> to <code>position_fct</code></p>
 <p>The absolute number of goals might be a little harder to interpret, though.</p>
 <p>We can add a <code>mapping</code> argument to <code><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar()</a></code> to tell it to plot proportions instead of counts.</p>
 </div><div class="column" style="width:66%;">
@@ -799,7 +1479,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-25-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-38-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -807,10 +1487,10 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-7-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position</span>, y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">after_stat</a></span><span class="op">(</span><span class="va">prop</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position_fct</span>, y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">after_stat</a></span><span class="op">(</span><span class="va">prop</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position_fct</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -818,7 +1498,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div></div>
 </section><section id="visualize-ggplot2-7" class="slide level2"><h2>Visualize: <code>ggplot2</code>
 </h2>
-<p>Now, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?</p>
+<p>Now, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:33%;">
 <p>Now, we can start tidying this up. Let’s make the y-axis have percentage signs with <code>label_percent()</code> from the <code>scales</code> package, let’s make the x-axis only have integers (since goals scored is a count variable) by specifying its <code>breaks</code> argument.</p>
@@ -834,7 +1514,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-27-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-40-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -842,10 +1522,10 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-8-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position_fct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">after_stat</a></span><span class="op">(</span><span class="va">prop</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position_fct</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span><span class="st">"Proportion"</span>, limits <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">1</span>, labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">label_percent</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span><span class="st">"Goals Scored"</span>, breaks <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -855,12 +1535,10 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div></div>
 </section><section id="visualize-ggplot2-8" class="slide level2"><h2>Visualize: <code>ggplot2</code>
 </h2>
-<p>Now, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?</p>
+<p>Now, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:33%;">
-<p>Let’s add some nicer-looking labels to the facets.</p>
-<p>We need to create a vector of the pattern <code>c(value_in_the_data = label_we_want, ...)</code>.</p>
-<p>Then, we can tell <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap()</a></code> how to interpret it with the <code><a href="https://ggplot2.tidyverse.org/reference/as_labeller.html">as_labeller()</a></code> function.</p>
+<p>To help anyone viewing our plot understand it, we can add some labels with the <code><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs()</a></code> function.</p>
 </div><div class="column" style="width:66%;">
 <div class="panel-tabset">
 <ul id="tabset-9" class="panel-tabset-tabby">
@@ -872,7 +1550,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-29-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-42-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -880,12 +1558,14 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-9-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position_fct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">after_stat</a></span><span class="op">(</span><span class="va">prop</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position</span>, labeller <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/as_labeller.html">as_labeller</a></span><span class="op">(</span><span class="va">position_labels</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position_fct</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span><span class="st">"Proportion"</span>, limits <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">1</span>, labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">label_percent</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span><span class="st">"Goals Scored"</span>, breaks <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span><span class="st">"Goals Scored"</span>, breaks <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"2026 World Cup Goals by Player Position"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Data from doi.org/10.5281/zenodo.21592427"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -893,10 +1573,11 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div></div>
 </section><section id="visualize-ggplot2-9" class="slide level2"><h2>Visualize: <code>ggplot2</code>
 </h2>
-<p>Now, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?</p>
+<p>Now, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:33%;">
-<p>To help anyone viewing our plot understand it, we can add some labels with the <code><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs()</a></code> function.</p>
+<p>To improve the overall look of the plot, we can add a <code>ggplot</code> theme.</p>
+<p>I like increasing the <code>base_size</code> argument to improve readability.</p>
 </div><div class="column" style="width:66%;">
 <div class="panel-tabset">
 <ul id="tabset-10" class="panel-tabset-tabby">
@@ -908,7 +1589,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-31-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-44-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -916,21 +1597,15 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-10-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">position_labels</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"GK"</span> <span class="op">=</span> <span class="st">"Goalkeeper"</span>,</span>
-<span>  <span class="st">"DEF"</span> <span class="op">=</span> <span class="st">"Defense"</span>,</span>
-<span>  <span class="st">"MID"</span> <span class="op">=</span> <span class="st">"Midfield"</span>,</span>
-<span>  <span class="st">"FWD"</span> <span class="op">=</span> <span class="st">"Forward"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position_fct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">after_stat</a></span><span class="op">(</span><span class="va">prop</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position</span>, labeller <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/as_labeller.html">as_labeller</a></span><span class="op">(</span><span class="va">position_labels</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position_fct</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span><span class="st">"Proportion"</span>, limits <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">1</span>, labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">label_percent</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span><span class="st">"Goals Scored"</span>, breaks <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"2026 World Cup Goals by Player Position"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Data from doi.org/10.5281/zenodo.21592427"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span>       caption <span class="op">=</span> <span class="st">"Data from doi.org/10.5281/zenodo.21592427"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -938,11 +1613,12 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div></div>
 </section><section id="visualize-ggplot2-10" class="slide level2"><h2>Visualize: <code>ggplot2</code>
 </h2>
-<p>Now, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:33%;">
-<p>To improve the overall look of the plot, we can add a <code>ggplot</code> theme.</p>
-<p>I like increasing the <code>base_size</code> argument to improve readability.</p>
+<p>We can use the <code><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme()</a></code> function to further customize our plot.</p>
+<p>We can remove the redundant color legend by setting <code>legend.position</code> to <code>"none"</code>.</p>
+<p>We can center and increase the plot title by specifying that it is a text element with <code><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text()</a></code>, and customizing its <code>hjust</code> (horizontal justification) and <code>size</code> argument.</p>
+<p>I also like to cap the axes with the <code><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides()</a></code> and <code>guide_axis(cap = T)</code> function.</p>
 </div><div class="column" style="width:66%;">
 <div class="panel-tabset">
 <ul id="tabset-11" class="panel-tabset-tabby">
@@ -954,7 +1630,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-33-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-46-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -962,66 +1638,10 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-11-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">position_labels</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"GK"</span> <span class="op">=</span> <span class="st">"Goalkeeper"</span>,</span>
-<span>  <span class="st">"DEF"</span> <span class="op">=</span> <span class="st">"Defense"</span>,</span>
-<span>  <span class="st">"MID"</span> <span class="op">=</span> <span class="st">"Midfield"</span>,</span>
-<span>  <span class="st">"FWD"</span> <span class="op">=</span> <span class="st">"Forward"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position_fct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">after_stat</a></span><span class="op">(</span><span class="va">prop</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position</span>, labeller <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/as_labeller.html">as_labeller</a></span><span class="op">(</span><span class="va">position_labels</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span><span class="st">"Proportion"</span>, limits <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">1</span>, labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">label_percent</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span><span class="st">"Goals Scored"</span>, breaks <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"2026 World Cup Goals by Player Position"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Data from doi.org/10.5281/zenodo.21592427"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
-</section><section id="visualize-ggplot2-11" class="slide level2"><h2>Visualize: <code>ggplot2</code>
-</h2>
-<p>Now, let’s explore a different question: what is the relationship between players’ positions and the number of goals they score?</p>
-<div class="columns" style="font-size:60%">
-<div class="column" style="width:33%;">
-<p>We can use the <code><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme()</a></code> function to further customize our plot.</p>
-<p>We can remove the redundant color legend by setting <code>legend.position</code> to <code>"none"</code>.</p>
-<p>We can center and increase the plot title by specifying that it is a text element with <code><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text()</a></code>, and customizing its <code>hjust</code> (horizontal justification) and <code>size</code> argument.</p>
-<p>I also like to cap the axes with the <code><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides()</a></code> and <code>guide_axis(cap = T)</code> function.</p>
-</div><div class="column" style="width:66%;">
-<div class="panel-tabset">
-<ul id="tabset-12" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-12-1">Plot</a></li>
-<li><a href="#tabset-12-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-12-1">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-35-1.png" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-12-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">position_labels</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"GK"</span> <span class="op">=</span> <span class="st">"Goalkeeper"</span>,</span>
-<span>  <span class="st">"DEF"</span> <span class="op">=</span> <span class="st">"Defense"</span>,</span>
-<span>  <span class="st">"MID"</span> <span class="op">=</span> <span class="st">"Midfield"</span>,</span>
-<span>  <span class="st">"FWD"</span> <span class="op">=</span> <span class="st">"Forward"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">goals</span>, fill <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html">after_stat</a></span><span class="op">(</span><span class="va">prop</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position</span>, labeller <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/as_labeller.html">as_labeller</a></span><span class="op">(</span><span class="va">position_labels</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">position_fct</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span><span class="st">"Proportion"</span>, limits <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">1</span>, labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">label_percent</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span><span class="st">"Goals Scored"</span>, breaks <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"2026 World Cup Goals by Player Position"</span>,</span>
@@ -1043,6 +1663,32 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:50%;">
 <div class="panel-tabset">
+<ul id="tabset-12" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-12-1">Plot</a></li>
+<li><a href="#tabset-12-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-12-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-48-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-12-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
 <ul id="tabset-13" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-13-1">Plot</a></li>
 <li><a href="#tabset-13-2">Code</a></li>
@@ -1052,7 +1698,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-37-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-50-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1060,33 +1706,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-13-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-14" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-14-1">Plot</a></li>
-<li><a href="#tabset-14-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-14-1">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-39-1.png" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-14-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
 <span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1102,6 +1722,33 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="column" style="width:50%;">
 <p><code>binwidth = 10</code></p>
 <div class="panel-tabset">
+<ul id="tabset-14" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-14-1">Plot</a></li>
+<li><a href="#tabset-14-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-14-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-52-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-14-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><code>bins = 15</code></p>
+<div class="panel-tabset">
 <ul id="tabset-15" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-15-1">Plot</a></li>
 <li><a href="#tabset-15-2">Code</a></li>
@@ -1111,7 +1758,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-41-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-54-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1119,15 +1766,19 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-15-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
 <span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="column" style="width:50%;">
-<p><code>bins = 15</code></p>
+</div></div>
+</div>
+</section><section id="some-more-ggplots-2" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
+<p>Violin plots help us easily compare distributions. Create them with <code><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin()</a></code>. Specify the groups on the y-axis by specifying <code>aes(y = position_fct)</code>.</p>
+<div class="columns" style="font-size:60%">
+<div class="column" style="width:50%;">
 <div class="panel-tabset">
 <ul id="tabset-16" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-16-1">Plot</a></li>
@@ -1138,7 +1789,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-43-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-56-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1146,18 +1797,16 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-16-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">position_fct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </div>
 </div></div>
-</div>
-</section><section id="some-more-ggplots-2" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
-<p>Violin plots help us easily compare distributions. Create them with <code><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin()</a></code>. Specify the groups on the y-axis by specifying <code>aes(y = position)</code>.</p>
-<p>We can group the violins by specifying the <code>y</code> value in the <code>mapping</code>. <span class="fragment">If we want to layer on the observed data by adding a point plot, do we need to change the <code>mapping</code> or the <code>geom</code>?</span> <span class="fragment"><code><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter()</a></code>!</span></p>
+</section><section id="some-more-ggplots-3" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
+<p>If we want to layer on the observed data by adding a point plot, do we need to change the <code>mapping</code> or the <code>geom</code>? <span class="fragment"><code><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter()</a></code>!</span></p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:50%;">
 <div class="panel-tabset">
@@ -1170,7 +1819,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-45-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-58-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1178,8 +1827,8 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-17-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">position_fct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -1197,7 +1846,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-47-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-60-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1205,8 +1854,8 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-18-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">minutes_played</span>, x <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">position_fct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1215,8 +1864,10 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 </div>
 </div></div>
-</section><section id="some-more-ggplots-3" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
-<p>An note about <code><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter()</a></code>: by default it will add noise in both the x- and y-direction (<code>width</code> and <code>height</code> arguments). This may not be appropriate for all cases: here, the default behavior hides that values in category 2 are rounded.</p>
+</section><section id="some-more-ggplots-4" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
+<div style="font-size:90%">
+<p>An note about <code><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter()</a></code>: by default it will add noise in both the x- and y-direction (<code>width</code> and <code>height</code> arguments). This may not be appropriate for all cases: here, the default behavior hides that values in category B are rounded.</p>
+</div>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:50%;">
 <p><code><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter()</a></code></p>
@@ -1230,7 +1881,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-50-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-63-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1238,7 +1889,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-19-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">d</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">d</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">measurement</span>, y <span class="op">=</span> <span class="va">category</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1259,7 +1910,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-52-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-65-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1267,7 +1918,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-20-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">d</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">d</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">measurement</span>, y <span class="op">=</span> <span class="va">category</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1277,7 +1928,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 </div>
 </div></div>
-</section><section id="some-more-ggplots-4" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
+</section><section id="some-more-ggplots-5" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
 <p>To plot two continuous variables, we can specify both the x- and y-axes in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> and add a point plot with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>.</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:50%;">
@@ -1293,7 +1944,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-54-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-67-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1301,7 +1952,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-21-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
 <span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1309,11 +1960,11 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 </div>
 </div></div>
-</section><section id="some-more-ggplots-5" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
+</section><section id="some-more-ggplots-6" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
 <p>We can add a trend line with <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code>. Note that <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code> picks up the same x and y assignment as already specified in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code>.</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:50%;">
-<p>If we wanted to see the points with color representing player position, would we need to change the <code>mapping</code> or <code>geom</code>? <span class="fragment"><code>aes(color = position)</code>!</span></p>
+<p>If we wanted to see the points with color representing player position, would we need to change the <code>mapping</code> or <code>geom</code>? <span class="fragment"><code>aes(color = position_fct)</code>!</span></p>
 </div><div class="column" style="width:50%;">
 <div class="panel-tabset">
 <ul id="tabset-22" class="panel-tabset-tabby">
@@ -1325,7 +1976,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-56-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-69-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1333,7 +1984,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-22-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
 <span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1342,7 +1993,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 </div>
 </div></div>
-</section><section id="some-more-ggplots-6" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
+</section><section id="some-more-ggplots-7" class="slide level2"><h2>Some More <code>ggplot</code>s</h2>
 <p>If we want to see the points labeled by player position, we can specify the <code>color</code> mapping in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code>. Also, because <code>data</code> is the first argument, we can pipe right into <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code>!</p>
 <div class="columns" style="font-size:60%">
 <div class="column" style="width:50%;">
@@ -1356,7 +2007,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-58-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-71-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1364,8 +2015,8 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-23-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span>, color <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span>, color <span class="op">=</span> <span class="va">position_fct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1383,7 +2034,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-60-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-73-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1391,9 +2042,8 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-24-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">player_stats</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter_out</a></span><span class="op">(</span><span class="va">position</span> <span class="op">==</span> <span class="st">"GK"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span>, color <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span>, color <span class="op">=</span> <span class="va">position_fct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1401,7 +2051,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 </div>
 </div></div>
-</section><section id="visualize-ggplot2-12" class="slide level2"><h2>Visualize: <code>ggplot2</code>
+</section><section id="visualize-ggplot2-11" class="slide level2"><h2>Visualize: <code>ggplot2</code>
 </h2>
 <p>Another example of tidying a plot up. Note how similar all the code is!</p>
 <div class="columns" style="font-size:60%">
@@ -1421,7 +2071,7 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-62-1.png" width="672"></p>
+<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-75-1.png" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1429,10 +2079,9 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div>
 <div id="tabset-25-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">player_stats</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter_out</a></span><span class="op">(</span><span class="va">position</span> <span class="op">==</span> <span class="st">"GK"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span>, </span>
-<span>                     color <span class="op">=</span> <span class="va">position</span>, fill <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
+<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">goals</span>, </span>
+<span>                     color <span class="op">=</span> <span class="va">position_fct</span>, fill <span class="op">=</span> <span class="va">position_fct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_axis.html">guide_axis</a></span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
@@ -1456,51 +2105,37 @@ $ goals_conceded  &lt;int&gt; 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, N
 </div></div>
 </section><section id="visualizations-resources" class="slide level2"><h2>Visualizations: Resources</h2>
 <p>Plotting in <code>ggplot2</code> is very powerful and flexible but can take some getting used to. <strong>None</strong> of these functions or arguments need to be memorized. You will always have access to reference material and documentation.</p>
-<div class="columns">
+<div class="columns smaller-column-images">
 <div class="column" style="width:33%;">
-<p><a href="https://r4ds.hadley.nz/" target="blank">R for Data Science (2e)</a></p>
-<p><a href="https://r4ds.hadley.nz/" target="blank"><img data-src="../media/lab_01/r4de.jpg"></a></p>
+<p><a href="https://r4ds.hadley.nz/" target="blank"><img data-src="../media/lab_01/r4de.jpg" style="width:100.0%"></a></p>
 </div><div class="column" style="width:33%;">
-<p><a href="https://ggplot2-book.org/" target="blank">ggplot2: Elegant Graphics for Data Analysis (3e)</a></p>
-<p><a href="https://ggplot2-book.org//" target="blank"><img data-src="../media/lab_01/ggplot2.jpg"></a></p>
+<p><a href="https://ggplot2-book.org//" target="blank"><img data-src="../media/lab_01/ggplot2.jpg" style="width:100.0%"></a></p>
 </div><div class="column" style="width:33%;">
 <p><a href="https://ggplot2.tidyverse.org/index.html" target="blank"><code>ggplot2</code> Documentation</a></p>
 </div></div>
-</section><section id="visualizations-bonus" class="slide level2"><h2>Visualizations: Bonus</h2>
-<p>Back to the violin plot, we can layer on the observed data by adding a point plot with <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>.</p>
-<div class="columns" style="font-size:60%">
-<div class="column" style="width:33%;">
-<p>But, the points are all overlapping and hard to see at the different levels of position.</p>
-<p>We can nudge them off their data value by using <code><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter()</a></code>. But, we only want it to nudge on the y-axis, not the x-axis.</p>
-<p>So, we will need to set <code><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter()</a></code>’s <code>width</code> argument to 0. Otherwise, it’ll try to move the points on their <code>minutes_played</code> value, too.</p>
-</div><div class="column" style="width:66%;">
-<div class="panel-tabset">
-<ul id="tabset-26" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-26-1">Plot</a></li>
-<li><a href="#tabset-26-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-26-1">
+</section><section id="removing-missing-data" class="slide level2"><h2>Removing Missing Data</h2>
+<p>One more thing (relevant for Homework 1!)</p>
+<p>R has a special type for missing data: <code>NA</code>. If there are <code>NA</code>s in your data, some common functions will not work as expected.</p>
 <div class="cell">
-<div class="cell-output-display">
-<div>
-<figure><p><img data-src="lab_02_files/figure-revealjs/unnamed-chunk-64-1.png" width="672"></p>
-</figure>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">test_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">90</span>, <span class="fl">82</span>, <span class="fl">98</span>, <span class="fl">76</span>, <span class="fl">86</span>, <span class="fl">98</span>, <span class="cn">NA</span>, <span class="fl">93</span>, <span class="fl">89</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">test_scores</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">test_scores</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
 </div>
 </div>
-</div>
-</div>
-<div id="tabset-26-2">
+<p>Some functions (like these) have an <code>na.rm</code> function: tells it to remove the <code>NA</code>s before calculating.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">player_stats</span>,</span>
-<span>       mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">minutes_played</span>, y <span class="op">=</span> <span class="va">position</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">test_scores</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">test_scores</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 89</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7.615773</code></pre>
 </div>
 </div>
-</div>
-</div>
-</div></div>
 </section><section id="lab-02-activity" class="slide level2"><h2>Lab 02 Activity</h2>
 <p>Objectives:</p>
 <ul>

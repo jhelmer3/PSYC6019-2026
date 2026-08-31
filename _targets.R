@@ -61,7 +61,8 @@ list(
              "lab/slides/lab_02.qmd", 
              format = "file"),
   tar_target(lab_02_slides, {
-    quarto::quarto_render(lab_02_slides_qmd)
+    player_stats_csv
+    quarto::quarto_render(lab_02_slides_qmd, quiet = F)
     qmd_out(lab_02_slides_qmd)
   }, format = "file"),
   
