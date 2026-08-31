@@ -122,7 +122,7 @@ Probability tells us how data are *randomly* **generated** based on some underly
 
 -   **Event**: A possible outcome or combination of outcomes
 -   **Sample Space**: All possible outcomes
-    -   Sample space for a coin flip is $\text{{heads, tails}}$
+    -   Sample space for a coin flip is $\text{\{heads, tails\}}$
         -   Curly brackets indicate a set of individual elements
     -   Sample space for points in an NBA game $[0,\infty]$
         -   Square brackets indicate an inclusive interval
@@ -158,7 +158,7 @@ If we randomly pick one gummy bear, what is the probability of picking a pineapp
 
 [$P(\text{pineapple}) = \frac{\text{\# of pineapple gummy bears}}{\text{total \# of gummy bears}}$]{.answer .fragment .content-visible unless-meta="params.v0"}
 
-[**Classical Definition of Probability:** *Proportion* ways a particular outcome can occur out of all possible outcomes]{.answer .fragment .content-visible unless-meta="params.v0"}
+[**Classical Definition of Probability:** *Proportion* of ways a particular outcome can occur out of all possible outcomes]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ## Bernoulli Trials
 
@@ -170,12 +170,14 @@ Drawing a pineapple gummy bear is known as a **Bernoulli trial**:
 
 If we code a "success" as "1" and a "failure" as "0", then the probability of success in any Bernoulli trial equals
 
-$\pi = \frac{\text{\# of ways to succeed}}{\text{\# of ways to succeed} + \text{\# of ways to fail}}$
+$$\pi = \frac{\text{\# of ways to succeed}}{\text{\# of ways to succeed} + \text{\# of ways to fail}}$$
+
+**NOTE:** $\pi$ is generic notation for a parameter (population value) representing the probability of success, NOT 3.14159....
 
 ## The Bernoulli Distribution
 
-::: {style="font-size: 0.8em;"}
-Note than $\pi$ is not a *statistic* but a *parameter*
+::: {style="font-size: 0.9em;"}
+Remember that $\pi$ is not a *statistic* but a *parameter*
 
 -   Represents an underlying truth: the proportion of ways a success can happen out of how many ways successes and failures can both happen
 
@@ -187,11 +189,13 @@ $$\text{Pineapple Bear} \sim \text{Bernoulli}(\pi)$$
 
 In the population, the Bernoulli distribution has
 
--   Mean $\mu= pi$
+-   Mean $\mu= \pi$
 -   Variance $\sigma^2 = \pi(1-\pi)$
 :::
 
 ## More Bernoulli
+
+::: {style="font-size: 0.8em;"}
 
 Let's code successes on a given trial $i$ as $y_i = \text{Pineapple Bear} = 1$ and $\text{any other flavor} = 0$
 
@@ -199,37 +203,45 @@ We can write the Bernoulli distribution as
 
 $$P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i}$$
 
-That means, if  $y_i = \text{Pineapple Bear} = 1$
+That means, for  $y_i = \text{Pineapple Bear} = 1$
 
 - $\pi^{y_i} = \pi^{1} = \pi$ 
 - $(1-\pi)^{1-y_i} = (1 - \pi)^{1 - 1} = 1$ 
 - $P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = \pi(1) = \pi$
 
-And if $y_i = \text{any other flavor} = 0$
+And for $y_i = \text{any other flavor} = 0$
 
 - $\pi^{y_i} = \pi^{0} = 1$ 
-- $(1-\pi)^{1-y_i} = (1 - \pi)^{1 - 0} = (1 - \pi$ 
+- $(1-\pi)^{1-y_i} = (1 - \pi)^{1 - 0} = (1 - \pi)$ 
 - $P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = 1(1 - \pi) = 1 -\pi$
 
+:::
+
 ## Alternate Bernoulli
+
+::: {style="font-size: 0.85em;"}
 
 You might also see it written this way:
 
 $$P(y_i | \pi) = \pi(y_i) + (1 - \pi)(1 - y_i)$$
 
-That means, if  $y_i = \text{Pineapple Bear} = 1$
+That means, for  $y_i = \text{Pineapple Bear} = 1$
 
 - $\pi(y_i) = \pi(1) = \pi$ 
 - $(1 - \pi)(1 - y_i) = (1 \pi)(1 - 1) = 0$ 
-- $P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = \pi + 0 = \pi$
+- $P(y_i| \pi)=P(y_i | \pi) = \pi(y_i) + (1 - \pi)(1 - y_i) = \pi + 0 = \pi$
 
-And if $y_i = \text{any other flavor} = 0$
+And for $y_i = \text{any other flavor} = 0$
 
 - $\pi(y_i) = \pi(0) = 0$ 
 - $(1 - \pi)(1 - y_i) = (1 - \pi)(1 - 0) = 1 -\pi$ 
-- $P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = 0 + 1 -\pi = 1- \pi$
+- $P(y_i| \pi)=P(y_i | \pi) = \pi(y_i) + (1 - \pi)(1 - y_i) = 0 + 1 -\pi = 1- \pi$
+
+::: 
 
 ## Multiple Trials
+
+::: {style="font-size: 0.95em;"}
 
 What if we sample more than one gummy bear?
 
@@ -241,7 +253,7 @@ Two ways:
 
     -   Outcomes are **dependent**
 
-    -   The probability of an event change depends on earlier events
+    -   The probability of an event changes depending on earlier events
 
 -   With replacement
 
@@ -251,9 +263,13 @@ Two ways:
 
     -   The same probabilities apply to all events
 
-## Multiple Indepenent Trials
+:::
 
-What if we want to know the probability we would get five pineapple bears from 10 different bags (each has $\pi = .2$)?
+## Indepenent Trials
+
+::: {style="font-size: 0.95em;"}
+
+What if we want to know the probability we would get five pineapple bears from a bag of 10 (each bear has has $\pi = .2$ of being pineapple)?
 
 -   This is known as the *binomial* distribution
 -   Two parameters, sample size ($n$) and probability of success ($\pi$)
@@ -265,15 +281,16 @@ Where
 
 $$\begin{pmatrix} n \\ k\end{pmatrix} = \frac{n!}{k!(n-k)!}$$
 
+::: 
+
 ## Binomial Distribution
 
-::: {style="font-size: 0.9em;"}
-**What this means:** If we repeatedly sampled 10 bags of gummy bears, we would expect to get exactly five pineapples with probability
+**What this means:** If we repeatedly sampled bags of 10 gummy bears, we would expect to get exactly five pineapples with probability
 
-$$P(\text{five pineapples}) = \frac{n!}{k!(n-k)!}\pi^k (1-\pi)^{n-k} =$$ $$\frac{10!}{5!(10-5)!}.2^5 (1-.2)^{10-5} = .03$$
+$$P(\text{five pineapples}) = \frac{n!}{k!(n-k)!}\pi^k (1-\pi)^{n-k} =$$ $$\frac{10!}{5!(10-5)!}.2^5 (1-.2)^{10-5} = .026$$
 
-For every 100 times we repeated this exercise, we would expect to get exactly five pineapples in 10 draws three times.
-:::
+For every 100 times we repeated this exercise, we would expect to get exactly five pineapples in 10 draws about three times.
+
 
 ## The Binomial Distribution
 
@@ -286,14 +303,53 @@ In the population, the binomial distribution has
 -   Mean $\mu= n\pi$
 -   Variance $\sigma^2 = n\pi(1-\pi)$
 
+## Cumulative Binomials
+
+::: {style="font-size: 0.85em;"}
+
+We can also use the binomial distribution to consider *cumulative* outcomes by summing the probabilities of each outcome within a cumulative range. 
+
+For example, the probability that we would draw **fewer than three** (exactly zero, exactly one, or exactly two) pineapples in bags of 10 bears is:
+
+$$P(\text{fewer than three pinapples}) = \frac{10!}{0!(10-0)!}.2^0 (1-.2)^{10-0} +$$ $$\frac{10!}{1!(10-1)!}.2^1 (1-.2)^{10-1} + \frac{10!}{2!(10-2)!}.2^2 (1-.2)^{10-2} = .68$$
+
+
+And we can get the *complement* of this cumulative probability by just subtracting it from 1. The probability we would draw **at least three** pineapples is
+
+$$P(\text{at least three pinapples}) = 1 - P(\text{fewer than three pinapples}) =$$ 
+$$1 - .68 = .32$$
+:::
+
+## Cumulative Problems
+
+The easiest way to do these problems "by hand" is to reduce the number of calculation steps.
+
+For example, if I wanted to know the probability of nine or more pineapples, I would do
+
+$$P(\text{nine or more pineapples}) = \frac{10!}{9!(10-9)!}.2^9 (1-.2)^{10-9} +$$
+$$\frac{10!}{10!(10-10)!}.2^{10} (1-.2)^{10-10} = \text{some very small number}$$
+
+Then to get fewer than nine
+
+$$P(\text{fewer than nine pineapples}) = 1 - \text{that very small number}$$
+
 ## Counting Events
 
+::: {style="font-size: 0.9em;"}
+
 -   The binomial distribution tells us the probability of a given number of successes in a fixed number of trials. Examples:
-    -   Number of pineapple gummies in 10 independent bags
-    -   Number of heads in five independent coin flips
+    -   Number of pineapple gummies in a bag of 10
+    -   Number of heads in five coin flips
 -   The **Poisson distribution** tells us how many "successes" occur (specific type of event happens) in a fixed time period. Examples:
     -   Number of Ph.D. applications Georgia Tech receives in an application cycle
     -   Number of calls a fire station gets on a given day
+    
+The difference between the binomial and Poisson
+
+- **Binomial:** Number of successes in a fixed number of trials
+- **Poisson:** Number of successes in unspecified number of trials over fixed time period
+
+::: 
 
 ## The Poisson Distribution
 
@@ -303,28 +359,38 @@ $$P(x) = \frac{e^{-\mu}\mu^x}{x!}$$
 
 Where
 
--   $e$ is Euler's number (base of natural logarithm)
+-   $e$ is Euler's number (base of natural logarithm) $\approx 2.718$
 -   $\mu$ is the mean number of successes in the population
--   $x$ is the number of observed counts
+-   $x$ is the number of observed successes (or counts)
 
 ## Poisson Example
 
-If the mean number of calls to the fire station is 8, the probability of getting exactly 11 calls would be
+If the mean number of calls to the fire station in a week is 8, the probability of getting exactly 11 calls in a given week would be
 
-$$P(x = 11) = \frac{e^{-8}8^11}{11!} = .072$$
+$$P(x = 11) = \frac{e^{-8}8^{11}}{11!} = .072$$
 
 In the Poisson distribution
 
 -   The population mean is $\mu$
 -   The population variance $\sigma^2$ *also* $= \mu$
 
+## Cumulative Poissons
+
+You can also get cumulative probabilities from Poisson distributions. The cumulative probability of 11 or fewer calls in a given week would be
+
+$$P(x \leq 11) = \sum_{i=0}^{11}\frac{e^{-8}8^{i}}{i!} = .89$$
+
+And the probability of more than 11 calls would be
+
+$$P(x > 11) = 1 - P(x \leq 11) = 1 - .89 = .11$$
+
 ## Continuous Variables
 
-::: {style="font-size: 0.85em;"}
+::: {style="font-size: 0.95em;"}
 The Bernoulli, Binomial, and Poisson distributions all involve *discrete* variables. What about continuous variables?
 
 -   **The Normal Distribution** will be our major focus
--   Symmetrical with parameters $\mu$ and $\sigma$
+  -   Symmetrical with parameters $\mu$ and $\sigma$
 -   The lognormal distribution: $e^{\text{normal distribution}}$
     -   Creates distribution with lower boundary of zero and no upper boundary
 -   The gamma distribution
@@ -345,6 +411,13 @@ There are two parameters (here $\pi$ is the number not a parameter!): $\mu$ and 
 $$x \sim \text{normal}(\mu, \sigma^2)$$
 
 **Simple interpretation:** In the population, the average value of $x$ is $\mu$ and the average amount of **squared error** between all members of the population and $\mu$ is $\sigma^2$
+
+Sometimes you will also see it as 
+
+$$x \sim \text{normal}(\mu, \sigma)$$
+
+In which case we are referring to the standard deviation rather than the variance
+
 :::
 
 ## Normal Distribution Example
@@ -354,9 +427,11 @@ Let's imagine in the population of all **possible** basketball players, the aver
 That means, if I randomly sampled a group of basketball players, I would expect:
 
 -   The average height of players in my sample to be 200cm
--   The average **squared difference** between each players' height and 200cm would be 64
+-   The average **squared difference** between each players' height and 200cm to be 64
 
-## Visualizing Probability Distributions
+## Visualizing Distributions
+
+
 
 Two types of probability distributions
 
@@ -374,11 +449,13 @@ Two types of probability distributions
 
     -   PDFs give the relative probability of an event in the region
 
-        \-$\rightarrow$ higher values in more likely regions
+        - $\rightarrow$ higher values in more likely regions
 
     -   Think: histograms & kernel density plots (density on $y$ axis)
 
-## Bernoulli Probability Mass Function
+
+
+## Bernoulli PMF
 
 ::: {style="font-size: 0.7em;"}
 If I sample one gummy bear and $\pi_\text{pineapple} = .2$, then the distribution (PMF) of whether I draw a pineapple gummy bear in my sample is:
@@ -395,7 +472,7 @@ ggplot(data.frame(x, probability), aes(x, probability)) +
   theme(axis.title = element_text(size = 14))
 ```
 
-## Binomial Probability Mass Function
+## Binomial PMF
 
 ::: {style="font-size: 0.7em;"}
 If I sample 10 gummy bears and $\pi_\text{pineapple} = .2$, then the distribution (PMF) of the number of Pineapple bears I draw is:
@@ -428,10 +505,10 @@ ggplot(binom_df, aes(x = k, y = prob)) +
 
 ```
 
-## Poisson Probability Mass Function
+## Poisson PMF
 
 ::: {style="font-size: 0.7em;"}
-If I sample calls to a fire station on a given day when the mean number of calls is $\mu = 8$, then the distribution (PMF) of the number of calls is:
+If I sample calls to a fire station on a given week when the mean number of calls is $\mu = 8$, then the distribution (PMF) of the number of calls is:
 :::
 
 ```{r}
@@ -492,7 +569,7 @@ ggplot(norm_df, aes(x = height, y = density)) +
 
 ## Independence
 
-::: {style="font-size: 0.85em;"}
+
 **Independent Events**: The probability of one event happening does not depend on whether or not another event has happened
 
 If $A$ and $B$ are independent events:
@@ -504,11 +581,11 @@ Most statistical methods make use of the idea of independence
 
 -   "Independence of observations" assumption
 -   Assumes that if you know one data point, it doesn't give you any new information about probability distribution of other data points
-:::
 
-## Joint & Marginal Probability
 
-\Joint probability: The probability of two events both occurring
+## Joint & Marginal
+
+Joint probability: The probability of two events both occurring
 
 $$P(A \cap B)$$
 
@@ -522,13 +599,13 @@ $$P(A)$$
 
 -   Irrespective of other events
 
--   $P(A) = P(A \cap B) + P(A \cap \text{ not } B)$
+-   $P(A) = P(A \cap B) + P(A \cap \neg B)$
 
 ## Contingency Table
 
-::: {style="font-size: 0.85em;"}
+
 Contingency tables show us how frequently events occur jointly (cells) and marginally (margins)
-:::
+
 
 ```{r}
 #| echo: false
@@ -573,9 +650,8 @@ data.frame(
 
 ## Marginal Probability
 
-::: {style="font-size: 0.85em;"}
+
 We can calculate marginal probabilities from a contingency table
-:::
 
 ```{r}
 #| echo: false
@@ -618,19 +694,19 @@ data.frame(
 )
 ```
 
-::: {style="font-size: 0.85em;"}
+
 $P(\text{positive test}) = \frac{\text{\# with a positive test}}{\text{Total \#}} = \frac{140}{1000} = .14$
 
 What is the marginal probability of having a negative test?
 
 [$P(\text{negative test}) = \frac{\text{\# with a negative test}}{\text{Total \#}} = \frac{860}{1000} = .86$]{.answer .fragment .content-visible unless-meta="params.v0"}
-:::
+
 
 ## Joint Probability
 
-::: {style="font-size: 0.85em;"}
+
 We can calculate joint probabilities from a contingency table
-:::
+
 
 ```{r}
 #| echo: false
@@ -671,15 +747,13 @@ data.frame(
 )
 ```
 
-::: {style="font-size: 0.775em;"}
-**Joint** probability of having cancer and receiving a positive test:
 
 $P(\text{cancer } \cap \text{ positive test}) = \frac{\text{\# with cancer AND a positive test}}{\text{Total \#}} =$ $\frac{94}{1000} = .094$
 
 What is the joint probability of not having cancer and receiving a positive test?
 
 [$P(\text{no cancer } \cap \text{ positive test}) = \frac{\text{\# with no cancer AND a positive test}}{\text{Total \#}} =$]{.answer .fragment .content-visible unless-meta="params.v0"} [$\frac{46}{1000} = .046$]{.answer .fragment .content-visible unless-meta="params.v0"}
-:::
+
 
 ## Conditional Probability
 
@@ -730,8 +804,8 @@ data.frame(
 )
 ```
 
-::: {style="font-size: 0.85em;"}
-**conditional probability** of having cancer given a positive test is
+::: {style="font-size: 0.9em;"}
+The **conditional probability** of having cancer given a positive test is
 
 $P(\text{cancer} \vert \text{positive test}) = \frac{\text{\# with cancer and a positive test}}{\text{\# with a positive test}} = \frac{94}{140} = .67$
 
@@ -781,15 +855,15 @@ data.frame(
 )
 ```
 
-::: {style="font-size: 0.85em;"}
+
 What if we reverse it. What is the probability receiving a positive test given that we have do not have cancer?
 
 [$P(\text{positive test} \vert \text{no cancer}) = \frac{\text{\# with no cancer and a positive test}}{\text{\# with no cancer}}=$]{.answer .fragment .content-visible unless-meta="params.v0"} [$\frac{46}{900} = .05$]{.answer .fragment .content-visible unless-meta="params.v0"}
-:::
+
 
 ## Bayes' Theorem
 
-::: {style="font-size: 0.75em;"}
+::: {style="font-size: 0.85em;"}
 A better (more technical) definition of conditional probability:
 
 $$P(A | B)  =   \frac{P(A\cap B)}{P(B)} = \frac{P(B \vert A) P(A)}{P(B)}$$
@@ -809,7 +883,7 @@ Which one of these do you think is more important to know when taking a diagnost
 
 ## More Bayes' Theorem
 
-::: {style="font-size: 0.85em;"}
+
 A better (more technical) definition of conditional probability:
 
 $$P(A | B)  =   \frac{P(A\cap B)}{P(B)} = \frac{P(B \vert A) P(A)}{P(B)}$$
@@ -822,7 +896,7 @@ $$P(A | B)  \neq    P(B | A)$$
 
 -   $P$(guilty \| evidence) $\neq P$(evidence \| guilty)
 -   $P$(data \| hypothesis) $\neq P$(hypothesis \| data)
-:::
+
 
 ## The Frequentist Approach
 
@@ -838,13 +912,13 @@ Historically, the most popular is the **frequentist** approach:
 
 Less historically popular, but rapidly gaining momentum is the **Bayesian** approach
 
--   Start with a prior belief (probability distribution) over all different possible sets of parameters ($\theta$): $P(\theta)$
--   Look at how likely our data ($D$) are under all different possible sets of parameters: $P(D|\theta)$
--   Use Bayes' rule to revise our beliefs (probability distribution) about the parameters given the data we have observed: $P(\theta|D)$
+-   Start with a prior belief (probability distribution) over all different possible sets of parameters ($\boldsymbol{\theta}$): $P(\boldsymbol{\theta})$
+-   Look at how likely our data ($\boldsymbol{D}$) are under all different possible sets of parameters: $P(\boldsymbol{D}|\boldsymbol{\theta})$
+-   Use Bayes' rule to revise our beliefs (probability distribution) about the parameters given the data we have observed: $P(\boldsymbol{\theta}|\boldsymbol{D})$
 
 ## A Brief History of Bayesianism
 
-::: {style="font-size: 0.85em;"}
+::: {style="font-size: 0.95em;"}
 -   Bayes theorem was first discovered by Reverend Thomas Bayes in 18th century
     -   English Presbyterian Minister
     -   Published defenses of science against religious claims they were heretical
@@ -875,10 +949,10 @@ Pierre Simon Laplace (1749-1827)
 ## A Brief History of Frequentism
 
 ::: {style="font-size: 0.8em;"}
--   Post-enlightenment, there was strong desire for "objective" science
+-   Post-enlightenment (early 20th century), there was strong desire for "objective" science
 -   Bayesian inference **requires** subjectivity in the form of a prior belief
 -   This was considered "perverse" by modern standards
--   Sir Ronald Fisher is responsible for the core philosophy behind contemporary frequentist statistics
+-   Sir Ronald Fisher is one of the key backers of core philosophy behind contemporary frequentist statistics
     -   Rejected Bayesianism
     -   Highly prone to becoming polemic
     -   Even had a very famous intellectual war with contemporary Jerzy Neyman over the "right" way to do frequentism
@@ -902,3 +976,20 @@ Jerzy Neyman (1895-1980)
 :::
 :::::
 ::::::
+
+
+## Wrapping Up
+
+ Next time
+
+- We will look at how to use computers to do probability-based simulations
+- Can help us understand how data are randomly generated under sets of parametric assumptions (assumptions about parameters)
+
+For now
+
+- Homework 1 will go live on Canvas tomorrow
+- Covers
+  - First four lectures
+  - First two labs
+
+Don't forget Ed Discussion!

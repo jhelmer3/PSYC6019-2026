@@ -29,7 +29,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-5f4f28e8bfc7f39b89cc2436db0d29b7.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-1a1f3d21782fc4857a415709dc9abfca.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -165,7 +165,7 @@ Mark Himmelstein
 <li><strong>Event</strong>: A possible outcome or combination of outcomes</li>
 <li><strong>Sample Space</strong>: All possible outcomes
 <ul>
-<li>Sample space for a coin flip is <span class="math inline">\(\text{{heads, tails}}\)</span>
+<li>Sample space for a coin flip is <span class="math inline">\(\text{\{heads, tails\}}\)</span>
 <ul>
 <li>Curly brackets indicate a set of individual elements</li>
 </ul></li>
@@ -205,7 +205,7 @@ Mark Himmelstein
 <p>If we randomly pick one gummy bear, what is the probability of picking a pineapple gummy?</p>
 <!-- This brings us to the **analytic** view of probability: -->
 <p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(P(\text{pineapple}) = \frac{\text{\# of pineapple gummy bears}}{\text{total \# of gummy bears}}\)</span></span></p>
-<p><span class="answer fragment" data-unless-meta="params.v0"><strong>Classical Definition of Probability:</strong> <em>Proportion</em> ways a particular outcome can occur out of all possible outcomes</span></p>
+<p><span class="answer fragment" data-unless-meta="params.v0"><strong>Classical Definition of Probability:</strong> <em>Proportion</em> of ways a particular outcome can occur out of all possible outcomes</span></p>
 </section>
 <section id="bernoulli-trials" class="slide level2">
 <h2>Bernoulli Trials</h2>
@@ -215,12 +215,13 @@ Mark Himmelstein
 <li><p>e.g., heads vs.&nbsp;tails, pass vs.&nbsp;fail this class, diagnosis vs.&nbsp;no diagnosis, pineapple vs.&nbsp;other flavor gummy</p></li>
 </ul>
 <p>If we code a “success” as “1” and a “failure” as “0”, then the probability of success in any Bernoulli trial equals</p>
-<p><span class="math inline">\(\pi = \frac{\text{\# of ways to succeed}}{\text{\# of ways to succeed} + \text{\# of ways to fail}}\)</span></p>
+<p><span class="math display">\[\pi = \frac{\text{\# of ways to succeed}}{\text{\# of ways to succeed} + \text{\# of ways to fail}}\]</span></p>
+<p><strong>NOTE:</strong> <span class="math inline">\(\pi\)</span> is generic notation for a parameter (population value) representing the probability of success, NOT 3.14159….</p>
 </section>
 <section id="the-bernoulli-distribution" class="slide level2">
 <h2>The Bernoulli Distribution</h2>
-<div style="font-size: 0.8em;">
-<p>Note than <span class="math inline">\(\pi\)</span> is not a <em>statistic</em> but a <em>parameter</em></p>
+<div style="font-size: 0.9em;">
+<p>Remember that <span class="math inline">\(\pi\)</span> is not a <em>statistic</em> but a <em>parameter</em></p>
 <ul>
 <li>Represents an underlying truth: the proportion of ways a success can happen out of how many ways successes and failures can both happen</li>
 </ul>
@@ -229,48 +230,53 @@ Mark Himmelstein
 <p><strong>Read:</strong> Pineapple bears are distributed Bernoulli (follow a Bernoulli distribution) with probability <span class="math inline">\(\pi\)</span></p>
 <p>In the population, the Bernoulli distribution has</p>
 <ul>
-<li>Mean <span class="math inline">\(\mu= pi\)</span></li>
+<li>Mean <span class="math inline">\(\mu= \pi\)</span></li>
 <li>Variance <span class="math inline">\(\sigma^2 = \pi(1-\pi)\)</span></li>
 </ul>
 </div>
 </section>
 <section id="more-bernoulli" class="slide level2">
 <h2>More Bernoulli</h2>
+<div style="font-size: 0.8em;">
 <p>Let’s code successes on a given trial <span class="math inline">\(i\)</span> as <span class="math inline">\(y_i = \text{Pineapple Bear} = 1\)</span> and <span class="math inline">\(\text{any other flavor} = 0\)</span></p>
 <p>We can write the Bernoulli distribution as</p>
 <p><span class="math display">\[P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i}\]</span></p>
-<p>That means, if <span class="math inline">\(y_i = \text{Pineapple Bear} = 1\)</span></p>
+<p>That means, for <span class="math inline">\(y_i = \text{Pineapple Bear} = 1\)</span></p>
 <ul>
 <li><span class="math inline">\(\pi^{y_i} = \pi^{1} = \pi\)</span></li>
 <li><span class="math inline">\((1-\pi)^{1-y_i} = (1 - \pi)^{1 - 1} = 1\)</span></li>
 <li><span class="math inline">\(P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = \pi(1) = \pi\)</span></li>
 </ul>
-<p>And if <span class="math inline">\(y_i = \text{any other flavor} = 0\)</span></p>
+<p>And for <span class="math inline">\(y_i = \text{any other flavor} = 0\)</span></p>
 <ul>
 <li><span class="math inline">\(\pi^{y_i} = \pi^{0} = 1\)</span></li>
-<li><span class="math inline">\((1-\pi)^{1-y_i} = (1 - \pi)^{1 - 0} = (1 - \pi\)</span></li>
+<li><span class="math inline">\((1-\pi)^{1-y_i} = (1 - \pi)^{1 - 0} = (1 - \pi)\)</span></li>
 <li><span class="math inline">\(P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = 1(1 - \pi) = 1 -\pi\)</span></li>
 </ul>
+</div>
 </section>
 <section id="alternate-bernoulli" class="slide level2">
 <h2>Alternate Bernoulli</h2>
+<div style="font-size: 0.85em;">
 <p>You might also see it written this way:</p>
 <p><span class="math display">\[P(y_i | \pi) = \pi(y_i) + (1 - \pi)(1 - y_i)\]</span></p>
-<p>That means, if <span class="math inline">\(y_i = \text{Pineapple Bear} = 1\)</span></p>
+<p>That means, for <span class="math inline">\(y_i = \text{Pineapple Bear} = 1\)</span></p>
 <ul>
 <li><span class="math inline">\(\pi(y_i) = \pi(1) = \pi\)</span></li>
 <li><span class="math inline">\((1 - \pi)(1 - y_i) = (1 \pi)(1 - 1) = 0\)</span></li>
-<li><span class="math inline">\(P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = \pi + 0 = \pi\)</span></li>
+<li><span class="math inline">\(P(y_i| \pi)=P(y_i | \pi) = \pi(y_i) + (1 - \pi)(1 - y_i) = \pi + 0 = \pi\)</span></li>
 </ul>
-<p>And if <span class="math inline">\(y_i = \text{any other flavor} = 0\)</span></p>
+<p>And for <span class="math inline">\(y_i = \text{any other flavor} = 0\)</span></p>
 <ul>
 <li><span class="math inline">\(\pi(y_i) = \pi(0) = 0\)</span></li>
 <li><span class="math inline">\((1 - \pi)(1 - y_i) = (1 - \pi)(1 - 0) = 1 -\pi\)</span></li>
-<li><span class="math inline">\(P(y_i| \pi)=\pi^{y_i}(1-\pi)^{1-y_i} = 0 + 1 -\pi = 1- \pi\)</span></li>
+<li><span class="math inline">\(P(y_i| \pi)=P(y_i | \pi) = \pi(y_i) + (1 - \pi)(1 - y_i) = 0 + 1 -\pi = 1- \pi\)</span></li>
 </ul>
+</div>
 </section>
 <section id="multiple-trials" class="slide level2">
 <h2>Multiple Trials</h2>
+<div style="font-size: 0.95em;">
 <p>What if we sample more than one gummy bear?</p>
 <p>Two ways:</p>
 <ul>
@@ -278,7 +284,7 @@ Mark Himmelstein
 <ul>
 <li><p>Probability of a pineapple on the 2nd draw depends on the outcome of the first draw</p></li>
 <li><p>Outcomes are <strong>dependent</strong></p></li>
-<li><p>The probability of an event change depends on earlier events</p></li>
+<li><p>The probability of an event changes depending on earlier events</p></li>
 </ul></li>
 <li><p>With replacement</p>
 <ul>
@@ -287,10 +293,12 @@ Mark Himmelstein
 <li><p>The same probabilities apply to all events</p></li>
 </ul></li>
 </ul>
+</div>
 </section>
-<section id="multiple-indepenent-trials" class="slide level2">
-<h2>Multiple Indepenent Trials</h2>
-<p>What if we want to know the probability we would get five pineapple bears from 10 different bags (each has <span class="math inline">\(\pi = .2\)</span>)?</p>
+<section id="indepenent-trials" class="slide level2">
+<h2>Indepenent Trials</h2>
+<div style="font-size: 0.95em;">
+<p>What if we want to know the probability we would get five pineapple bears from a bag of 10 (each bear has has <span class="math inline">\(\pi = .2\)</span> of being pineapple)?</p>
 <ul>
 <li>This is known as the <em>binomial</em> distribution</li>
 <li>Two parameters, sample size (<span class="math inline">\(n\)</span>) and probability of success (<span class="math inline">\(\pi\)</span>)</li>
@@ -299,14 +307,13 @@ Mark Himmelstein
 <p><span class="math display">\[\begin{pmatrix} n \\ k\end{pmatrix}\pi^k (1-\pi)^{n-k}\]</span></p>
 <p>Where</p>
 <p><span class="math display">\[\begin{pmatrix} n \\ k\end{pmatrix} = \frac{n!}{k!(n-k)!}\]</span></p>
+</div>
 </section>
 <section id="binomial-distribution" class="slide level2">
 <h2>Binomial Distribution</h2>
-<div style="font-size: 0.9em;">
-<p><strong>What this means:</strong> If we repeatedly sampled 10 bags of gummy bears, we would expect to get exactly five pineapples with probability</p>
-<p><span class="math display">\[P(\text{five pineapples}) = \frac{n!}{k!(n-k)!}\pi^k (1-\pi)^{n-k} =\]</span> <span class="math display">\[\frac{10!}{5!(10-5)!}.2^5 (1-.2)^{10-5} = .03\]</span></p>
-<p>For every 100 times we repeated this exercise, we would expect to get exactly five pineapples in 10 draws three times.</p>
-</div>
+<p><strong>What this means:</strong> If we repeatedly sampled bags of 10 gummy bears, we would expect to get exactly five pineapples with probability</p>
+<p><span class="math display">\[P(\text{five pineapples}) = \frac{n!}{k!(n-k)!}\pi^k (1-\pi)^{n-k} =\]</span> <span class="math display">\[\frac{10!}{5!(10-5)!}.2^5 (1-.2)^{10-5} = .026\]</span></p>
+<p>For every 100 times we repeated this exercise, we would expect to get exactly five pineapples in 10 draws about three times.</p>
 </section>
 <section id="the-binomial-distribution" class="slide level2">
 <h2>The Binomial Distribution</h2>
@@ -318,13 +325,32 @@ Mark Himmelstein
 <li>Variance <span class="math inline">\(\sigma^2 = n\pi(1-\pi)\)</span></li>
 </ul>
 </section>
+<section id="cumulative-binomials" class="slide level2">
+<h2>Cumulative Binomials</h2>
+<div style="font-size: 0.85em;">
+<p>We can also use the binomial distribution to consider <em>cumulative</em> outcomes by summing the probabilities of each outcome within a cumulative range.</p>
+<p>For example, the probability that we would draw <strong>fewer than three</strong> (exactly zero, exactly one, or exactly two) pineapples in bags of 10 bears is:</p>
+<p><span class="math display">\[P(\text{fewer than three pinapples}) = \frac{10!}{0!(10-0)!}.2^0 (1-.2)^{10-0} +\]</span> <span class="math display">\[\frac{10!}{1!(10-1)!}.2^1 (1-.2)^{10-1} + \frac{10!}{2!(10-2)!}.2^2 (1-.2)^{10-2} = .68\]</span></p>
+<p>And we can get the <em>complement</em> of this cumulative probability by just subtracting it from 1. The probability we would draw <strong>at least three</strong> pineapples is</p>
+<p><span class="math display">\[P(\text{at least three pinapples}) = 1 - P(\text{fewer than three pinapples}) =\]</span> <span class="math display">\[1 - .68 = .32\]</span></p>
+</div>
+</section>
+<section id="cumulative-problems" class="slide level2">
+<h2>Cumulative Problems</h2>
+<p>The easiest way to do these problems “by hand” is to reduce the number of calculation steps.</p>
+<p>For example, if I wanted to know the probability of nine or more pineapples, I would do</p>
+<p><span class="math display">\[P(\text{nine or more pineapples}) = \frac{10!}{9!(10-9)!}.2^9 (1-.2)^{10-9} +\]</span> <span class="math display">\[\frac{10!}{10!(10-10)!}.2^{10} (1-.2)^{10-10} = \text{some very small number}\]</span></p>
+<p>Then to get fewer than nine</p>
+<p><span class="math display">\[P(\text{fewer than nine pineapples}) = 1 - \text{that very small number}\]</span></p>
+</section>
 <section id="counting-events" class="slide level2">
 <h2>Counting Events</h2>
+<div style="font-size: 0.9em;">
 <ul>
 <li>The binomial distribution tells us the probability of a given number of successes in a fixed number of trials. Examples:
 <ul>
-<li>Number of pineapple gummies in 10 independent bags</li>
-<li>Number of heads in five independent coin flips</li>
+<li>Number of pineapple gummies in a bag of 10</li>
+<li>Number of heads in five coin flips</li>
 </ul></li>
 <li>The <strong>Poisson distribution</strong> tells us how many “successes” occur (specific type of event happens) in a fixed time period. Examples:
 <ul>
@@ -332,6 +358,12 @@ Mark Himmelstein
 <li>Number of calls a fire station gets on a given day</li>
 </ul></li>
 </ul>
+<p>The difference between the binomial and Poisson</p>
+<ul>
+<li><strong>Binomial:</strong> Number of successes in a fixed number of trials</li>
+<li><strong>Poisson:</strong> Number of successes in unspecified number of trials over fixed time period</li>
+</ul>
+</div>
 </section>
 <section id="the-poisson-distribution" class="slide level2">
 <h2>The Poisson Distribution</h2>
@@ -339,24 +371,31 @@ Mark Himmelstein
 <p><span class="math display">\[P(x) = \frac{e^{-\mu}\mu^x}{x!}\]</span></p>
 <p>Where</p>
 <ul>
-<li><span class="math inline">\(e\)</span> is Euler’s number (base of natural logarithm)</li>
+<li><span class="math inline">\(e\)</span> is Euler’s number (base of natural logarithm) <span class="math inline">\(\approx 2.718\)</span></li>
 <li><span class="math inline">\(\mu\)</span> is the mean number of successes in the population</li>
-<li><span class="math inline">\(x\)</span> is the number of observed counts</li>
+<li><span class="math inline">\(x\)</span> is the number of observed successes (or counts)</li>
 </ul>
 </section>
 <section id="poisson-example" class="slide level2">
 <h2>Poisson Example</h2>
-<p>If the mean number of calls to the fire station is 8, the probability of getting exactly 11 calls would be</p>
-<p><span class="math display">\[P(x = 11) = \frac{e^{-8}8^11}{11!} = .072\]</span></p>
+<p>If the mean number of calls to the fire station in a week is 8, the probability of getting exactly 11 calls in a given week would be</p>
+<p><span class="math display">\[P(x = 11) = \frac{e^{-8}8^{11}}{11!} = .072\]</span></p>
 <p>In the Poisson distribution</p>
 <ul>
 <li>The population mean is <span class="math inline">\(\mu\)</span></li>
 <li>The population variance <span class="math inline">\(\sigma^2\)</span> <em>also</em> <span class="math inline">\(= \mu\)</span></li>
 </ul>
 </section>
+<section id="cumulative-poissons" class="slide level2">
+<h2>Cumulative Poissons</h2>
+<p>You can also get cumulative probabilities from Poisson distributions. The cumulative probability of 11 or fewer calls in a given week would be</p>
+<p><span class="math display">\[P(x \leq 11) = \sum_{i=0}^{11}\frac{e^{-8}8^{i}}{i!} = .89\]</span></p>
+<p>And the probability of more than 11 calls would be</p>
+<p><span class="math display">\[P(x &gt; 11) = 1 - P(x \leq 11) = 1 - .89 = .11\]</span></p>
+</section>
 <section id="continuous-variables" class="slide level2">
 <h2>Continuous Variables</h2>
-<div style="font-size: 0.85em;">
+<div style="font-size: 0.95em;">
 <p>The Bernoulli, Binomial, and Poisson distributions all involve <em>discrete</em> variables. What about continuous variables?</p>
 <ul>
 <li><strong>The Normal Distribution</strong> will be our major focus</li>
@@ -384,6 +423,9 @@ Mark Himmelstein
 <p>There are two parameters (here <span class="math inline">\(\pi\)</span> is the number not a parameter!): <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span>. We can write that <span class="math inline">\(x\)</span> is normally distributed with mean <span class="math inline">\(\mu\)</span> and variance <span class="math inline">\(\sigma^2\)</span> as</p>
 <p><span class="math display">\[x \sim \text{normal}(\mu, \sigma^2)\]</span></p>
 <p><strong>Simple interpretation:</strong> In the population, the average value of <span class="math inline">\(x\)</span> is <span class="math inline">\(\mu\)</span> and the average amount of <strong>squared error</strong> between all members of the population and <span class="math inline">\(\mu\)</span> is <span class="math inline">\(\sigma^2\)</span></p>
+<p>Sometimes you will also see it as</p>
+<p><span class="math display">\[x \sim \text{normal}(\mu, \sigma)\]</span></p>
+<p>In which case we are referring to the standard deviation rather than the variance</p>
 </div>
 </section>
 <section id="normal-distribution-example" class="slide level2">
@@ -392,11 +434,11 @@ Mark Himmelstein
 <p>That means, if I randomly sampled a group of basketball players, I would expect:</p>
 <ul>
 <li>The average height of players in my sample to be 200cm</li>
-<li>The average <strong>squared difference</strong> between each players’ height and 200cm would be 64</li>
+<li>The average <strong>squared difference</strong> between each players’ height and 200cm to be 64</li>
 </ul>
 </section>
-<section id="visualizing-probability-distributions" class="slide level2">
-<h2>Visualizing Probability Distributions</h2>
+<section id="visualizing-distributions" class="slide level2">
+<h2>Visualizing Distributions</h2>
 <p>Two types of probability distributions</p>
 <ul>
 <li><p>Probability mass functions (PMFs)</p>
@@ -409,29 +451,31 @@ Mark Himmelstein
 <ul>
 <li><p>The probability of any specific event (technically) equals zero</p></li>
 <li><p>PDFs give the relative probability of an event in the region</p>
-<p>-<span class="math inline">\(\rightarrow\)</span> higher values in more likely regions</p></li>
+<ul>
+<li><span class="math inline">\(\rightarrow\)</span> higher values in more likely regions</li>
+</ul></li>
 <li><p>Think: histograms &amp; kernel density plots (density on <span class="math inline">\(y\)</span> axis)</p></li>
 </ul></li>
 </ul>
 </section>
-<section id="bernoulli-probability-mass-function" class="slide level2">
-<h2>Bernoulli Probability Mass Function</h2>
+<section id="bernoulli-pmf" class="slide level2">
+<h2>Bernoulli PMF</h2>
 <div style="font-size: 0.7em;">
 <p>If I sample one gummy bear and <span class="math inline">\(\pi_\text{pineapple} = .2\)</span>, then the distribution (PMF) of whether I draw a pineapple gummy bear in my sample is:</p>
 </div>
 
 <img data-src="Lecture-4-Probability_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="binomial-probability-mass-function" class="slide level2">
-<h2>Binomial Probability Mass Function</h2>
+<section id="binomial-pmf" class="slide level2">
+<h2>Binomial PMF</h2>
 <div style="font-size: 0.7em;">
 <p>If I sample 10 gummy bears and <span class="math inline">\(\pi_\text{pineapple} = .2\)</span>, then the distribution (PMF) of the number of Pineapple bears I draw is:</p>
 </div>
 
 <img data-src="Lecture-4-Probability_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="poisson-probability-mass-function" class="slide level2">
-<h2>Poisson Probability Mass Function</h2>
+<section id="poisson-pmf" class="slide level2">
+<h2>Poisson PMF</h2>
 <div style="font-size: 0.7em;">
-<p>If I sample calls to a fire station on a given day when the mean number of calls is <span class="math inline">\(\mu = 8\)</span>, then the distribution (PMF) of the number of calls is:</p>
+<p>If I sample calls to a fire station on a given week when the mean number of calls is <span class="math inline">\(\mu = 8\)</span>, then the distribution (PMF) of the number of calls is:</p>
 </div>
 
 <img data-src="Lecture-4-Probability_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
@@ -444,7 +488,6 @@ Mark Himmelstein
 <img data-src="Lecture-4-Probability_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="independence" class="slide level2">
 <h2>Independence</h2>
-<div style="font-size: 0.85em;">
 <p><strong>Independent Events</strong>: The probability of one event happening does not depend on whether or not another event has happened</p>
 <p>If <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent events:</p>
 <ul>
@@ -456,11 +499,10 @@ Mark Himmelstein
 <li>“Independence of observations” assumption</li>
 <li>Assumes that if you know one data point, it doesn’t give you any new information about probability distribution of other data points</li>
 </ul>
-</div>
 </section>
-<section id="joint-marginal-probability" class="slide level2">
-<h2>Joint &amp; Marginal Probability</h2>
-<p>probability: The probability of two events both occurring</p>
+<section id="joint-marginal" class="slide level2">
+<h2>Joint &amp; Marginal</h2>
+<p>Joint probability: The probability of two events both occurring</p>
 <p><span class="math display">\[P(A \cap B)\]</span></p>
 <ul>
 <li><p>If <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are <strong>independent</strong>, <span class="math inline">\(P(A \cap B) = P(A)P(B)\)</span></p></li>
@@ -470,33 +512,31 @@ Mark Himmelstein
 <p><span class="math display">\[P(A)\]</span></p>
 <ul>
 <li><p>Irrespective of other events</p></li>
-<li><p><span class="math inline">\(P(A) = P(A \cap B) + P(A \cap \text{ not } B)\)</span></p></li>
+<li><p><span class="math inline">\(P(A) = P(A \cap B) + P(A \cap \neg B)\)</span></p></li>
 </ul>
 </section>
 <section id="contingency-table" class="slide level2">
 <h2>Contingency Table</h2>
-<div style="font-size: 0.85em;">
 <p>Contingency tables show us how frequently events occur jointly (cells) and marginally (margins)</p>
-</div>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="hwccwwxrzm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#hwccwwxrzm table {
+<div id="mjydsmqbsq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#mjydsmqbsq table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#hwccwwxrzm thead, #hwccwwxrzm tbody, #hwccwwxrzm tfoot, #hwccwwxrzm tr, #hwccwwxrzm td, #hwccwwxrzm th {
+#mjydsmqbsq thead, #mjydsmqbsq tbody, #mjydsmqbsq tfoot, #mjydsmqbsq tr, #mjydsmqbsq td, #mjydsmqbsq th {
   border-style: none;
 }
 
-#hwccwwxrzm p {
+#mjydsmqbsq p {
   margin: 0;
   padding: 0;
 }
 
-#hwccwwxrzm .gt_table {
+#mjydsmqbsq .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -522,12 +562,12 @@ Mark Himmelstein
   border-left-color: #D3D3D3;
 }
 
-#hwccwwxrzm .gt_caption {
+#mjydsmqbsq .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#hwccwwxrzm .gt_title {
+#mjydsmqbsq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -539,7 +579,7 @@ Mark Himmelstein
   border-bottom-width: 0;
 }
 
-#hwccwwxrzm .gt_subtitle {
+#mjydsmqbsq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -551,7 +591,7 @@ Mark Himmelstein
   border-top-width: 0;
 }
 
-#hwccwwxrzm .gt_heading {
+#mjydsmqbsq .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -563,13 +603,13 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#hwccwwxrzm .gt_bottom_border {
+#mjydsmqbsq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#hwccwwxrzm .gt_col_headings {
+#mjydsmqbsq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -584,7 +624,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#hwccwwxrzm .gt_col_heading {
+#mjydsmqbsq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -604,7 +644,7 @@ Mark Himmelstein
   overflow-x: hidden;
 }
 
-#hwccwwxrzm .gt_column_spanner_outer {
+#mjydsmqbsq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -616,15 +656,15 @@ Mark Himmelstein
   padding-right: 4px;
 }
 
-#hwccwwxrzm .gt_column_spanner_outer:first-child {
+#mjydsmqbsq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#hwccwwxrzm .gt_column_spanner_outer:last-child {
+#mjydsmqbsq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#hwccwwxrzm .gt_column_spanner {
+#mjydsmqbsq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -636,11 +676,11 @@ Mark Himmelstein
   width: 100%;
 }
 
-#hwccwwxrzm .gt_spanner_row {
+#mjydsmqbsq .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#hwccwwxrzm .gt_group_heading {
+#mjydsmqbsq .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -666,7 +706,7 @@ Mark Himmelstein
   text-align: left;
 }
 
-#hwccwwxrzm .gt_empty_group_heading {
+#mjydsmqbsq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -681,15 +721,15 @@ Mark Himmelstein
   vertical-align: middle;
 }
 
-#hwccwwxrzm .gt_from_md > :first-child {
+#mjydsmqbsq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#hwccwwxrzm .gt_from_md > :last-child {
+#mjydsmqbsq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#hwccwwxrzm .gt_row {
+#mjydsmqbsq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -708,7 +748,7 @@ Mark Himmelstein
   overflow-x: hidden;
 }
 
-#hwccwwxrzm .gt_stub {
+#mjydsmqbsq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -721,7 +761,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#hwccwwxrzm .gt_stub_row_group {
+#mjydsmqbsq .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -735,15 +775,15 @@ Mark Himmelstein
   vertical-align: top;
 }
 
-#hwccwwxrzm .gt_row_group_first td {
+#mjydsmqbsq .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#hwccwwxrzm .gt_row_group_first th {
+#mjydsmqbsq .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#hwccwwxrzm .gt_summary_row {
+#mjydsmqbsq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -753,16 +793,16 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#hwccwwxrzm .gt_first_summary_row {
+#mjydsmqbsq .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#hwccwwxrzm .gt_first_summary_row.thick {
+#mjydsmqbsq .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#hwccwwxrzm .gt_last_summary_row {
+#mjydsmqbsq .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -772,7 +812,7 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#hwccwwxrzm .gt_grand_summary_row {
+#mjydsmqbsq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -782,7 +822,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#hwccwwxrzm .gt_first_grand_summary_row {
+#mjydsmqbsq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -792,7 +832,7 @@ Mark Himmelstein
   border-top-color: #D3D3D3;
 }
 
-#hwccwwxrzm .gt_last_grand_summary_row_top {
+#mjydsmqbsq .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -802,11 +842,11 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#hwccwwxrzm .gt_striped {
+#mjydsmqbsq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#hwccwwxrzm .gt_table_body {
+#mjydsmqbsq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -815,7 +855,7 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#hwccwwxrzm .gt_footnotes {
+#mjydsmqbsq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -829,7 +869,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#hwccwwxrzm .gt_footnote {
+#mjydsmqbsq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -838,7 +878,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#hwccwwxrzm .gt_sourcenotes {
+#mjydsmqbsq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -852,7 +892,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#hwccwwxrzm .gt_sourcenote {
+#mjydsmqbsq .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -860,72 +900,72 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#hwccwwxrzm .gt_left {
+#mjydsmqbsq .gt_left {
   text-align: left;
 }
 
-#hwccwwxrzm .gt_center {
+#mjydsmqbsq .gt_center {
   text-align: center;
 }
 
-#hwccwwxrzm .gt_right {
+#mjydsmqbsq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#hwccwwxrzm .gt_font_normal {
+#mjydsmqbsq .gt_font_normal {
   font-weight: normal;
 }
 
-#hwccwwxrzm .gt_font_bold {
+#mjydsmqbsq .gt_font_bold {
   font-weight: bold;
 }
 
-#hwccwwxrzm .gt_font_italic {
+#mjydsmqbsq .gt_font_italic {
   font-style: italic;
 }
 
-#hwccwwxrzm .gt_super {
+#mjydsmqbsq .gt_super {
   font-size: 65%;
 }
 
-#hwccwwxrzm .gt_footnote_marks {
+#mjydsmqbsq .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#hwccwwxrzm .gt_asterisk {
+#mjydsmqbsq .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#hwccwwxrzm .gt_indent_1 {
+#mjydsmqbsq .gt_indent_1 {
   text-indent: 5px;
 }
 
-#hwccwwxrzm .gt_indent_2 {
+#mjydsmqbsq .gt_indent_2 {
   text-indent: 10px;
 }
 
-#hwccwwxrzm .gt_indent_3 {
+#mjydsmqbsq .gt_indent_3 {
   text-indent: 15px;
 }
 
-#hwccwwxrzm .gt_indent_4 {
+#mjydsmqbsq .gt_indent_4 {
   text-indent: 20px;
 }
 
-#hwccwwxrzm .gt_indent_5 {
+#mjydsmqbsq .gt_indent_5 {
   text-indent: 25px;
 }
 
-#hwccwwxrzm .katex-display {
+#mjydsmqbsq .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#hwccwwxrzm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#mjydsmqbsq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -967,28 +1007,26 @@ Mark Himmelstein
 </section>
 <section id="marginal-probability" class="slide level2">
 <h2>Marginal Probability</h2>
-<div style="font-size: 0.85em;">
 <p>We can calculate marginal probabilities from a contingency table</p>
-</div>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="mkulsyeabs" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#mkulsyeabs table {
+<div id="qtfzrtxnof" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qtfzrtxnof table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#mkulsyeabs thead, #mkulsyeabs tbody, #mkulsyeabs tfoot, #mkulsyeabs tr, #mkulsyeabs td, #mkulsyeabs th {
+#qtfzrtxnof thead, #qtfzrtxnof tbody, #qtfzrtxnof tfoot, #qtfzrtxnof tr, #qtfzrtxnof td, #qtfzrtxnof th {
   border-style: none;
 }
 
-#mkulsyeabs p {
+#qtfzrtxnof p {
   margin: 0;
   padding: 0;
 }
 
-#mkulsyeabs .gt_table {
+#qtfzrtxnof .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1014,12 +1052,12 @@ Mark Himmelstein
   border-left-color: #D3D3D3;
 }
 
-#mkulsyeabs .gt_caption {
+#qtfzrtxnof .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#mkulsyeabs .gt_title {
+#qtfzrtxnof .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1031,7 +1069,7 @@ Mark Himmelstein
   border-bottom-width: 0;
 }
 
-#mkulsyeabs .gt_subtitle {
+#qtfzrtxnof .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1043,7 +1081,7 @@ Mark Himmelstein
   border-top-width: 0;
 }
 
-#mkulsyeabs .gt_heading {
+#qtfzrtxnof .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1055,13 +1093,13 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#mkulsyeabs .gt_bottom_border {
+#qtfzrtxnof .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mkulsyeabs .gt_col_headings {
+#qtfzrtxnof .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1076,7 +1114,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#mkulsyeabs .gt_col_heading {
+#qtfzrtxnof .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1096,7 +1134,7 @@ Mark Himmelstein
   overflow-x: hidden;
 }
 
-#mkulsyeabs .gt_column_spanner_outer {
+#qtfzrtxnof .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1108,15 +1146,15 @@ Mark Himmelstein
   padding-right: 4px;
 }
 
-#mkulsyeabs .gt_column_spanner_outer:first-child {
+#qtfzrtxnof .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mkulsyeabs .gt_column_spanner_outer:last-child {
+#qtfzrtxnof .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mkulsyeabs .gt_column_spanner {
+#qtfzrtxnof .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1128,11 +1166,11 @@ Mark Himmelstein
   width: 100%;
 }
 
-#mkulsyeabs .gt_spanner_row {
+#qtfzrtxnof .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#mkulsyeabs .gt_group_heading {
+#qtfzrtxnof .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1158,7 +1196,7 @@ Mark Himmelstein
   text-align: left;
 }
 
-#mkulsyeabs .gt_empty_group_heading {
+#qtfzrtxnof .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1173,15 +1211,15 @@ Mark Himmelstein
   vertical-align: middle;
 }
 
-#mkulsyeabs .gt_from_md > :first-child {
+#qtfzrtxnof .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mkulsyeabs .gt_from_md > :last-child {
+#qtfzrtxnof .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mkulsyeabs .gt_row {
+#qtfzrtxnof .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1200,7 +1238,7 @@ Mark Himmelstein
   overflow-x: hidden;
 }
 
-#mkulsyeabs .gt_stub {
+#qtfzrtxnof .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1213,7 +1251,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#mkulsyeabs .gt_stub_row_group {
+#qtfzrtxnof .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1227,15 +1265,15 @@ Mark Himmelstein
   vertical-align: top;
 }
 
-#mkulsyeabs .gt_row_group_first td {
+#qtfzrtxnof .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#mkulsyeabs .gt_row_group_first th {
+#qtfzrtxnof .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#mkulsyeabs .gt_summary_row {
+#qtfzrtxnof .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1245,16 +1283,16 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#mkulsyeabs .gt_first_summary_row {
+#qtfzrtxnof .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#mkulsyeabs .gt_first_summary_row.thick {
+#qtfzrtxnof .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#mkulsyeabs .gt_last_summary_row {
+#qtfzrtxnof .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1264,7 +1302,7 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#mkulsyeabs .gt_grand_summary_row {
+#qtfzrtxnof .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1274,7 +1312,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#mkulsyeabs .gt_first_grand_summary_row {
+#qtfzrtxnof .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1284,7 +1322,7 @@ Mark Himmelstein
   border-top-color: #D3D3D3;
 }
 
-#mkulsyeabs .gt_last_grand_summary_row_top {
+#qtfzrtxnof .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1294,11 +1332,11 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#mkulsyeabs .gt_striped {
+#qtfzrtxnof .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mkulsyeabs .gt_table_body {
+#qtfzrtxnof .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1307,7 +1345,7 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#mkulsyeabs .gt_footnotes {
+#qtfzrtxnof .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1321,7 +1359,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#mkulsyeabs .gt_footnote {
+#qtfzrtxnof .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1330,7 +1368,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#mkulsyeabs .gt_sourcenotes {
+#qtfzrtxnof .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1344,7 +1382,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#mkulsyeabs .gt_sourcenote {
+#qtfzrtxnof .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1352,72 +1390,72 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#mkulsyeabs .gt_left {
+#qtfzrtxnof .gt_left {
   text-align: left;
 }
 
-#mkulsyeabs .gt_center {
+#qtfzrtxnof .gt_center {
   text-align: center;
 }
 
-#mkulsyeabs .gt_right {
+#qtfzrtxnof .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mkulsyeabs .gt_font_normal {
+#qtfzrtxnof .gt_font_normal {
   font-weight: normal;
 }
 
-#mkulsyeabs .gt_font_bold {
+#qtfzrtxnof .gt_font_bold {
   font-weight: bold;
 }
 
-#mkulsyeabs .gt_font_italic {
+#qtfzrtxnof .gt_font_italic {
   font-style: italic;
 }
 
-#mkulsyeabs .gt_super {
+#qtfzrtxnof .gt_super {
   font-size: 65%;
 }
 
-#mkulsyeabs .gt_footnote_marks {
+#qtfzrtxnof .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#mkulsyeabs .gt_asterisk {
+#qtfzrtxnof .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#mkulsyeabs .gt_indent_1 {
+#qtfzrtxnof .gt_indent_1 {
   text-indent: 5px;
 }
 
-#mkulsyeabs .gt_indent_2 {
+#qtfzrtxnof .gt_indent_2 {
   text-indent: 10px;
 }
 
-#mkulsyeabs .gt_indent_3 {
+#qtfzrtxnof .gt_indent_3 {
   text-indent: 15px;
 }
 
-#mkulsyeabs .gt_indent_4 {
+#qtfzrtxnof .gt_indent_4 {
   text-indent: 20px;
 }
 
-#mkulsyeabs .gt_indent_5 {
+#qtfzrtxnof .gt_indent_5 {
   text-indent: 25px;
 }
 
-#mkulsyeabs .katex-display {
+#qtfzrtxnof .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#mkulsyeabs div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#qtfzrtxnof div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1456,36 +1494,32 @@ Mark Himmelstein
 </div>
 </div>
 </div>
-<div style="font-size: 0.85em;">
 <p><span class="math inline">\(P(\text{positive test}) = \frac{\text{\# with a positive test}}{\text{Total \#}} = \frac{140}{1000} = .14\)</span></p>
 <p>What is the marginal probability of having a negative test?</p>
 <p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(P(\text{negative test}) = \frac{\text{\# with a negative test}}{\text{Total \#}} = \frac{860}{1000} = .86\)</span></span></p>
-</div>
 </section>
 <section id="joint-probability" class="slide level2">
 <h2>Joint Probability</h2>
-<div style="font-size: 0.85em;">
 <p>We can calculate joint probabilities from a contingency table</p>
-</div>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="pjozrvjpog" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#pjozrvjpog table {
+<div id="tcrwwrdfau" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tcrwwrdfau table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#pjozrvjpog thead, #pjozrvjpog tbody, #pjozrvjpog tfoot, #pjozrvjpog tr, #pjozrvjpog td, #pjozrvjpog th {
+#tcrwwrdfau thead, #tcrwwrdfau tbody, #tcrwwrdfau tfoot, #tcrwwrdfau tr, #tcrwwrdfau td, #tcrwwrdfau th {
   border-style: none;
 }
 
-#pjozrvjpog p {
+#tcrwwrdfau p {
   margin: 0;
   padding: 0;
 }
 
-#pjozrvjpog .gt_table {
+#tcrwwrdfau .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1511,12 +1545,12 @@ Mark Himmelstein
   border-left-color: #D3D3D3;
 }
 
-#pjozrvjpog .gt_caption {
+#tcrwwrdfau .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#pjozrvjpog .gt_title {
+#tcrwwrdfau .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1528,7 +1562,7 @@ Mark Himmelstein
   border-bottom-width: 0;
 }
 
-#pjozrvjpog .gt_subtitle {
+#tcrwwrdfau .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1540,7 +1574,7 @@ Mark Himmelstein
   border-top-width: 0;
 }
 
-#pjozrvjpog .gt_heading {
+#tcrwwrdfau .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1552,13 +1586,13 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#pjozrvjpog .gt_bottom_border {
+#tcrwwrdfau .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#pjozrvjpog .gt_col_headings {
+#tcrwwrdfau .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1573,7 +1607,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#pjozrvjpog .gt_col_heading {
+#tcrwwrdfau .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1593,7 +1627,7 @@ Mark Himmelstein
   overflow-x: hidden;
 }
 
-#pjozrvjpog .gt_column_spanner_outer {
+#tcrwwrdfau .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1605,15 +1639,15 @@ Mark Himmelstein
   padding-right: 4px;
 }
 
-#pjozrvjpog .gt_column_spanner_outer:first-child {
+#tcrwwrdfau .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#pjozrvjpog .gt_column_spanner_outer:last-child {
+#tcrwwrdfau .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#pjozrvjpog .gt_column_spanner {
+#tcrwwrdfau .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1625,11 +1659,11 @@ Mark Himmelstein
   width: 100%;
 }
 
-#pjozrvjpog .gt_spanner_row {
+#tcrwwrdfau .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#pjozrvjpog .gt_group_heading {
+#tcrwwrdfau .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1655,7 +1689,7 @@ Mark Himmelstein
   text-align: left;
 }
 
-#pjozrvjpog .gt_empty_group_heading {
+#tcrwwrdfau .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1670,15 +1704,15 @@ Mark Himmelstein
   vertical-align: middle;
 }
 
-#pjozrvjpog .gt_from_md > :first-child {
+#tcrwwrdfau .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#pjozrvjpog .gt_from_md > :last-child {
+#tcrwwrdfau .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#pjozrvjpog .gt_row {
+#tcrwwrdfau .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1697,7 +1731,7 @@ Mark Himmelstein
   overflow-x: hidden;
 }
 
-#pjozrvjpog .gt_stub {
+#tcrwwrdfau .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1710,7 +1744,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#pjozrvjpog .gt_stub_row_group {
+#tcrwwrdfau .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1724,15 +1758,15 @@ Mark Himmelstein
   vertical-align: top;
 }
 
-#pjozrvjpog .gt_row_group_first td {
+#tcrwwrdfau .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#pjozrvjpog .gt_row_group_first th {
+#tcrwwrdfau .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#pjozrvjpog .gt_summary_row {
+#tcrwwrdfau .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1742,16 +1776,16 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#pjozrvjpog .gt_first_summary_row {
+#tcrwwrdfau .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#pjozrvjpog .gt_first_summary_row.thick {
+#tcrwwrdfau .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#pjozrvjpog .gt_last_summary_row {
+#tcrwwrdfau .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1761,7 +1795,7 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#pjozrvjpog .gt_grand_summary_row {
+#tcrwwrdfau .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1771,7 +1805,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#pjozrvjpog .gt_first_grand_summary_row {
+#tcrwwrdfau .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1781,7 +1815,7 @@ Mark Himmelstein
   border-top-color: #D3D3D3;
 }
 
-#pjozrvjpog .gt_last_grand_summary_row_top {
+#tcrwwrdfau .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1791,11 +1825,11 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#pjozrvjpog .gt_striped {
+#tcrwwrdfau .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#pjozrvjpog .gt_table_body {
+#tcrwwrdfau .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1804,7 +1838,7 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#pjozrvjpog .gt_footnotes {
+#tcrwwrdfau .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1818,7 +1852,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#pjozrvjpog .gt_footnote {
+#tcrwwrdfau .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1827,7 +1861,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#pjozrvjpog .gt_sourcenotes {
+#tcrwwrdfau .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1841,7 +1875,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#pjozrvjpog .gt_sourcenote {
+#tcrwwrdfau .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1849,72 +1883,72 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#pjozrvjpog .gt_left {
+#tcrwwrdfau .gt_left {
   text-align: left;
 }
 
-#pjozrvjpog .gt_center {
+#tcrwwrdfau .gt_center {
   text-align: center;
 }
 
-#pjozrvjpog .gt_right {
+#tcrwwrdfau .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#pjozrvjpog .gt_font_normal {
+#tcrwwrdfau .gt_font_normal {
   font-weight: normal;
 }
 
-#pjozrvjpog .gt_font_bold {
+#tcrwwrdfau .gt_font_bold {
   font-weight: bold;
 }
 
-#pjozrvjpog .gt_font_italic {
+#tcrwwrdfau .gt_font_italic {
   font-style: italic;
 }
 
-#pjozrvjpog .gt_super {
+#tcrwwrdfau .gt_super {
   font-size: 65%;
 }
 
-#pjozrvjpog .gt_footnote_marks {
+#tcrwwrdfau .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#pjozrvjpog .gt_asterisk {
+#tcrwwrdfau .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#pjozrvjpog .gt_indent_1 {
+#tcrwwrdfau .gt_indent_1 {
   text-indent: 5px;
 }
 
-#pjozrvjpog .gt_indent_2 {
+#tcrwwrdfau .gt_indent_2 {
   text-indent: 10px;
 }
 
-#pjozrvjpog .gt_indent_3 {
+#tcrwwrdfau .gt_indent_3 {
   text-indent: 15px;
 }
 
-#pjozrvjpog .gt_indent_4 {
+#tcrwwrdfau .gt_indent_4 {
   text-indent: 20px;
 }
 
-#pjozrvjpog .gt_indent_5 {
+#tcrwwrdfau .gt_indent_5 {
   text-indent: 25px;
 }
 
-#pjozrvjpog .katex-display {
+#tcrwwrdfau .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#pjozrvjpog div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#tcrwwrdfau div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1953,12 +1987,9 @@ Mark Himmelstein
 </div>
 </div>
 </div>
-<div style="font-size: 0.775em;">
-<p><strong>Joint</strong> probability of having cancer and receiving a positive test:</p>
 <p><span class="math inline">\(P(\text{cancer } \cap \text{ positive test}) = \frac{\text{\# with cancer AND a positive test}}{\text{Total \#}} =\)</span> <span class="math inline">\(\frac{94}{1000} = .094\)</span></p>
 <p>What is the joint probability of not having cancer and receiving a positive test?</p>
 <p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(P(\text{no cancer } \cap \text{ positive test}) = \frac{\text{\# with no cancer AND a positive test}}{\text{Total \#}} =\)</span></span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{46}{1000} = .046\)</span></span></p>
-</div>
 </section>
 <section id="conditional-probability" class="slide level2">
 <h2>Conditional Probability</h2>
@@ -1970,23 +2001,23 @@ Mark Himmelstein
 <h2>Calculating Conditional Probability</h2>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="lgclfnrizx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#lgclfnrizx table {
+<div id="jmburaqezg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jmburaqezg table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#lgclfnrizx thead, #lgclfnrizx tbody, #lgclfnrizx tfoot, #lgclfnrizx tr, #lgclfnrizx td, #lgclfnrizx th {
+#jmburaqezg thead, #jmburaqezg tbody, #jmburaqezg tfoot, #jmburaqezg tr, #jmburaqezg td, #jmburaqezg th {
   border-style: none;
 }
 
-#lgclfnrizx p {
+#jmburaqezg p {
   margin: 0;
   padding: 0;
 }
 
-#lgclfnrizx .gt_table {
+#jmburaqezg .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2012,12 +2043,12 @@ Mark Himmelstein
   border-left-color: #D3D3D3;
 }
 
-#lgclfnrizx .gt_caption {
+#jmburaqezg .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#lgclfnrizx .gt_title {
+#jmburaqezg .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2029,7 +2060,7 @@ Mark Himmelstein
   border-bottom-width: 0;
 }
 
-#lgclfnrizx .gt_subtitle {
+#jmburaqezg .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2041,7 +2072,7 @@ Mark Himmelstein
   border-top-width: 0;
 }
 
-#lgclfnrizx .gt_heading {
+#jmburaqezg .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2053,13 +2084,13 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#lgclfnrizx .gt_bottom_border {
+#jmburaqezg .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#lgclfnrizx .gt_col_headings {
+#jmburaqezg .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2074,7 +2105,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#lgclfnrizx .gt_col_heading {
+#jmburaqezg .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2094,7 +2125,7 @@ Mark Himmelstein
   overflow-x: hidden;
 }
 
-#lgclfnrizx .gt_column_spanner_outer {
+#jmburaqezg .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2106,15 +2137,15 @@ Mark Himmelstein
   padding-right: 4px;
 }
 
-#lgclfnrizx .gt_column_spanner_outer:first-child {
+#jmburaqezg .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#lgclfnrizx .gt_column_spanner_outer:last-child {
+#jmburaqezg .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#lgclfnrizx .gt_column_spanner {
+#jmburaqezg .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2126,11 +2157,11 @@ Mark Himmelstein
   width: 100%;
 }
 
-#lgclfnrizx .gt_spanner_row {
+#jmburaqezg .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#lgclfnrizx .gt_group_heading {
+#jmburaqezg .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2156,7 +2187,7 @@ Mark Himmelstein
   text-align: left;
 }
 
-#lgclfnrizx .gt_empty_group_heading {
+#jmburaqezg .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2171,15 +2202,15 @@ Mark Himmelstein
   vertical-align: middle;
 }
 
-#lgclfnrizx .gt_from_md > :first-child {
+#jmburaqezg .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#lgclfnrizx .gt_from_md > :last-child {
+#jmburaqezg .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#lgclfnrizx .gt_row {
+#jmburaqezg .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2198,7 +2229,7 @@ Mark Himmelstein
   overflow-x: hidden;
 }
 
-#lgclfnrizx .gt_stub {
+#jmburaqezg .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2211,7 +2242,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#lgclfnrizx .gt_stub_row_group {
+#jmburaqezg .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2225,15 +2256,15 @@ Mark Himmelstein
   vertical-align: top;
 }
 
-#lgclfnrizx .gt_row_group_first td {
+#jmburaqezg .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#lgclfnrizx .gt_row_group_first th {
+#jmburaqezg .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#lgclfnrizx .gt_summary_row {
+#jmburaqezg .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2243,16 +2274,16 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#lgclfnrizx .gt_first_summary_row {
+#jmburaqezg .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#lgclfnrizx .gt_first_summary_row.thick {
+#jmburaqezg .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#lgclfnrizx .gt_last_summary_row {
+#jmburaqezg .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2262,7 +2293,7 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#lgclfnrizx .gt_grand_summary_row {
+#jmburaqezg .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2272,7 +2303,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#lgclfnrizx .gt_first_grand_summary_row {
+#jmburaqezg .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2282,7 +2313,7 @@ Mark Himmelstein
   border-top-color: #D3D3D3;
 }
 
-#lgclfnrizx .gt_last_grand_summary_row_top {
+#jmburaqezg .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2292,11 +2323,11 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#lgclfnrizx .gt_striped {
+#jmburaqezg .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#lgclfnrizx .gt_table_body {
+#jmburaqezg .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2305,7 +2336,7 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#lgclfnrizx .gt_footnotes {
+#jmburaqezg .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2319,7 +2350,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#lgclfnrizx .gt_footnote {
+#jmburaqezg .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2328,7 +2359,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#lgclfnrizx .gt_sourcenotes {
+#jmburaqezg .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2342,7 +2373,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#lgclfnrizx .gt_sourcenote {
+#jmburaqezg .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2350,72 +2381,72 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#lgclfnrizx .gt_left {
+#jmburaqezg .gt_left {
   text-align: left;
 }
 
-#lgclfnrizx .gt_center {
+#jmburaqezg .gt_center {
   text-align: center;
 }
 
-#lgclfnrizx .gt_right {
+#jmburaqezg .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#lgclfnrizx .gt_font_normal {
+#jmburaqezg .gt_font_normal {
   font-weight: normal;
 }
 
-#lgclfnrizx .gt_font_bold {
+#jmburaqezg .gt_font_bold {
   font-weight: bold;
 }
 
-#lgclfnrizx .gt_font_italic {
+#jmburaqezg .gt_font_italic {
   font-style: italic;
 }
 
-#lgclfnrizx .gt_super {
+#jmburaqezg .gt_super {
   font-size: 65%;
 }
 
-#lgclfnrizx .gt_footnote_marks {
+#jmburaqezg .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#lgclfnrizx .gt_asterisk {
+#jmburaqezg .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#lgclfnrizx .gt_indent_1 {
+#jmburaqezg .gt_indent_1 {
   text-indent: 5px;
 }
 
-#lgclfnrizx .gt_indent_2 {
+#jmburaqezg .gt_indent_2 {
   text-indent: 10px;
 }
 
-#lgclfnrizx .gt_indent_3 {
+#jmburaqezg .gt_indent_3 {
   text-indent: 15px;
 }
 
-#lgclfnrizx .gt_indent_4 {
+#jmburaqezg .gt_indent_4 {
   text-indent: 20px;
 }
 
-#lgclfnrizx .gt_indent_5 {
+#jmburaqezg .gt_indent_5 {
   text-indent: 25px;
 }
 
-#lgclfnrizx .katex-display {
+#jmburaqezg .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#lgclfnrizx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#jmburaqezg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2454,8 +2485,8 @@ Mark Himmelstein
 </div>
 </div>
 </div>
-<div style="font-size: 0.85em;">
-<p><strong>conditional probability</strong> of having cancer given a positive test is</p>
+<div style="font-size: 0.9em;">
+<p>The <strong>conditional probability</strong> of having cancer given a positive test is</p>
 <p><span class="math inline">\(P(\text{cancer} \vert \text{positive test}) = \frac{\text{\# with cancer and a positive test}}{\text{\# with a positive test}} = \frac{94}{140} = .67\)</span></p>
 <p>What is the conditional probability of not having cancer given a positive test?</p>
 <p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(P(\text{no cancer} \vert \text{positive test}) = \frac{\text{\# with no cancer and a positive test}}{\text{\# with a positive test}}=\)</span></span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{46}{140} = .33\)</span></span></p>
@@ -2465,23 +2496,23 @@ Mark Himmelstein
 <h2>Flipped Conditional Probability</h2>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="geaqvvqrgj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#geaqvvqrgj table {
+<div id="pddbjeykph" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#pddbjeykph table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#geaqvvqrgj thead, #geaqvvqrgj tbody, #geaqvvqrgj tfoot, #geaqvvqrgj tr, #geaqvvqrgj td, #geaqvvqrgj th {
+#pddbjeykph thead, #pddbjeykph tbody, #pddbjeykph tfoot, #pddbjeykph tr, #pddbjeykph td, #pddbjeykph th {
   border-style: none;
 }
 
-#geaqvvqrgj p {
+#pddbjeykph p {
   margin: 0;
   padding: 0;
 }
 
-#geaqvvqrgj .gt_table {
+#pddbjeykph .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2507,12 +2538,12 @@ Mark Himmelstein
   border-left-color: #D3D3D3;
 }
 
-#geaqvvqrgj .gt_caption {
+#pddbjeykph .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#geaqvvqrgj .gt_title {
+#pddbjeykph .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2524,7 +2555,7 @@ Mark Himmelstein
   border-bottom-width: 0;
 }
 
-#geaqvvqrgj .gt_subtitle {
+#pddbjeykph .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2536,7 +2567,7 @@ Mark Himmelstein
   border-top-width: 0;
 }
 
-#geaqvvqrgj .gt_heading {
+#pddbjeykph .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2548,13 +2579,13 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#geaqvvqrgj .gt_bottom_border {
+#pddbjeykph .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#geaqvvqrgj .gt_col_headings {
+#pddbjeykph .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2569,7 +2600,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#geaqvvqrgj .gt_col_heading {
+#pddbjeykph .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2589,7 +2620,7 @@ Mark Himmelstein
   overflow-x: hidden;
 }
 
-#geaqvvqrgj .gt_column_spanner_outer {
+#pddbjeykph .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2601,15 +2632,15 @@ Mark Himmelstein
   padding-right: 4px;
 }
 
-#geaqvvqrgj .gt_column_spanner_outer:first-child {
+#pddbjeykph .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#geaqvvqrgj .gt_column_spanner_outer:last-child {
+#pddbjeykph .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#geaqvvqrgj .gt_column_spanner {
+#pddbjeykph .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2621,11 +2652,11 @@ Mark Himmelstein
   width: 100%;
 }
 
-#geaqvvqrgj .gt_spanner_row {
+#pddbjeykph .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#geaqvvqrgj .gt_group_heading {
+#pddbjeykph .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2651,7 +2682,7 @@ Mark Himmelstein
   text-align: left;
 }
 
-#geaqvvqrgj .gt_empty_group_heading {
+#pddbjeykph .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2666,15 +2697,15 @@ Mark Himmelstein
   vertical-align: middle;
 }
 
-#geaqvvqrgj .gt_from_md > :first-child {
+#pddbjeykph .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#geaqvvqrgj .gt_from_md > :last-child {
+#pddbjeykph .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#geaqvvqrgj .gt_row {
+#pddbjeykph .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2693,7 +2724,7 @@ Mark Himmelstein
   overflow-x: hidden;
 }
 
-#geaqvvqrgj .gt_stub {
+#pddbjeykph .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2706,7 +2737,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#geaqvvqrgj .gt_stub_row_group {
+#pddbjeykph .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2720,15 +2751,15 @@ Mark Himmelstein
   vertical-align: top;
 }
 
-#geaqvvqrgj .gt_row_group_first td {
+#pddbjeykph .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#geaqvvqrgj .gt_row_group_first th {
+#pddbjeykph .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#geaqvvqrgj .gt_summary_row {
+#pddbjeykph .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2738,16 +2769,16 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#geaqvvqrgj .gt_first_summary_row {
+#pddbjeykph .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#geaqvvqrgj .gt_first_summary_row.thick {
+#pddbjeykph .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#geaqvvqrgj .gt_last_summary_row {
+#pddbjeykph .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2757,7 +2788,7 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#geaqvvqrgj .gt_grand_summary_row {
+#pddbjeykph .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2767,7 +2798,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#geaqvvqrgj .gt_first_grand_summary_row {
+#pddbjeykph .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2777,7 +2808,7 @@ Mark Himmelstein
   border-top-color: #D3D3D3;
 }
 
-#geaqvvqrgj .gt_last_grand_summary_row_top {
+#pddbjeykph .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2787,11 +2818,11 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#geaqvvqrgj .gt_striped {
+#pddbjeykph .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#geaqvvqrgj .gt_table_body {
+#pddbjeykph .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2800,7 +2831,7 @@ Mark Himmelstein
   border-bottom-color: #D3D3D3;
 }
 
-#geaqvvqrgj .gt_footnotes {
+#pddbjeykph .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2814,7 +2845,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#geaqvvqrgj .gt_footnote {
+#pddbjeykph .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2823,7 +2854,7 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#geaqvvqrgj .gt_sourcenotes {
+#pddbjeykph .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2837,7 +2868,7 @@ Mark Himmelstein
   border-right-color: #D3D3D3;
 }
 
-#geaqvvqrgj .gt_sourcenote {
+#pddbjeykph .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2845,72 +2876,72 @@ Mark Himmelstein
   padding-right: 5px;
 }
 
-#geaqvvqrgj .gt_left {
+#pddbjeykph .gt_left {
   text-align: left;
 }
 
-#geaqvvqrgj .gt_center {
+#pddbjeykph .gt_center {
   text-align: center;
 }
 
-#geaqvvqrgj .gt_right {
+#pddbjeykph .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#geaqvvqrgj .gt_font_normal {
+#pddbjeykph .gt_font_normal {
   font-weight: normal;
 }
 
-#geaqvvqrgj .gt_font_bold {
+#pddbjeykph .gt_font_bold {
   font-weight: bold;
 }
 
-#geaqvvqrgj .gt_font_italic {
+#pddbjeykph .gt_font_italic {
   font-style: italic;
 }
 
-#geaqvvqrgj .gt_super {
+#pddbjeykph .gt_super {
   font-size: 65%;
 }
 
-#geaqvvqrgj .gt_footnote_marks {
+#pddbjeykph .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#geaqvvqrgj .gt_asterisk {
+#pddbjeykph .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#geaqvvqrgj .gt_indent_1 {
+#pddbjeykph .gt_indent_1 {
   text-indent: 5px;
 }
 
-#geaqvvqrgj .gt_indent_2 {
+#pddbjeykph .gt_indent_2 {
   text-indent: 10px;
 }
 
-#geaqvvqrgj .gt_indent_3 {
+#pddbjeykph .gt_indent_3 {
   text-indent: 15px;
 }
 
-#geaqvvqrgj .gt_indent_4 {
+#pddbjeykph .gt_indent_4 {
   text-indent: 20px;
 }
 
-#geaqvvqrgj .gt_indent_5 {
+#pddbjeykph .gt_indent_5 {
   text-indent: 25px;
 }
 
-#geaqvvqrgj .katex-display {
+#pddbjeykph .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#geaqvvqrgj div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#pddbjeykph div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2949,14 +2980,12 @@ Mark Himmelstein
 </div>
 </div>
 </div>
-<div style="font-size: 0.85em;">
 <p>What if we reverse it. What is the probability receiving a positive test given that we have do not have cancer?</p>
 <p><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(P(\text{positive test} \vert \text{no cancer}) = \frac{\text{\# with no cancer and a positive test}}{\text{\# with no cancer}}=\)</span></span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{46}{900} = .05\)</span></span></p>
-</div>
 </section>
 <section id="bayes-theorem" class="slide level2">
 <h2>Bayes’ Theorem</h2>
-<div style="font-size: 0.75em;">
+<div style="font-size: 0.85em;">
 <p>A better (more technical) definition of conditional probability:</p>
 <p><span class="math display">\[P(A | B)  =   \frac{P(A\cap B)}{P(B)} = \frac{P(B \vert A) P(A)}{P(B)}\]</span></p>
 <p>This is known as <strong>Bayes’ Theorem</strong></p>
@@ -2971,7 +3000,6 @@ Mark Himmelstein
 </section>
 <section id="more-bayes-theorem" class="slide level2">
 <h2>More Bayes’ Theorem</h2>
-<div style="font-size: 0.85em;">
 <p>A better (more technical) definition of conditional probability:</p>
 <p><span class="math display">\[P(A | B)  =   \frac{P(A\cap B)}{P(B)} = \frac{P(B \vert A) P(A)}{P(B)}\]</span></p>
 <p>This is known as <strong>Bayes’ Theorem</strong></p>
@@ -2981,7 +3009,6 @@ Mark Himmelstein
 <li><span class="math inline">\(P\)</span>(guilty | evidence) <span class="math inline">\(\neq P\)</span>(evidence | guilty)</li>
 <li><span class="math inline">\(P\)</span>(data | hypothesis) <span class="math inline">\(\neq P\)</span>(hypothesis | data)</li>
 </ul>
-</div>
 </section>
 <section id="the-frequentist-approach" class="slide level2">
 <h2>The Frequentist Approach</h2>
@@ -2997,14 +3024,14 @@ Mark Himmelstein
 <h2>The Bayesian Approach</h2>
 <p>Less historically popular, but rapidly gaining momentum is the <strong>Bayesian</strong> approach</p>
 <ul>
-<li>Start with a prior belief (probability distribution) over all different possible sets of parameters (<span class="math inline">\(\theta\)</span>): <span class="math inline">\(P(\theta)\)</span></li>
-<li>Look at how likely our data (<span class="math inline">\(D\)</span>) are under all different possible sets of parameters: <span class="math inline">\(P(D|\theta)\)</span></li>
-<li>Use Bayes’ rule to revise our beliefs (probability distribution) about the parameters given the data we have observed: <span class="math inline">\(P(\theta|D)\)</span></li>
+<li>Start with a prior belief (probability distribution) over all different possible sets of parameters (<span class="math inline">\(\boldsymbol{\theta}\)</span>): <span class="math inline">\(P(\boldsymbol{\theta})\)</span></li>
+<li>Look at how likely our data (<span class="math inline">\(\boldsymbol{D}\)</span>) are under all different possible sets of parameters: <span class="math inline">\(P(\boldsymbol{D}|\boldsymbol{\theta})\)</span></li>
+<li>Use Bayes’ rule to revise our beliefs (probability distribution) about the parameters given the data we have observed: <span class="math inline">\(P(\boldsymbol{\theta}|\boldsymbol{D})\)</span></li>
 </ul>
 </section>
 <section id="a-brief-history-of-bayesianism" class="slide level2">
 <h2>A Brief History of Bayesianism</h2>
-<div style="font-size: 0.85em;">
+<div style="font-size: 0.95em;">
 <ul>
 <li>Bayes theorem was first discovered by Reverend Thomas Bayes in 18th century
 <ul>
@@ -3037,10 +3064,10 @@ Mark Himmelstein
 <h2>A Brief History of Frequentism</h2>
 <div style="font-size: 0.8em;">
 <ul>
-<li>Post-enlightenment, there was strong desire for “objective” science</li>
+<li>Post-enlightenment (early 20th century), there was strong desire for “objective” science</li>
 <li>Bayesian inference <strong>requires</strong> subjectivity in the form of a prior belief</li>
 <li>This was considered “perverse” by modern standards</li>
-<li>Sir Ronald Fisher is responsible for the core philosophy behind contemporary frequentist statistics
+<li>Sir Ronald Fisher is one of the key backers of core philosophy behind contemporary frequentist statistics
 <ul>
 <li>Rejected Bayesianism</li>
 <li>Highly prone to becoming polemic</li>
@@ -3062,6 +3089,24 @@ Mark Himmelstein
 <p>Jerzy Neyman (1895-1980)</p>
 </div></div>
 </div>
+</section>
+<section id="wrapping-up" class="slide level2">
+<h2>Wrapping Up</h2>
+<p>Next time</p>
+<ul>
+<li>We will look at how to use computers to do probability-based simulations</li>
+<li>Can help us understand how data are randomly generated under sets of parametric assumptions (assumptions about parameters)</li>
+</ul>
+<p>For now</p>
+<ul>
+<li>Homework 1 will go live on Canvas tomorrow</li>
+<li>Covers
+<ul>
+<li>First four lectures</li>
+<li>First two labs</li>
+</ul></li>
+</ul>
+<p>Don’t forget Ed Discussion!</p>
 
 
 </section>
