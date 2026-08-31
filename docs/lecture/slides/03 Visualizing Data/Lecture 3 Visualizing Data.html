@@ -28,8 +28,73 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-5f4f28e8bfc7f39b89cc2436db0d29b7.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-1a1f3d21782fc4857a415709dc9abfca.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -172,26 +237,30 @@ Mark Himmelstein
 <li>Only use extra plot features to help emphasize relevant features of the data</li>
 </ul>
 </section>
-<section id="example-the-dataink-ratio" class="slide level2">
-<h2>Example: The Data/Ink Ratio</h2>
+<section id="the-dataink-ratio-1" class="slide level2">
+<h2>The Data/Ink Ratio</h2>
 
 <img data-src="../../Figs/dataink.png" class="r-stretch"></section>
-<section id="can-you-identify-chartjunk" class="slide level2">
-<h2>Can You Identify Chartjunk?</h2>
+<section id="identifying-chartjunk" class="slide level2">
+<h2>Identifying Chartjunk</h2>
 
 <img data-src="../../Figs/chartjunk.png" class="r-stretch"></section>
 <section id="chartjunk-answers" class="slide level2">
 <h2>Chartjunk Answers</h2>
 <ul>
 <li><span class="answer fragment" data-unless-meta="params.v0">Weird graphics overlaid on bars</span></li>
-<li><span class="answer fragment" data-unless-meta="params.v0">Unnecessarily textured background</span>?</li>
-<li><span class="answer fragment" data-unless-meta="params.v0">3D bars might distort the data</span>?</li>
+<li><span class="answer fragment" data-unless-meta="params.v0">Unnecessarily textured background</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">3D bars might distort the data</span></li>
 </ul>
 </section>
 <section id="axis-distortions" class="slide level2">
 <h2>Axis Distortions</h2>
 <p>Choosing the appropriate scale for chart axes is one of the most important decisions in appropriately representing data.</p>
-<p>The following slides will show some examples of pairs of graphs of the same data. Which do you think is the better representation of the data?</p>
+<p>The following slides will show some examples of pairs of graphs of the same data.</p>
+<ul>
+<li><p>How do they differ?</p></li>
+<li><p>Which do you think is the better representation of the data?</p></li>
+</ul>
 </section>
 <section id="violent-crime-per-capita" class="slide level2">
 <h2>Violent Crime per Capita</h2>
@@ -220,7 +289,6 @@ Mark Himmelstein
 </section>
 <section id="the-lie-factor" class="slide level2">
 <h2>The Lie Factor</h2>
-<div style="font-size: 0.8em;">
 <p>Also proposed by Tufte</p>
 <p><span class="math display">\[\text{lie factor} = \frac{\text{size of effect in graphic}}{\text{actual size of effect}}\]</span></p>
 <p>Where, in our example</p>
@@ -229,12 +297,17 @@ Mark Himmelstein
 <li><strong>Actual size of effect:</strong> Numerical difference between two bars</li>
 </ul>
 <p>The difference in areas in the second panel is 2.8x as large as the numerical difference. This is misleading!</p>
-</div>
 </section>
 <section id="principles-of-axis-scaling" class="slide level2">
 <h2>Principles of Axis Scaling</h2>
+<div style="font-size: 0.97em;">
+<p>One of the most common mistakes I see in creating graphs</p>
 <ul>
-<li>Axis should represent a plausible range of values of data</li>
+<li>Software will often default to the range of values <strong>being graphed</strong></li>
+<li>Axis should represent a <strong>plausible range of values of data</strong></li>
+<li>If you are comparing multiple means, you often need to expand the axis range! - <strong>Reasonable heuristic:</strong> Use the observed range or IQR of values of a variable</li>
+<li>Almost always important to think about on <span class="math inline">\(y\)</span>-axis</li>
+<li>Sometimes important to think about on <span class="math inline">\(x\)</span>-axis</li>
 <li>Don’t “zoom in” to exaggerate the size of an effect</li>
 <li>Don’t “zoom out” to de-emphasize size of effect</li>
 <li>Scale should be chosen such that it reasonably represents effect size
@@ -242,10 +315,10 @@ Mark Himmelstein
 <li>More on effect sizes later</li>
 </ul></li>
 </ul>
+</div>
 </section>
 <section id="types-of-data-and-graphs" class="slide level2">
 <h2>Types of Data and Graphs</h2>
-<div style="font-size: 0.8em;">
 <p>Discrete data</p>
 <ul>
 <li>Bar charts</li>
@@ -258,20 +331,70 @@ Mark Himmelstein
 <li>Violin Plots</li>
 <li>Beeswarms</li>
 </ul>
+</section>
+<section id="nba-data" class="slide level2">
+<h2>2026 NBA Data</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>bball <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../../data/2026NBA_data.csv"</span>) <span class="sc">|&gt;</span> <span class="fu">filter</span>(G <span class="sc">&gt;=</span> <span class="fu">max</span>(G)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb1-2"><a></a>                                                draft_year <span class="sc">!=</span> <span class="st">""</span>)</span>
+<span id="cb1-3"><a></a>bball <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a></a><span class="ex">Rows:</span> 258</span>
+<span id="cb2-2"><a></a><span class="ex">Columns:</span> 29</span>
+<span id="cb2-3"><a></a><span class="ex">$</span> Player      <span class="op">&lt;</span>chr<span class="op">&gt;</span> <span class="st">"Luka Dončić"</span>, <span class="st">"Shai Gilgeous-Alexande…</span></span>
+<span id="cb2-4"><a></a><span class="st">$ Age         &lt;int&gt; 26, 27, 24, 29, 25, 34, 29, 30, 28, 37…</span></span>
+<span id="cb2-5"><a></a><span class="st">$ Team        &lt;chr&gt; "</span>LAL<span class="st">", "</span>OKC<span class="st">", "</span>MIN<span class="st">", "</span>BOS<span class="st">", "</span>PHI<span class="st">", "</span>LA…</span>
+<span id="cb2-6"><a></a><span class="ex">$</span> Height      <span class="op">&lt;</span>dbl<span class="op">&gt;</span> 200.66, 198.12, 193.04, 198.12, 187.96…</span>
+<span id="cb2-7"><a></a><span class="ex">$</span> Weight      <span class="op">&lt;</span>dbl<span class="op">&gt;</span> 104.32616, 88.45044, 102.05820, 101.15…</span>
+<span id="cb2-8"><a></a><span class="ex">$</span> College     <span class="op">&lt;</span>chr<span class="op">&gt;</span> <span class="st">""</span>, <span class="st">"Kentucky"</span>, <span class="st">"Georgia"</span>, <span class="st">"California…</span></span>
+<span id="cb2-9"><a></a><span class="st">$ Country     &lt;chr&gt; "</span>Slovenia<span class="st">", "</span>Canada<span class="st">", "</span>USA<span class="st">", "</span>USA<span class="st">", "</span>U…</span>
+<span id="cb2-10"><a></a><span class="ex">$</span> draft_year  <span class="op">&lt;</span>chr<span class="op">&gt;</span> <span class="st">"2018"</span>, <span class="st">"2018"</span>, <span class="st">"2020"</span>, <span class="st">"2016"</span>, <span class="st">"2020"</span>…</span>
+<span id="cb2-11"><a></a><span class="ex">$</span> draft_round <span class="op">&lt;</span>chr<span class="op">&gt;</span> <span class="st">"1"</span>, <span class="st">"1"</span>, <span class="st">"1"</span>, <span class="st">"1"</span>, <span class="st">"1"</span>, <span class="st">"1"</span>, <span class="st">"1"</span>, <span class="st">"2"</span>…</span>
+<span id="cb2-12"><a></a><span class="ex">$</span> Pos         <span class="op">&lt;</span>chr<span class="op">&gt;</span> <span class="st">"PG"</span>, <span class="st">"PG"</span>, <span class="st">"SG"</span>, <span class="st">"SF"</span>, <span class="st">"PG"</span>, <span class="st">"SF"</span>, <span class="st">"S…</span></span>
+<span id="cb2-13"><a></a><span class="st">$ G           &lt;int&gt; 64, 68, 61, 71, 70, 65, 70, 65, 42, 43…</span></span>
+<span id="cb2-14"><a></a><span class="st">$ GS          &lt;int&gt; 64, 68, 60, 71, 70, 65, 70, 65, 42, 41…</span></span>
+<span id="cb2-15"><a></a><span class="st">$ MP          &lt;dbl&gt; 35.8, 33.2, 35.0, 34.4, 38.0, 32.1, 33…</span></span>
+<span id="cb2-16"><a></a><span class="st">$ PTS         &lt;dbl&gt; 33.5, 31.1, 28.8, 28.7, 28.3, 27.9, 27…</span></span>
+<span id="cb2-17"><a></a><span class="st">$ FG          &lt;dbl&gt; 10.8, 10.8, 9.9, 10.4, 9.9, 9.8, 9.7, …</span></span>
+<span id="cb2-18"><a></a><span class="st">$ FGA         &lt;dbl&gt; 22.8, 19.4, 20.2, 21.7, 21.4, 19.4, 20…</span></span>
+<span id="cb2-19"><a></a><span class="st">$ FGp         &lt;dbl&gt; 0.476, 0.553, 0.489, 0.477, 0.462, 0.5…</span></span>
+<span id="cb2-20"><a></a><span class="st">$ TP          &lt;dbl&gt; 4.0, 1.7, 3.4, 2.0, 3.1, 2.6, 3.2, 1.7…</span></span>
+<span id="cb2-21"><a></a><span class="st">$ TPA         &lt;dbl&gt; 10.8, 4.4, 8.4, 5.7, 8.6, 6.8, 8.8, 4.…</span></span>
+<span id="cb2-22"><a></a><span class="st">$ TPp         &lt;dbl&gt; 0.366, 0.386, 0.399, 0.347, 0.367, 0.3…</span></span>
+<span id="cb2-23"><a></a><span class="st">$ FT          &lt;dbl&gt; 7.9, 7.9, 5.7, 6.0, 5.3, 5.7, 5.3, 6.1…</span></span>
+<span id="cb2-24"><a></a><span class="st">$ FTA         &lt;dbl&gt; 10.1, 9.0, 7.2, 7.5, 6.0, 6.4, 6.1, 7.…</span></span>
+<span id="cb2-25"><a></a><span class="st">$ FTp         &lt;dbl&gt; 0.780, 0.879, 0.796, 0.795, 0.892, 0.8…</span></span>
+<span id="cb2-26"><a></a><span class="st">$ ORB         &lt;dbl&gt; 0.6, 0.6, 0.6, 1.1, 0.3, 1.1, 0.7, 3.0…</span></span>
+<span id="cb2-27"><a></a><span class="st">$ DRB         &lt;dbl&gt; 7.1, 3.7, 4.4, 5.8, 3.8, 5.3, 3.8, 9.9…</span></span>
+<span id="cb2-28"><a></a><span class="st">$ TRB         &lt;dbl&gt; 7.7, 4.3, 5.0, 6.9, 4.1, 6.4, 4.5, 12.…</span></span>
+<span id="cb2-29"><a></a><span class="st">$ AST         &lt;dbl&gt; 8.3, 6.6, 3.7, 5.1, 6.6, 3.6, 5.7, 10.…</span></span>
+<span id="cb2-30"><a></a><span class="st">$ STL         &lt;dbl&gt; 1.6, 1.4, 1.4, 1.0, 1.9, 1.9, 1.5, 1.4…</span></span>
+<span id="cb2-31"><a></a><span class="st">$ BLK         &lt;dbl&gt; 0.5, 0.8, 0.8, 0.4, 0.8, 0.4, 0.3, 0.8…</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
+</section>
+<section id="nba-data-sources" class="slide level2">
+<h2>2026 NBA Data Sources</h2>
+<ul>
+<li><a href="https://www.basketball-reference.com/leagues/NBA_2026_totals.html">Basketball Reference 2026 season statistics</a></li>
+<li><a href="https://www.kaggle.com/datasets/justinas/nba-players-data/data">Kaggle dataset with demographic data on players through 2021</a>
+<ul>
+<li>Means we are missing demographic data on some younger players</li>
+<li>I removed these players from our dataset for simplicity</li>
+</ul></li>
+</ul>
 </section>
 <section id="discrete-data-bar-charts" class="slide level2">
 <h2>Discrete Data: Bar Charts</h2>
-<p>This is the default of players by position in <code>ggplot2</code> if I don’t do any manual tweaks. How could I make this better?</p>
+<p>If I want to plot the number of players at each position, this is the default I get in <code>ggplot2</code>. How can I make this better?</p>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="better-bar-chart" class="slide level2">
 <h2>Better Bar Chart</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="important-changes" class="slide level2">
 <h2>Important Changes</h2>
-<div style="font-size: 0.8em;">
 <ul>
 <li>Informative labels</li>
 <li>Made x-axis labels diagonal so they are readable but don’t overlap</li>
@@ -284,11 +407,13 @@ Mark Himmelstein
 <ul>
 <li>Focuses on contrast rather than hue</li>
 </ul></li>
-<li>I ordered the x-axis in a sensible way. I could have also done something like this (arguably better!)</li>
+<li>I ordered the x-axis in a sensible way. I could have also done something like this (arguably better!):</li>
 </ul>
-</div>
+</section>
+<section id="ordered-by-count" class="slide level2">
+<h2>Ordered By Count</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="what-about-this" class="slide level2">
 <h2>What About This?</h2>
 <div style="font-size: 0.65em;">
@@ -296,7 +421,7 @@ Mark Himmelstein
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" style="width:75.0%"></p>
+<p><img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" style="width:75.0%"></p>
 </figure>
 </div>
 </div>
@@ -318,18 +443,21 @@ Mark Himmelstein
 <section id="bar-graphs-for-means" class="slide level2">
 <h2>Bar Graphs for Means</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="thoughts" class="slide level2">
 <h2>Thoughts?</h2>
-<div style="font-size: 0.85em;">
 <p>What does the mean tell you?</p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">The mean is a measure of <em>centrality</em></span></li>
+</ul>
 <p>What do the bars imply?</p>
-<p><span class="answer fragment" data-unless-meta="params.v0">The mean is a measure of <em>centrality</em>. Bars imply there is a difference between values below the bar (colored) and above the bar (not colored)</span></p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">Bars imply there is a difference between values below the bar (colored) and above the bar (not colored)</span></li>
+</ul>
 <p><span class="answer fragment" data-unless-meta="params.v0"><strong>The-Bar Tip Limit Error:</strong> About one in five people interpret the top of a bar to indicate a <em>limit</em> even when it is meant to indicate an <em>average</em></span></p>
 <p><span class="answer fragment" data-unless-meta="params.v0"><strong>Bar charts are inappropriate for continuous data!</strong></span></p>
-</div>
 <div style="font-size: 0.6em;">
-<p>Kerns, S. H., &amp; Wilmer, J. B. (2021). Two graphs walk into a bar: Readout-based measurement reveals the Bar-Tip Limit error, a common, categorical misinterpretation of mean bar graphs. <em>Journal of Vision</em>, <em>21</em>(12), Article 17. <a href="https://doi.org/10.1167/jov.21.12.17" class="uri">https://doi.org/10.1167/jov.21.12.17</a></p>
+<p><span class="answer fragment" data-unless-meta="params.v0">Kerns, S. H., &amp; Wilmer, J. B. (2021). Two graphs walk into a bar: Readout-based measurement reveals the Bar-Tip Limit error, a common, categorical misinterpretation of mean bar graphs. <em>Journal of Vision</em>, <em>21</em>(12), Article 17. <a href="https://doi.org/10.1167/jov.21.12.17" class="uri">https://doi.org/10.1167/jov.21.12.17</a></span></p>
 </div>
 </section>
 <section id="histograms" class="slide level2">
@@ -344,10 +472,10 @@ Mark Himmelstein
 <li>Histograms show the frequency of observations in each bin</li>
 </ul>
 </section>
-<section id="histogram-of-points-per-game" class="slide level2">
-<h2>Histogram of Points Per Game</h2>
+<section id="histogram-of-ppg" class="slide level2">
+<h2>Histogram of PPG</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="choosing-bins" class="slide level2">
 <h2>Choosing Bins</h2>
 <p><code>ggplot2</code> defaults to 30 bins regardless of the data, but you should think more carefully!</p>
@@ -358,25 +486,24 @@ Mark Himmelstein
 <li>Sturges’ rule:
 <ul>
 <li>Number of bins = <span class="math inline">\(1 + \text{log}_2(N)\)</span></li>
-<li>Width of bins = </li>
+<li>Width of bins = <span class="math inline">\(\frac{\text{max} - \text{min} + 1}{\text{number of bins}}\)</span></li>
 </ul></li>
 </ul>
 </section>
 <section id="too-few-bins" class="slide level2">
 <h2>Too few bins</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="too-many-bins" class="slide level2">
 <h2>Too many bins</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="sturges-bins" class="slide level2">
 <h2>Sturges Bins</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="kernel-density-plot" class="slide level2">
 <h2>Kernel Density Plot</h2>
-<div style="font-size: 0.9em;">
 <p>Kernel density plots produce a <strong>smooth curve</strong> of a distribution</p>
 <ul>
 <li><p>Horizontal axis (<span class="math inline">\(x\)</span>-axis): values</p></li>
@@ -385,22 +512,24 @@ Mark Himmelstein
 <p>Conceptually:</p>
 <ul>
 <li><p>Sort scores on the <span class="math inline">\(x\)</span>-axis</p></li>
-<li><p>Assume that <strong>every</strong> value represents an underlying distribution (kernel function) (e.g., normal)</p></li>
+<li><p>Assume that <strong>every</strong> value represents an underlying distribution (kernel function)</p>
+<ul>
+<li>E.g. every value is treated as a separate normal distribution</li>
+</ul></li>
 <li><p>Kernel density function sums these underlying distributions</p></li>
 </ul>
-</div>
 </section>
 <section id="kernel-density-plot-1" class="slide level2">
 <h2>Kernel Density Plot</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="kernel-density-plot-2" class="slide level2">
 <h2>Kernel Density Plot</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="kernel-density-plot-3" class="slide level2">
 <h2>Kernel Density Plot</h2>
-<div style="font-size: 0.8em;">
+<div style="font-size: 0.925em;">
 <p>Two Considerations:</p>
 <p>Kernel function:</p>
 <ul>
@@ -420,10 +549,9 @@ Mark Himmelstein
 <section id="kernel-density-plot-4" class="slide level2">
 <h2>Kernel Density Plot</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="modality" class="slide level2">
 <h2>Modality</h2>
-<div style="font-size: 0.9em;">
 <p>It’s almost impossible to infer the <strong>mode</strong> from numerical summaries of continuous data. Plots are a huge help here!</p>
 <p>Modality: number of peaks</p>
 <ul>
@@ -435,16 +563,15 @@ Mark Himmelstein
 <li>Bimodal distributions often have kurtosis &lt; 0 (but not necessarily)</li>
 </ul>
 <p>In addition to descriptive statistics, this one reason we <strong>always</strong> want to graph the distributions of variables</p>
-</div>
 </section>
 <section id="modality-1" class="slide level2">
 <h2>Modality</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="boxplots" class="slide level2">
 <h2>Boxplots</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><div style="font-size: 0.65em;">
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><div style="font-size: 0.75em;">
 <ul>
 <li>Middle line: median</li>
 <li>Box boundaries: interquartile range</li>
@@ -460,6 +587,9 @@ Mark Himmelstein
 <li>We were comparing group <strong>means</strong></li>
 <li>The techniques we are using here show distributions</li>
 <li>We can use these to compare group <strong>distributions</strong></li>
+</ul>
+<p>Some options for comparing distributions:</p>
+<ul>
 <li>Overlay histograms or density plots</li>
 <li>Put box plots next to each other</li>
 </ul>
@@ -467,17 +597,17 @@ Mark Himmelstein
 <section id="overlaid-histogram" class="slide level2">
 <h2>Overlaid Histogram</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p>Overlaid histograms don’t always look very nice when you have many groups</p>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p>Overlaid histograms don’t always look very nice when you have many groups</p>
 </section>
 <section id="overlaid-histogram-1" class="slide level2">
 <h2>Overlaid Histogram</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p>Density plots tend to look nicer!</p>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p>Density plots tend to look nicer!</p>
 </section>
 <section id="multiple-boxplots" class="slide level2">
 <h2>Multiple Boxplots</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="boxplots-1" class="slide level2">
 <h2>Boxplots</h2>
 <ul>
@@ -505,11 +635,11 @@ Mark Himmelstein
 <section id="just-violins" class="slide level2">
 <h2>Just Violins</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="violins-and-boxes" class="slide level2">
 <h2>Violins and Boxes</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="what-else-can-we-do" class="slide level2">
 <h2>What Else Can We Do?</h2>
 
@@ -527,17 +657,18 @@ Mark Himmelstein
 <li>“Jitter” points for actual data
 <ul>
 <li>Jittering just means randomly placing points along an axis to “spread them out”</li>
+<li>Provides a visual of exactly where the data are</li>
 </ul></li>
 </ul>
 </section>
-<section id="violins-and-boxes-with-means" class="slide level2">
-<h2>Violins and Boxes with Means</h2>
-
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="and-with-jittered-points" class="slide level2">
-<h2>And with Jittered Points</h2>
+<section id="violins-boxes-means" class="slide level2">
+<h2>Violins, Boxes + Means</h2>
 
 <img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-23-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="jittered-points" class="slide level2">
+<h2>+ Jittered Points</h2>
+
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="beeswarm-plots" class="slide level2">
 <h2>Beeswarm Plots</h2>
 <p>In beeswarm plots, the points <strong>are</strong> the shape</p>
@@ -553,14 +684,14 @@ Mark Himmelstein
 <section id="beeswarm-plot" class="slide level2">
 <h2>Beeswarm Plot</h2>
 
-<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-3-Visualizing-Data_files/figure-revealjs/unnamed-chunk-25-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="major-takehome" class="slide level2">
 <h2>Major Takehome</h2>
 <ul>
 <li>Maximize data/ink ratio</li>
 <li>Preserve <strong>distributions</strong>
 <ul>
-<li>don’t just plot means/summary statistics</li>
+<li>Don’t just plot means/summary statistics</li>
 </ul></li>
 <li>Get creative
 <ul>

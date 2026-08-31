@@ -84,25 +84,29 @@ $$\text{data/ink ratio} = \frac{\text{amount of ink used on data}}{\text{total i
 -   Ensure the data speaks
 -   Only use extra plot features to help emphasize relevant features of the data
 
-## Example: The Data/Ink Ratio
+## The Data/Ink Ratio
 
 ![](../../Figs/dataink.png)
 
-## Can You Identify Chartjunk?
+## Identifying Chartjunk
 
 ![](../../Figs/chartjunk.png)
 
 ## Chartjunk Answers
 
 -   [Weird graphics overlaid on bars]{.answer .fragment .content-visible unless-meta="params.v0"}
--   [Unnecessarily textured background]{.answer .fragment .content-visible unless-meta="params.v0"}?
--   [3D bars might distort the data]{.answer .fragment .content-visible unless-meta="params.v0"}?
+-   [Unnecessarily textured background]{.answer .fragment .content-visible unless-meta="params.v0"}
+-   [3D bars might distort the data]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ## Axis Distortions
 
 Choosing the appropriate scale for chart axes is one of the most important decisions in appropriately representing data.
 
-The following slides will show some examples of pairs of graphs of the same data. Which do you think is the better representation of the data?
+The following slides will show some examples of pairs of graphs of the same data.
+
+- How do they differ?
+
+- Which do you think is the better representation of the data?
 
 ## Violent Crime per Capita
 
@@ -130,7 +134,6 @@ The following slides will show some examples of pairs of graphs of the same data
 
 ## The Lie Factor
 
-::: {style="font-size: 0.8em;"}
 Also proposed by Tufte
 
 $$\text{lie factor} = \frac{\text{size of effect in graphic}}{\text{actual size of effect}}$$
@@ -141,19 +144,30 @@ Where, in our example
 -   **Actual size of effect:** Numerical difference between two bars
 
 The difference in areas in the second panel is 2.8x as large as the numerical difference. This is misleading!
-:::
+
 
 ## Principles of Axis Scaling
 
--   Axis should represent a plausible range of values of data
+::: {style="font-size: 0.97em;"}
+
+One of the most common mistakes I see in creating graphs
+
+-   Software will often default to the range of values **being graphed**
+-   Axis should represent a **plausible range of values of data**
+  -   If you are comparing multiple means, you often need to expand the axis range!
+    - **Reasonable heuristic:** Use the observed range or IQR of values of a variable
+-   Almost always important to think about on $y$-axis
+-   Sometimes important to think about on $x$-axis
 -   Don't "zoom in" to exaggerate the size of an effect
 -   Don't "zoom out" to de-emphasize size of effect
 -   Scale should be chosen such that it reasonably represents effect size
     -   More on effect sizes later
 
+::: 
+
 ## Types of Data and Graphs
 
-::: {style="font-size: 0.8em;"}
+
 Discrete data
 
 -   Bar charts
@@ -165,11 +179,28 @@ Continuous data
 -   Box plots
 -   Violin Plots
 -   Beeswarms
-:::
+
+
+## 2026 NBA Data
+
+```{r}
+#| echo: TRUE
+bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
+                                                draft_year != "")
+bball |> glimpse()
+```
+
+## 2026 NBA Data Sources
+
+-   [Basketball Reference 2026 season statistics](https://www.basketball-reference.com/leagues/NBA_2026_totals.html)
+-   [Kaggle dataset with demographic data on players through 2021](https://www.kaggle.com/datasets/justinas/nba-players-data/data)
+    -   Means we are missing demographic data on some younger players
+    -   I removed these players from our dataset for simplicity
+
 
 ## Discrete Data: Bar Charts
 
-This is the default of players by position in `ggplot2` if I don't do any manual tweaks. How could I make this better?
+If I want to plot the number of players at each position, this is the default I get in `ggplot2`. How can I make this better?
 
 ```{r}
 ggplot(bball, aes(x = Pos)) + geom_bar()
@@ -195,13 +226,14 @@ ggplot(bball, aes(x = Position, fill = Position)) + geom_bar() +
   scale_y_continuous(limits = c(0,75), breaks = seq(0, 75, 5)) +
   scale_fill_viridis_d() +
   theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+          legend.position = "none")
 
 ```
 
 ## Important Changes
 
-::: {style="font-size: 0.8em;"}
+
 -   Informative labels
 -   Made x-axis labels diagonal so they are readable but don't overlap
 -   Set a scale for the y-axis
@@ -209,8 +241,10 @@ ggplot(bball, aes(x = Position, fill = Position)) + geom_bar() +
 -   Added enough horizontal reference lines to make the values clear
 -   While color wasn't necessary, I chose a colorblind friendly palette
     -   Focuses on contrast rather than hue
--   I ordered the x-axis in a sensible way. I could have also done something like this (arguably better!)
-:::
+-   I ordered the x-axis in a sensible way. I could have also done something like this (arguably better!):
+
+
+## Ordered By Count
 
 ```{r}
 
@@ -221,7 +255,8 @@ ggplot(bball, aes(x = Position, fill = Position)) + geom_bar() +
   scale_y_continuous(limits = c(0,75), breaks = seq(0, 75, 5)) +
   scale_fill_viridis_d() +
   theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+          legend.position = "none")
 
 ```
 
@@ -263,25 +298,27 @@ ggplot(bball, aes(x = Position, y = PTS, fill = Position)) +
   scale_y_continuous(limits = c(0,20), breaks = seq(0, 20, 2)) +
   scale_fill_viridis_d() +
   theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+          legend.position = "none")
 ```
 
 ## Thoughts?
 
-::: {style="font-size: 0.85em;"}
+
 What does the mean tell you?
+
+- [The mean is a measure of *centrality*]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 What do the bars imply?
 
-[The mean is a measure of *centrality*. Bars imply there is a difference between values below the bar (colored) and above the bar (not colored)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Bars imply there is a difference between values below the bar (colored) and above the bar (not colored)]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 [**The-Bar Tip Limit Error:** About one in five people interpret the top of a bar to indicate a *limit* even when it is meant to indicate an *average*]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 [**Bar charts are inappropriate for continuous data!**]{.answer .fragment .content-visible unless-meta="params.v0"}
-:::
 
 ::: {style="font-size: 0.6em;"}
-Kerns, S. H., & Wilmer, J. B. (2021). Two graphs walk into a bar: Readout-based measurement reveals the Bar-Tip Limit error, a common, categorical misinterpretation of mean bar graphs. *Journal of Vision*, *21*(12), Article 17. <https://doi.org/10.1167/jov.21.12.17>
+[Kerns, S. H., & Wilmer, J. B. (2021). Two graphs walk into a bar: Readout-based measurement reveals the Bar-Tip Limit error, a common, categorical misinterpretation of mean bar graphs. *Journal of Vision*, *21*(12), Article 17. <https://doi.org/10.1167/jov.21.12.17>]{.answer .fragment .content-visible unless-meta="params.v0"}
 :::
 
 ## Histograms
@@ -293,7 +330,7 @@ Histograms look a bit *like* bar charts, but they are different
 -   Group values into equal-interval "bins"
 -   Histograms show the frequency of observations in each bin
 
-## Histogram of Points Per Game
+## Histogram of PPG
 
 ```{r}
 ggplot(bball, aes(x = PTS)) +
@@ -311,7 +348,7 @@ ggplot(bball, aes(x = PTS)) +
 -   Trial and error is OK!
 -   Sturges' rule:
     -   Number of bins = $1 + \text{log}_2(N)$
-    -   Width of bins = \frac{\text{max} - \text{min} + 1}{\text{number of bins}}
+    -   Width of bins = $\frac{\text{max} - \text{min} + 1}{\text{number of bins}}$
 
 ## Too few bins
 
@@ -347,7 +384,7 @@ ggplot(bball, aes(x = PTS)) +
 
 ## Kernel Density Plot
 
-::: {style="font-size: 0.9em;"}
+
 Kernel density plots produce a **smooth curve** of a distribution
 
 -   Horizontal axis ($x$-axis): values
@@ -358,10 +395,11 @@ Conceptually:
 
 -   Sort scores on the $x$-axis
 
--   Assume that **every** value represents an underlying distribution (kernel function) (e.g., normal)
-
+-   Assume that **every** value represents an underlying distribution (kernel function) 
+    - E.g. every value is treated as a separate normal distribution
+    
 -   Kernel density function sums these underlying distributions
-:::
+
 
 ## Kernel Density Plot
 
@@ -406,7 +444,7 @@ ggplot(data.frame(x =c(1.65, 1.84, 1.89, 1.90,
 
 ## Kernel Density Plot
 
-::: {style="font-size: 0.8em;"}
+::: {style="font-size: 0.925em;"}
 Two Considerations:
 
 Kernel function:
@@ -448,7 +486,7 @@ gridExtra::grid.arrange(p1, p2, p3, p4)
 
 ## Modality
 
-::: {style="font-size: 0.9em;"}
+
 It's almost impossible to infer the **mode** from numerical summaries of continuous data. Plots are a huge help here!
 
 Modality: number of peaks
@@ -462,7 +500,7 @@ Mean, SD, skewness, and kurtosis do not indicate modality
 -   Bimodal distributions often have kurtosis \< 0 (but not necessarily)
 
 In addition to descriptive statistics, this one reason we **always** want to graph the distributions of variables
-:::
+
 
 ## Modality
 
@@ -502,7 +540,7 @@ ggplot(bball, aes(y = PTS)) + geom_boxplot(na.rm = TRUE, fill = my_orange) +
   labs(y = "Points Per Game")
 ```
 
-::: {style="font-size: 0.65em;"}
+::: {style="font-size: 0.75em;"}
 -   Middle line: median
 -   Box boundaries: interquartile range
 -   Whiskers: lower/upper quartile $\pm 1.5\text{IQR}$ OR min/max value (whichever is more extreme)
@@ -516,6 +554,9 @@ We started by talking about how bar plots are inappropriate for continuous data.
 -   We were comparing group **means**
 -   The techniques we are using here show distributions
 -   We can use these to compare group **distributions**
+
+Some options for comparing distributions: 
+
 -   Overlay histograms or density plots
 -   Put box plots next to each other
 
@@ -614,14 +655,15 @@ What else can we add?
 -   Representation of Means
 -   "Jitter" points for actual data
     -   Jittering just means randomly placing points along an axis to "spread them out"
+    - Provides a visual of exactly where the data are
 
-## Violins and Boxes with Means
+## Violins, Boxes + Means
 
 ```{r}
 ggplot(bball, aes(y = PTS, x = Position, fill = Position)) + 
   geom_violin(alpha = .1) +
   geom_boxplot(width = .25, alpha = .15) +
-  stat_summary(fun = "mean", geom = "point", shape = 20, size = 5, aes(color = Position)) + 
+  stat_summary(fun = "mean", geom = "point", shape = 23, size = 5, aes(color = Position)) + 
   coord_flip() + 
   theme_light() +
   scale_fill_viridis_d() +
@@ -632,14 +674,14 @@ ggplot(bball, aes(y = PTS, x = Position, fill = Position)) +
   labs(y = "Points Per Game")
 ```
 
-## And with Jittered Points
+## + Jittered Points
 
 ```{r}
 ggplot(bball, aes(y = PTS, x = Position, fill = Position)) + 
   geom_jitter(alpha = .5, aes(color = Position)) +
   geom_violin(alpha = .1) +
   geom_boxplot(width = .25, alpha = .15) +
-  stat_summary(fun = "mean", geom = "point", shape = 20, size = 5, aes(color = Position)) + 
+  stat_summary(fun = "mean", geom = "point", shape = 23, size = 5, aes(color = Position)) + 
   coord_flip() + 
   theme_light() +
   scale_fill_viridis_d() +
@@ -679,6 +721,6 @@ ggplot(bball, aes(y = PTS, x = Position, color = Position)) +
 
 -   Maximize data/ink ratio
 -   Preserve **distributions**
-    -   don't just plot means/summary statistics
+    -   Don't just plot means/summary statistics
 -   Get creative
     -   Color, contrast, density, overlays can all help convey information clearly (and pleasantly)
