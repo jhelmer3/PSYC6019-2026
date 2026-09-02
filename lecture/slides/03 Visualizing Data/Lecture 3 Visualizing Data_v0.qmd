@@ -148,14 +148,14 @@ The difference in areas in the second panel is 2.8x as large as the numerical di
 
 ## Principles of Axis Scaling
 
-::: {style="font-size: 0.97em;"}
+::: {style="font-size: 0.9em;"}
 
 One of the most common mistakes I see in creating graphs
 
 -   Software will often default to the range of values **being graphed**
 -   Axis should represent a **plausible range of values of data**
-  -   If you are comparing multiple means, you often need to expand the axis range!
-    - **Reasonable heuristic:** Use the observed range or IQR of values of a variable
+    -   If you are comparing multiple means, you often need to expand the axis range!
+        - **Reasonable heuristic:** Use the observed range or IQR of values of a variable
 -   Almost always important to think about on $y$-axis
 -   Sometimes important to think about on $x$-axis
 -   Don't "zoom in" to exaggerate the size of an effect
@@ -241,7 +241,9 @@ ggplot(bball, aes(x = Position, fill = Position)) + geom_bar() +
 -   Added enough horizontal reference lines to make the values clear
 -   While color wasn't necessary, I chose a colorblind friendly palette
     -   Focuses on contrast rather than hue
--   I ordered the x-axis in a sensible way. I could have also done something like this (arguably better!):
+-   I ordered the x-axis in a sensible way. 
+    - Point guards are usually the smallest players, centers the biggest
+    -   I could have also done something like this (arguably better!):
 
 
 ## Ordered By Count
@@ -321,6 +323,46 @@ What do the bars imply?
 [Kerns, S. H., & Wilmer, J. B. (2021). Two graphs walk into a bar: Readout-based measurement reveals the Bar-Tip Limit error, a common, categorical misinterpretation of mean bar graphs. *Journal of Vision*, *21*(12), Article 17. <https://doi.org/10.1167/jov.21.12.17>]{.answer .fragment .content-visible unless-meta="params.v0"}
 :::
 
+## Point Means
+
+If you **must** create a visual that just has the mean, don't use bars
+
+- Use single points to represent the mean
+- Consider including something that represents the precision of the measurement
+    - Standard error
+    - 95% confidence interval
+    - Be explicit about which one you use
+    - We haven't discussed these yet, but we will!
+
+
+## Means and 95% CIs
+
+```{r}
+library(ggeffects)
+lm1 <- lm(PTS ~ Position, bball)
+
+ggp1 <- ggpredict(lm1, "Position")
+ggp1 <- as.data.frame(ggp1)
+ggplot(ggp1, aes(x = x, y = predicted, color = x)) + geom_point(size = 3) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), size = 1, width = .2)  +
+  scale_y_continuous(limits = c(0,20), breaks = seq(0, 20, 2)) +
+  scale_color_viridis_d() +
+  theme_minimal() +
+  labs(x = "Position", y = "Average Points Per Game") +
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+          legend.position = "none")
+```
+## Beyond Means
+
+Plotting means has its place, especially for **inference**
+
+- Help us see how groups differ on average
+- Help us understand the extent to which one group differs from another on average
+
+But data viz can do so much more than just help us visualize means
+
+- We often want to plot **distributions**
+
 ## Histograms
 
 Histograms look a bit *like* bar charts, but they are different
@@ -335,7 +377,7 @@ Histograms look a bit *like* bar charts, but they are different
 ```{r}
 ggplot(bball, aes(x = PTS)) +
   geom_histogram(fill = "steelblue") + 
-  xlab("Points Per Game") + ylab("Frequency") + 
+  xlab("Points Per Game (All Positions)") + ylab("Frequency") + 
   theme_minimal()
 ```
 
@@ -356,7 +398,7 @@ ggplot(bball, aes(x = PTS)) +
 
 ggplot(bball, aes(x = PTS)) +
   geom_histogram(fill = "steelblue", bins = 3) + 
-  xlab("Points Per Game") + ylab("Frequency") + 
+  xlab("Points Per Game (All Positions)")  + ylab("Frequency") + 
   theme_minimal()
 ```
 
@@ -366,7 +408,7 @@ ggplot(bball, aes(x = PTS)) +
 
 ggplot(bball, aes(x = PTS)) +
   geom_histogram(fill = "steelblue", bins = 500) + 
-  xlab("Points Per Game") + ylab("Frequency") + 
+  xlab("Points Per Game (All Positions)")  + ylab("Frequency") + 
   theme_minimal()
 ```
 
@@ -378,7 +420,7 @@ n_bins <- ceiling(1 + log2(nrow(bball)))
 
 ggplot(bball, aes(x = PTS)) +
   geom_histogram(fill = "steelblue", bins = n_bins) + 
-  xlab("Points Per Game") + ylab("Frequency") + 
+  xlab("Points Per Game (All Positions)")  + ylab("Frequency") + 
   theme_minimal()
 ```
 
@@ -721,6 +763,10 @@ ggplot(bball, aes(y = PTS, x = Position, color = Position)) +
 
 -   Maximize data/ink ratio
 -   Preserve **distributions**
-    -   Don't just plot means/summary statistics
+    -   Don't (always) just plot means/summary statistics
+        - Especially important for initial stages of analysis and data exploration
+        - Can help diagnose unanticipated issues in data
+            - Multiple modes
+            - Outliers
 -   Get creative
     -   Color, contrast, density, overlays can all help convey information clearly (and pleasantly)
