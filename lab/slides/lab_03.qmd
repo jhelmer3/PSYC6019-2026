@@ -1,6 +1,6 @@
 ---
-title: "Simulations and Chi-Squared Tests"
-subtitle: "PSYC 6019-A01 / PSYC 6022-A01 \n 2025-09-11 | Lab 3"
+title: "Data Manipulation and Simulation"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2025-09-11 | Lab 3"
 author: "Jess Helmer"
 footer: "[jhelmer3.github.io/PSYC6019-2026/](https://jhelmer3.github.io/PSYC6019-2026/)"
 format: 
@@ -14,22 +14,39 @@ execute:
   echo: true
   dpi: 600
   freeze: auto
+engine: knitr
+knitr:
+  opts_chunk: 
+    R.options:
+      width: 120
 ---
 
 ## Outline
 
+- Data manipulation with the `tidyverse`
 - Simulating data introduction
 - Central Limit Theorem example
-- $\chi^2$ distribution
   
 ```{r setup}
 #| echo: false
 #| output: false
 library(tidyverse)
 library(gt)
-targets::tar_load(gatech_admissions_data_file, store = here::here("_targets"))
+targets::tar_load(c(player_stats, gatech_admissions_data_file), store = here::here("_targets"))
 ```
 
+
+## Whole Game
+
+Pieces of the "whole game" of data science
+
+![](../media/lab_02/tidyflow.png)
+
+
+
+# Whole Game
+
+<span style="color: #C5C5C5;">Import → </span>**Tidy**<span style="color: #C5C5C5;"> → Transform → Visualize → Model → Communicate</span>
 
 ## Tidy
 
@@ -47,24 +64,13 @@ Tidy data follow a consistent set of organizational principles
 
 Typically a bit more work up front but **much** easier to work with after
 
-We will discuss tidying data more next week!
-
 
 ## Tidy
 
-```{r}
-player_stats <- read.csv(here::here("lab", "data", "world_cup_player_stats.csv"))
-```
-
-## Tidy
-
-
-:::: {.columns style="font-size:60%"}
+:::: {.columns style="font-size:100%"}
 ::: {.column width=32%}
 ```{r, echo=F}
-player_stats |>
-  select(player_name, minutes_played, assists, goals) |>
-  head()
+table1
 ```
 :::
 
@@ -74,11 +80,7 @@ player_stats |>
 
 ::: {.column .fragment .fade-out width=32% data-fragment-index="1"}
 ```{r, echo=F}
-player_stats |>
-  select(player_name, minutes_played, assists, goals) |>
-  pivot_longer(c(assists, goals), 
-               names_to = "type", values_to = "count") |>
-  head()
+table2
 ```
 :::
 
@@ -88,11 +90,7 @@ player_stats |>
 
 ::: {.column .fragment .fade-out width=32% data-fragment-index="1"}
 ```{r, echo=F}
-player_stats |>
-  select(player_name, minutes_played, assists, goals) |>
-  mutate(assists_to_goals = paste0(assists, ":", goals),
-         .keep = "unused") |>
-  head()
+table3
 ```
 :::
 ::::
@@ -134,11 +132,174 @@ Three rules to a tidy dataset
 :::
 
 
+## Long vs. Wide Data
+
+Long: each observation is a row (tidy)
+
+<div class="subpoint">○ Observation does not necessarily mean "person" </div>
+
+<div class="subpoint">○ Can be within-person measurements over time </div>
+
+Wide: columns might represent different "values" of a variables
+
+
+## Long vs. Wide Data
+
+:::: {.columns}
+::: {.column}
+```{r, echo=F}
+dat <- data.frame(person = c("Harry", "Ron", "Hermione")) |>
+  expand_grid(book = c("book 1", "book 2", "book 3")) |>
+  mutate(score = rbinom(book, 3, .7))
+dat
+```
+:::
+
+::: {.column}
+```{r, echo=F}
+dat <- dat |>
+  pivot_wider(id_cols = person,
+              names_from = book, values_from = score)
+dat
+```
+:::
+::::
+
+Wide data common in spreadsheets, data from survey platforms
+
+Long data typically easier to work with
+
+
+## Key Functions
+
+:::: {.columns}
+::: {.column}
+##### Wide to Long
+`pivot_longer()`
+```{r}
+#| code-line-numbers: false
+longdat <- dat |>
+  pivot_longer(cols = c("book 1", "book 2", "book 3"),
+               names_to = "book", values_to = "score")
+longdat
+```
+:::
+
+::: {.column}
+##### Long to Wide
+`pivot_wider()`
+```{r}
+#| code-line-numbers: false
+widedat <- longdat |>
+  pivot_wider(names_from = book, values_from = score)
+widedat
+```
+:::
+::::
+
+
+## Key Functions
+
+:::: {.columns}
+::: {.column}
+##### Wide to Long
+`pivot_longer()`
+<div class="subpoint-narrow">○ `cols` = set of columns to pivot </div>
+<div class="subpoint-narrow">○ `names_to` = name of new column with the column names from before </div>
+<div class="subpoint-narrow">○ `values_to` = name of new column with the values from before </div>
+:::
+
+::: {.column}
+##### Long to Wide
+`pivot_wider()`
+<div class="subpoint-narrow">○ `names_from` = column with values to be column names </div>
+<div class="subpoint-narrow">○ `values_from` = column with values to be in those columns </div>
+:::
+::::
+
+
+## Some Examples: Example 1
+
+```{r}
+table1
+```
+
+::: fragment
+Looks good!
+:::
+
+
+## Some Examples: Example 2
+
+```{r}
+table2
+```
+
+::: fragment
+To RStudio!!
+:::
+
+
+## Some Examples: Example 2
+
+Example code
+
+```{r}
+table2 |> 
+  pivot_wider(names_from = type, values_from = count)
+```
+
+::: fragment
+More examples later!
+:::
+
+
+## Selecting Functions
+
+Sometimes, we want to select many columns (to pivot, to remove, etc.)
+
+Notice the documentation for `pivot_longer()`
+
+`<tidy-select>` functions
+
+<div class="subpoint">○ e.g., `starts_with()`, `ends_with()`, `everything()` </div>
+
+
+## Selecting Functions
+
+:::: {.columns}
+::: {.column}
+Simple example, but...
+
+```{r}
+dat <- data.frame(
+  id = 1:5,
+  Q1 = rbinom(5, 1, .1),
+  Q2 = rbinom(5, 1, .2),
+  Q3 = rbinom(5, 1, .3),
+  Q4 = rbinom(5, 1, .4),
+  Q5 = rbinom(5, 1, .5)
+)
+dat
+```
+:::
+
+::: {.column .fragment}
+```{r}
+dat |>
+  pivot_longer(cols = starts_with("Q"),
+               names_to = "question", values_to = "correct")
+```
+:::
+::::
+
+
 ## Tidy: Is Our Data Tidy?
 
 :::: {.columns style="font-size:70%"}
 ::: {.column width=70%}
 ```{r}
+player_stats <- read.csv(here::here("lab", "data", "world_cup_player_stats.csv"))
 head(player_stats, n = 10)
 ```
 :::
@@ -153,11 +314,10 @@ head(player_stats, n = 10)
 ::::
 
 
-## Tidy: For Later...
 
-We will learn ways to make untidy data tidy in later classes
+# Whole Game
 
-For now, we are good, and can proceed with our work!
+<span style="color: #C5C5C5;">Import → Tidy → </span>**Transform**<span style="color: #C5C5C5;"> → Visualize → Model → Communicate</span>
 
 
 ## Transform
@@ -172,7 +332,6 @@ Sometimes we need...
 
 * Reordered variables
 
-We will discuss transforming data more next week!
 
 
 ## Transform: `tidyverse` syntax 
@@ -181,11 +340,9 @@ The `tidyverse` website mentioned that each package shares a common language for
 
 Based off of `dplyr` (one of the packages) verbs
 
-1. The first argument is always a dataframe.
-
-2. The subsequent arguments typically describe which columns to operate on using the variable names (without quotes).
-
-3. The output is always a new data frame.
+> 1) The first argument is always a dataframe.
+> 2) The subsequent arguments typically describe which columns to operate on using the variable names (without quotes).
+> 3) The output is always a new data frame.
 
 ::: footer
 <https://r4ds.hadley.nz/data-transform.html#dplyr-basics>
@@ -251,12 +408,12 @@ My questions:
 
 A core few of the `tidyverse` functions...
 
-::: panel-tabset
+::: {.panel-tabset style="font-size:90%"}
 ### `select()`
 
 `select(df, columns)`
 
-Selects just the columns you specify. Helpful for paring down the data for easy viewing.
+Selects just the columns you specify. Helpful for paring down data for easier viewing.
 
 ```{r}
 player_minutes_played <- player_stats |>
@@ -270,7 +427,7 @@ player_minutes_played |>
 
 `mutate(df, new_column = ...)`
 
-Adds new columns to the dataframe, either from scratch or based on existing columns.
+Adds new columns to the dataframe, either from scratch or based on existing columns. Can modify / overwrite existing columns as well.
 
 ```{r}
 player_minutes_played |>
@@ -311,7 +468,12 @@ player_minutes_played |>
 
 ### Logical Operators
 
-| Symbol | Meaning                   |
+:::: {.columns}
+::: {.column width="50%"}
+
+::: {style="font-size:80%"}
+
+| Symbol | Meaning                   | 
 |--------|---------------------------|
 | `==`   | equal to                  |
 | `!=`   | not equal to              |
@@ -319,6 +481,20 @@ player_minutes_played |>
 | `<=`   | less than or equal to     |
 | `>`    | greater than              |
 | `>=`   | greater than or equal to  |
+
+:::
+
+:::
+
+::: {.column width="50%"}
+```{r}
+1 == 1; "A" == "A"
+9 + 10 > 5
+"Georgia Tech" != "Georgia State"
+c(1, 2, 3) >= c(3, 2, 1)
+```
+:::
+::::
 
 :::
 
@@ -347,6 +523,8 @@ player_stats |>
 ```
 :::
 
+::::
+
 ### `arrange()`
 
 `arrange(ordering_var)`
@@ -373,13 +551,13 @@ player_stats |>
 :::
 ::::
 
-::::
-
 :::
 
 
 ## Transform: Questions
 
+:::: {.columns}
+::: {.column width="50%"}
 1. What team had the most goals overall?
 
 ```{r}
@@ -390,10 +568,16 @@ total_goals_df <- player_stats |>
 total_goals_df |>
   arrange(desc(total_goals)) |>
   head(10)
+```
+:::
 
+::: {.column width="50%"}
+```{r}
 total_goals_df |>
   filter(total_goals == max(total_goals))
 ```
+:::
+::::
 
 
 ## Transform: Questions
@@ -417,11 +601,245 @@ player_stats |>
 
 3. Class question!! (time pending)
 
+<!-- ::: fragment -->
+<!-- Back to tidying... -->
+<!-- ::: -->
+
+
+<!-- ## Some Examples: Example 3 -->
+
+<!-- ```{r} -->
+<!-- table3 -->
+<!-- ``` -->
+
+<!-- ::: fragment -->
+<!-- It's unfortunately pretty common to get data that has multiple values in a cell! -->
+<!-- ::: -->
+
+<!-- ::: fragment -->
+<!-- New function! -->
+
+<!-- `separate_wider_delim()` -->
+<!-- <div class="subpoint">○ `delim` = character to split on </div> -->
+<!-- <div class="subpoint">○ `names` = vector of names for the new columns (post-separation) </div> -->
+<!-- ::: -->
+
+<!-- ::: fragment -->
+<!-- To RStudio!! -->
+<!-- ::: -->
+
+
+<!-- ## Some Examples: Example 3 -->
+
+<!-- Example code -->
+
+<!-- ```{r} -->
+<!-- table3 |> -->
+<!--   separate_wider_delim(cols = rate, delim = "/", -->
+<!--                        names = c("cases", "population")) |> -->
+<!--   mutate(cases = as.numeric(cases), -->
+<!--          population = as.numeric(population), -->
+<!--          rate = cases / population) -->
+<!-- ``` -->
+
+<!-- ::: fragment -->
+<!-- `as.numeric()` attempts to convert to numeric data type -->
+<!-- ::: -->
+
+<!-- ::: fragment -->
+<!-- If you create columns in a `mutate()` call, you can refer to those columns in the same call after you create them -->
+<!-- ::: -->
+
+
+<!-- ## Some Examples: Example 4 -->
+
+<!-- ```{r} -->
+<!-- #| layout-ncol: 2 -->
+<!-- table4a -->
+<!-- table4b -->
+<!-- ``` -->
+
+<!-- ::: fragment -->
+<!-- Sometimes we get data in multiple pieces -->
+<!-- ::: -->
+
+<!-- ::: fragment -->
+<!-- New function! -->
+
+<!-- `full_join()` -->
+<!-- <div class="subpoint">○ `x` = left dataframe to join </div> -->
+<!-- <div class="subpoint">○ `y` = right dataframe to join </div> -->
+<!-- <div class="subpoint">○ `by` = character, matching column(s) in both dataframes </div> -->
+<!-- <div class="subsubpoint">○ 'join by' columns need to have exact same name in both </div> -->
+<!-- ::: -->
+
+<!-- ::: fragment -->
+<!-- To RStudio!! -->
+<!-- ::: -->
+
+<!-- ## Some Examples: Example 4 -->
+
+<!-- Example code -->
+
+<!-- :::: {.columns} -->
+<!-- ::: {.column} -->
+<!-- ```{r} -->
+<!-- #| code-line-numbers: false -->
+<!-- table4a_long <- table4a |> -->
+<!--   pivot_longer(c("1999", "2000"), -->
+<!--                names_to = "year", values_to = "cases") -->
+
+<!-- table4b_long <- table4b |> -->
+<!--   pivot_longer(c("1999", "2000"), -->
+<!--                names_to = "year", values_to = "cases") -->
+
+<!-- full_join(table4a_long, table4b_long, by = c("country", "year")) -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: {.column} -->
+<!-- ```{r} -->
+<!-- #| code-line-numbers: false -->
+<!-- full_join( -->
+<!--   table4a |> -->
+<!--     pivot_longer(c("1999", "2000"), -->
+<!--                  names_to = "year", values_to = "cases"), -->
+<!--   table4b |> -->
+<!--     pivot_longer(c("1999", "2000"), -->
+<!--                  names_to = "year", values_to = "cases"), -->
+<!--   by = c("country", "year") -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- :::: -->
+
+
+<!-- ## Some Examples: Example 5 -->
+
+<!-- ```{r} -->
+<!-- table5 -->
+<!-- ``` -->
+
+<!-- ::: fragment -->
+<!-- `paste()` and `paste0()` combine characters into one string -->
+<!-- <div class="subpoint">○ `paste()` adds a space between inputs </div> -->
+<!-- <div class="subpoint">○ `paste0()` does not </div> -->
+<!-- ::: -->
+
+<!-- ::: fragment -->
+<!-- To RStudio!! -->
+<!-- ::: -->
+
+
+<!-- ## Some Examples: Example 5 -->
+
+<!-- Example code -->
+
+<!-- ```{r} -->
+<!-- table5 |> -->
+<!--   separate_wider_delim(cols = rate, delim = "/", -->
+<!--                        names = c("cases", "population")) |> -->
+<!--   mutate(cases = as.numeric(cases), -->
+<!--          population = as.numeric(population), -->
+<!--          rate = cases / population, -->
+<!--          year = paste0(century, year) |> as.numeric(), -->
+<!--          .keep = "unused") -->
+<!-- ``` -->
+
+# Simulation
 
 
 ## Simulation
 
-why do we like sims
+Simulating fake data is such a helpful skill to have in your toolbox. You can...
+
+:::: {.columns}
+::: {.column .fragment width="33%"}
+- Check that methods are working correctly
+:::
+
+::: {.column .fragment width="66%"}
+```{r}
+rnorm(1000000, 5, 10) |> mean()
+```
+:::
+::::
+
+:::: {.columns}
+::: {.column .fragment width="33%"}
+- Build your intuition and understanding about statistical theory
+:::
+
+::: {.column .fragment width="66%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+n_reps <- 100000
+tibble(n = n_reps,
+       sd = c(1, 1.25, 1.5)) |>
+  uncount(n_reps) |>
+  mutate(draw = rnorm(n(), 0, sd)) |>
+  ggplot(aes(x = draw, group = factor(sd))) +
+  geom_density(alpha = 0.4, color = NA, fill = "steelblue") +
+  geom_text(
+    data = tibble(sd = c(1, 1.25, 1.5), 
+                  height = dnorm(0, 0, sd) * 0.875,
+                  draw = 0),
+    aes(label = paste("SD =", sd), y = height),
+    color = "white", fontface = "bold", size = 4.5
+  ) +
+  guides(y = guide_none(NULL),
+         x = guide_axis(NULL, cap = T),
+         color = guide_legend("SD")) +
+  coord_cartesian(xlim = c(-4, 4)) +
+  theme_classic() +
+  theme(legend.position = "bottom")
+```
+
+### Code
+```{r}
+#| eval: false
+n_reps <- 100000
+tibble(n = n_reps,
+       sd = c(1, 1.25, 1.5)) |>
+  uncount(n_reps) |>
+  mutate(draw = rnorm(n(), 0, sd)) |>
+  ggplot(aes(x = draw, group = factor(sd))) +
+  geom_density(alpha = 0.4, color = NA, fill = "steelblue") +
+  geom_text(
+    data = tibble(sd = c(1, 1.25, 1.5), 
+                  height = dnorm(0, 0, sd) * 0.875,
+                  draw = 0),
+    aes(label = paste("SD =", sd), y = height),
+    color = "white", fontface = "bold", size = 4.5
+  ) +
+  guides(y = guide_none(NULL),
+         x = guide_axis(NULL, cap = T),
+         color = guide_legend("SD")) +
+  coord_cartesian(xlim = c(-4, 4)) +
+  theme_classic() +
+  theme(legend.position = "bottom")
+```
+:::
+
+:::
+::::
+
+
+:::: {.columns}
+::: {.column .fragment width="33%"}
+- Answer your own questions about a statistical concept
+:::
+
+::: {.column .fragment width="66%"}
+Let's do that today!
+:::
+::::
 
 
 ## Simulation Example: CLT
@@ -746,10 +1164,10 @@ means |>
 
 ## Simulation Example: CLT
 
-4. Incorporate different distributions.
-
 :::: {.columns}
 ::: {.column width="50%"}
+4. Incorporate different distributions.
+
 `runif(x, min, max)` where all values between `min` and `max` have an equal chance of being sampled
 
 ```{r}
@@ -771,10 +1189,10 @@ chisquared_samples
 
 ## Simulation Example: CLT
 
-Incorporate different distributions.
-
 :::: {.columns}
 ::: {.column width="50%"}
+4. Incorporate different distributions.
+
 ```{r}
 n_reps <- 1000
 sample_size <- 10
@@ -808,167 +1226,12 @@ tibble(grouping_var = rep(c("group_1", "group_2"), times = 3),
 ::::
 
 
-## Let Us Review...
-
-What are the tidy principles?
-
-::: fragment
-Three rules to a tidy dataset
-
-<div style="font-size:70%">
-1. Each variable is a column; each column is a variable.
-
-2. Each observation is a row; each row is an observation.
-
-3. Each value is a cell; each cell is a single value.
-</div>
-
-![](https://r4ds.hadley.nz/images/tidy-1.png)
-:::
-
-
-## Long vs. Wide Data
-
-Long: each observation is a row (tidy)
-
-<div class="subpoint">○ Observation does not necessarily mean "person" </div>
-
-<div class="subpoint">○ Can be within-person measurements over time </div>
-
-Wide: columns might represent different "values" of a variables
-
-
-## Long vs. Wide Data
-
-:::: {.columns}
-::: {.column}
-```{r}
-#| echo: false
-dat <- data.frame(person = c("Harry", "Ron", "Hermione")) %>%
-  expand_grid(book = c("book 1", "book 2", "book 3")) %>%
-  mutate(score = rbinom(book, 3, .7))
-dat
-```
-:::
-
-::: {.column}
-```{r}
-#| echo: false
-dat <- dat %>%
-  pivot_wider(id_cols = person,
-              names_from = book, values_from = score)
-dat
-```
-:::
-::::
-
-Wide data common in spreadsheets, data from survey platforms
-
-Long data typically easier to work with
-
-
-## Key Functions
-
-:::: {.columns}
-::: {.column}
-#### Wide to Long
-
-`pivot_longer()`
-```{r}
-longdat <- dat %>%
-  pivot_longer(cols = c("book 1", "book 2", "book 3"),
-               names_to = "book", values_to = "score")
-longdat
-```
-:::
-
-::: {.column}
-#### Long to Wide
-
-`pivot_wider()`
-```{r}
-widedat <- longdat %>%
-  pivot_wider(names_from = book, values_from = score)
-widedat
-```
-:::
-::::
-
-
-## Key Functions
-
-:::: {.columns}
-::: {.column}
-##### Wide to Long
-
-`pivot_longer()`
-
-<div class="subpoint">○ `cols` = set of columns to pivot </div>
-
-<div class="subpoint">○ `names_to` = name of new column with the column names from before </div>
-
-<div class="subpoint">○ `values_to` = name of new column with the values from before </div>
-:::
-
-::: {.column}
-##### Long to Wide
-
-`pivot_wider()`
-
-<div class="subpoint">○ `names_from` = column with values to be column names </div>
-
-<div class="subpoint">○ `values_from` = column with values to be in those columns </div>
-:::
-::::
-
-
-## Selecting Functions
-
-Sometimes, we want to select many columns (to pivot, to remove, etc.)
-
-Notice the documentation for `pivot_longer()`
-
-`<tidy-select>` functions
-
-<div class="subpoint">○ `starts_with()` and `ends_with()` </div>
-
-
-## Selecting Functions
-
-:::: {.columns}
-::: {.column}
-Simple example, but...
-```{r}
-dat <- data.frame(id = 1:5,
-           q1 = rbinom(5, 1, .1),
-           q2 = rbinom(5, 1, .2),
-           q3 = rbinom(5, 1, .3),
-           q4 = rbinom(5, 1, .4),
-           q5 = rbinom(5, 1, .5))
-dat
-```
-:::
-
-::: {.column}
-```{r}
-dat |>
-  pivot_longer(cols = starts_with("q"),
-               names_to = "question", values_to = "correct")
-```
-:::
-::::
-
-::: fragment
-Now, back to our simulation.
-:::
-
-
 ## Simulation Example: CLT
 
-4. Incorporate different distributions.
-
 :::: {.columns}
 ::: {.column}
+4. Incorporate different distributions.
+
 ```{r}
 n_reps <- 1000
 sample_size <- 10
@@ -1001,10 +1264,10 @@ sim_data |>
 
 ## Simulation Example: CLT
 
-4. Incorporate different distributions.
-
 :::: {.columns style="font-size:80%"}
 ::: {.column width="50%"}
+4. Incorporate different distributions.
+
 We can then draw `n_reps * sample_size = total_n` values from a normal distribution with `rnorm()`.
 
 ```{r}
@@ -1139,10 +1402,10 @@ means |>
 
 ## Simulation Example: CLT
 
-5. Incorporate different sample sizes.
-
 ::::: {.columns style="font-size:80%"}
 :::: {.column width="50%"}
+5. Incorporate different sample sizes.
+
 ::: {.panel-tabset}
 ### Our Sim
 
@@ -1200,10 +1463,10 @@ tibble(
 
 ## Simulation Example: CLT
 
-5. Incorporate different sample sizes.
-
 :::: {.columns}
 ::: {.column width="50%"}
+5. Incorporate different sample sizes.
+
 ```{r}
 n_reps <- 1000
 sample_size <- c(3, 10, 30, 100)
@@ -1412,5 +1675,5 @@ means |>
 :::::
 
 
-
+## Lab 04 Activity
 
