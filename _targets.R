@@ -35,6 +35,8 @@ list(
              "lab/slides/lab_03.qmd", 
              format = "file"),
   tar_target(lab_03_slides, {
+    player_stats
+    gatech_admissions_data_file
     quarto::quarto_render(lab_03_slides_qmd)
     qmd_out(lab_03_slides_qmd)
   }, format = "file"),
@@ -47,8 +49,8 @@ list(
   }, format = "file"),
   
   ## lab 02
-  tar_target(world_cup_player_stats_file, "lab/raw_data/world_cup_player_stats.csv", format = "file"),
-  tar_target(world_cup_teams_file, "lab/raw_data/world_cup_teams.csv", format = "file"),
+  tar_target(world_cup_player_stats_file, "lab/raw-data/world_cup_player_stats.csv", format = "file"),
+  tar_target(world_cup_teams_file, "lab/raw-data/world_cup_teams.csv", format = "file"),
   tar_target(world_cup_player_stats_full, read.csv(world_cup_player_stats_file)),
   tar_target(world_cup_teams_full, read.csv(world_cup_teams_file)),
   tar_target(player_stats, 

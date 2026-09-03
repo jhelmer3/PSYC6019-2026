@@ -7242,14 +7242,14 @@
     "href": "lab/activities/lab_02_activity.html",
     "title": "Lab 02 Activity",
     "section": "",
-    "text": "Link to Activity 02"
+    "text": "Practice data visualization in ggplot2"
   },
   {
     "objectID": "lab/activities/lab_02_activity.html#activity",
     "href": "lab/activities/lab_02_activity.html#activity",
     "title": "Lab 02 Activity",
     "section": "Activity",
-    "text": "Activity\n\n1) Load in the tidyverse packages with library(tidyverse). Then, read in the world_cup_player_stats.csv data and assign it to a variable.\n\n\n2) Use at least two functions to explore and ‘get a sense of’ the data (HINT: glimpse() can be one of them).\n\n\n3) Come up with one question you’d like to ask of the data through data transformation (feel free to use the ones from the slides as inspiration, but it shouldn’t be the exact same), and write the question below.\n\n\n4) Use a tidyverse pipe chain to address this question.\n\n\n5) Come up with one question you’d like to ask of the data through data visualization (this can be the same, similar, or different from your question in (3)), and write the question below.\n\n\n6) Start by creating just the bare bones of the plot. Use the ggplot() function and set the data and mapping argument. For the mapping argument, think carefully about which variables you want to set on which axes using the aes() function.\n\n\n7) Next, add a geom_ layer.\n\n\n8) Briefly interpret this plot (1–2 sentences).\n\n\n9) Make at least one structural modification to this plot. By structural modification, I mean changing either (1) something in the data being plotted, (2) something in the data mapping in the aes() argument, or (3) the geom(s) being plotted.\n\n\n10) Briefly interpret this new plot (1–2 sentences).\n\n\n11) Finally, make at least three additional modifications to this plot. This can include changes to the theme, scales, labels, etc. Please provide a brief justification for each change (e.g., making the plot visually cleaner, clarifying expected breaks in scale, adding text to explain the plot)."
+    "text": "Activity\n\n1) Load in the tidyverse packages with library(tidyverse). Then, read in the world_cup_player_stats.csv data and assign it to a variable.\n\n\n2) Use at least two functions to explore and ‘get a sense of’ the data (HINT: glimpse() can be one of them).\n\n\n3) Come up with one question you’d like to ask of the data through data visualization (feel free to use the slides as inspiration, but it shouldn’t be the exact same), and write the question below.\n\n\n4) Before you start plotting, have an idea of your end goal in mind. Below, describe what the plot should overall look like (ignoring the actual trends you’d need to see to describe). For example, what would be on the x-axis? The y-axis? What type of plot would it be?\n\n\n5) Start by creating just the bare bones of the plot. Use the ggplot() function and set the data and mapping argument. For the mapping argument, think carefully about which variables you want to set on which axes using the aes() function.\n\n\n6) Next, add a geom_ layer.\n\n\n7) Briefly interpret this plot (1–2 sentences).\n\n\n8) Make at least one structural modification to this plot. By structural modification, I mean changing either (1) something in the data being plotted, (2) something in the data mapping in the aes() argument, or (3) the geom(s) being plotted.\n\n\n9) Briefly interpret this new plot (1–2 sentences).\n\n\n10) Finally, make at least three additional modifications to this plot. This can include changes to the theme, scales, labels, etc. Please provide a brief justification for each change (e.g., making the plot visually cleaner, clarifying expected breaks in scale, adding text to explain the plot).\n\n\n11) The R Graph Gallery contains lots of excellent plots. Browse through, and include the link to two plots you like below! Provide some brief commentary / description as to why you like those specific ones, and for each, try to identify a code snippet that connects to (or creates) the reason why you like it. See this section in the Quarto Markdown Guide for how to use Markdown code styling for the snippets."
   },
   {
     "objectID": "lab/slides/lab_01.html#clearing-environment-and-restarting-r",
@@ -7296,189 +7296,189 @@
   {
     "objectID": "lab/slides/lab_03.html#outline",
     "href": "lab/slides/lab_03.html#outline",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Outline",
-    "text": "Outline\n\nSimulating data introduction\nCentral Limit Theorem example\n\n\\(\\chi^2\\) distribution"
+    "text": "Outline\n\nData manipulation with the tidyverse\n\nSimulating data introduction\nCentral Limit Theorem example"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation",
     "href": "lab/slides/lab_03.html#simulation",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation",
-    "text": "Simulation\nwhy do we like sims"
+    "text": "Simulation\nSimulating fake data is such a helpful skill to have in your toolbox. You can…\n\n\n\nCheck that methods are working correctly\n\n\n\nrnorm(100000, 5, 10) |&gt; mean()\n\n[1] 5.034076\n\n\n\n\n\n\nBuild your intuition and understanding about statistical theory\n\n\n\nn_reps &lt;- 100000\ntibble(n = n_reps,\n       sd = c(1, 1.25, 1.5)) |&gt;\n  uncount(n_reps) |&gt;\n  mutate(draw = rnorm(n(), 0, sd)) |&gt;\n  ggplot(aes(x = draw, group = factor(sd))) +\n  geom_density(alpha = 0.4, color = NA, fill = \"steelblue\") +\n  geom_text(\n    data = tibble(sd = c(1, 1.25, 1.5), \n                  height = dnorm(0, 0, sd) * 0.875,\n                  draw = 0),\n    aes(label = paste(\"SD =\", sd), y = height),\n    color = \"white\", fontface = \"bold\", size = 4.5\n  ) +\n  guides(y = guide_none(NULL),\n         x = guide_axis(NULL, cap = T),\n         color = guide_legend(\"SD\")) +\n  coord_cartesian(xlim = c(-4, 4)) +\n  theme_classic() +\n  theme(legend.position = \"bottom\")\n\n\n\n\n\n\n\n\n\n\n\nAnswer your own questions about a statistical concept\n\n\nLet’s do that today!"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt",
     "href": "lab/slides/lab_03.html#simulation-example-clt",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
     "text": "Simulation Example: CLT\nThe Central Limit Theorem (CLT) says that the sampling distribution of the mean of any distribution with finite mean and variance will converge to be normal with increasing sample size.\n\n○ Imagine: take a sample of \\(N\\) observations from the population, calculate some statistics (e.g., the mean), and toss them back.\n\n\n○ Repeat a whole bunch of times\n\n\n○ Sampling distribution: the distribution of those calculated statistics (e.g., means)\n\nLet’s say we’re not so sure, and we want to test this out with different distributions and sample sizes \\(N\\)."
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-1",
     "href": "lab/slides/lab_03.html#simulation-example-clt-1",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
     "text": "Simulation Example: CLT\nBefore simulating, define your goals / questions.\n\n\nQuestions\nDoes the sampling distribution of the mean really converge to normal for wonky asymmetrical distributions like the \\(\\chi^2\\) distribution?\nAt what sample sizes does this fail?\n\nGoals\nSee if the distribution of means from repeatedly sampling data looks normal\n\n○ Does this change with different original distributions from which the data is drawn?\n\n\n○ Does this change with sample size?"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-2",
     "href": "lab/slides/lab_03.html#simulation-example-clt-2",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
     "text": "Simulation Example: CLT\nThen, sketch out a plan. Try to build things up step-by-step, not all at once.\n\nStart with data sampled from a normal distribution. Generate one sample of data, take its mean.\nRepeat this process multiple times, generating replications of data samples and sample means.\nVisualize both: the original distribution of the data (sample distribution), the distribution of the the samples’ means (sampling distribution).\nIncorporate different distributions.\nIncorporate different sample sizes."
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-3",
     "href": "lab/slides/lab_03.html#simulation-example-clt-3",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\nStart with data sampled from a normal distribution. Generate one sample of data, take its mean.\n\n\n\nrnorm(x, mean, sd) where x is the number of samples\n\nlibrary(tidyverse)\nsamples &lt;- rnorm(3, mean = 1, sd = 0.5)\nsamples\n\n[1] 1.3279596 1.2045123 0.4821183\n\nmean(samples)\n\n[1] 1.004863\n\n\n\nInstead of having it in a vector by itself, lets put it in a dataframe\n\nsim_data &lt;- tibble(x = rnorm(3, mean = 1, sd = 0.5))\nsim_data\n\n# A tibble: 3 × 1\n      x\n  &lt;dbl&gt;\n1 1.25 \n2 0.789\n3 2.02 \n\nmean(sim_data$x)\n\n[1] 1.351263\n\n\n\n\n\n\n\n\n\n\ntibble()\n\n\nA tibble() is just like a dataframe, but better. The best part is its printing—tibble()s will never crowd your screen by trying to show every single value of a dataframe. Also, they work better with making tibbles in tibbles in tibbles… More on tibbles here."
+    "text": "Simulation Example: CLT\n\nStart with data sampled from a normal distribution. Generate one sample of data, take its mean.\n\n\n\nrnorm(x, mean, sd) where x is the number of samples\n\nlibrary(tidyverse)\nsamples &lt;- rnorm(3, mean = 1, sd = 0.5)\nsamples\n\n[1] 0.7679764 2.0330250 0.6786676\n\nmean(samples)\n\n[1] 1.15989\n\n\n\nInstead of having it in a vector by itself, lets put it in a dataframe\n\nsim_data &lt;- tibble(x = rnorm(3, mean = 1, sd = 0.5))\nsim_data\n\n# A tibble: 3 × 1\n      x\n  &lt;dbl&gt;\n1 1.19 \n2 1.29 \n3 0.942\n\nmean(sim_data$x)\n\n[1] 1.139898\n\n\n\n\n\n\n\n\n\n\ntibble()\n\n\nA tibble() is just like a dataframe, but better. The best part is its printing—tibble()s will never crowd your screen by trying to show every single value of a dataframe. Also, they work better with making tibbles in tibbles in tibbles… More on tibbles here."
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-4",
     "href": "lab/slides/lab_03.html#simulation-example-clt-4",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
     "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\n\n\n\nLet’s specify the sample size and how many replications we want. Start small!\n\nn_reps &lt;- 2\nsample_size &lt;- 3\n# total number of simulated draws\ntotal_n &lt;- n_reps * sample_size\n\n\nLet’s create a tibble with a row for every index in every replication.\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\")\nsim_data\n\n# A tibble: 6 × 2\n    rep index\n  &lt;int&gt; &lt;int&gt;\n1     1     1\n2     1     2\n3     1     3\n4     2     1\n5     2     2\n6     2     3"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-5",
     "href": "lab/slides/lab_03.html#simulation-example-clt-5",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\n\n\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw = rnorm(total_n, mean = 1, sd = 0.5)\n  )\nsim_data\n\n# A tibble: 6 × 3\n    rep index  draw\n  &lt;int&gt; &lt;int&gt; &lt;dbl&gt;\n1     1     1 1.23 \n2     1     2 0.780\n3     1     3 0.668\n4     2     1 1.14 \n5     2     2 0.666\n6     2     3 1.24 \n\n\n\nAnd, we can plot those draws (getting a head start on #3).\n\nsim_data |&gt;\n  ggplot(aes(x = draw)) +\n  geom_density()"
+    "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\n\n\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw = rnorm(total_n, mean = 1, sd = 0.5)\n  )\nsim_data\n\n# A tibble: 6 × 3\n    rep index  draw\n  &lt;int&gt; &lt;int&gt; &lt;dbl&gt;\n1     1     1 1.04 \n2     1     2 0.859\n3     1     3 0.657\n4     2     1 1.18 \n5     2     2 1.12 \n6     2     3 0.525\n\n\n\nAnd, we can plot those draws (getting a head start on #3).\n\nsim_data |&gt;\n  ggplot(aes(x = draw)) +\n  geom_density()"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-6",
     "href": "lab/slides/lab_03.html#simulation-example-clt-6",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\nVisualize both: the original distribution of the data (sample distribution), the distribution of the the samples’ means (sampling distribution).\n\n\n\nLet’ finish out #2 by summarize()ing our sim_data into one sample mean per replication.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = rep,\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 2 × 2\n    rep sample_mean\n  &lt;int&gt;       &lt;dbl&gt;\n1     1       0.891\n2     2       1.02 \n\n\n\nAnd, we can plot those draws (getting a head start on #4).\n\nmeans |&gt;\n  ggplot(aes(x = sample_mean)) +\n  geom_density()"
+    "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\nVisualize both: the original distribution of the data (sample distribution), the distribution of the the samples’ means (sampling distribution).\n\n\n\nLet’ finish out #2 by summarize()ing our sim_data into one sample mean per replication.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = rep,\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 2 × 2\n    rep sample_mean\n  &lt;int&gt;       &lt;dbl&gt;\n1     1       0.852\n2     2       0.941\n\n\n\nAnd, we can plot those draws (getting a head start on #4).\n\nmeans |&gt;\n  ggplot(aes(x = sample_mean)) +\n  geom_density()"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-7",
     "href": "lab/slides/lab_03.html#simulation-example-clt-7",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\nBefore we start incorporating other conditions, let’s scale this up.\n\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw = rnorm(total_n, mean = 1, sd = 0.5)\n  )\nsim_data\n\n# A tibble: 10,000 × 3\n     rep index  draw\n   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;\n 1     1     1 0.906\n 2     1     2 0.429\n 3     1     3 1.17 \n 4     1     4 1.46 \n 5     1     5 1.08 \n 6     1     6 0.737\n 7     1     7 0.710\n 8     1     8 1.24 \n 9     1     9 1.57 \n10     1    10 0.206\n# ℹ 9,990 more rows\n\n\n\nAnd grab their means.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = rep,\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 1,000 × 2\n     rep sample_mean\n   &lt;int&gt;       &lt;dbl&gt;\n 1     1       0.950\n 2     2       0.801\n 3     3       0.905\n 4     4       0.944\n 5     5       0.956\n 6     6       1.32 \n 7     7       0.958\n 8     8       0.861\n 9     9       0.991\n10    10       0.785\n# ℹ 990 more rows"
+    "text": "Simulation Example: CLT\nBefore we start incorporating other conditions, let’s scale this up.\n\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw = rnorm(total_n, mean = 1, sd = 0.5)\n  )\nsim_data\n\n# A tibble: 10,000 × 3\n     rep index  draw\n   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;\n 1     1     1 1.01 \n 2     1     2 0.252\n 3     1     3 1.16 \n 4     1     4 1.20 \n 5     1     5 1.19 \n 6     1     6 0.220\n 7     1     7 1.07 \n 8     1     8 2.07 \n 9     1     9 0.784\n10     1    10 1.23 \n# ℹ 9,990 more rows\n\n\n\nAnd grab their means.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = rep,\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 1,000 × 2\n     rep sample_mean\n   &lt;int&gt;       &lt;dbl&gt;\n 1     1       1.02 \n 2     2       1.15 \n 3     3       1.04 \n 4     4       0.970\n 5     5       0.942\n 6     6       0.909\n 7     7       1.20 \n 8     8       1.09 \n 9     9       1.02 \n10    10       0.791\n# ℹ 990 more rows"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-8",
     "href": "lab/slides/lab_03.html#simulation-example-clt-8",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
     "text": "Simulation Example: CLT\nPlotting both the sample distribution and sampling distributions…\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsim_data |&gt;\n  ggplot(aes(x = draw)) +\n  geom_density() +\n  theme_classic(base_size = 14) +\n  coord_cartesian(xlim = c(-1, 3)) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  labs(title = \"Sample Distribution\")\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmeans |&gt;\n  ggplot(aes(x = sample_mean)) +\n  geom_density() +\n  theme_classic(base_size = 14) +\n  coord_cartesian(xlim = c(-1, 3)) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  labs(title = \"Sampling Distribution\")"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-9",
     "href": "lab/slides/lab_03.html#simulation-example-clt-9",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\nIncorporate different distributions.\n\n\n\nrunif(x, min, max) where all values between min and max have an equal chance of being sampled\n\nuniform_samples &lt;- runif(5, min = -1, max = 3)\nuniform_samples\n\n[1]  1.35713650  1.35925572  2.13854816 -0.04258515  0.64153177\n\n\n\nrchisq(x, df) where df is the degrees of freedom for the distribution\n\nchisquared_samples &lt;- rchisq(5, df = 1)\nchisquared_samples\n\n[1] 0.2459304 0.1483904 6.3893707 1.7592017 3.7477797"
+    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\nrunif(x, min, max) where all values between min and max have an equal chance of being sampled\n\nuniform_samples &lt;- runif(5, min = -1, max = 3)\nuniform_samples\n\n[1]  2.8764847  2.3513868 -0.9450459 -0.5668513  2.6200084\n\n\n\nrchisq(x, df) where df is the degrees of freedom for the distribution\n\nchisquared_samples &lt;- rchisq(5, df = 1)\nchisquared_samples\n\n[1] 4.467241091 0.469038924 0.001887847 1.119630514 0.275215780"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-10",
     "href": "lab/slides/lab_03.html#simulation-example-clt-10",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\nIncorporate different distributions.\n\n\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  )\nsim_data\n\n# A tibble: 10,000 × 5\n     rep index draw_normal draw_uniform draw_chisquared\n   &lt;int&gt; &lt;int&gt;       &lt;dbl&gt;        &lt;dbl&gt;           &lt;dbl&gt;\n 1     1     1       1.29         0.385        0.130   \n 2     1     2       0.838       -0.716        1.32    \n 3     1     3       1.23        -0.261        0.555   \n 4     1     4       1.59         0.225        3.53    \n 5     1     5       0.713        1.69         0.128   \n 6     1     6      -0.318       -0.887        0.000533\n 7     1     7       1.45        -0.299        0.102   \n 8     1     8       0.973       -0.888        3.16    \n 9     1     9       2.03        -0.622        0.475   \n10     1    10       0.717       -0.921        0.419   \n# ℹ 9,990 more rows\n\n\n\nWe want to plot these draws as distributions, but facet_wrap(~ grouping_var) or aes(fill / color) are all expecting the values to be in one column, and a grouping variable that distinguishes them in another column.\n\n\n# A tibble: 6 × 2\n  grouping_var     y\n  &lt;chr&gt;        &lt;dbl&gt;\n1 group_1        0.3\n2 group_2        1.4\n3 group_1        1  \n4 group_2        0.6\n5 group_1        0.1\n6 group_2        3"
+    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  )\nsim_data\n\n# A tibble: 10,000 × 5\n     rep index draw_normal draw_uniform draw_chisquared\n   &lt;int&gt; &lt;int&gt;       &lt;dbl&gt;        &lt;dbl&gt;           &lt;dbl&gt;\n 1     1     1       1.67        0.168           0.0339\n 2     1     2       0.992       2.24            0.275 \n 3     1     3       1.32        2.44            0.743 \n 4     1     4       0.978       2.52            0.601 \n 5     1     5       0.862       0.631           5.60  \n 6     1     6       1.56        0.818           0.278 \n 7     1     7       1.82        0.405           0.0556\n 8     1     8       0.862       1.74            1.78  \n 9     1     9       0.590       0.0365          0.0968\n10     1    10       0.890       2.34            0.511 \n# ℹ 9,990 more rows\n\n\n\nWe want to plot these draws as distributions, but facet_wrap(~ grouping_var) or aes(fill / color) are all expecting the values to be in one column, and a grouping variable that distinguishes them in another column.\n\n\n# A tibble: 6 × 2\n  grouping_var     y\n  &lt;chr&gt;        &lt;dbl&gt;\n1 group_1       -2.1\n2 group_2       -0.4\n3 group_1       -2.6\n4 group_2       -2.2\n5 group_1       -0.2\n6 group_2        2.6"
   },
   {
     "objectID": "lab/slides/lab_03.html#let-us-review",
     "href": "lab/slides/lab_03.html#let-us-review",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Let Us Review…",
     "text": "Let Us Review…\nWhat are the tidy principles?\n\nThree rules to a tidy dataset\n\n\nEach variable is a column; each column is a variable.\nEach observation is a row; each row is an observation.\nEach value is a cell; each cell is a single value."
   },
   {
     "objectID": "lab/slides/lab_03.html#long-vs.-wide-data",
     "href": "lab/slides/lab_03.html#long-vs.-wide-data",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Long vs. Wide Data",
     "text": "Long vs. Wide Data\nLong: each observation is a row (tidy)\n\n○ Observation does not necessarily mean “person”\n\n\n○ Can be within-person measurements over time\n\nWide: columns might represent different “values” of a variables"
   },
   {
     "objectID": "lab/slides/lab_03.html#long-vs.-wide-data-1",
     "href": "lab/slides/lab_03.html#long-vs.-wide-data-1",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Long vs. Wide Data",
-    "text": "Long vs. Wide Data\n\n\n\n\n# A tibble: 9 × 3\n  person   book   score\n  &lt;chr&gt;    &lt;chr&gt;  &lt;int&gt;\n1 Harry    book 1     3\n2 Harry    book 2     2\n3 Harry    book 3     2\n4 Ron      book 1     1\n5 Ron      book 2     1\n6 Ron      book 3     3\n7 Hermione book 1     1\n8 Hermione book 2     1\n9 Hermione book 3     3\n\n\n\n\n\n# A tibble: 3 × 4\n  person   `book 1` `book 2` `book 3`\n  &lt;chr&gt;       &lt;int&gt;    &lt;int&gt;    &lt;int&gt;\n1 Harry           3        2        2\n2 Ron             1        1        3\n3 Hermione        1        1        3\n\n\n\nWide data common in spreadsheets, data from survey platforms\nLong data typically easier to work with"
+    "text": "Long vs. Wide Data\n\n\n\n\n# A tibble: 9 × 3\n  person   book   score\n  &lt;chr&gt;    &lt;chr&gt;  &lt;int&gt;\n1 Harry    book 1     3\n2 Harry    book 2     3\n3 Harry    book 3     3\n4 Ron      book 1     2\n5 Ron      book 2     2\n6 Ron      book 3     1\n7 Hermione book 1     3\n8 Hermione book 2     1\n9 Hermione book 3     0\n\n\n\n\n\n# A tibble: 3 × 4\n  person   `book 1` `book 2` `book 3`\n  &lt;chr&gt;       &lt;int&gt;    &lt;int&gt;    &lt;int&gt;\n1 Harry           3        3        3\n2 Ron             2        2        1\n3 Hermione        3        1        0\n\n\n\nWide data common in spreadsheets, data from survey platforms\nLong data typically easier to work with"
   },
   {
     "objectID": "lab/slides/lab_03.html#key-functions",
     "href": "lab/slides/lab_03.html#key-functions",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Key Functions",
-    "text": "Key Functions\n\n\nWide to Long\npivot_longer()\n\nlongdat &lt;- dat %&gt;%\n  pivot_longer(cols = c(\"book 1\", \"book 2\", \"book 3\"),\n               names_to = \"book\", values_to = \"score\")\nlongdat\n\n# A tibble: 9 × 3\n  person   book   score\n  &lt;chr&gt;    &lt;chr&gt;  &lt;int&gt;\n1 Harry    book 1     3\n2 Harry    book 2     2\n3 Harry    book 3     2\n4 Ron      book 1     1\n5 Ron      book 2     1\n6 Ron      book 3     3\n7 Hermione book 1     1\n8 Hermione book 2     1\n9 Hermione book 3     3\n\n\n\nLong to Wide\npivot_wider()\n\nwidedat &lt;- longdat %&gt;%\n  pivot_wider(names_from = book, values_from = score)\nwidedat\n\n# A tibble: 3 × 4\n  person   `book 1` `book 2` `book 3`\n  &lt;chr&gt;       &lt;int&gt;    &lt;int&gt;    &lt;int&gt;\n1 Harry           3        2        2\n2 Ron             1        1        3\n3 Hermione        1        1        3"
+    "text": "Key Functions\n\n\nWide to Long\npivot_longer()\n\nlongdat &lt;- dat |&gt;\n  pivot_longer(cols = c(\"book 1\", \"book 2\", \"book 3\"),\n               names_to = \"book\", values_to = \"score\")\nlongdat\n\n# A tibble: 9 × 3\n  person   book   score\n  &lt;chr&gt;    &lt;chr&gt;  &lt;int&gt;\n1 Harry    book 1     3\n2 Harry    book 2     3\n3 Harry    book 3     3\n4 Ron      book 1     2\n5 Ron      book 2     2\n6 Ron      book 3     1\n7 Hermione book 1     3\n8 Hermione book 2     1\n9 Hermione book 3     0\n\n\n\nLong to Wide\npivot_wider()\n\nwidedat &lt;- longdat |&gt;\n  pivot_wider(names_from = book, values_from = score)\nwidedat\n\n# A tibble: 3 × 4\n  person   `book 1` `book 2` `book 3`\n  &lt;chr&gt;       &lt;int&gt;    &lt;int&gt;    &lt;int&gt;\n1 Harry           3        3        3\n2 Ron             2        2        1\n3 Hermione        3        1        0"
   },
   {
     "objectID": "lab/slides/lab_03.html#key-functions-1",
     "href": "lab/slides/lab_03.html#key-functions-1",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Key Functions",
     "text": "Key Functions\n\n\nWide to Long\npivot_longer()\n\n○ cols = set of columns to pivot\n\n\n○ names_to = name of new column with the column names from before\n\n\n○ values_to = name of new column with the values from before\n\n\nLong to Wide\npivot_wider()\n\n○ names_from = column with values to be column names\n\n\n○ values_from = column with values to be in those columns"
   },
   {
     "objectID": "lab/slides/lab_03.html#selecting-functions",
     "href": "lab/slides/lab_03.html#selecting-functions",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Selecting Functions",
-    "text": "Selecting Functions\nSometimes, we want to select many columns (to pivot, to remove, etc.)\nNotice the documentation for pivot_longer()\n&lt;tidy-select&gt; functions\n\n○ starts_with() and ends_with()"
+    "text": "Selecting Functions\nSometimes, we want to select many columns (to pivot, to remove, etc.)\nNotice the documentation for pivot_longer()\n&lt;tidy-select&gt; functions\n\n○ e.g., starts_with(), ends_with(), everything()"
   },
   {
     "objectID": "lab/slides/lab_03.html#selecting-functions-1",
     "href": "lab/slides/lab_03.html#selecting-functions-1",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Selecting Functions",
-    "text": "Selecting Functions\n\n\nSimple example, but…\n\ndat &lt;- data.frame(id = 1:5,\n           q1 = rbinom(5, 1, .1),\n           q2 = rbinom(5, 1, .2),\n           q3 = rbinom(5, 1, .3),\n           q4 = rbinom(5, 1, .4),\n           q5 = rbinom(5, 1, .5))\ndat\n\n  id q1 q2 q3 q4 q5\n1  1  0  0  0  1  0\n2  2  0  0  0  0  0\n3  3  0  0  0  1  0\n4  4  0  1  1  0  1\n5  5  0  0  0  0  0\n\n\n\n\ndat |&gt;\n  pivot_longer(cols = starts_with(\"q\"),\n               names_to = \"question\", values_to = \"correct\")\n\n# A tibble: 25 × 3\n      id question correct\n   &lt;int&gt; &lt;chr&gt;      &lt;int&gt;\n 1     1 q1             0\n 2     1 q2             0\n 3     1 q3             0\n 4     1 q4             1\n 5     1 q5             0\n 6     2 q1             0\n 7     2 q2             0\n 8     2 q3             0\n 9     2 q4             0\n10     2 q5             0\n# ℹ 15 more rows\n\n\n\n\nNow, back to our simulation."
+    "text": "Selecting Functions\n\n\nSimple example, but…\n\ndat &lt;- data.frame(\n  id = 1:5,\n  Q1 = rbinom(5, 1, .1),\n  Q2 = rbinom(5, 1, .2),\n  Q3 = rbinom(5, 1, .3),\n  Q4 = rbinom(5, 1, .4),\n  Q5 = rbinom(5, 1, .5)\n)\ndat\n\n  id Q1 Q2 Q3 Q4 Q5\n1  1  0  0  0  0  0\n2  2  1  0  0  0  0\n3  3  0  0  0  0  0\n4  4  0  0  0  1  1\n5  5  0  0  0  0  0\n\n\n\n\ndat |&gt;\n  pivot_longer(cols = starts_with(\"Q\"),\n               names_to = \"question\", values_to = \"correct\")\n\n# A tibble: 25 × 3\n      id question correct\n   &lt;int&gt; &lt;chr&gt;      &lt;int&gt;\n 1     1 Q1             0\n 2     1 Q2             0\n 3     1 Q3             0\n 4     1 Q4             0\n 5     1 Q5             0\n 6     2 Q1             1\n 7     2 Q2             0\n 8     2 Q3             0\n 9     2 Q4             0\n10     2 Q5             0\n# ℹ 15 more rows"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-11",
     "href": "lab/slides/lab_03.html#simulation-example-clt-11",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\nIncorporate different distributions.\n\n\n\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  )\nsim_data\n\n# A tibble: 10,000 × 5\n     rep index draw_normal draw_uniform draw_chisquared\n   &lt;int&gt; &lt;int&gt;       &lt;dbl&gt;        &lt;dbl&gt;           &lt;dbl&gt;\n 1     1     1      0.976         2.99           2.00  \n 2     1     2      0.856         0.332          0.0217\n 3     1     3      0.819         2.01           2.16  \n 4     1     4      1.01          0.978          0.0299\n 5     1     5     -0.0761       -0.141          0.164 \n 6     1     6      1.55         -0.551          0.144 \n 7     1     7      0.811         1.18           0.118 \n 8     1     8      0.782         2.30           2.94  \n 9     1     9      0.896         0.653          0.783 \n10     1    10      1.56          2.80           0.249 \n# ℹ 9,990 more rows\n\n\n\n\nsim_data |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\n\n# A tibble: 30,000 × 4\n     rep index distribution      draw\n   &lt;int&gt; &lt;int&gt; &lt;chr&gt;            &lt;dbl&gt;\n 1     1     1 draw_normal     0.976 \n 2     1     1 draw_uniform    2.99  \n 3     1     1 draw_chisquared 2.00  \n 4     1     2 draw_normal     0.856 \n 5     1     2 draw_uniform    0.332 \n 6     1     2 draw_chisquared 0.0217\n 7     1     3 draw_normal     0.819 \n 8     1     3 draw_uniform    2.01  \n 9     1     3 draw_chisquared 2.16  \n10     1     4 draw_normal     1.01  \n# ℹ 29,990 more rows"
+    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  )\nsim_data\n\n# A tibble: 10,000 × 5\n     rep index draw_normal draw_uniform draw_chisquared\n   &lt;int&gt; &lt;int&gt;       &lt;dbl&gt;        &lt;dbl&gt;           &lt;dbl&gt;\n 1     1     1       1.03       -0.895          0.133  \n 2     1     2       1.08        2.76           0.112  \n 3     1     3       1.42        2.52           4.00   \n 4     1     4       1.09        0.0763         0.609  \n 5     1     5       0.526       2.69           0.356  \n 6     1     6       2.02        1.32           0.0137 \n 7     1     7       0.991       0.379          1.58   \n 8     1     8       1.83       -0.495          1.77   \n 9     1     9       1.13       -0.188          0.00408\n10     1    10       0.888      -0.765          0.594  \n# ℹ 9,990 more rows\n\n\n\n\nsim_data |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\n\n# A tibble: 30,000 × 4\n     rep index distribution      draw\n   &lt;int&gt; &lt;int&gt; &lt;chr&gt;            &lt;dbl&gt;\n 1     1     1 draw_normal      1.03 \n 2     1     1 draw_uniform    -0.895\n 3     1     1 draw_chisquared  0.133\n 4     1     2 draw_normal      1.08 \n 5     1     2 draw_uniform     2.76 \n 6     1     2 draw_chisquared  0.112\n 7     1     3 draw_normal      1.42 \n 8     1     3 draw_uniform     2.52 \n 9     1     3 draw_chisquared  4.00 \n10     1     4 draw_normal      1.09 \n# ℹ 29,990 more rows"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-12",
     "href": "lab/slides/lab_03.html#simulation-example-clt-12",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\nIncorporate different distributions.\n\n\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  ) |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\nsim_data\n\n# A tibble: 30,000 × 4\n     rep index distribution       draw\n   &lt;int&gt; &lt;int&gt; &lt;chr&gt;             &lt;dbl&gt;\n 1     1     1 draw_normal      0.861 \n 2     1     1 draw_uniform     2.34  \n 3     1     1 draw_chisquared  0.0235\n 4     1     2 draw_normal      0.426 \n 5     1     2 draw_uniform    -0.334 \n 6     1     2 draw_chisquared  0.563 \n 7     1     3 draw_normal      1.41  \n 8     1     3 draw_uniform     0.0870\n 9     1     3 draw_chisquared  0.0331\n10     1     4 draw_normal      0.627 \n# ℹ 29,990 more rows\n\n\n\nAnd grab their means.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = c(rep, distribution),\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 3,000 × 3\n     rep distribution    sample_mean\n   &lt;int&gt; &lt;chr&gt;                 &lt;dbl&gt;\n 1     1 draw_normal           0.967\n 2     1 draw_uniform          0.742\n 3     1 draw_chisquared       0.773\n 4     2 draw_normal           1.06 \n 5     2 draw_uniform          0.483\n 6     2 draw_chisquared       0.628\n 7     3 draw_normal           0.754\n 8     3 draw_uniform          2.01 \n 9     3 draw_chisquared       1.72 \n10     4 draw_normal           0.553\n# ℹ 2,990 more rows"
+    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  ) |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\nsim_data\n\n# A tibble: 30,000 × 4\n     rep index distribution       draw\n   &lt;int&gt; &lt;int&gt; &lt;chr&gt;             &lt;dbl&gt;\n 1     1     1 draw_normal      0.745 \n 2     1     1 draw_uniform    -0.295 \n 3     1     1 draw_chisquared  0.0555\n 4     1     2 draw_normal      1.15  \n 5     1     2 draw_uniform     2.80  \n 6     1     2 draw_chisquared  0.816 \n 7     1     3 draw_normal      0.715 \n 8     1     3 draw_uniform    -0.483 \n 9     1     3 draw_chisquared  1.90  \n10     1     4 draw_normal      1.58  \n# ℹ 29,990 more rows\n\n\n\nAnd grab their means.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = c(rep, distribution),\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 3,000 × 3\n     rep distribution    sample_mean\n   &lt;int&gt; &lt;chr&gt;                 &lt;dbl&gt;\n 1     1 draw_normal           1.03 \n 2     1 draw_uniform          1.04 \n 3     1 draw_chisquared       1.64 \n 4     2 draw_normal           1.27 \n 5     2 draw_uniform          1.82 \n 6     2 draw_chisquared       1.72 \n 7     3 draw_normal           0.916\n 8     3 draw_uniform          1.73 \n 9     3 draw_chisquared       1.83 \n10     4 draw_normal           0.952\n# ℹ 2,990 more rows"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-13",
     "href": "lab/slides/lab_03.html#simulation-example-clt-13",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
     "text": "Simulation Example: CLT\nPlotting both the sample distribution and sampling distributions…\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndistribution_labels = c(\n  \"draw_normal\" = \"Normal\",\n  \"draw_uniform\" = \"Uniform\",\n  \"draw_chisquared\" = \"Chi-Squared\"\n)\n\nsim_data |&gt;\n  ggplot(aes(x = draw)) +\n  geom_density() +\n  theme_classic(base_size = 14) +\n  coord_cartesian(xlim = c(-1, 3)) +\n  facet_wrap(~ distribution, labeller = as_labeller(distribution_labels)) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  labs(title = \"Sample Distribution\")\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmeans |&gt;\n  ggplot(aes(x = sample_mean)) +\n  geom_density() +\n  theme_classic(base_size = 14) +\n  coord_cartesian(xlim = c(-1, 3)) +\n  facet_wrap(~ distribution, labeller = as_labeller(distribution_labels)) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  labs(title = \"Sampling Distribution\")"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-14",
     "href": "lab/slides/lab_03.html#simulation-example-clt-14",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\nIncorporate different sample sizes.\n\n\n\n\n\nOur Sim\nexpand_grid()\n\n\n\nWe can expand sample_size to be a vector of desired sample sizes\nBecause n_reps is length one, it will be “recycled” (repeated) to match the length of sample_size\nFor more complicated designs, we might have to use an expand() function\n\nn_reps &lt;- 3\nsample_size &lt;- c(1, 3)\ntotal_n &lt;- n_reps * sample_size\n\ntibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n)\n\n# A tibble: 2 × 2\n  n_reps sample_size\n   &lt;dbl&gt;       &lt;dbl&gt;\n1      3           1\n2      3           3\n\n\n\n\nLet’s say we also wanted to vary n_reps\n\nn_reps &lt;- c(100, 1000)\nsample_size &lt;- c(1, 3)\n\ntibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n)\n\n# A tibble: 2 × 2\n  n_reps sample_size\n   &lt;dbl&gt;       &lt;dbl&gt;\n1    100           1\n2   1000           3\n\ntibble(n_reps = n_reps) |&gt;\n  expand_grid(sample_size = sample_size)\n\n# A tibble: 4 × 2\n  n_reps sample_size\n   &lt;dbl&gt;       &lt;dbl&gt;\n1    100           1\n2    100           3\n3   1000           1\n4   1000           3\n\n\n\n\n\n\n\nn_reps &lt;- 3\nsample_size &lt;- c(1, 3)\n\ntibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"sample_id\", .remove = F)\n\n# A tibble: 12 × 3\n   sample_size   rep sample_id\n         &lt;dbl&gt; &lt;int&gt;     &lt;int&gt;\n 1           1     1         1\n 2           1     2         1\n 3           1     3         1\n 4           3     1         1\n 5           3     1         2\n 6           3     1         3\n 7           3     2         1\n 8           3     2         2\n 9           3     2         3\n10           3     3         1\n11           3     3         2\n12           3     3         3"
+    "text": "Simulation Example: CLT\n\n\n\nIncorporate different sample sizes.\n\n\n\nOur Sim\nexpand_grid()\n\n\n\nWe can expand sample_size to be a vector of desired sample sizes\nBecause n_reps is length one, it will be “recycled” (repeated) to match the length of sample_size\nFor more complicated designs, we might have to use an expand() function\n\nn_reps &lt;- 3\nsample_size &lt;- c(1, 3)\ntotal_n &lt;- n_reps * sample_size\n\ntibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n)\n\n# A tibble: 2 × 2\n  n_reps sample_size\n   &lt;dbl&gt;       &lt;dbl&gt;\n1      3           1\n2      3           3\n\n\n\n\nLet’s say we also wanted to vary n_reps\n\nn_reps &lt;- c(100, 1000)\nsample_size &lt;- c(1, 3)\n\ntibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n)\n\n# A tibble: 2 × 2\n  n_reps sample_size\n   &lt;dbl&gt;       &lt;dbl&gt;\n1    100           1\n2   1000           3\n\ntibble(n_reps = n_reps) |&gt;\n  expand_grid(sample_size = sample_size)\n\n# A tibble: 4 × 2\n  n_reps sample_size\n   &lt;dbl&gt;       &lt;dbl&gt;\n1    100           1\n2    100           3\n3   1000           1\n4   1000           3\n\n\n\n\n\n\n\nn_reps &lt;- 3\nsample_size &lt;- c(1, 3)\n\ntibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"sample_id\", .remove = F)\n\n# A tibble: 12 × 3\n   sample_size   rep sample_id\n         &lt;dbl&gt; &lt;int&gt;     &lt;int&gt;\n 1           1     1         1\n 2           1     2         1\n 3           1     3         1\n 4           3     1         1\n 5           3     1         2\n 6           3     1         3\n 7           3     2         1\n 8           3     2         2\n 9           3     2         3\n10           3     3         1\n11           3     3         2\n12           3     3         3"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-15",
     "href": "lab/slides/lab_03.html#simulation-example-clt-15",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\nIncorporate different sample sizes.\n\n\n\n\nn_reps &lt;- 1000\nsample_size &lt;- c(3, 10, 30, 100)\ntotal_n &lt;- sum(n_reps * sample_size)\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\", .remove = F) |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  ) |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\nsim_data\n\n# A tibble: 429,000 × 5\n   sample_size   rep index distribution          draw\n         &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;                &lt;dbl&gt;\n 1           3     1     1 draw_normal      0.588    \n 2           3     1     1 draw_uniform     2.06     \n 3           3     1     1 draw_chisquared  1.04     \n 4           3     1     2 draw_normal      0.896    \n 5           3     1     2 draw_uniform     2.79     \n 6           3     1     2 draw_chisquared  1.61     \n 7           3     1     3 draw_normal      0.713    \n 8           3     1     3 draw_uniform    -0.836    \n 9           3     1     3 draw_chisquared  0.0000218\n10           3     2     1 draw_normal      0.872    \n# ℹ 428,990 more rows\n\n\n\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = c(rep, distribution, sample_size),\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 12,000 × 4\n     rep distribution    sample_size sample_mean\n   &lt;int&gt; &lt;chr&gt;                 &lt;dbl&gt;       &lt;dbl&gt;\n 1     1 draw_normal               3       0.733\n 2     1 draw_uniform              3       1.34 \n 3     1 draw_chisquared           3       0.883\n 4     2 draw_normal               3       0.833\n 5     2 draw_uniform              3       1.13 \n 6     2 draw_chisquared           3       1.42 \n 7     3 draw_normal               3       0.908\n 8     3 draw_uniform              3       2.11 \n 9     3 draw_chisquared           3       0.174\n10     4 draw_normal               3       1.39 \n# ℹ 11,990 more rows"
+    "text": "Simulation Example: CLT\n\n\n\nIncorporate different sample sizes.\n\n\nn_reps &lt;- 1000\nsample_size &lt;- c(3, 10, 30, 100)\ntotal_n &lt;- sum(n_reps * sample_size)\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\", .remove = F) |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  ) |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\nsim_data\n\n# A tibble: 429,000 × 5\n   sample_size   rep index distribution      draw\n         &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;            &lt;dbl&gt;\n 1           3     1     1 draw_normal     0.603 \n 2           3     1     1 draw_uniform    0.257 \n 3           3     1     1 draw_chisquared 0.183 \n 4           3     1     2 draw_normal     0.278 \n 5           3     1     2 draw_uniform    1.13  \n 6           3     1     2 draw_chisquared 0.470 \n 7           3     1     3 draw_normal     0.770 \n 8           3     1     3 draw_uniform    2.47  \n 9           3     1     3 draw_chisquared 0.0368\n10           3     2     1 draw_normal     0.712 \n# ℹ 428,990 more rows\n\n\n\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = c(rep, distribution, sample_size),\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 12,000 × 4\n     rep distribution    sample_size sample_mean\n   &lt;int&gt; &lt;chr&gt;                 &lt;dbl&gt;       &lt;dbl&gt;\n 1     1 draw_normal               3      0.550 \n 2     1 draw_uniform              3      1.28  \n 3     1 draw_chisquared           3      0.230 \n 4     2 draw_normal               3      0.932 \n 5     2 draw_uniform              3     -0.0788\n 6     2 draw_chisquared           3      2.21  \n 7     3 draw_normal               3      0.571 \n 8     3 draw_uniform              3      0.790 \n 9     3 draw_chisquared           3      1.98  \n10     4 draw_normal               3      0.995 \n# ℹ 11,990 more rows"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-16",
     "href": "lab/slides/lab_03.html#simulation-example-clt-16",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
     "text": "Simulation Example: CLT\n\nIncorporate different sample sizes.\n\nNow, let’s think about how we want to visualize these results. We now have two condition variables (sample_size and distribution). We need to plot in a way that distinguishes both factors.\n\n\nfacet_grid()\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsim_data |&gt;\n  filter(rep %in% sample(n_reps, size = 30)) |&gt;\n  ggplot(aes(x = draw, group = interaction(distribution, rep))) +\n  geom_density() +\n  theme_classic(base_size = 14) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  facet_grid(sample_size ~ distribution) +\n  labs(title = \"Sample Distribution\")\n\n\n\n\n\n{ggridges}\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n# install.packages(\"ggridges\")\nsim_data |&gt;\n  filter(rep %in% sample(n_reps, size = 30)) |&gt;\n  ggplot(aes(x = draw, y = distribution,\n             color = distribution, group = interaction(distribution, rep))) +\n  ggridges::geom_density_ridges(alpha = 0.8, fill = NA) +\n  theme_classic(base_size = 14) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  facet_wrap(~ sample_size) +\n  labs(title = \"Sample Distribution\")"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-17",
     "href": "lab/slides/lab_03.html#simulation-example-clt-17",
-    "title": "Simulations and Chi-Squared Tests",
+    "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
     "text": "Simulation Example: CLT\n\n\nfacet_grid()\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmeans |&gt;\n  ggplot(aes(x = sample_mean)) +\n  geom_density() +\n  theme_classic(base_size = 14) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  facet_grid(sample_size ~ distribution, scales = \"free_y\") +\n  labs(title = \"Samplng Distribution\")\n\n\n\n\n\n{ggridges}\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n# install.packages(\"ggridges\")\nmeans |&gt;\n  ggplot(aes(x = sample_mean, y = distribution, color = distribution)) +\n  ggridges::geom_density_ridges(alpha = 0.8, fill = NA) +\n  theme_classic(base_size = 14) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  facet_wrap(~ sample_size) +\n  labs(title = \"Sampling Distribution\")"
   },
@@ -9826,5 +9826,299 @@
     "title": "Lecture 15: Bayesian Inference and Estimation",
     "section": "APA Writeup",
     "text": "APA Writeup\nUsing a Bayesian model, the posterior mean of the difference between control and treatment was \\(\\beta_1 = -0.12\\), \\(95\\% \\text{ CI} = [-0.22, -0.02]\\). Compared to an intercept-only model, this model had \\(BF = 0.70\\), indicating it was only 70% as likely as the model that allows for differences in means between the two groups."
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#extra-credit-r-conference",
+    "href": "lab/slides/lab_02.html#extra-credit-r-conference",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Extra Credit: R Conference",
+    "text": "Extra Credit: R Conference\n\n\nAssignment and Registration Details"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#aside-packages-in-r",
+    "href": "lab/slides/lab_02.html#aside-packages-in-r",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Aside: Packages in R",
+    "text": "Aside: Packages in R\nBase R has a lot of great stuff, but packages made by the community have even more great stuff"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#aside-packages-in-r-1",
+    "href": "lab/slides/lab_02.html#aside-packages-in-r-1",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Aside: Packages in R",
+    "text": "Aside: Packages in R\nSteps of using an R package:\n1. Installing\ninstall.packages(package)\n\n○ package = (character) package name\n\n\ninstall.packages(\"here\")\n\nOnly have to do this once"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#aside-packages-in-r-2",
+    "href": "lab/slides/lab_02.html#aside-packages-in-r-2",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Aside: Packages in R",
+    "text": "Aside: Packages in R\nSteps of using an R package:\n2. Loading\n\n\nlibrary(package)\n\n○ package = (not character) package name\n\nAt the top of your file\n\nlibrary(here)\n\nBetter if you use many functions from that package in your script\n\npackage::package_function()\n\nhere::here()\n\nBetter if you use only a few functions from that package\nOr if you want to be more specific\n\n○ Sometimes a function from one package will overwrite a function from a different package, and this calls the specific one"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#aside-packages-in-r-3",
+    "href": "lab/slides/lab_02.html#aside-packages-in-r-3",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Aside: Packages in R",
+    "text": "Aside: Packages in R\nSteps of using an R package:\n3. Using\nIf you use library(), you can then call the function with just its name\n\nlibrary(here)\n\nhere()"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#import-paths-to-files-2",
+    "href": "lab/slides/lab_02.html#import-paths-to-files-2",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Import: Paths to Files",
+    "text": "Import: Paths to Files\nhere::here() specifies paths relatively, using the .Rproj file as the starting point.\nPSYC6019/\n├── PSYC6019.Rproj\n├── data/\n│   ├── survey_data.csv\n│   └── participant_info.csv\n├── scripts/\n│   ├── clean_data.R\n│   └── fit_model.R\n├── media/\n│   └── results.png\n└── reports/\n    └── lab_report.qmd\nHow do we access each of these files from each of these starting places?\n\n\nparticipant_info.csv from clean_data.R\nhere::here(\"data\", \"participant_info.csv\")\n\nsurvey_data.csv to fit_model.R\nhere::here(\"data\", \"survey_data.csv\")\n\nresults.png to lab_report.qmd\nhere::here(\"media\", \"lab_report.qmd\")"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#data-types-interlude-factors",
+    "href": "lab/slides/lab_02.html#data-types-interlude-factors",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Data Types Interlude: Factors",
+    "text": "Data Types Interlude: Factors\nNew data type (to us): factor variable: a built-in data type that R provides for categorical variables\nSets fixed possibilities of values that the variable can take on\n\n\nIf you have a variable with days of the week…\n\ndays &lt;- c(\"Tues\", \"Wed\", \"Thurs\")\n\nNothing preventing typos and no sensible sorting\n\nmoredays &lt;- c(\"Teus\", \"Wed\", \"Thrus\")\nsort(days)\n\n[1] \"Thurs\" \"Tues\"  \"Wed\"  \n\n\n\nFactors help with both. Start by creating a vector of levels. Can also make labels for nicer printing.\n\nweekday_levels &lt;- c(\"Mon\", \"Tues\", \"Wed\", \"Thurs\", \"Fri\")\nweekday_labels &lt;- c(\"Mon\" = \"Monday\", \n                    \"Tues\" = \"Tuesday\", \n                    \"Wed\" = \"Wednesday\", \n                    \"Thurs\" = \"Thursday\", \n                    \"Fri\" = \"Friday\")\n\nAnd now make a factor\n\ndays_fct &lt;- factor(days, levels = weekday_levels, \n                   labels = weekday_labels)"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#transform-factor-variables",
+    "href": "lab/slides/lab_02.html#transform-factor-variables",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Transform: Factor Variables",
+    "text": "Transform: Factor Variables\nWill convert to NA if not valid level\n\nfactor(moredays, levels = weekday_levels)\n\n[1] &lt;NA&gt; Wed  &lt;NA&gt;\nLevels: Mon Tues Wed Thurs Fri\n\n\nBetter sorting\n\nsort(days_fct)\n\n[1] Tuesday   Wednesday Thursday \nLevels: Monday Tuesday Wednesday Thursday Friday"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#data-types-interlude-factors-1",
+    "href": "lab/slides/lab_02.html#data-types-interlude-factors-1",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Data Types Interlude: Factors",
+    "text": "Data Types Interlude: Factors\nWithin a dataframe, we can modify or create columns by pulling the column out with $ and assigning it to something new.\n\nposition_levels &lt;- c(\"GK\", \"DEF\", \"MID\", \"FWD\")\nposition_labels &lt;- c(\"GK\" = \"Goalkeeper\",\n                     \"DEF\" = \"Defense\",\n                     \"MID\" = \"Midfield\",\n                     \"FWD\" = \"Forward\")\n\n\nplayer_stats$position_fct &lt;- factor(player_stats$position,\n                                    levels = position_levels,\n                                    labels = position_labels)\nplayer_stats$position_fct |&gt; head()\n\n[1] Goalkeeper Defense    Defense    Defense    Defense    Midfield  \nLevels: Goalkeeper Defense Midfield Forward"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#some-more-ggplots-4",
+    "href": "lab/slides/lab_02.html#some-more-ggplots-4",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Some More ggplots",
+    "text": "Some More ggplots\n\nAn note about geom_jitter(): by default it will add noise in both the x- and y-direction (width and height arguments). This may not be appropriate for all cases: here, the default behavior hides that values in category B are rounded.\n\n\n\ngeom_jitter()\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nd |&gt;\n  ggplot(aes(x = measurement, y = category)) +\n  geom_violin() +\n  geom_jitter()\n\n\n\n\n\n\ngeom_jitter(width = 0)\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nd |&gt;\n  ggplot(aes(x = measurement, y = category)) +\n  geom_violin() +\n  geom_jitter(width = 0)"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#some-more-ggplots-5",
+    "href": "lab/slides/lab_02.html#some-more-ggplots-5",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Some More ggplots",
+    "text": "Some More ggplots\nTo plot two continuous variables, we can specify both the x- and y-axes in aes() and add a point plot with geom_point().\n\n\nIf we wanted to add a trendline to this, would we need to change the mapping or geom? geom_smooth()!\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals)) +\n  geom_point()"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#some-more-ggplots-6",
+    "href": "lab/slides/lab_02.html#some-more-ggplots-6",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Some More ggplots",
+    "text": "Some More ggplots\nWe can add a trend line with geom_smooth(). Note that geom_smooth() picks up the same x and y assignment as already specified in aes().\n\n\nIf we wanted to see the points with color representing player position, would we need to change the mapping or geom? aes(color = position_fct)!\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals)) +\n  geom_point() +\n  geom_smooth()"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#some-more-ggplots-7",
+    "href": "lab/slides/lab_02.html#some-more-ggplots-7",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Some More ggplots",
+    "text": "Some More ggplots\nIf we want to see the points labeled by player position, we can specify the color mapping in aes(). Also, because data is the first argument, we can pipe right into ggplot()!\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals, color = position_fct)) +\n  geom_point() +\n  geom_smooth()\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals, color = position_fct)) +\n  geom_point() +\n  geom_smooth()"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#removing-missing-data",
+    "href": "lab/slides/lab_02.html#removing-missing-data",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Removing Missing Data",
+    "text": "Removing Missing Data\nOne more thing (relevant for Homework 1!)\nR has a special type for missing data: NA. If there are NAs in your data, some common functions will not work as expected.\n\ntest_scores &lt;- c(90, 82, 98, 76, 86, 98, NA, 93, 89)\nmean(test_scores); sd(test_scores)\n\n[1] NA\n\n\n[1] NA\n\n\nSome functions (like these) have an na.rm function: tells it to remove the NAs before calculating.\n\nmean(test_scores, na.rm = T); sd(test_scores, na.rm = T)\n\n[1] 89\n\n\n[1] 7.615773"
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#lab-02-activity",
+    "href": "lab/slides/lab_02.html#lab-02-activity",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Lab 02 Activity",
+    "text": "Lab 02 Activity\nObjectives:\n\nDo some basic R!\nGet familiar with Quarto"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#tidy",
+    "href": "lab/slides/lab_03.html#tidy",
+    "title": "Data Manipulation and Simulation",
+    "section": "Tidy",
+    "text": "Tidy\nRefers to tidy data\n\n\n“Happy families are all alike; every unhappy family is unhappy in its own way.”\n— Leo Tolstoy\n\n\n“Tidy datasets are all alike, but every messy dataset is messy in its own way.”\n— Hadley Wickham\n\n\nTidy data follow a consistent set of organizational principles\nTypically a bit more work up front but much easier to work with after"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#tidy-1",
+    "href": "lab/slides/lab_03.html#tidy-1",
+    "title": "Data Manipulation and Simulation",
+    "section": "Tidy",
+    "text": "Tidy\n\n\n\n\n# A tibble: 6 × 4\n  country      year  cases population\n  &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;\n1 Afghanistan  1999    745   19987071\n2 Afghanistan  2000   2666   20595360\n3 Brazil       1999  37737  172006362\n4 Brazil       2000  80488  174504898\n5 China        1999 212258 1272915272\n6 China        2000 213766 1280428583\n\n\n\n\n\n\n\n# A tibble: 12 × 4\n   country      year type            count\n   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;\n 1 Afghanistan  1999 cases             745\n 2 Afghanistan  1999 population   19987071\n 3 Afghanistan  2000 cases            2666\n 4 Afghanistan  2000 population   20595360\n 5 Brazil       1999 cases           37737\n 6 Brazil       1999 population  172006362\n 7 Brazil       2000 cases           80488\n 8 Brazil       2000 population  174504898\n 9 China        1999 cases          212258\n10 China        1999 population 1272915272\n11 China        2000 cases          213766\n12 China        2000 population 1280428583\n\n\n\n\n\n\n\n# A tibble: 6 × 3\n  country      year rate             \n  &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;            \n1 Afghanistan  1999 745/19987071     \n2 Afghanistan  2000 2666/20595360    \n3 Brazil       1999 37737/172006362  \n4 Brazil       2000 80488/174504898  \n5 China        1999 212258/1272915272\n6 China        2000 213766/1280428583\n\n\n\nAll of these dataframes contain the same information, but one of them is much easier to work with…\n\nWhy?"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#tidy-2",
+    "href": "lab/slides/lab_03.html#tidy-2",
+    "title": "Data Manipulation and Simulation",
+    "section": "Tidy",
+    "text": "Tidy\n\n\n\n\n            player_name minutes_played assists goals\n1      José Raúl Rangel            438       0     0\n2 Jorge Eduardo Sanchez            439       1     0\n3    César Jasib Montes            165       0     0\n4    Edson Omar Alvarez             75       0     0\n5  Johan Felipe Vasquez            180       0     0\n6     Erik Antonio Lira            450       1     0\n\n\n\n\n\n\n\n# A tibble: 6 × 4\n  player_name           minutes_played type    count\n  &lt;chr&gt;                          &lt;int&gt; &lt;chr&gt;   &lt;int&gt;\n1 José Raúl Rangel                 438 assists     0\n2 José Raúl Rangel                 438 goals       0\n3 Jorge Eduardo Sanchez            439 assists     1\n4 Jorge Eduardo Sanchez            439 goals       0\n5 César Jasib Montes               165 assists     0\n6 César Jasib Montes               165 goals       0\n\n\n\n\n\n\n\n            player_name minutes_played assists_to_goals\n1      José Raúl Rangel            438              0:0\n2 Jorge Eduardo Sanchez            439              1:0\n3    César Jasib Montes            165              0:0\n4    Edson Omar Alvarez             75              0:0\n5  Johan Felipe Vasquez            180              0:0\n6     Erik Antonio Lira            450              1:0\n\n\n\nAll of these dataframes contain the same information, but one of them is much easier to work with…\n\nWhy?"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#tidy-principles",
+    "href": "lab/slides/lab_03.html#tidy-principles",
+    "title": "Data Manipulation and Simulation",
+    "section": "Tidy: Principles",
+    "text": "Tidy: Principles\nThree rules to a tidy dataset\n\nEach variable is a column; each column is a variable.\nEach observation is a row; each row is an observation.\nEach value is a cell; each cell is a single value.\n\n\n\nhttps://r4ds.hadley.nz/data-tidy.html#fig-tidy-structure"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#tidy-why-tidy",
+    "href": "lab/slides/lab_03.html#tidy-why-tidy",
+    "title": "Data Manipulation and Simulation",
+    "section": "Tidy: Why Tidy?",
+    "text": "Tidy: Why Tidy?\n\nConsistency! Any sort of consistency in your data management will be beneficial.\n\n\n\nR loves vectors! Having variables in columns plays well with many functions.\n\n\n\n\nCohesion with an ecosystem of R packages that expect tidy data."
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#tidy-is-our-data-tidy",
+    "href": "lab/slides/lab_03.html#tidy-is-our-data-tidy",
+    "title": "Data Manipulation and Simulation",
+    "section": "Tidy: Is Our Data Tidy?",
+    "text": "Tidy: Is Our Data Tidy?\n\n\n\nplayer_stats &lt;- read.csv(here::here(\"lab\", \"data\", \"world_cup_player_stats.csv\"))\nhead(player_stats, n = 10)\n\n   team_name fifa_code           player_name position matches_played matches_started minutes_played goals assists\n1     Mexico       MEX      José Raúl Rangel       GK              5               5            438     0       0\n2     Mexico       MEX Jorge Eduardo Sanchez      DEF              5               5            439     0       1\n3     Mexico       MEX    César Jasib Montes      DEF              3               2            165     0       0\n4     Mexico       MEX    Edson Omar Alvarez      DEF              2               0             75     0       0\n5     Mexico       MEX  Johan Felipe Vasquez      DEF              2               2            180     0       0\n6     Mexico       MEX     Erik Antonio Lira      MID              5               5            450     0       1\n7     Mexico       MEX   Luis Francisco Romo      MID              4               2            194     1       1\n8     Mexico       MEX        Álvaro Fidalgo      MID              2               0             41     1       0\n9     Mexico       MEX   Raúl Alonso Jimenez      FWD              3               2            193     3       0\n10    Mexico       MEX   Ernesto Alexis Vega      FWD              0               0              0     0       0\n   yellow_cards red_cards own_goals saves goals_conceded\n1             0         0         0     7              3\n2             0         0         0    NA             NA\n3             0         1         0    NA             NA\n4             1         0         0    NA             NA\n5             0         0         0    NA             NA\n6             1         0         0    NA             NA\n7             0         0         0    NA             NA\n8             0         0         0    NA             NA\n9             0         0         0    NA             NA\n10            0         0         0    NA             NA\n\n\n\n\nEach variable is a column; each column is a variable.\nEach observation is a row; each row is an observation.\nEach value is a cell; each cell is a single value."
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#tidy-for-later",
+    "href": "lab/slides/lab_03.html#tidy-for-later",
+    "title": "Data Manipulation and Simulation",
+    "section": "Tidy: For Later…",
+    "text": "Tidy: For Later…\nWe will learn ways to make untidy data tidy in later classes\nFor now, we are good, and can proceed with our work!"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#transform",
+    "href": "lab/slides/lab_03.html#transform",
+    "title": "Data Manipulation and Simulation",
+    "section": "Transform",
+    "text": "Transform\nUsually, our data doesn’t come to us with the variables exactly as we want them\nSometimes we need…\n\nNew variables, based on our existing data or otherwise\nSummarized version of our dataset\nReordered variables"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#transform-tidyverse-syntax",
+    "href": "lab/slides/lab_03.html#transform-tidyverse-syntax",
+    "title": "Data Manipulation and Simulation",
+    "section": "Transform: tidyverse syntax",
+    "text": "Transform: tidyverse syntax\nThe tidyverse website mentioned that each package shares a common language for their functions\nBased off of dplyr (one of the packages) verbs\n\nThe first argument is always a dataframe.\nThe subsequent arguments typically describe which columns to operate on using the variable names (without quotes).\nThe output is always a new data frame.\n\n\nhttps://r4ds.hadley.nz/data-transform.html#dplyr-basics"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#transform-more-tidyverse-syntax",
+    "href": "lab/slides/lab_03.html#transform-more-tidyverse-syntax",
+    "title": "Data Manipulation and Simulation",
+    "section": "Transform: More tidyverse syntax",
+    "text": "Transform: More tidyverse syntax\nOne more thing…\ntidyverse verbs work best in a pipe: |&gt;\n\n\nHow we’ve been using functions:\noutput &lt;- function(input)\n\nFunctions in a pipe:\noutput &lt;- input |&gt; function()\n\nWhy is this helpful?\n\n\nMany functions together:\nanother_function(other_function(function(input)))\n\nFunctions in a pipe:\ninput |&gt;\n  function() |&gt;\n  other_function() |&gt;\n  another_function()"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#transform-goals-for-our-data",
+    "href": "lab/slides/lab_03.html#transform-goals-for-our-data",
+    "title": "Data Manipulation and Simulation",
+    "section": "Transform: Goals For Our Data",
+    "text": "Transform: Goals For Our Data\nMy questions:\n\nWhat team had the most goals overall?\nWhat goalie had the highest saves per match played?\nClass question!! (time pending)"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#transform-functions",
+    "href": "lab/slides/lab_03.html#transform-functions",
+    "title": "Data Manipulation and Simulation",
+    "section": "Transform: Functions",
+    "text": "Transform: Functions\nA core few of the tidyverse functions…\n\n\nselect()\nmutate()\nfilter()\nsummarize()\narrange()\n\n\n\nselect(df, columns)\nSelects just the columns you specify. Helpful for paring down data for easier viewing.\n\nplayer_minutes_played &lt;- player_stats |&gt;\n  select(player_name, minutes_played) \n\nplayer_minutes_played |&gt;\n  head()\n\n            player_name minutes_played\n1      José Raúl Rangel            438\n2 Jorge Eduardo Sanchez            439\n3    César Jasib Montes            165\n4    Edson Omar Alvarez             75\n5  Johan Felipe Vasquez            180\n6     Erik Antonio Lira            450\n\n\n\n\nmutate(df, new_column = ...)\nAdds new columns to the dataframe, either from scratch or based on existing columns. Can modify / overwrite existing columns as well.\n\nplayer_minutes_played |&gt;\n  mutate(hours_played = minutes_played / 60,\n         hours_played_rounded = round(hours_played, 2)) |&gt;\n  head()\n\n            player_name minutes_played hours_played hours_played_rounded\n1      José Raúl Rangel            438     7.300000                 7.30\n2 Jorge Eduardo Sanchez            439     7.316667                 7.32\n3    César Jasib Montes            165     2.750000                 2.75\n4    Edson Omar Alvarez             75     1.250000                 1.25\n5  Johan Felipe Vasquez            180     3.000000                 3.00\n6     Erik Antonio Lira            450     7.500000                 7.50\n\n\n\n\n\n\nCode Example\nLogical Operators\n\n\n\n\n\nfilter(df, condition_to_keep)\n\nplayer_minutes_played |&gt;\n  filter(minutes_played &gt; quantile(minutes_played, probs = .99)) |&gt;\n  head()\n\n                      player_name minutes_played\n1              Lamine Yamal Yamal            616\n2                     Pedro Pedri            638\n3                  Marc Cucurella            750\n4 Dayotchanculle Oswald Upamecano            661\n5            Jules Olivier Kounde            605\n6                   Kylian Mbappe            711\n\n\n\nfilter_out(df, condition_to_toss) does the opposite (as you’d expect by the name)\n\nplayer_minutes_played |&gt;\n  nrow()\n\n[1] 1248\n\nplayer_minutes_played |&gt;\n  filter_out(minutes_played == 0) |&gt;\n  nrow()\n\n[1] 1039\n\n\n\n\n\n\n\n\n\n\nSymbol\nMeaning\n\n\n\n==\nequal to\n\n\n!=\nnot equal to\n\n\n&lt;\nless than\n\n\n&lt;=\nless than or equal to\n\n\n&gt;\ngreater than\n\n\n&gt;=\ngreater than or equal to\n\n\n\n\n\n\n1 == 1; \"A\" == \"A\"\n\n[1] TRUE\n\n\n[1] TRUE\n\n9 + 10 &gt; 5\n\n[1] TRUE\n\n\"Georgia Tech\" != \"Georgia State\"\n\n[1] TRUE\n\nc(1, 2, 3) &gt;= c(3, 2, 1)\n\n[1] FALSE  TRUE  TRUE\n\n\n\n\n\n\n\n\nsummarize(df, .by = optional_grouping_variable, new_column = ...)\n\n\n\nplayer_minutes_played |&gt;\n  summarize(mean = mean(minutes_played),\n            median = median(minutes_played),\n            min  = min(minutes_played),\n            max = max(minutes_played))\n\n      mean median min max\n1 168.9976    146   0 750\n\n\n\n\nplayer_stats |&gt;\n  summarize(.by = team_name,\n            total_minutes_played = sum(minutes_played)) |&gt;\n  head()\n\n               team_name total_minutes_played\n1                 Mexico                 5250\n2           South Africa                 3960\n3            South Korea                 2970\n4                Czechia                 2970\n5                 Canada                 4981\n6 Bosnia and Herzegovina                 3961\n\n\n\n\n\narrange(ordering_var)\nOrders data based on some variable. Can use desc() (descending) to flip.\n\n\n\nplayer_stats |&gt;\n  select(team_name, player_name, minutes_played) |&gt;\n  arrange(player_name) |&gt;\n  head()\n\n   team_name                   player_name minutes_played\n1       Iraq            Aamar Iqbal Zidane            188\n2   Scotland         Aaron Buchanan Hickey             75\n3 Uzbekistan           Abbosbek Fayzullaev            223\n4      Egypt      Abdelaziz Mohame Mostafa            390\n5      Egypt Abdelaziz Moustafa Ramy Rabia            368\n6      Egypt Abdelghaffar Abdel Tarek Alaa              0\n\n\n\n\nplayer_stats |&gt;\n  select(team_name, player_name, minutes_played) |&gt;\n  arrange(desc(minutes_played)) |&gt;\n  head()\n\n  team_name                     player_name minutes_played\n1     Spain                  Marc Cucurella            750\n2 Argentina             Alexis Mac Allister            720\n3    France                   Kylian Mbappe            711\n4    France           Michael Akpovie Olise            668\n5 Argentina         Enzo Jeremías Fernandez            663\n6    France Dayotchanculle Oswald Upamecano            661"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#transform-questions",
+    "href": "lab/slides/lab_03.html#transform-questions",
+    "title": "Data Manipulation and Simulation",
+    "section": "Transform: Questions",
+    "text": "Transform: Questions\n\n\n\nWhat team had the most goals overall?\n\n\ntotal_goals_df &lt;- player_stats |&gt;\n  summarize(.by = team_name,\n            total_goals = sum(goals))\n\ntotal_goals_df |&gt;\n  arrange(desc(total_goals)) |&gt;\n  head(10)\n\n     team_name total_goals\n1       France          20\n2      England          20\n3    Argentina          18\n4      Belgium          13\n5        Spain          13\n6       Norway          12\n7      Germany          11\n8       Mexico          10\n9  Switzerland          10\n10      Brazil          10\n\n\n\n\ntotal_goals_df |&gt;\n  filter(total_goals == max(total_goals))\n\n  team_name total_goals\n1    France          20\n2   England          20"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#transform-questions-1",
+    "href": "lab/slides/lab_03.html#transform-questions-1",
+    "title": "Data Manipulation and Simulation",
+    "section": "Transform: Questions",
+    "text": "Transform: Questions\n\nWhat goalie had the highest saves per match played?\n\n\nplayer_stats$position |&gt; unique()\n\n[1] \"GK\"  \"DEF\" \"MID\" \"FWD\"\n\nplayer_stats |&gt;\n  filter(when_all(position == \"GK\",\n                  matches_played &gt; 0)) |&gt;\n  select(team_name, player_name, saves, matches_played) |&gt;\n  mutate(saves_per_match = saves / matches_played) |&gt;\n  arrange(desc(saves_per_match)) |&gt;\n  head()\n\n     team_name                     player_name saves matches_played saves_per_match\n1      Curaçao                Eloy Victor Room    25              3        8.333333\n2       Sweden Jacob Mikael Widell Zetterstrom    13              2        6.500000\n3      Ecuador          Hernán Ismael Galindez    25              4        6.250000\n4      Tunisia             Abdelmouhib Chamakh     6              1        6.000000\n5  New Zealand       Maxime Teremoana Crocombe    18              3        6.000000\n6 Saudi Arabia         Khalil Mohammed Alowais    18              3        6.000000"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#transform-questions-2",
+    "href": "lab/slides/lab_03.html#transform-questions-2",
+    "title": "Data Manipulation and Simulation",
+    "section": "Transform: Questions",
+    "text": "Transform: Questions\n\nClass question!! (time pending)"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#whole-game",
+    "href": "lab/slides/lab_03.html#whole-game",
+    "title": "Data Manipulation and Simulation",
+    "section": "Whole Game",
+    "text": "Whole Game\nPieces of the “whole game” of data science"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#some-examples-example-1",
+    "href": "lab/slides/lab_03.html#some-examples-example-1",
+    "title": "Data Manipulation and Simulation",
+    "section": "Some Examples: Example 1",
+    "text": "Some Examples: Example 1\n\ntable1\n\n# A tibble: 6 × 4\n  country      year  cases population\n  &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;\n1 Afghanistan  1999    745   19987071\n2 Afghanistan  2000   2666   20595360\n3 Brazil       1999  37737  172006362\n4 Brazil       2000  80488  174504898\n5 China        1999 212258 1272915272\n6 China        2000 213766 1280428583\n\n\n\nLooks good!"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#some-examples-example-2",
+    "href": "lab/slides/lab_03.html#some-examples-example-2",
+    "title": "Data Manipulation and Simulation",
+    "section": "Some Examples: Example 2",
+    "text": "Some Examples: Example 2\n\ntable2\n\n# A tibble: 12 × 4\n   country      year type            count\n   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt;\n 1 Afghanistan  1999 cases             745\n 2 Afghanistan  1999 population   19987071\n 3 Afghanistan  2000 cases            2666\n 4 Afghanistan  2000 population   20595360\n 5 Brazil       1999 cases           37737\n 6 Brazil       1999 population  172006362\n 7 Brazil       2000 cases           80488\n 8 Brazil       2000 population  174504898\n 9 China        1999 cases          212258\n10 China        1999 population 1272915272\n11 China        2000 cases          213766\n12 China        2000 population 1280428583\n\n\n\nTo RStudio!!"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#some-examples-example-2-1",
+    "href": "lab/slides/lab_03.html#some-examples-example-2-1",
+    "title": "Data Manipulation and Simulation",
+    "section": "Some Examples: Example 2",
+    "text": "Some Examples: Example 2\nExample code\n\ntable2 |&gt; \n  pivot_wider(names_from = type, values_from = count)\n\n# A tibble: 6 × 4\n  country      year  cases population\n  &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;\n1 Afghanistan  1999    745   19987071\n2 Afghanistan  2000   2666   20595360\n3 Brazil       1999  37737  172006362\n4 Brazil       2000  80488  174504898\n5 China        1999 212258 1272915272\n6 China        2000 213766 1280428583\n\n\n\nMore examples later!"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#some-examples-example-3",
+    "href": "lab/slides/lab_03.html#some-examples-example-3",
+    "title": "Data Manipulation and Simulation",
+    "section": "Some Examples: Example 3",
+    "text": "Some Examples: Example 3\n\ntable3\n\n# A tibble: 6 × 3\n  country      year rate             \n  &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;            \n1 Afghanistan  1999 745/19987071     \n2 Afghanistan  2000 2666/20595360    \n3 Brazil       1999 37737/172006362  \n4 Brazil       2000 80488/174504898  \n5 China        1999 212258/1272915272\n6 China        2000 213766/1280428583\n\n\n\nIt’s unfortunately pretty common to get data that has multiple values in a cell!\n\n\nNew function!\nseparate_wider_delim()\n\n○ delim = character to split on\n\n\n○ names = vector of names for the new columns (post-separation)\n\n\n\nTo RStudio!!"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#some-examples-example-3-1",
+    "href": "lab/slides/lab_03.html#some-examples-example-3-1",
+    "title": "Data Manipulation and Simulation",
+    "section": "Some Examples: Example 3",
+    "text": "Some Examples: Example 3\nExample code\n\ntable3 |&gt;\n  separate_wider_delim(cols = rate, delim = \"/\",\n                       names = c(\"cases\", \"population\")) |&gt;\n  mutate(cases = as.numeric(cases),\n         population = as.numeric(population),\n         rate = cases / population)\n\n# A tibble: 6 × 5\n  country      year  cases population      rate\n  &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;\n1 Afghanistan  1999    745   19987071 0.0000373\n2 Afghanistan  2000   2666   20595360 0.000129 \n3 Brazil       1999  37737  172006362 0.000219 \n4 Brazil       2000  80488  174504898 0.000461 \n5 China        1999 212258 1272915272 0.000167 \n6 China        2000 213766 1280428583 0.000167 \n\n\n\nas.numeric() attempts to convert to numeric data type\n\n\nIf you create columns in a mutate() call, you can refer to those columns in the same call after you create them"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#some-examples-example-4",
+    "href": "lab/slides/lab_03.html#some-examples-example-4",
+    "title": "Data Manipulation and Simulation",
+    "section": "Some Examples: Example 4",
+    "text": "Some Examples: Example 4\ntable4a\ntable4b\n\n\n\n# A tibble: 3 × 3\n  country     `1999` `2000`\n  &lt;chr&gt;        &lt;dbl&gt;  &lt;dbl&gt;\n1 Afghanistan    745   2666\n2 Brazil       37737  80488\n3 China       212258 213766\n\n\n# A tibble: 3 × 3\n  country         `1999`     `2000`\n  &lt;chr&gt;            &lt;dbl&gt;      &lt;dbl&gt;\n1 Afghanistan   19987071   20595360\n2 Brazil       172006362  174504898\n3 China       1272915272 1280428583\n\n\n\n\nSometimes we get data in multiple pieces\n\n\nNew function!\nfull_join()\n\n○ x = left dataframe to join\n\n\n○ y = right dataframe to join\n\n\n○ by = character, matching column(s) in both dataframes\n\n\n○ ‘join by’ columns need to have exact same name in both\n\n\n\nTo RStudio!!"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#some-examples-example-4-1",
+    "href": "lab/slides/lab_03.html#some-examples-example-4-1",
+    "title": "Data Manipulation and Simulation",
+    "section": "Some Examples: Example 4",
+    "text": "Some Examples: Example 4\nExample code\n\n\n\ntable4a_long &lt;- table4a |&gt;\n  pivot_longer(c(\"1999\", \"2000\"),\n               names_to = \"year\", values_to = \"cases\")\n\ntable4b_long &lt;- table4b |&gt;\n  pivot_longer(c(\"1999\", \"2000\"),\n               names_to = \"year\", values_to = \"cases\")\n\nfull_join(table4a_long, table4b_long, by = c(\"country\", \"year\"))\n\n# A tibble: 6 × 4\n  country     year  cases.x    cases.y\n  &lt;chr&gt;       &lt;chr&gt;   &lt;dbl&gt;      &lt;dbl&gt;\n1 Afghanistan 1999      745   19987071\n2 Afghanistan 2000     2666   20595360\n3 Brazil      1999    37737  172006362\n4 Brazil      2000    80488  174504898\n5 China       1999   212258 1272915272\n6 China       2000   213766 1280428583\n\n\n\n\nfull_join(\n  table4a |&gt;\n    pivot_longer(c(\"1999\", \"2000\"),\n                 names_to = \"year\", values_to = \"cases\"),\n  table4b |&gt;\n    pivot_longer(c(\"1999\", \"2000\"),\n                 names_to = \"year\", values_to = \"cases\"),\n  by = c(\"country\", \"year\")\n)\n\n# A tibble: 6 × 4\n  country     year  cases.x    cases.y\n  &lt;chr&gt;       &lt;chr&gt;   &lt;dbl&gt;      &lt;dbl&gt;\n1 Afghanistan 1999      745   19987071\n2 Afghanistan 2000     2666   20595360\n3 Brazil      1999    37737  172006362\n4 Brazil      2000    80488  174504898\n5 China       1999   212258 1272915272\n6 China       2000   213766 1280428583"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#some-examples-example-5",
+    "href": "lab/slides/lab_03.html#some-examples-example-5",
+    "title": "Data Manipulation and Simulation",
+    "section": "Some Examples: Example 5",
+    "text": "Some Examples: Example 5\n\ntable5\n\n# A tibble: 6 × 4\n  country     century year  rate             \n  &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;            \n1 Afghanistan 19      99    745/19987071     \n2 Afghanistan 20      00    2666/20595360    \n3 Brazil      19      99    37737/172006362  \n4 Brazil      20      00    80488/174504898  \n5 China       19      99    212258/1272915272\n6 China       20      00    213766/1280428583\n\n\n\npaste() and paste0() combine characters into one string\n\n○ paste() adds a space between inputs\n\n\n○ paste0() does not\n\n\n\nTo RStudio!!"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#some-examples-example-5-1",
+    "href": "lab/slides/lab_03.html#some-examples-example-5-1",
+    "title": "Data Manipulation and Simulation",
+    "section": "Some Examples: Example 5",
+    "text": "Some Examples: Example 5\nExample code\n\ntable5 |&gt;\n  separate_wider_delim(cols = rate, delim = \"/\",\n                       names = c(\"cases\", \"population\")) |&gt;\n  mutate(cases = as.numeric(cases),\n         population = as.numeric(population),\n         rate = cases / population,\n         year = paste0(century, year) |&gt; as.numeric(),\n         .keep = \"unused\")\n\n# A tibble: 6 × 5\n  country      year  cases population      rate\n  &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;\n1 Afghanistan  1999    745   19987071 0.0000373\n2 Afghanistan  2000   2666   20595360 0.000129 \n3 Brazil       1999  37737  172006362 0.000219 \n4 Brazil       2000  80488  174504898 0.000461 \n5 China        1999 212258 1272915272 0.000167 \n6 China        2000 213766 1280428583 0.000167"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#simulation-1",
+    "href": "lab/slides/lab_03.html#simulation-1",
+    "title": "Data Manipulation and Simulation",
+    "section": "Simulation",
+    "text": "Simulation\nSimulating fake data is such a helpful skill to have in your toolbox. You can…\n\n\n\nCheck that methods are working correctly\n\n\n\nrnorm(1000000, 5, 10) |&gt; mean()\n\n[1] 5.00039\n\n\n\n\n\n\nBuild your intuition and understanding about statistical theory\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nn_reps &lt;- 100000\ntibble(n = n_reps,\n       sd = c(1, 1.25, 1.5)) |&gt;\n  uncount(n_reps) |&gt;\n  mutate(draw = rnorm(n(), 0, sd)) |&gt;\n  ggplot(aes(x = draw, group = factor(sd))) +\n  geom_density(alpha = 0.4, color = NA, fill = \"steelblue\") +\n  geom_text(\n    data = tibble(sd = c(1, 1.25, 1.5), \n                  height = dnorm(0, 0, sd) * 0.875,\n                  draw = 0),\n    aes(label = paste(\"SD =\", sd), y = height),\n    color = \"white\", fontface = \"bold\", size = 4.5\n  ) +\n  guides(y = guide_none(NULL),\n         x = guide_axis(NULL, cap = T),\n         color = guide_legend(\"SD\")) +\n  coord_cartesian(xlim = c(-4, 4)) +\n  theme_classic() +\n  theme(legend.position = \"bottom\")\n\n\n\n\n\n\n\n\nAnswer your own questions about a statistical concept\n\n\nLet’s do that today!"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#lab-04-activity",
+    "href": "lab/slides/lab_03.html#lab-04-activity",
+    "title": "Data Manipulation and Simulation",
+    "section": "Lab 04 Activity",
+    "text": "Lab 04 Activity"
   }
 ]
