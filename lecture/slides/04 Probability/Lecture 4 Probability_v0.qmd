@@ -56,7 +56,7 @@ my_yellow2 <- "#FFFFCC"
 
 ```{r}
 
-bball <- read.csv("C:/Users/markh/OneDrive - Georgia Institute of Technology/Documents/Grad Stat I/Fall 2026/Lecture 3/2026NBA_data.csv") |> filter(G >= max(G)/2,
+bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
                                                 draft_year != "")
 ```
 
@@ -126,7 +126,8 @@ Probability tells us how data are *randomly* **generated** based on some underly
         -   Curly brackets indicate a set of individual elements
     -   Sample space for points in an NBA game $[0,\infty]$
         -   Square brackets indicate an inclusive interval
-
+        
+        
 ## Notation
 
 -   $P(A)$: The probability of event $A$
@@ -135,12 +136,38 @@ Probability tells us how data are *randomly* **generated** based on some underly
 -   $P(A \cup B)$: The probability of event $A$ *or* $B$
 -   $P(A|B)$: The probability that event $A$ happens *given* that event $B$ has happened
 
+
+
+## What is More Likely?
+
+::: {style="font-size: 0.88em;"}
+
+$P(\text{Georgia Tech Beats CU})$ or $P(\text{Georgia Tech Beats CU} \cap \text{Georgia Tech Scores at least 20})$
+
+- [$P(\text{Georgia Tech Beats CU})$ includes all the times Georgia Tech wins and scores less than 20]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+$P(\text{Georgia Tech Beats CU} \cap \text{Georgia Tech Scores at least 20})$ or $P(\text{Georgia Tech Beats CU} \cup \text{Georgia Tech Scores at least 20})$
+
+- [$P(\text{Georgia Tech Beats CU} \cup \text{Georgia Tech Scores at least 20})$ includes all the times Georgia Tech wins and scores less than 20 AND includes all the times Georgia Tech loses while scoring at least 20]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+$P(\text{Georgia Tech Beats CU} \cap \text{Georgia Tech Scores at least 20})$ or $P(\text{Georgia Tech Beats CU} | \text{Georgia Tech Scores at least 20})$
+
+- [$P(\text{Georgia Tech Beats CU} \cap \text{Georgia Tech Scores at least 20})$ includes cases where both must me true out of ALL cases, while $P(\text{Georgia Tech Beats CU} | \text{Georgia Tech Scores at least 20})$ only considers cases where Georgia Tech scores at least 20 (smaller denominoator)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+:::
+
+    
 ## Axioms
 
 Axiom (noun): [Statement that is taken to be true without need of proof]{.answer .fragment .content-visible unless-meta="params.v0"}
 
--   For any $A$, $0 \leq P(A) \leq 1$
+-   **Positivity:** For any $A$, $0 \leq P(A) \leq 1$
 -   The sum of the probability of all elements of a sample space $= 1$
+
+Example:
+
+- If I flip a coin, the probability of heads must be between 0 and 1, and the sum of the probability of heads and the probability of tails is always 1
+    - Even for an unfair coin, one of the outcomes is guaranteed, and must happen if the other outcome does not happen
 
 ## Gummy Bears
 
@@ -229,13 +256,13 @@ That means, for  $y_i = \text{Pineapple Bear} = 1$
 
 - $\pi(y_i) = \pi(1) = \pi$ 
 - $(1 - \pi)(1 - y_i) = (1 \pi)(1 - 1) = 0$ 
-- $P(y_i| \pi)=P(y_i | \pi) = \pi(y_i) + (1 - \pi)(1 - y_i) = \pi + 0 = \pi$
+- $P(y_i| \pi) = \pi(y_i) + (1 - \pi)(1 - y_i) = \pi + 0 = \pi$
 
 And for $y_i = \text{any other flavor} = 0$
 
 - $\pi(y_i) = \pi(0) = 0$ 
 - $(1 - \pi)(1 - y_i) = (1 - \pi)(1 - 0) = 1 -\pi$ 
-- $P(y_i| \pi)=P(y_i | \pi) = \pi(y_i) + (1 - \pi)(1 - y_i) = 0 + 1 -\pi = 1- \pi$
+- $P(y_i| \pi) = \pi(y_i) + (1 - \pi)(1 - y_i) = 0 + 1 -\pi = 1- \pi$
 
 ::: 
 
@@ -333,6 +360,19 @@ Then to get fewer than nine
 
 $$P(\text{fewer than nine pineapples}) = 1 - \text{that very small number}$$
 
+## Practice
+
+Lets say DoorDash orders come within the estimated delivery time 85% of the time. If you make five DoorDash orders, what is the probability that **fewer than four** will come within the estimated delivery window? 
+
+
+[Easier to **first** calculate four or more, then subtract that from 1]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+[$P(\text{four or more on time}) = \frac{5!}{4!(5-4)!}.85^4 (1-.85)^{5-4} +$]{.answer .fragment .content-visible unless-meta="params.v0"}
+[$\frac{5!}{5!(5-5)!}.85^5 (1-.85)^{5-5} = .84$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+[$P(\text{fewer than four on time}) = 1 - .84 = .16$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
 ## Counting Events
 
 ::: {style="font-size: 0.9em;"}
@@ -365,7 +405,7 @@ Where
 
 ## Poisson Example
 
-If the mean number of calls to the fire station in a week is 8, the probability of getting exactly 11 calls in a given week would be
+If the mean number of calls to the fire station in a day is 8, the probability of getting exactly 11 calls in a given day would be
 
 $$P(x = 11) = \frac{e^{-8}8^{11}}{11!} = .072$$
 
@@ -376,7 +416,7 @@ In the Poisson distribution
 
 ## Cumulative Poissons
 
-You can also get cumulative probabilities from Poisson distributions. The cumulative probability of 11 or fewer calls in a given week would be
+You can also get cumulative probabilities from Poisson distributions. The cumulative probability of 11 or fewer calls in a given day would be
 
 $$P(x \leq 11) = \sum_{i=0}^{11}\frac{e^{-8}8^{i}}{i!} = .89$$
 
@@ -384,13 +424,25 @@ And the probability of more than 11 calls would be
 
 $$P(x > 11) = 1 - P(x \leq 11) = 1 - .89 = .11$$
 
+## Practice
+
+You work at a car dealership that sells on average ten cars in a given week. What is the probability you sell one or fewer cars in a given week?
+
+
+
+[$P(x \leq 1) = \frac{e^{-3}3^{0}}{0!} +\frac{e^{-3}3^{1}}{1!}  = .20$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+What is the probability you sell more than one car in a given week?
+
+[$P(x > 1) = 1 - .80 = .20$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
 ## Continuous Variables
 
 ::: {style="font-size: 0.95em;"}
 The Bernoulli, Binomial, and Poisson distributions all involve *discrete* variables. What about continuous variables?
 
 -   **The Normal Distribution** will be our major focus
-  -   Symmetrical with parameters $\mu$ and $\sigma$
+    -   Symmetrical with parameters $\mu$ and $\sigma$
 -   The lognormal distribution: $e^{\text{normal distribution}}$
     -   Creates distribution with lower boundary of zero and no upper boundary
 -   The gamma distribution
@@ -567,8 +619,28 @@ ggplot(norm_df, aes(x = height, y = density)) +
   theme(axis.title = element_text(size = 14))
 ```
 
+## Review
+
+::: {style="font-size: 0.95em;"}
+
+How are PMFs and PDFs different?
+
+- [PMFs give exact probabilities of discrete events. PDFs give densities representing the relative probabilities of continuous events within given ranges]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+How are PMFs different from the bar plots we discussed last time?
+
+- [PMFs represent the *discrete* **probability distribution** for the **population** while bar plots represent the **empirical distribution** of the **sample**]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+How are PDFs different from the kernel density plots we discussed last time? 
+
+- [PDFs represent the *continuous* **probability distribution** for the **population** while kernel density plots represent the **empirical distribution** of the **sample**]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+:::
+
+
 ## Independence
 
+::: {style="font-size: 0.88em;"}
 
 **Independent Events**: The probability of one event happening does not depend on whether or not another event has happened
 
@@ -580,8 +652,11 @@ If $A$ and $B$ are independent events:
 Most statistical methods make use of the idea of independence
 
 -   "Independence of observations" assumption
--   Assumes that if you know one data point, it doesn't give you any new information about probability distribution of other data points
+-   Assumes that if you know one data point and the parameters of the distribution, new data point doesn't give you any new information about probability distribution of other data points
+    - **Non-independent:** Knowing my height, how tall do you think my brother is?
+    - **Independent:** Knowing my height, how tall do you think the next person to walk by the door will be?
 
+:::
 
 ## Joint & Marginal
 
@@ -878,7 +953,7 @@ $$P(A | B)  \neq    P(B | A)$$
 
 -   $P(\text{positive test} \vert \text{no cancer}) = \frac{\text{\# with no cancer and a positive test}}{\text{\# with cancer}} = \frac{46}{900} = .05$
 
-Which one of these do you think is more important to know when taking a diagnostic test?
+Which one of these do you think is more important to know when taking a diagnostic test? Which do you think is more likely to be known?
 :::
 
 ## More Bayes' Theorem
@@ -921,7 +996,7 @@ Less historically popular, but rapidly gaining momentum is the **Bayesian** appr
 ::: {style="font-size: 0.95em;"}
 -   Bayes theorem was first discovered by Reverend Thomas Bayes in 18th century
     -   English Presbyterian Minister
-    -   Published defenses of science against religious claims they were heretical
+    -   Published defenses of science against religious claims science was heretical
     -   Theorem didn't make big waves until....
 -   It was independently redisocvered by Pierre Simon Laplace
     -   Gave much more formal mathematical definition
@@ -952,7 +1027,7 @@ Pierre Simon Laplace (1749-1827)
 -   Post-enlightenment (early 20th century), there was strong desire for "objective" science
 -   Bayesian inference **requires** subjectivity in the form of a prior belief
 -   This was considered "perverse" by modern standards
--   Sir Ronald Fisher is one of the key backers of core philosophy behind contemporary frequentist statistics
+-   Sir Ronald Fisher was one of the key backers of core philosophy behind contemporary frequentist statistics
     -   Rejected Bayesianism
     -   Highly prone to becoming polemic
     -   Even had a very famous intellectual war with contemporary Jerzy Neyman over the "right" way to do frequentism
@@ -980,6 +1055,8 @@ Jerzy Neyman (1895-1980)
 
 ## Wrapping Up
 
+:::::: {style="font-size: 0.95em;"}
+
  Next time
 
 - We will look at how to use computers to do probability-based simulations
@@ -993,3 +1070,5 @@ For now
   - First two labs
 
 Don't forget Ed Discussion!
+
+::::::
