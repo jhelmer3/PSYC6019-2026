@@ -21,16 +21,40 @@ list(
   ## lab index page
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
-  ## lab 03
+  ## lab 04
   tar_target(gatech_admissions_data, make_gatech_admissions_data()),
   tar_target(gatech_admissions_data_file, 
              write.csv(gatech_admissions_data, "lab/data/gatech_admissions.csv",
                        row.names = F),
              format = "file"),
+  tar_target(pumpkin_data, make_pumpkin_data()),
+  tar_target(pumpkin_data_file, 
+             write.csv(pumpkin_data, "lab/data/pumpkin_data.csv", row.names = F),
+             format = "file"),
   tar_target(leaves_data, make_leaves_data()),
   tar_target(leaves_data_file, 
              write.csv(leaves_data, "lab/data/leaves.csv", row.names = F)),
-   
+  
+  tar_target(lab_04_slides_qmd, 
+             "lab/slides/lab_04.qmd", 
+             format = "file"),
+  tar_target(lab_04_slides, {
+    gatech_admissions_data_file
+    pumpkin_data_file
+    quarto::quarto_render(lab_04_slides_qmd)
+    qmd_out(lab_04_slides_qmd)
+  }, format = "file"),
+  tar_target(lab_04_activity_key_qmd, 
+             "lab/activities/activity_keys/lab_04_activity_key.qmd", 
+             format = "file"),
+  tar_target(lab_04_activity_key, {
+    leaves_data_file
+    quarto::quarto_render(lab_04_activity_key_qmd)
+    qmd_out(lab_04_activity_key_qmd)
+  }, format = "file"),
+  
+  ## lab 03
+
   tar_target(lab_03_slides_qmd, 
              "lab/slides/lab_03.qmd", 
              format = "file"),

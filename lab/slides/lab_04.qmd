@@ -1,6 +1,6 @@
 ---
-title: "Chi-Squared and T-Tests"
-subtitle: "PSYC 6019-A01 / PSYC 6022-A01 \n 2025-09-18 | Lab 4"
+title: "Chi-Squared Tests, T-Tests, Effect Size"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2025-09-18 | Lab 4"
 author: "Jess Helmer"
 footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
 format: 
@@ -25,7 +25,7 @@ execute:
 #| echo: false
 #| output: false
 library(tidyverse)
-# library(gt)
+library(gt)
 # targets::tar_load(gatech_admissions_data_file, store = here::here("_targets"))
 ```
 
@@ -127,7 +127,7 @@ $H_1$: $\pi_j \neq \pi_{j_0}$ for any category $j$
 :::
 
 
-## $\chi^2$ Test of Goodness of Fit Generally
+## $\chi^2$ Test of Goodness of Fit
 
 $$ \chi^2 = \sum_{j=1}^{J} \frac{(O_j – N\pi_{j_0})^2}{N\pi_{j_0}} = \sum_{j=1}^{J} \frac{(O_j – E_j)^2}{E_j} $$
 
@@ -144,7 +144,7 @@ where
 [*The sum of the squared differences between the observed and expected frequencies, divided by the expected frequency, for each group.*]{.fragment}
 
 
-## $\chi^2$ Test of Goodness of Fit Generally
+## $\chi^2$ Test of Goodness of Fit
 
 $\text{df} = J - 1$, where
 
@@ -503,7 +503,7 @@ obs_chisq > chisq_crit
 
 [We can reject the null in favor of the alternative that the number of students is not the same across majors.]{.fragment}
 
-## $\chi^2$ Test of Goodness of Fit R Function
+## R Function
 
 ::: fragment
 ```{r}
@@ -569,7 +569,7 @@ data.frame(type = c("Expected", "Observed"),
 ```
 
 
-## $\chi^2$ Test of Goodness of Fit R Function
+## R Function
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -642,7 +642,7 @@ $H_1$: $\pi_j \neq \pi_{j_0}$ for any category $j$
 Just changing the expected frequencies
 :::
 
-## $\chi^2$ Test of Independence Generally
+## $\chi^2$ Test of Independence
 
 $$ \chi^2 = \sum_{j_1=1}^{J_1}\sum_{j_2=1}^{J_2} \frac{(O_j – N\pi_{j_0})^2}{N\pi_{j_0}} = \sum_{j_1=1}^{J_1}\sum_{j_2=1}^{J_2} \frac{(O_j – E_j)^2}{E_j} $$
 
@@ -701,7 +701,7 @@ First, what are your expected frequencies for each category?
 :::
 
 
-## $\chi^2$ Test of Independence Example: Calculating Expected Frequencies
+## Calculating Expected Frequencies
 
 First, get the marginal totals for each column
 
@@ -726,7 +726,7 @@ data.frame(type = c("Undergrad", "Graduate", "Total"),
 ```
 
 
-## $\chi^2$ Test of Independence Example: Calculating Expected Frequencies
+## Calculating Expected Frequencies
 
 First, get the marginal totals for each column
 
@@ -751,7 +751,7 @@ data.frame(type = c("Undergrad", "Graduate", "Total"),
 ```
 
 
-## $\chi^2$ Test of Independence Example: Calculating Expected Frequencies
+## Calculating Expected Frequencies
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -809,7 +809,7 @@ Expected cell frequency = $E_j$ = $\frac{\text{column total} \times \text{row to
 [○ Graduate & Out-of-State = $\frac{15 \times 20}{50} = 6$]{.subpoint}
 
 
-## $\chi^2$ Test of Goodness of Fit Example
+## $\chi^2$ Test of Independence Example
 
 $$ \chi^2 = \sum_{j=0}^{J} \frac{(O_j – N\pi_j)^2}{N\pi_j} = \sum_{j=0}^{J} \frac{(O_j – E_j)^2}{E_j} $$
 
@@ -865,6 +865,274 @@ studdat |>
 ::::
 
 [We can reject the null in favor of the alternative that students' level (graduate vs. undergraduate) and whether they are an in-state student or not are not independent.]{.fragment}
+
+
+# t-Tests
+
+## *T*-Statistic Cutoffs
+
+Say you want to find the cutoff *t* values: $t(\text{df}=3)$ and $t(\text{df}=37)$ for $\alpha = .05$, both upper one-tailed and two-tailed.
+
+::: fragment
+Which will have the larger magnitude cutoff values?
+:::
+
+:::: {.columns .fragment style="font-size:70%"}
+::: column
+**One-Tailed**
+
+All of our $\alpha = .05$ goes on the upper side
+
+Need a cutoff for $.95$
+```{r}
+qt(p = .95, df = 3)
+
+qt(p = .05, df = 37, lower.tail = F)
+```
+$t_{crit}(\text{df}=3) = 2.35$
+
+$t_{crit}(\text{df}=37) = 1.69$
+:::
+
+::: column
+**Two-Tailed**
+
+$\alpha = 1 - .95 = 5\%$ on both sides
+
+So $.05 / 2 = .025$ on each side
+
+Need value for $.025$ and $.95 + .025$ ($[.025, .975]$)
+```{r}
+qt(p = c(.025, .975), df = 3)
+
+qt(p = c(.025, .975), df = 37)
+```
+$t_{crit}(\text{df}=3) = [-3.18, 3.18]$
+
+$t_{crit}(\text{df}=37) = [-2.03, 2.03]$
+:::
+::::
+
+
+## *T*-Statistic Cutoffs: Table
+
+![](https://www.tdistributiontable.com/wp-content/uploads/2020/08/t-table.png){fig-align="center"}
+
+
+## Types of *T*-Tests
+
+![](https://media.geeksforgeeks.org/wp-content/uploads/20250128171318605791/Types-of-t-test.webp)
+
+
+## Independent Sample *T*-Test
+
+Might want to compare two samples of observations
+
+[○ Post-graduation salaries of GT vs. UGA grads]{.subpoint}
+
+[○ Treatment vs. control group]{.subpoint}
+
+[○ Cats vs. dogs]{.subpoint}
+
+We can represent each group with their mean on some outcome and compare the means
+
+Consider whether the mean difference is significant but also have to account for different levels of variability within group
+
+
+## Independent Sample *T*-Test: Pooled SD
+
+Need to pool the sample SDs while noting different sample sizes
+
+$$ s_p^2 = \frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{(n_1 - 1) + (n_2 - 1)} = \frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{n_1 + n_2 - 2}$$
+
+
+## Independent Sample *T*-Test: Pooled SD
+
+Note that when sample size is equal (i.e., $n_1 = n_2 = n$),
+
+::: math
+\begin{array}{ll}
+  s_p^2 \bigg|_{n_1 = n_2 = n} & = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1) + (n - 1)} = \frac{(n - 1) (s_1^2 + s_2^2)}{(n - 1) + (n - 1)} \\[0.6em]
+   & = \frac{(n - 1) (s_1^2 + s_2^2)}{2(n - 1)} = \frac{s_1^2 + s_2^2}{2}
+\end{array}
+:::
+
+::: fragment
+Square root to get back to standard deviation
+
+$$ s_p = \sqrt{s_p^2} = \sqrt{\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{(n_1 - 1) + (n_2 - 1)}} = \sqrt{\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{n_1 + n_2 - 2}} $$
+:::
+
+
+## Independent Sample *T*-Test: Test statistic
+
+$$ t = \frac{\bar{x_1} - \bar{x_2}}{\sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}} = \frac{\bar{x_1} - \bar{x_2}}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}$$
+
+[Compare against critical *t*-value with df = $(n_1 - 1) + (n_2 - 2)$]{.fragment}
+
+
+## Independent Sample *T*-Test: R Calculation
+
+```{r}
+#| echo: false
+candy <- rio::import(here::here("lab", "data", "candy_data.csv"))
+```
+
+```{r}
+summary(candy)
+
+ccorn <- candy |> filter(candy == "candy corn") |> pluck("sales")
+choc <- candy |> filter(candy == "chocolate") |> pluck("sales")
+```
+<br>
+```{r}
+ccorn
+choc
+```
+
+
+## Independent Sample *T*-Test: R Calculation
+
+::: fragment
+```{r}
+x_bar_ccorn <- mean(ccorn)
+sd_ccorn <- sd(ccorn)
+n_ccorn <- length(ccorn)
+
+x_bar_choc <- mean(choc)
+sd_choc <- sd(choc)
+n_choc <- length(choc)
+
+pooled_sd <- sqrt( ((n_ccorn - 1) * sd_ccorn^2 + (n_choc - 1) * sd_choc^2) /
+                     ((n_ccorn - 1) + (n_choc - 1)) )
+pooled_sd
+```
+:::
+
+## Independent Sample *T*-Test: R Calculation
+
+::: fragment
+```{r}
+df <- (n_ccorn - 1) + (n_choc - 1)
+
+t_crit <- qt(c(.025, .975), df)
+t_crit
+```
+
+If our observed *t*-statistic exceeds the bounds of [-2.02, 2.02], we reject the null.
+:::
+
+::: fragment
+```{r}
+t_stat <- (x_bar_ccorn - x_bar_choc) / (pooled_sd * sqrt(1 / n_ccorn + 1 / n_choc))
+t_stat
+```
+:::
+
+[We reject the null! Can we tell which had a larger mean?]{.fragment}
+
+
+## Independent Sample *T*-Test: R Function
+
+`t.test(outcome ~ group_var, data, var.equal = T)`
+
+```{r}
+t.test(sales ~ candy, candy, var.equal = T)
+```
+
+
+## Paired Sample *T*-Test
+
+Comparing the same subjects under two conditions (typically two timepoints)
+
+[○ Stress levels before vs. after a test]{.subpoint}
+
+[○ Reaction times before vs. after caffiene consumption]{.subpoint}
+
+[○ Anxiety levels before vs. after a mindfulness intervention]{.subpoint}
+
+We can still use the mean to represent the observations in each condition and make comparisons
+
+This time, focus on difference scores (individual differences in the observations between the two conditions)
+
+
+## Paired Sample *T*-Test
+
+Need difference score for each observation $d_i = x_2 - x_1$
+
+Then, get mean difference $\bar{d} = \frac{d_1+d_2+...+d_n}{n}$ and standard deviation of those difference scores $s_d = \sqrt{\frac{(d_1-\bar{d})^2 + (d_2-\bar{d})^2 + ... + (d_n-\bar{d})^2}{n - 1}}$
+
+$$ t = \frac{\bar{d} - \mu_{d_0}}{\frac{s_d}{\sqrt{n}}} = \text{(usually)} \frac{\bar{d} - 0}{\frac{s_d}{\sqrt{n}}} = \frac{\bar{d}}{\frac{s_d}{\sqrt{n}}}$$
+
+Compare against critical *t*-value with df = $n - 1$
+
+
+## Paired Sample *T*-Test: R Calculation
+
+::: fragment
+```{r}
+#| echo: false
+pumpkin <- read.csv(here::here("lab", "data", "pumpkin_data.csv"))
+```
+
+```{r}
+pumpkin <- pumpkin |>
+  mutate(diff = oct1 - oct31)
+
+mean_diff <- mean(pumpkin$diff)
+sd_diff <- sd(pumpkin$diff)
+df <- nrow(pumpkin) - 1
+
+qt(c(.025, .975), df)
+
+t_stat <- (mean_diff - 0) / (sd_diff / sqrt(nrow(pumpkin)))
+t_stat
+```
+:::
+
+[We can reject the null in favor of the alternative that there is a difference in pumpkin weights between October 1st and October 31st in the population!]{.fragment}
+
+
+## Paired Sample *T*-Test: R Function
+
+`t.test(y1_vector, y2_vector, paired = T, var.equal = T)`
+
+```{r}
+t.test(pumpkin$oct1, pumpkin$oct31, paired = T, var.equal = T)
+```
+
+
+## Cohen's *D* Revisited
+
+Now that we have two groups, R functions for Cohen's *D* will be more helpful to us. The `cohens_d()` function from the `effectsize` package allows for many formats of inputs.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| code-line-numbers: false
+(x_bar_ccorn - x_bar_choc) / pooled_sd
+
+effectsize::cohens_d(sales ~ candy,
+                     data = candy)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| code-line-numbers: false
+mean_diff / sd_diff
+
+effectsize::cohens_d(pumpkin$oct1, pumpkin$oct31,
+                     paired = T)
+```
+:::
+::::
+
+
+## *T*-Test: Interpretation and write-up
+
+An [independent samples / repeated measures] *t*-test analysis was conducted between [group 1] and [group 2]. We [[fail to reject]{.blue} / [reject]{.gold}] H0 [[in favor of H1]{.gold}], *t*([df]) = [____], *p* [[< 0.05]{.gold} / [p-value]{.blue}]. We [[did not]{.blue}] observe[[d]{.gold}] a significant difference between the mean [DV] of [group 1] and [group 2] in our sample.
+
 
 
 

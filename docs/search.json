@@ -7333,7 +7333,7 @@
     "href": "lab/slides/lab_03.html#simulation-example-clt-3",
     "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\nStart with data sampled from a normal distribution. Generate one sample of data, take its mean.\n\n\n\nrnorm(x, mean, sd) where x is the number of samples\n\nlibrary(tidyverse)\nsamples &lt;- rnorm(3, mean = 1, sd = 0.5)\nsamples\n\n[1] 0.7679764 2.0330250 0.6786676\n\nmean(samples)\n\n[1] 1.15989\n\n\n\nInstead of having it in a vector by itself, lets put it in a dataframe\n\nsim_data &lt;- tibble(x = rnorm(3, mean = 1, sd = 0.5))\nsim_data\n\n# A tibble: 3 × 1\n      x\n  &lt;dbl&gt;\n1 1.19 \n2 1.29 \n3 0.942\n\nmean(sim_data$x)\n\n[1] 1.139898\n\n\n\n\n\n\n\n\n\n\ntibble()\n\n\nA tibble() is just like a dataframe, but better. The best part is its printing—tibble()s will never crowd your screen by trying to show every single value of a dataframe. Also, they work better with making tibbles in tibbles in tibbles… More on tibbles here."
+    "text": "Simulation Example: CLT\n\nStart with data sampled from a normal distribution. Generate one sample of data, take its mean.\n\n\n\nrnorm(x, mean, sd) where x is the number of samples\n\nlibrary(tidyverse)\nsamples &lt;- rnorm(3, mean = 1, sd = 0.5)\nsamples\n\n[1] 1.2496602 0.3932403 1.2690088\n\nmean(samples)\n\n[1] 0.9706365\n\n\n\nInstead of having it in a vector by itself, lets put it in a dataframe\n\nsim_data &lt;- tibble(x = rnorm(3, mean = 1, sd = 0.5))\nsim_data\n\n# A tibble: 3 × 1\n      x\n  &lt;dbl&gt;\n1 1.67 \n2 1.34 \n3 0.310\n\nmean(sim_data$x)\n\n[1] 1.109607\n\n\n\n\n\n\n\n\n\n\ntibble()\n\n\nA tibble() is just like a dataframe, but better. The best part is its printing—tibble()s will never crowd your screen by trying to show every single value of a dataframe. Also, they work better with making tibbles in tibbles in tibbles… More on tibbles here."
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-4",
@@ -7347,21 +7347,21 @@
     "href": "lab/slides/lab_03.html#simulation-example-clt-5",
     "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\n\n\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw = rnorm(total_n, mean = 1, sd = 0.5)\n  )\nsim_data\n\n# A tibble: 6 × 3\n    rep index  draw\n  &lt;int&gt; &lt;int&gt; &lt;dbl&gt;\n1     1     1 1.04 \n2     1     2 0.859\n3     1     3 0.657\n4     2     1 1.18 \n5     2     2 1.12 \n6     2     3 0.525\n\n\n\nAnd, we can plot those draws (getting a head start on #3).\n\nsim_data |&gt;\n  ggplot(aes(x = draw)) +\n  geom_density()"
+    "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\n\n\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw = rnorm(total_n, mean = 1, sd = 0.5)\n  )\nsim_data\n\n# A tibble: 6 × 3\n    rep index  draw\n  &lt;int&gt; &lt;int&gt; &lt;dbl&gt;\n1     1     1 0.522\n2     1     2 0.273\n3     1     3 1.11 \n4     2     1 0.902\n5     2     2 0.548\n6     2     3 0.436\n\n\n\nAnd, we can plot those draws (getting a head start on #3).\n\nsim_data |&gt;\n  ggplot(aes(x = draw)) +\n  geom_density()"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-6",
     "href": "lab/slides/lab_03.html#simulation-example-clt-6",
     "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\nVisualize both: the original distribution of the data (sample distribution), the distribution of the the samples’ means (sampling distribution).\n\n\n\nLet’ finish out #2 by summarize()ing our sim_data into one sample mean per replication.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = rep,\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 2 × 2\n    rep sample_mean\n  &lt;int&gt;       &lt;dbl&gt;\n1     1       0.852\n2     2       0.941\n\n\n\nAnd, we can plot those draws (getting a head start on #4).\n\nmeans |&gt;\n  ggplot(aes(x = sample_mean)) +\n  geom_density()"
+    "text": "Simulation Example: CLT\n\nRepeat this process multiple times, generating replications of data samples and sample means.\nVisualize both: the original distribution of the data (sample distribution), the distribution of the the samples’ means (sampling distribution).\n\n\n\nLet’ finish out #2 by summarize()ing our sim_data into one sample mean per replication.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = rep,\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 2 × 2\n    rep sample_mean\n  &lt;int&gt;       &lt;dbl&gt;\n1     1       0.635\n2     2       0.628\n\n\n\nAnd, we can plot those draws (getting a head start on #4).\n\nmeans |&gt;\n  ggplot(aes(x = sample_mean)) +\n  geom_density()"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-7",
     "href": "lab/slides/lab_03.html#simulation-example-clt-7",
     "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\nBefore we start incorporating other conditions, let’s scale this up.\n\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw = rnorm(total_n, mean = 1, sd = 0.5)\n  )\nsim_data\n\n# A tibble: 10,000 × 3\n     rep index  draw\n   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;\n 1     1     1 1.01 \n 2     1     2 0.252\n 3     1     3 1.16 \n 4     1     4 1.20 \n 5     1     5 1.19 \n 6     1     6 0.220\n 7     1     7 1.07 \n 8     1     8 2.07 \n 9     1     9 0.784\n10     1    10 1.23 \n# ℹ 9,990 more rows\n\n\n\nAnd grab their means.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = rep,\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 1,000 × 2\n     rep sample_mean\n   &lt;int&gt;       &lt;dbl&gt;\n 1     1       1.02 \n 2     2       1.15 \n 3     3       1.04 \n 4     4       0.970\n 5     5       0.942\n 6     6       0.909\n 7     7       1.20 \n 8     8       1.09 \n 9     9       1.02 \n10    10       0.791\n# ℹ 990 more rows"
+    "text": "Simulation Example: CLT\nBefore we start incorporating other conditions, let’s scale this up.\n\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw = rnorm(total_n, mean = 1, sd = 0.5)\n  )\nsim_data\n\n# A tibble: 10,000 × 3\n     rep index   draw\n   &lt;int&gt; &lt;int&gt;  &lt;dbl&gt;\n 1     1     1 0.235 \n 2     1     2 0.345 \n 3     1     3 1.57  \n 4     1     4 0.725 \n 5     1     5 1.08  \n 6     1     6 1.55  \n 7     1     7 1.51  \n 8     1     8 2.01  \n 9     1     9 0.0431\n10     1    10 1.26  \n# ℹ 9,990 more rows\n\n\n\nAnd grab their means.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = rep,\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 1,000 × 2\n     rep sample_mean\n   &lt;int&gt;       &lt;dbl&gt;\n 1     1       1.03 \n 2     2       0.971\n 3     3       0.950\n 4     4       0.776\n 5     5       0.917\n 6     6       1.01 \n 7     7       1.13 \n 8     8       1.27 \n 9     9       0.784\n10    10       0.909\n# ℹ 990 more rows"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-8",
@@ -7375,14 +7375,14 @@
     "href": "lab/slides/lab_03.html#simulation-example-clt-9",
     "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\nrunif(x, min, max) where all values between min and max have an equal chance of being sampled\n\nuniform_samples &lt;- runif(5, min = -1, max = 3)\nuniform_samples\n\n[1]  2.8764847  2.3513868 -0.9450459 -0.5668513  2.6200084\n\n\n\nrchisq(x, df) where df is the degrees of freedom for the distribution\n\nchisquared_samples &lt;- rchisq(5, df = 1)\nchisquared_samples\n\n[1] 4.467241091 0.469038924 0.001887847 1.119630514 0.275215780"
+    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\nrunif(x, min, max) where all values between min and max have an equal chance of being sampled\n\nuniform_samples &lt;- runif(5, min = -1, max = 3)\nuniform_samples\n\n[1]  1.0329863  0.6172056  1.3688687 -0.5564932  1.5914623\n\n\n\nrchisq(x, df) where df is the degrees of freedom for the distribution\n\nchisquared_samples &lt;- rchisq(5, df = 1)\nchisquared_samples\n\n[1] 1.6566004 0.1194079 2.4901818 1.7468879 0.5675482"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-10",
     "href": "lab/slides/lab_03.html#simulation-example-clt-10",
     "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  )\nsim_data\n\n# A tibble: 10,000 × 5\n     rep index draw_normal draw_uniform draw_chisquared\n   &lt;int&gt; &lt;int&gt;       &lt;dbl&gt;        &lt;dbl&gt;           &lt;dbl&gt;\n 1     1     1       1.67        0.168           0.0339\n 2     1     2       0.992       2.24            0.275 \n 3     1     3       1.32        2.44            0.743 \n 4     1     4       0.978       2.52            0.601 \n 5     1     5       0.862       0.631           5.60  \n 6     1     6       1.56        0.818           0.278 \n 7     1     7       1.82        0.405           0.0556\n 8     1     8       0.862       1.74            1.78  \n 9     1     9       0.590       0.0365          0.0968\n10     1    10       0.890       2.34            0.511 \n# ℹ 9,990 more rows\n\n\n\nWe want to plot these draws as distributions, but facet_wrap(~ grouping_var) or aes(fill / color) are all expecting the values to be in one column, and a grouping variable that distinguishes them in another column.\n\n\n# A tibble: 6 × 2\n  grouping_var     y\n  &lt;chr&gt;        &lt;dbl&gt;\n1 group_1       -2.1\n2 group_2       -0.4\n3 group_1       -2.6\n4 group_2       -2.2\n5 group_1       -0.2\n6 group_2        2.6"
+    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  )\nsim_data\n\n# A tibble: 10,000 × 5\n     rep index draw_normal draw_uniform draw_chisquared\n   &lt;int&gt; &lt;int&gt;       &lt;dbl&gt;        &lt;dbl&gt;           &lt;dbl&gt;\n 1     1     1       1.61        -0.996         0.139  \n 2     1     2       1.54        -0.831         0.0772 \n 3     1     3       0.936        2.56          0.00867\n 4     1     4       0.926       -0.408         1.54   \n 5     1     5       1.42         2.28          0.365  \n 6     1     6       0.127        2.38          0.334  \n 7     1     7       2.38         2.81          1.22   \n 8     1     8       0.733        1.13          1.42   \n 9     1     9       0.659        2.31          3.27   \n10     1    10       1.26         2.61          0.307  \n# ℹ 9,990 more rows\n\n\n\nWe want to plot these draws as distributions, but facet_wrap(~ grouping_var) or aes(fill / color) are all expecting the values to be in one column, and a grouping variable that distinguishes them in another column.\n\n\n# A tibble: 6 × 2\n  grouping_var     y\n  &lt;chr&gt;        &lt;dbl&gt;\n1 group_1        1.2\n2 group_2        2.2\n3 group_1       -2.9\n4 group_2        0.8\n5 group_1        1.9\n6 group_2       -1"
   },
   {
     "objectID": "lab/slides/lab_03.html#let-us-review",
@@ -7403,14 +7403,14 @@
     "href": "lab/slides/lab_03.html#long-vs.-wide-data-1",
     "title": "Data Manipulation and Simulation",
     "section": "Long vs. Wide Data",
-    "text": "Long vs. Wide Data\n\n\n\n\n# A tibble: 9 × 3\n  person   book   score\n  &lt;chr&gt;    &lt;chr&gt;  &lt;int&gt;\n1 Harry    book 1     3\n2 Harry    book 2     3\n3 Harry    book 3     3\n4 Ron      book 1     2\n5 Ron      book 2     2\n6 Ron      book 3     1\n7 Hermione book 1     3\n8 Hermione book 2     1\n9 Hermione book 3     0\n\n\n\n\n\n# A tibble: 3 × 4\n  person   `book 1` `book 2` `book 3`\n  &lt;chr&gt;       &lt;int&gt;    &lt;int&gt;    &lt;int&gt;\n1 Harry           3        3        3\n2 Ron             2        2        1\n3 Hermione        3        1        0\n\n\n\nWide data common in spreadsheets, data from survey platforms\nLong data typically easier to work with"
+    "text": "Long vs. Wide Data\n\n\n\n\n# A tibble: 9 × 3\n  person   book   score\n  &lt;chr&gt;    &lt;chr&gt;  &lt;int&gt;\n1 Harry    book 1     3\n2 Harry    book 2     1\n3 Harry    book 3     3\n4 Ron      book 1     3\n5 Ron      book 2     1\n6 Ron      book 3     3\n7 Hermione book 1     3\n8 Hermione book 2     3\n9 Hermione book 3     2\n\n\n\n\n\n# A tibble: 3 × 4\n  person   `book 1` `book 2` `book 3`\n  &lt;chr&gt;       &lt;int&gt;    &lt;int&gt;    &lt;int&gt;\n1 Harry           3        1        3\n2 Ron             3        1        3\n3 Hermione        3        3        2\n\n\n\nWide data common in spreadsheets, data from survey platforms\nLong data typically easier to work with"
   },
   {
     "objectID": "lab/slides/lab_03.html#key-functions",
     "href": "lab/slides/lab_03.html#key-functions",
     "title": "Data Manipulation and Simulation",
     "section": "Key Functions",
-    "text": "Key Functions\n\n\nWide to Long\npivot_longer()\n\nlongdat &lt;- dat |&gt;\n  pivot_longer(cols = c(\"book 1\", \"book 2\", \"book 3\"),\n               names_to = \"book\", values_to = \"score\")\nlongdat\n\n# A tibble: 9 × 3\n  person   book   score\n  &lt;chr&gt;    &lt;chr&gt;  &lt;int&gt;\n1 Harry    book 1     3\n2 Harry    book 2     3\n3 Harry    book 3     3\n4 Ron      book 1     2\n5 Ron      book 2     2\n6 Ron      book 3     1\n7 Hermione book 1     3\n8 Hermione book 2     1\n9 Hermione book 3     0\n\n\n\nLong to Wide\npivot_wider()\n\nwidedat &lt;- longdat |&gt;\n  pivot_wider(names_from = book, values_from = score)\nwidedat\n\n# A tibble: 3 × 4\n  person   `book 1` `book 2` `book 3`\n  &lt;chr&gt;       &lt;int&gt;    &lt;int&gt;    &lt;int&gt;\n1 Harry           3        3        3\n2 Ron             2        2        1\n3 Hermione        3        1        0"
+    "text": "Key Functions\n\n\nWide to Long\npivot_longer()\n\nlongdat &lt;- dat |&gt;\n  pivot_longer(cols = c(\"book 1\", \"book 2\", \"book 3\"),\n               names_to = \"book\", values_to = \"score\")\nlongdat\n\n# A tibble: 9 × 3\n  person   book   score\n  &lt;chr&gt;    &lt;chr&gt;  &lt;int&gt;\n1 Harry    book 1     3\n2 Harry    book 2     1\n3 Harry    book 3     3\n4 Ron      book 1     3\n5 Ron      book 2     1\n6 Ron      book 3     3\n7 Hermione book 1     3\n8 Hermione book 2     3\n9 Hermione book 3     2\n\n\n\nLong to Wide\npivot_wider()\n\nwidedat &lt;- longdat |&gt;\n  pivot_wider(names_from = book, values_from = score)\nwidedat\n\n# A tibble: 3 × 4\n  person   `book 1` `book 2` `book 3`\n  &lt;chr&gt;       &lt;int&gt;    &lt;int&gt;    &lt;int&gt;\n1 Harry           3        1        3\n2 Ron             3        1        3\n3 Hermione        3        3        2"
   },
   {
     "objectID": "lab/slides/lab_03.html#key-functions-1",
@@ -7431,21 +7431,21 @@
     "href": "lab/slides/lab_03.html#selecting-functions-1",
     "title": "Data Manipulation and Simulation",
     "section": "Selecting Functions",
-    "text": "Selecting Functions\n\n\nSimple example, but…\n\ndat &lt;- data.frame(\n  id = 1:5,\n  Q1 = rbinom(5, 1, .1),\n  Q2 = rbinom(5, 1, .2),\n  Q3 = rbinom(5, 1, .3),\n  Q4 = rbinom(5, 1, .4),\n  Q5 = rbinom(5, 1, .5)\n)\ndat\n\n  id Q1 Q2 Q3 Q4 Q5\n1  1  0  0  0  0  0\n2  2  1  0  0  0  0\n3  3  0  0  0  0  0\n4  4  0  0  0  1  1\n5  5  0  0  0  0  0\n\n\n\n\ndat |&gt;\n  pivot_longer(cols = starts_with(\"Q\"),\n               names_to = \"question\", values_to = \"correct\")\n\n# A tibble: 25 × 3\n      id question correct\n   &lt;int&gt; &lt;chr&gt;      &lt;int&gt;\n 1     1 Q1             0\n 2     1 Q2             0\n 3     1 Q3             0\n 4     1 Q4             0\n 5     1 Q5             0\n 6     2 Q1             1\n 7     2 Q2             0\n 8     2 Q3             0\n 9     2 Q4             0\n10     2 Q5             0\n# ℹ 15 more rows"
+    "text": "Selecting Functions\n\n\nSimple example, but…\n\ndat &lt;- data.frame(\n  id = 1:5,\n  Q1 = rbinom(5, 1, .1),\n  Q2 = rbinom(5, 1, .2),\n  Q3 = rbinom(5, 1, .3),\n  Q4 = rbinom(5, 1, .4),\n  Q5 = rbinom(5, 1, .5)\n)\ndat\n\n  id Q1 Q2 Q3 Q4 Q5\n1  1  0  0  1  0  1\n2  2  0  0  0  0  1\n3  3  0  1  0  0  1\n4  4  0  0  0  0  1\n5  5  0  1  0  0  0\n\n\n\n\ndat |&gt;\n  pivot_longer(cols = starts_with(\"Q\"),\n               names_to = \"question\", values_to = \"correct\")\n\n# A tibble: 25 × 3\n      id question correct\n   &lt;int&gt; &lt;chr&gt;      &lt;int&gt;\n 1     1 Q1             0\n 2     1 Q2             0\n 3     1 Q3             1\n 4     1 Q4             0\n 5     1 Q5             1\n 6     2 Q1             0\n 7     2 Q2             0\n 8     2 Q3             0\n 9     2 Q4             0\n10     2 Q5             1\n# ℹ 15 more rows"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-11",
     "href": "lab/slides/lab_03.html#simulation-example-clt-11",
     "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  )\nsim_data\n\n# A tibble: 10,000 × 5\n     rep index draw_normal draw_uniform draw_chisquared\n   &lt;int&gt; &lt;int&gt;       &lt;dbl&gt;        &lt;dbl&gt;           &lt;dbl&gt;\n 1     1     1       1.03       -0.895          0.133  \n 2     1     2       1.08        2.76           0.112  \n 3     1     3       1.42        2.52           4.00   \n 4     1     4       1.09        0.0763         0.609  \n 5     1     5       0.526       2.69           0.356  \n 6     1     6       2.02        1.32           0.0137 \n 7     1     7       0.991       0.379          1.58   \n 8     1     8       1.83       -0.495          1.77   \n 9     1     9       1.13       -0.188          0.00408\n10     1    10       0.888      -0.765          0.594  \n# ℹ 9,990 more rows\n\n\n\n\nsim_data |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\n\n# A tibble: 30,000 × 4\n     rep index distribution      draw\n   &lt;int&gt; &lt;int&gt; &lt;chr&gt;            &lt;dbl&gt;\n 1     1     1 draw_normal      1.03 \n 2     1     1 draw_uniform    -0.895\n 3     1     1 draw_chisquared  0.133\n 4     1     2 draw_normal      1.08 \n 5     1     2 draw_uniform     2.76 \n 6     1     2 draw_chisquared  0.112\n 7     1     3 draw_normal      1.42 \n 8     1     3 draw_uniform     2.52 \n 9     1     3 draw_chisquared  4.00 \n10     1     4 draw_normal      1.09 \n# ℹ 29,990 more rows"
+    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  )\nsim_data\n\n# A tibble: 10,000 × 5\n     rep index draw_normal draw_uniform draw_chisquared\n   &lt;int&gt; &lt;int&gt;       &lt;dbl&gt;        &lt;dbl&gt;           &lt;dbl&gt;\n 1     1     1       1.03         0.572          0.579 \n 2     1     2       1.53        -0.743          0.682 \n 3     1     3       1.04         1.82           0.801 \n 4     1     4       0.843        1.66           0.0219\n 5     1     5       0.257        1.83           0.515 \n 6     1     6       0.197       -0.466          0.352 \n 7     1     7       1.17         2.61           2.42  \n 8     1     8       1.20         0.547          0.831 \n 9     1     9       0.723       -0.512          1.24  \n10     1    10       1.46         1.15           0.0259\n# ℹ 9,990 more rows\n\n\n\n\nsim_data |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\n\n# A tibble: 30,000 × 4\n     rep index distribution      draw\n   &lt;int&gt; &lt;int&gt; &lt;chr&gt;            &lt;dbl&gt;\n 1     1     1 draw_normal      1.03 \n 2     1     1 draw_uniform     0.572\n 3     1     1 draw_chisquared  0.579\n 4     1     2 draw_normal      1.53 \n 5     1     2 draw_uniform    -0.743\n 6     1     2 draw_chisquared  0.682\n 7     1     3 draw_normal      1.04 \n 8     1     3 draw_uniform     1.82 \n 9     1     3 draw_chisquared  0.801\n10     1     4 draw_normal      0.843\n# ℹ 29,990 more rows"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-12",
     "href": "lab/slides/lab_03.html#simulation-example-clt-12",
     "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  ) |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\nsim_data\n\n# A tibble: 30,000 × 4\n     rep index distribution       draw\n   &lt;int&gt; &lt;int&gt; &lt;chr&gt;             &lt;dbl&gt;\n 1     1     1 draw_normal      0.745 \n 2     1     1 draw_uniform    -0.295 \n 3     1     1 draw_chisquared  0.0555\n 4     1     2 draw_normal      1.15  \n 5     1     2 draw_uniform     2.80  \n 6     1     2 draw_chisquared  0.816 \n 7     1     3 draw_normal      0.715 \n 8     1     3 draw_uniform    -0.483 \n 9     1     3 draw_chisquared  1.90  \n10     1     4 draw_normal      1.58  \n# ℹ 29,990 more rows\n\n\n\nAnd grab their means.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = c(rep, distribution),\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 3,000 × 3\n     rep distribution    sample_mean\n   &lt;int&gt; &lt;chr&gt;                 &lt;dbl&gt;\n 1     1 draw_normal           1.03 \n 2     1 draw_uniform          1.04 \n 3     1 draw_chisquared       1.64 \n 4     2 draw_normal           1.27 \n 5     2 draw_uniform          1.82 \n 6     2 draw_chisquared       1.72 \n 7     3 draw_normal           0.916\n 8     3 draw_uniform          1.73 \n 9     3 draw_chisquared       1.83 \n10     4 draw_normal           0.952\n# ℹ 2,990 more rows"
+    "text": "Simulation Example: CLT\n\n\n\nIncorporate different distributions.\n\nWe can then draw n_reps * sample_size = total_n values from a normal distribution with rnorm().\n\nn_reps &lt;- 1000\nsample_size &lt;- 10\ntotal_n &lt;- n_reps * sample_size\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\") |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  ) |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\nsim_data\n\n# A tibble: 30,000 × 4\n     rep index distribution      draw\n   &lt;int&gt; &lt;int&gt; &lt;chr&gt;            &lt;dbl&gt;\n 1     1     1 draw_normal      1.95 \n 2     1     1 draw_uniform    -0.740\n 3     1     1 draw_chisquared  1.71 \n 4     1     2 draw_normal      0.837\n 5     1     2 draw_uniform     1.72 \n 6     1     2 draw_chisquared  1.36 \n 7     1     3 draw_normal      1.43 \n 8     1     3 draw_uniform     2.18 \n 9     1     3 draw_chisquared  0.367\n10     1     4 draw_normal      1.05 \n# ℹ 29,990 more rows\n\n\n\nAnd grab their means.\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = c(rep, distribution),\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 3,000 × 3\n     rep distribution    sample_mean\n   &lt;int&gt; &lt;chr&gt;                 &lt;dbl&gt;\n 1     1 draw_normal           1.05 \n 2     1 draw_uniform          1.30 \n 3     1 draw_chisquared       0.616\n 4     2 draw_normal           0.774\n 5     2 draw_uniform          1.14 \n 6     2 draw_chisquared       0.789\n 7     3 draw_normal           0.826\n 8     3 draw_uniform          1.46 \n 9     3 draw_chisquared       0.552\n10     4 draw_normal           0.808\n# ℹ 2,990 more rows"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-13",
@@ -7466,7 +7466,7 @@
     "href": "lab/slides/lab_03.html#simulation-example-clt-15",
     "title": "Data Manipulation and Simulation",
     "section": "Simulation Example: CLT",
-    "text": "Simulation Example: CLT\n\n\n\nIncorporate different sample sizes.\n\n\nn_reps &lt;- 1000\nsample_size &lt;- c(3, 10, 30, 100)\ntotal_n &lt;- sum(n_reps * sample_size)\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\", .remove = F) |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  ) |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\nsim_data\n\n# A tibble: 429,000 × 5\n   sample_size   rep index distribution      draw\n         &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;            &lt;dbl&gt;\n 1           3     1     1 draw_normal     0.603 \n 2           3     1     1 draw_uniform    0.257 \n 3           3     1     1 draw_chisquared 0.183 \n 4           3     1     2 draw_normal     0.278 \n 5           3     1     2 draw_uniform    1.13  \n 6           3     1     2 draw_chisquared 0.470 \n 7           3     1     3 draw_normal     0.770 \n 8           3     1     3 draw_uniform    2.47  \n 9           3     1     3 draw_chisquared 0.0368\n10           3     2     1 draw_normal     0.712 \n# ℹ 428,990 more rows\n\n\n\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = c(rep, distribution, sample_size),\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 12,000 × 4\n     rep distribution    sample_size sample_mean\n   &lt;int&gt; &lt;chr&gt;                 &lt;dbl&gt;       &lt;dbl&gt;\n 1     1 draw_normal               3      0.550 \n 2     1 draw_uniform              3      1.28  \n 3     1 draw_chisquared           3      0.230 \n 4     2 draw_normal               3      0.932 \n 5     2 draw_uniform              3     -0.0788\n 6     2 draw_chisquared           3      2.21  \n 7     3 draw_normal               3      0.571 \n 8     3 draw_uniform              3      0.790 \n 9     3 draw_chisquared           3      1.98  \n10     4 draw_normal               3      0.995 \n# ℹ 11,990 more rows"
+    "text": "Simulation Example: CLT\n\n\n\nIncorporate different sample sizes.\n\n\nn_reps &lt;- 1000\nsample_size &lt;- c(3, 10, 30, 100)\ntotal_n &lt;- sum(n_reps * sample_size)\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\", .remove = F) |&gt;\n  mutate(\n    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),\n    draw_uniform = runif(total_n, min = -1, max = 3),\n    draw_chisquared = rchisq(total_n, df = 1)\n  ) |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\nsim_data\n\n# A tibble: 429,000 × 5\n   sample_size   rep index distribution       draw\n         &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;             &lt;dbl&gt;\n 1           3     1     1 draw_normal      1.12  \n 2           3     1     1 draw_uniform     0.943 \n 3           3     1     1 draw_chisquared  0.0111\n 4           3     1     2 draw_normal      1.67  \n 5           3     1     2 draw_uniform    -0.830 \n 6           3     1     2 draw_chisquared  0.162 \n 7           3     1     3 draw_normal      1.22  \n 8           3     1     3 draw_uniform     0.342 \n 9           3     1     3 draw_chisquared  0.0743\n10           3     2     1 draw_normal      0.775 \n# ℹ 428,990 more rows\n\n\n\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = c(rep, distribution, sample_size),\n            sample_mean = mean(draw))\nmeans\n\n# A tibble: 12,000 × 4\n     rep distribution    sample_size sample_mean\n   &lt;int&gt; &lt;chr&gt;                 &lt;dbl&gt;       &lt;dbl&gt;\n 1     1 draw_normal               3      1.34  \n 2     1 draw_uniform              3      0.152 \n 3     1 draw_chisquared           3      0.0823\n 4     2 draw_normal               3      1.09  \n 5     2 draw_uniform              3      2.02  \n 6     2 draw_chisquared           3      2.65  \n 7     3 draw_normal               3      1.44  \n 8     3 draw_uniform              3     -0.330 \n 9     3 draw_chisquared           3      1.81  \n10     4 draw_normal               3      1.18  \n# ℹ 11,990 more rows"
   },
   {
     "objectID": "lab/slides/lab_03.html#simulation-example-clt-16",
@@ -7781,21 +7781,21 @@
     "href": "lab/activities/activity_keys/lab_03_activity_key.html",
     "title": "Lab 03 Activity Key",
     "section": "",
-    "text": "Link to Activity 03"
+    "text": "Practice data visualization with the tidyverse\nPractice simulating data"
   },
   {
     "objectID": "lab/activities/activity_keys/lab_03_activity_key.html#activity",
     "href": "lab/activities/activity_keys/lab_03_activity_key.html#activity",
     "title": "Lab 03 Activity Key",
     "section": "Activity",
-    "text": "Activity\n\n2) Check and set (if needed) your working directory. If you’d like to load packages with library(), please do so in this block.\n\ntargets::tar_load(leaves_data_file, store = here::here(\"_targets\"))\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.2.1     ✔ readr     2.2.0\n✔ forcats   1.0.1     ✔ stringr   1.6.0\n✔ ggplot2   4.0.3     ✔ tibble    3.3.1\n✔ lubridate 1.9.5     ✔ tidyr     1.3.2\n✔ purrr     1.2.2     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors"
+    "text": "Activity\n\n2) Check and set (if needed) your working directory. If you’d like to load packages with library(), please do so in this block.\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.2.1     ✔ readr     2.2.0\n✔ forcats   1.0.1     ✔ stringr   1.6.0\n✔ ggplot2   4.0.3     ✔ tibble    3.3.1\n✔ lubridate 1.9.5     ✔ tidyr     1.3.2\n✔ purrr     1.2.2     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors"
   },
   {
     "objectID": "lab/activities/activity_keys/lab_03_activity_key.html#simulation",
     "href": "lab/activities/activity_keys/lab_03_activity_key.html#simulation",
     "title": "Lab 03 Activity Key",
     "section": "Simulation",
-    "text": "Simulation\n\n3) Extend or modify the data simulation shown in class in some way. Feel free to choose something interesting to you, but some possible ideas are: adding an additional condition, modifying an existing condition, replacing some distributions with different ones, comparing distributions with different parameters (e.g., comparing different means, SDs, degrees of freedom, etc. within a distribution). For this extension, write 1–2 questions or goals below.\n\nCompare how the CLT behaves with \\(\\chi^2\\) tests of different degrees of freedom.\n\n\n\n4) Next, make your plan. This can be brief, but sketch out the steps you will take to program this. If your extension involves varying some parameters, distribution, etc., specify the different levels it will take (e.g., testing a \\(\\chi^2\\) distribution with degrees of freedom 1, 2, 3, and 4).\nReplace existing distributions with \\(chi^2\\) distributions of varying degrees of freedom, specifically df = 1, 2, 3, and 4.\n\n\n5) Make your modifications to the simulation and show the results! Please include results for both the sample and sampling distributions.\n\nn_reps &lt;- 1000\nsample_size &lt;- c(3, 10, 30, 100)\ntotal_n &lt;- sum(n_reps * sample_size)\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\", .remove = F) |&gt;\n  mutate(\n    draw_chisq_1 = rchisq(total_n, df = 1),\n    draw_chisq_2 = rchisq(total_n, df = 2),\n    draw_chisq_3 = rchisq(total_n, df = 3),\n    draw_chisq_4 = rchisq(total_n, df = 4)\n  ) |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = c(rep, distribution, sample_size),\n            sample_mean = mean(draw))\n\nsim_data |&gt;\n  filter(rep %in% sample(n_reps, size = 30)) |&gt;\n  ggplot(aes(x = draw, y = distribution,\n             color = distribution, group = interaction(distribution, rep))) +\n  ggridges::geom_density_ridges(alpha = 0.8, fill = NA) +\n  theme_classic(base_size = 14) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  facet_wrap(~ sample_size) +\n  labs(title = \"Sample Distribution\")\n\nPicking joint bandwidth of 0.901\n\n\nPicking joint bandwidth of 0.876\n\n\nPicking joint bandwidth of 0.76\n\n\nPicking joint bandwidth of 0.634\n\n\n\n\n\n\n\n\nmeans |&gt;\n  ggplot(aes(x = sample_mean)) +\n  geom_density() +\n  theme_classic(base_size = 14) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  facet_grid(sample_size ~ distribution, scales = \"free_y\") +\n  labs(title = \"Samplng Distribution\")\n\n\n\n\n\n\n\n\n\n\n5) Provide a brief (2–4 sentences) writeup of your method and results."
+    "text": "Simulation\n\n3) Extend or modify the data simulation shown in class in some way. Feel free to choose something interesting to you, but some possible ideas are: adding an additional condition, modifying an existing condition, replacing some distributions with different ones, comparing distributions with different parameters (e.g., comparing different means, SDs, degrees of freedom, etc. within a distribution). For this extension, write 1–2 questions or goals below.\n\nCompare how the CLT behaves with \\(\\chi^2\\) tests of different degrees of freedom.\n\n\n\n4) Next, make your plan. This can be brief, but sketch out the steps you will take to program this. If your extension involves varying some parameters, distribution, etc., specify the different levels it will take (e.g., testing a \\(\\chi^2\\) distribution with degrees of freedom 1, 2, 3, and 4).\nReplace existing distributions with \\(chi^2\\) distributions of varying degrees of freedom, specifically df = 1, 2, 3, and 4.\n\n\n5) Make your modifications to the simulation and show the results! Please include results for both the sample and sampling distributions.\n\nn_reps &lt;- 1000\nsample_size &lt;- c(3, 10, 30, 100)\ntotal_n &lt;- sum(n_reps * sample_size)\n\nsim_data &lt;- tibble(\n  n_reps = n_reps,\n  sample_size = sample_size\n) |&gt;\n  uncount(n_reps, .id = \"rep\") |&gt;\n  uncount(sample_size, .id = \"index\", .remove = F) |&gt;\n  mutate(\n    draw_chisq_1 = rchisq(total_n, df = 1),\n    draw_chisq_2 = rchisq(total_n, df = 2),\n    draw_chisq_3 = rchisq(total_n, df = 3),\n    draw_chisq_4 = rchisq(total_n, df = 4)\n  ) |&gt;\n  pivot_longer(starts_with(\"draw\"),\n               names_to = \"distribution\", values_to = \"draw\")\n\nmeans &lt;- sim_data |&gt;\n  summarize(.by = c(rep, distribution, sample_size),\n            sample_mean = mean(draw))\n\nsim_data |&gt;\n  filter(rep %in% sample(n_reps, size = 30)) |&gt;\n  ggplot(aes(x = draw, y = distribution,\n             color = distribution, group = interaction(distribution, rep))) +\n  ggridges::geom_density_ridges(alpha = 0.8, fill = NA) +\n  theme_classic(base_size = 14) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  facet_wrap(~ sample_size) +\n  labs(title = \"Sample Distribution\")\n\nPicking joint bandwidth of 0.883\n\n\nPicking joint bandwidth of 0.834\n\n\nPicking joint bandwidth of 0.795\n\n\nPicking joint bandwidth of 0.635\n\n\n\n\n\n\n\n\nmeans |&gt;\n  ggplot(aes(x = sample_mean)) +\n  geom_density() +\n  theme_classic(base_size = 14) +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T),\n         color = guide_none()) +\n  facet_grid(sample_size ~ distribution, scales = \"free_y\") +\n  labs(title = \"Samplng Distribution\")\n\n\n\n\n\n\n\n\n\n\n5) Provide a brief (2–4 sentences) writeup of your method and results."
   },
   {
     "objectID": "lab/activities/activity_keys/lab_03_activity_key.html#chi-squared-test-of-proportions",
@@ -9993,7 +9993,7 @@
     "href": "lab/slides/lab_03.html#transform-tidyverse-syntax",
     "title": "Data Manipulation and Simulation",
     "section": "Transform: tidyverse syntax",
-    "text": "Transform: tidyverse syntax\nThe tidyverse website mentioned that each package shares a common language for their functions\nBased off of dplyr (one of the packages) verbs\n\nThe first argument is always a dataframe.\nThe subsequent arguments typically describe which columns to operate on using the variable names (without quotes).\nThe output is always a new data frame.\n\n\nhttps://r4ds.hadley.nz/data-transform.html#dplyr-basics"
+    "text": "Transform: tidyverse syntax\nThe tidyverse website mentioned that each package shares a common language for their functions\nBased off of dplyr (one of the packages) verbs\n\n\nThe first argument is always a dataframe.\nThe subsequent arguments typically describe which columns to operate on using the variable names (without quotes).\nThe output is always a new data frame.\n\n\n\nhttps://r4ds.hadley.nz/data-transform.html#dplyr-basics"
   },
   {
     "objectID": "lab/slides/lab_03.html#transform-more-tidyverse-syntax",
@@ -10112,7 +10112,7 @@
     "href": "lab/slides/lab_03.html#simulation-1",
     "title": "Data Manipulation and Simulation",
     "section": "Simulation",
-    "text": "Simulation\nSimulating fake data is such a helpful skill to have in your toolbox. You can…\n\n\n\nCheck that methods are working correctly\n\n\n\nrnorm(1000000, 5, 10) |&gt; mean()\n\n[1] 5.00039\n\n\n\n\n\n\nBuild your intuition and understanding about statistical theory\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nn_reps &lt;- 100000\ntibble(n = n_reps,\n       sd = c(1, 1.25, 1.5)) |&gt;\n  uncount(n_reps) |&gt;\n  mutate(draw = rnorm(n(), 0, sd)) |&gt;\n  ggplot(aes(x = draw, group = factor(sd))) +\n  geom_density(alpha = 0.4, color = NA, fill = \"steelblue\") +\n  geom_text(\n    data = tibble(sd = c(1, 1.25, 1.5), \n                  height = dnorm(0, 0, sd) * 0.875,\n                  draw = 0),\n    aes(label = paste(\"SD =\", sd), y = height),\n    color = \"white\", fontface = \"bold\", size = 4.5\n  ) +\n  guides(y = guide_none(NULL),\n         x = guide_axis(NULL, cap = T),\n         color = guide_legend(\"SD\")) +\n  coord_cartesian(xlim = c(-4, 4)) +\n  theme_classic() +\n  theme(legend.position = \"bottom\")\n\n\n\n\n\n\n\n\nAnswer your own questions about a statistical concept\n\n\nLet’s do that today!"
+    "text": "Simulation\nSimulating fake data is such a helpful skill to have in your toolbox. You can…\n\n\n\nCheck that methods are working correctly\n\n\n\nrnorm(1000000, 5, 10) |&gt; mean()\n\n[1] 4.969818\n\n\n\n\n\n\nBuild your intuition and understanding about statistical theory\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nn_reps &lt;- 100000\ntibble(n = n_reps,\n       sd = c(1, 1.25, 1.5)) |&gt;\n  uncount(n_reps) |&gt;\n  mutate(draw = rnorm(n(), 0, sd)) |&gt;\n  ggplot(aes(x = draw, group = factor(sd))) +\n  geom_density(alpha = 0.4, color = NA, fill = \"steelblue\") +\n  geom_text(\n    data = tibble(sd = c(1, 1.25, 1.5), \n                  height = dnorm(0, 0, sd) * 0.875,\n                  draw = 0),\n    aes(label = paste(\"SD =\", sd), y = height),\n    color = \"white\", fontface = \"bold\", size = 4.5\n  ) +\n  guides(y = guide_none(NULL),\n         x = guide_axis(NULL, cap = T),\n         color = guide_legend(\"SD\")) +\n  coord_cartesian(xlim = c(-4, 4)) +\n  theme_classic() +\n  theme(legend.position = \"bottom\")\n\n\n\n\n\n\n\n\nAnswer your own questions about a statistical concept\n\n\nLet’s do that today!"
   },
   {
     "objectID": "lab/slides/lab_03.html#lab-04-activity",
@@ -10120,5 +10120,551 @@
     "title": "Data Manipulation and Simulation",
     "section": "Lab 04 Activity",
     "text": "Lab 04 Activity"
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_03_activity_key.html#import",
+    "href": "lab/activities/activity_keys/lab_03_activity_key.html#import",
+    "title": "Lab 03 Activity Key",
+    "section": "Import",
+    "text": "Import\n\n3) The tidyverse package includes a dataset called billboard that has song rankings for the Billboard Top 100 songs from the year 2000. You can access the billboard data object by just calling billboard. Use the head() function to display the first six rows. Then, use the names() to look at the column names.\n\nhead(billboard)\n\n# A tibble: 6 × 79\n  artist      track date.entered   wk1   wk2   wk3   wk4   wk5   wk6   wk7   wk8\n  &lt;chr&gt;       &lt;chr&gt; &lt;date&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 2 Pac       Baby… 2000-02-26      87    82    72    77    87    94    99    NA\n2 2Ge+her     The … 2000-09-02      91    87    92    NA    NA    NA    NA    NA\n3 3 Doors Do… Kryp… 2000-04-08      81    70    68    67    66    57    54    53\n4 3 Doors Do… Loser 2000-10-21      76    76    72    69    67    65    55    59\n5 504 Boyz    Wobb… 2000-04-15      57    34    25    17    17    31    36    49\n6 98^0        Give… 2000-08-19      51    39    34    26    26    19     2     2\n# ℹ 68 more variables: wk9 &lt;dbl&gt;, wk10 &lt;dbl&gt;, wk11 &lt;dbl&gt;, wk12 &lt;dbl&gt;,\n#   wk13 &lt;dbl&gt;, wk14 &lt;dbl&gt;, wk15 &lt;dbl&gt;, wk16 &lt;dbl&gt;, wk17 &lt;dbl&gt;, wk18 &lt;dbl&gt;,\n#   wk19 &lt;dbl&gt;, wk20 &lt;dbl&gt;, wk21 &lt;dbl&gt;, wk22 &lt;dbl&gt;, wk23 &lt;dbl&gt;, wk24 &lt;dbl&gt;,\n#   wk25 &lt;dbl&gt;, wk26 &lt;dbl&gt;, wk27 &lt;dbl&gt;, wk28 &lt;dbl&gt;, wk29 &lt;dbl&gt;, wk30 &lt;dbl&gt;,\n#   wk31 &lt;dbl&gt;, wk32 &lt;dbl&gt;, wk33 &lt;dbl&gt;, wk34 &lt;dbl&gt;, wk35 &lt;dbl&gt;, wk36 &lt;dbl&gt;,\n#   wk37 &lt;dbl&gt;, wk38 &lt;dbl&gt;, wk39 &lt;dbl&gt;, wk40 &lt;dbl&gt;, wk41 &lt;dbl&gt;, wk42 &lt;dbl&gt;,\n#   wk43 &lt;dbl&gt;, wk44 &lt;dbl&gt;, wk45 &lt;dbl&gt;, wk46 &lt;dbl&gt;, wk47 &lt;dbl&gt;, wk48 &lt;dbl&gt;, …\n\nnames(billboard)\n\n [1] \"artist\"       \"track\"        \"date.entered\" \"wk1\"          \"wk2\"         \n [6] \"wk3\"          \"wk4\"          \"wk5\"          \"wk6\"          \"wk7\"         \n[11] \"wk8\"          \"wk9\"          \"wk10\"         \"wk11\"         \"wk12\"        \n[16] \"wk13\"         \"wk14\"         \"wk15\"         \"wk16\"         \"wk17\"        \n[21] \"wk18\"         \"wk19\"         \"wk20\"         \"wk21\"         \"wk22\"        \n[26] \"wk23\"         \"wk24\"         \"wk25\"         \"wk26\"         \"wk27\"        \n[31] \"wk28\"         \"wk29\"         \"wk30\"         \"wk31\"         \"wk32\"        \n[36] \"wk33\"         \"wk34\"         \"wk35\"         \"wk36\"         \"wk37\"        \n[41] \"wk38\"         \"wk39\"         \"wk40\"         \"wk41\"         \"wk42\"        \n[46] \"wk43\"         \"wk44\"         \"wk45\"         \"wk46\"         \"wk47\"        \n[51] \"wk48\"         \"wk49\"         \"wk50\"         \"wk51\"         \"wk52\"        \n[56] \"wk53\"         \"wk54\"         \"wk55\"         \"wk56\"         \"wk57\"        \n[61] \"wk58\"         \"wk59\"         \"wk60\"         \"wk61\"         \"wk62\"        \n[66] \"wk63\"         \"wk64\"         \"wk65\"         \"wk66\"         \"wk67\"        \n[71] \"wk68\"         \"wk69\"         \"wk70\"         \"wk71\"         \"wk72\"        \n[76] \"wk73\"         \"wk74\"         \"wk75\"         \"wk76\""
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_03_activity_key.html#tidy",
+    "href": "lab/activities/activity_keys/lab_03_activity_key.html#tidy",
+    "title": "Lab 03 Activity Key",
+    "section": "Tidy",
+    "text": "Tidy\n\n4a) Is the billboards dataset in wide or long format? How can you tell?\nWide! An “observation” here is a ranking in a given week, but all the weeks are in columns. They don’t have to specifically mention that an observation is a ranking in a week, but just something like this. \n\n\n4b) Using the ? tool on the dataset and / or the output from #3, please describe the contents of this dataset (specificially, an overview of what you can find in the columns) (1–2 sentences).\n\n#?billboards\n\nIn this dataset, we can find the artist name, track name, date that the track entered, and rankings for 76 weeks starting in 2000.\n\n\n4c) Given what you said in #4a, would you want to use the pivot_longer() or pivot_wider() function on this data?\npivot_longer()\n\n\n5) Using a pipe, let’s do a few things:\n\nTidy the data as you planned to in #4c,\nMutate the column with the numbered weeks so that it’s just numeric (hint: the parse_number() function will extract numbers from a string. Feel free to review its documentation with ?),\nAssign this tidied version to a variable so we can continue using it.\n\nAfter the pipe, print the first six rows from this tidied version.\n\nbillboard_l &lt;- billboard |&gt;\n  pivot_longer(cols = starts_with(\"wk\"),\n               names_to = \"week\", values_to = \"ranking\") |&gt;\n  mutate(week = parse_number(week))\nhead(billboard_l)\n\n# A tibble: 6 × 5\n  artist track                   date.entered  week ranking\n  &lt;chr&gt;  &lt;chr&gt;                   &lt;date&gt;       &lt;dbl&gt;   &lt;dbl&gt;\n1 2 Pac  Baby Don't Cry (Keep... 2000-02-26       1      87\n2 2 Pac  Baby Don't Cry (Keep... 2000-02-26       2      82\n3 2 Pac  Baby Don't Cry (Keep... 2000-02-26       3      72\n4 2 Pac  Baby Don't Cry (Keep... 2000-02-26       4      77\n5 2 Pac  Baby Don't Cry (Keep... 2000-02-26       5      87\n6 2 Pac  Baby Don't Cry (Keep... 2000-02-26       6      94"
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_03_activity_key.html#transform",
+    "href": "lab/activities/activity_keys/lab_03_activity_key.html#transform",
+    "title": "Lab 03 Activity Key",
+    "section": "Transform",
+    "text": "Transform\n\n5) Let’s answer some questions with this data! Our first question is: what song spent the most number of weeks in the Billboard top 10? Using a pipe and the tidied dataset from the previous question, let’s do a few things:\n\nFilter the data to just include 10 or lower in the ranking column\nSummarize by the song name to get the number of weeks. HINT: the n() function returns the number of rows in a summarize(.by = group) group.\nArrange the data with from highest to lowest number of weeks in the top 10\n\nWhat song spent the most number of weeks in the Billboard top 10?\n\nbillboard_l |&gt;\n  filter(ranking &lt;= 10) |&gt;\n  summarize(.by = track, n_weeks = n()) |&gt;\n  arrange(desc(n_weeks))\n\n# A tibble: 53 × 2\n   track                   n_weeks\n   &lt;chr&gt;                     &lt;int&gt;\n 1 Breathe                      19\n 2 Everything You Want          19\n 3 Kryptonite                   18\n 4 With Arms Wide Open          18\n 5 Maria, Maria                 18\n 6 Independent Women Pa...      17\n 7 My Love Is Your Love         17\n 8 I Knew I Loved You           17\n 9 Jumpin' Jumpin'              16\n10 I Wanna Know                 16\n# ℹ 43 more rows\n\n\n\n\n3) Come up with one question you’d like to ask of the data through data transformation.\n\n\n8) Using a pipe, transform the data to address your question."
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_03_activity_key.html#visualize-bonus",
+    "href": "lab/activities/activity_keys/lab_03_activity_key.html#visualize-bonus",
+    "title": "Lab 03 Activity Key",
+    "section": "Visualize (Bonus!)",
+    "text": "Visualize (Bonus!)\nIf you’d like more practice doing data visualization, here are some extra exercises. These will not count towards your grade, but I will provide feedback if you choose to do them for practice.\n\nB1) Let’s plot the billboards data. Let’s make a line graph that has time (week) on the x-axis and a song’s ranking on the y-axis. Start by using the ggplot() function to make a grid with axes (no geoms yet).\n\nbillboard_l |&gt;\n  ggplot(aes(x = week, y = ranking))\n\n\n\n\n\n\n\n\n\n\nB2) Now, let’s add a geom_line() to show the rankings of the different songs over time. Remember you will need to add a group argument to your aes.\n\nbillboard_l |&gt;\n  ggplot(aes(x = week, y = ranking, group = track)) +\n  geom_line()\n\nWarning: Removed 18723 rows containing missing values or values outside the scale range\n(`geom_line()`).\n\n\n\n\n\n\n\n\n\n\n\nB3) Because higher is “worse” for rankings, let’s reverse the y-axis so higher on the y is “better” by adding a scale layer. The function scale_y_reverse() will do this for us! Add it on to your plot just like you would add a new layer.\n\nbillboard_l |&gt;\n  ggplot(aes(x = week, y = ranking, group = track)) +\n  geom_line() +\n  scale_y_reverse()\n\nWarning: Removed 18723 rows containing missing values or values outside the scale range\n(`geom_line()`).\n\n\n\n\n\n\n\n\n\n\n\nB4) Modify the alpha argument within your geom to make it easier to see the patterns.\n\nbillboard_l |&gt;\n  ggplot(aes(x = week, y = ranking, group = track)) +\n  geom_line(alpha = .5) +\n  scale_y_reverse()\n\nWarning: Removed 18723 rows containing missing values or values outside the scale range\n(`geom_line()`).\n\n\n\n\n\n\n\n\n\n\n\nB6) Make three more modifications to this plot.\n\nbillboard_l |&gt;\n  ggplot(aes(x = week, y = ranking, group = track)) +\n  geom_line(alpha = .3) +\n  scale_y_reverse() +\n  coord_cartesian(expand = F) +\n  labs(x = \"Week\", y = \"Ranking\") +\n  theme_classic(base_size = 14)\n\nWarning: Removed 18723 rows containing missing values or values outside the scale range\n(`geom_line()`).\n\n\n\n\n\n\n\n\n\n\n\nB7) Describe what you see in this plot (1–2 sentences).\nSong rankings seem to increase and then fall soon after."
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_04_activity_key.html",
+    "href": "lab/activities/activity_keys/lab_04_activity_key.html",
+    "title": "Lab 04 Activity Key",
+    "section": "",
+    "text": "Conduct \\(\\chi^\\)-tests\nConduct t-tests"
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_04_activity_key.html#activity",
+    "href": "lab/activities/activity_keys/lab_04_activity_key.html#activity",
+    "title": "Lab 04 Activity Key",
+    "section": "Activity",
+    "text": "Activity\n\n2) Check and set (if needed) your working directory. If you’d like to load packages with library(), please do so in this block.\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.2.1     ✔ readr     2.2.0\n✔ forcats   1.0.1     ✔ stringr   1.6.0\n✔ ggplot2   4.0.3     ✔ tibble    3.3.1\n✔ lubridate 1.9.5     ✔ tidyr     1.3.2\n✔ purrr     1.2.2     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors"
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_04_activity_key.html#chi-squared-test-of-proportions",
+    "href": "lab/activities/activity_keys/lab_04_activity_key.html#chi-squared-test-of-proportions",
+    "title": "Lab 04 Activity Key",
+    "section": "Chi-Squared Test of Proportions",
+    "text": "Chi-Squared Test of Proportions\n\n3) Download and relocate the leaves.csv file to your folder for this class. Read in the file and display the first few rows of the data. This dataset contains the color (green, red, orange, or brown) and whether a not a leaf had fallen from its tree for 1,000 leaves (Note: this is a simulated dataset). Use mutate() to change the color variable into an factor variable ordered by the leaf changing process (green -&gt; red -&gt; orange -&gt; brown) first.\n\nleaves &lt;- read.csv(here::here(\"lab\", \"data\", \"leaves.csv\")) |&gt;\n  mutate(color = factor(color, levels = c(\"green\", \"red\", \"orange\", \"brown\")))\n\n\n\n4a) You are a tree researcher, and you would like to better understand leaves changing color in the fall. You’ve recorded the color of 1000 leaves, and you’d like to test if there is a difference in the frequency of the colors of the leaves. You plan to conduct a Chi-Squared Test of Proportions on the frequency of different color leaves you’ve observed in your dataset. First, what are the null and alternative hypotheses for this test?\n\\(H_0\\): The frequency of leaves of each color is the same in the population.\n\\(H_A\\): The frequency of leaves of each color is not the same in the population.\n\n\n4b) What is the expected frequency for leaves of each color?\n250 each.\n\n\n4c) What is your chi-square degrees of freedom and cutoff value?\n\nqchisq(.95, 3)\n\n[1] 7.814728\n\n\n\\(\\text{df} = 4 - 1 = 3\\), cutoff = 7.815.\n\n\n4d) What are the observed frequencies of each color?\n\ntable(leaves$color)\n\n\n green    red orange  brown \n   109    297    499     95 \n\n\n\n\n4e) What is the observed chi-squared statistic?\n\nchisq.test(c(94, 104, 513, 289))\n\n\n    Chi-squared test for given probabilities\n\ndata:  c(94, 104, 513, 289)\nX-squared = 465.37, df = 3, p-value &lt; 2.2e-16\n\n\n\n\n4f) Provide a brief interpretation of these results.\nWe reject the null in favor of the alternative that there is a difference among the frequencies of these leaf colors in the population.\n\n\n4g) Create a barplot that displays the frequencies of each leaf color.\n\nleaves |&gt;\n  ggplot(aes(x = color)) +\n  geom_bar()"
+  },
+  {
+    "objectID": "lab/activities/activity_keys/lab_04_activity_key.html#chi-squared-test-of-independence",
+    "href": "lab/activities/activity_keys/lab_04_activity_key.html#chi-squared-test-of-independence",
+    "title": "Lab 04 Activity Key",
+    "section": "Chi-Squared Test of Independence",
+    "text": "Chi-Squared Test of Independence\n\n5a) You now want to see if leaf color and whether or not the leaf had fallen from the tree are independent variables. What are the null and alternative hypotheses for this test?\n\\(H_0\\): Leaf color and whether or not the leaf had fallen have no association.\n\\(H_A\\): Leaf color and whether or not the leaf had fallen have some association.\n\n\n5b) What are the observed frequencies of each color given whether or not they had fallen?\n\ntable(leaves$color, leaves$fallen)\n\n        \n          no yes\n  green  100   9\n  red    202  95\n  orange 246 253\n  brown   28  67\n\n\n\n\n5c) What is the chi-squared statistic for this test?\n\nleaves |&gt;\n  summarize(.by = c(color, fallen),\n            n = n()) |&gt;\n  pivot_wider(names_from = fallen, values_from = n) |&gt;\n  select(-color) |&gt;\n  chisq.test()\n\n\n    Pearson's Chi-squared test\n\ndata:  select(pivot_wider(summarize(leaves, .by = c(color, fallen),     n = n()), names_from = fallen, values_from = n), -color)\nX-squared = 110.07, df = 3, p-value &lt; 2.2e-16\n\n\n\n\n5d) Provide a brief interpretation of these results.\nWe reject the null in favor of the alternative that there is an association between leaf color and whether or not they had fallen."
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#outline",
+    "href": "lab/slides/lab_04.html#outline",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Outline",
+    "text": "Outline\n\n\n\\(\\chi^2\\) tests\nt-tests"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi-squared-chi2-test",
+    "href": "lab/slides/lab_04.html#chi-squared-chi2-test",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Chi-Squared (\\(\\chi^2\\)) Test",
+    "text": "Chi-Squared (\\(\\chi^2\\)) Test\nTesting inferences about proportions\n○ Involve categorical variables\nComparing observed frequencies (counts) to some expected (null hypothesis) frequencies\n\\(\\chi^2\\) Test of Goodness of Fit: expected frequencies are set by researcher (e.g., null hypothesis is equal frequencies across all groups)\n\\(\\chi^2\\) Test of Independence: expected frequencies are those implied by independence"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi-squared-chi2-test-1",
+    "href": "lab/slides/lab_04.html#chi-squared-chi2-test-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Chi-Squared (\\(\\chi^2\\)) Test",
+    "text": "Chi-Squared (\\(\\chi^2\\)) Test\nInstead of a continuous variable, our outcome is a count\n\n\nContinuous\n\nHeight\nPetal length\nTest score\n\n\nCounts\n\nCoin flip being heads\nNumber of pets\nGoals scored\n\nOnly integers"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-1",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit\nDo the observed frequencies of a categorical variable differ from what expected a priori?\nTypically, this expectation is equal occurrence across groups (but doesn’t have to be).\nIf equal occurrence, what would be our expected frequencies?\n\n\n100 coin flips\n\n\nHeads\nTails\n\n\n50\n50\n\n\n\nFavorite primary color of 33 students\n\n\nRed\nBlue\nYellow\n\n\n11\n11\n11\n\n\n\nCan also hypothesize proportions and convert to frequencies once you have a sample size."
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-hypotheses",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-hypotheses",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit: Hypotheses",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit: Hypotheses\n\\(H_0\\): Observed data match the expected frequencies for the population\n\\(H_1\\): Observed data do not match the expected frequencies for the population\n○ Observed frequency is significantly different than expected\n\n\\(H_0\\): \\(\\pi_j = \\pi_{j_0}\\) for all categories \\(j\\) (i.e., difference for all categories is 0), where\n\\(\\pi_j\\) = observed proportion\n\\(\\pi_{j_0}\\) = expected proportion\n\\(H_1\\): \\(\\pi_j \\neq \\pi_{j_0}\\) for any category \\(j\\)"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-generally",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-generally",
+    "title": "Chi-Squared and T-Tests",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit Generally",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit Generally\n\\[ \\chi^2 = \\sum_{j=1}^{J} \\frac{(O_j – N\\pi_{j_0})^2}{N\\pi_{j_0}} = \\sum_{j=1}^{J} \\frac{(O_j – E_j)^2}{E_j} \\]\nwhere\n\\(O_j\\) = observed frequency\n\\(N\\) = total sample size\n\\(E_j\\) = expected frequency\n\\(j\\) = individual category out of \\(J\\) total categories\nThe sum of the squared differences between the observed and expected frequencies, divided by the expected frequency, for each group."
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-generally-1",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-generally-1",
+    "title": "Chi-Squared and T-Tests",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit Generally",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit Generally\n\\(\\text{df} = J - 1\\), where\n\\(J\\) = number of categories\nUse to identify critical \\(\\chi^2\\) value from \\(\\chi^2\\) table, R, etc.\nFor \\(\\chi^2\\), as \\(\\text{df}\\) increases, so does the critical-\\(\\chi^2\\) value (at same \\(\\alpha\\))\nOnly ever a one-tailed test! For the upper end of the distribution."
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-distribution",
+    "href": "lab/slides/lab_04.html#chi2-distribution",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Distribution",
+    "text": "\\(\\chi^2\\) Distribution"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-distribution-1",
+    "href": "lab/slides/lab_04.html#chi2-distribution-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Distribution",
+    "text": "\\(\\chi^2\\) Distribution"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-distribution-2",
+    "href": "lab/slides/lab_04.html#chi2-distribution-2",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Distribution",
+    "text": "\\(\\chi^2\\) Distribution"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-distribution-3",
+    "href": "lab/slides/lab_04.html#chi2-distribution-3",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Distribution",
+    "text": "\\(\\chi^2\\) Distribution"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-distribution-4",
+    "href": "lab/slides/lab_04.html#chi2-distribution-4",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Distribution",
+    "text": "\\(\\chi^2\\) Distribution"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-distribution-5",
+    "href": "lab/slides/lab_04.html#chi2-distribution-5",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Distribution",
+    "text": "\\(\\chi^2\\) Distribution"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-cutoffs",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-cutoffs",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit Cutoffs",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit Cutoffs\n\n\nCutoff for test of heads vs. tails\n\n\n\\(J =\\) 2\n\\(\\text{df} = J - 1 =\\) 1\n\n\n\nqchisq(.95, 1)\n\n[1] 3.841459\n\nqchisq(.05, 1, lower.tail = F)\n\n[1] 3.841459\n\n\n\n\nCutoff for test of favorite color in the rainbow\n\n\\(J =\\) 7 (ROYGBIV)\n\\(\\text{df} = J - 1 =\\) 6\n\n\n\nqchisq(.95, 6)\n\n[1] 12.59159\n\nqchisq(.05, 6, lower.tail = F)\n\n[1] 12.59159"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit Example",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit Example\n\nYou are an education psychologist interested in college students’ choice of majors. You’ve grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You’d like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.\nFirst, what are your expected frequencies for each category?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSTEM\nSocial Sciences\nHumanities\nArts\nBusiness\n\n\n\nExpected\n\n\n\n\n\n\n\nObserved"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-1",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit Example",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit Example\n\nYou are an education psychologist interested in college students’ choice of majors. You’ve grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You’d like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.\nFirst, what are your expected frequencies for each category?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSTEM\nSocial Sciences\nHumanities\nArts\nBusiness\n\n\n\nExpected\n20\n20\n20\n20\n20\n\n\nObserved"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-2",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-2",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit Example",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit Example\n\nYou are an education psychologist interested in college students’ choice of majors. You’ve grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You’d like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.\nNext, what is your \\(\\chi^2\\) cutoff value?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSTEM\nSocial Sciences\nHumanities\nArts\nBusiness\n\n\n\nExpected\n20\n20\n20\n20\n20\n\n\nObserved"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-3",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-3",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit Example",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit Example\nCutoff in R\n\n\ndf &lt;- 5 - 1\nchisq_crit &lt;- qchisq(.95, df)\nchisq_crit\n\n[1] 9.487729"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-4",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-4",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit Example",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit Example\n\nYou are an education psychologist interested in college students’ choice of majors. You’ve grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You’d like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.\nHere are the observed values:\n\n\n\n\n\n\n\n\nSTEM\nSocial Sciences\nHumanities\nArts\nBusiness\n\n\n\nExpected\n20\n20\n20\n20\n20\n\n\nObserved\n65\n10\n5\n5\n15"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-5",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-5",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit Example",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit Example\n\\[ \\chi^2 = \\sum_{j=0}^{J} \\frac{(O_j – N\\pi_j)^2}{N\\pi_j} = \\sum_{j=0}^{J} \\frac{(O_j – E_j)^2}{E_j} \\]\n\n\nobs_chisq &lt;- (65 - 20)^2 / 20 +\n  (10 - 20)^2 / 20 +\n  (5 - 20)^2 / 20 +\n  (5 - 20)^2 / 20 +\n  (15 - 20)^2 / 20\nobs_chisq\n\n[1] 130\n\nobs_chisq &gt; chisq_crit\n\n[1] TRUE\n\n\n\nWe can reject the null in favor of the alternative that the number of students is not the same across majors."
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-r-function",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-r-function",
+    "title": "Chi-Squared and T-Tests",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit R Function",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit R Function\n\n\nadmissions_data &lt;- read.csv(here::here(\"lab\", \"data\", \"gatech_admissions.csv\"))\n\nadmissions_data_2025 &lt;- admissions_data |&gt;\n  filter(year == 2025)\n\nchisq &lt;- admissions_data_2025 |&gt;\n  select(applied) |&gt;\n  chisq.test()\nchisq\n\n\n    Chi-squared test for given probabilities\n\ndata:  select(admissions_data_2025, applied)\nX-squared = 61919, df = 5, p-value &lt; 2.2e-16\n\n\n\n\n\n\n\nchisq$expected\n\n[1] 10994.67 10994.67 10994.67 10994.67 10994.67 10994.67\n\n\n\n\nchisq$statistic\n\nX-squared \n 61919.01 \n\n\n\n\nchisq$p.value\n\n[1] 0"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-6",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-6",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit Example",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit Example\n\nLet’s restart and say that you were a educational psychologist interested in how students in STEM schools choose their major. In this situation, you had expected more students to select a STEM major than other majors.\nThese are your new expected frequencies (60% STEM, evenly divided across the rest):\n\n\n\n\n\n\n\n\nSTEM\nSocial Sciences\nHumanities\nArts\nBusiness\n\n\n\nExpected\n60\n10\n10\n10\n10\n\n\nObserved\n65\n10\n5\n5\n15"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-r-function-1",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-r-function-1",
+    "title": "Chi-Squared and T-Tests",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit R Function",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit R Function\n\n\n\nchisq.test(x = c(65, 10, 5, 5, 15),\n           p = c(60, 10, 10, 10, 10),\n           rescale.p = T)\n\n\n    Chi-squared test for given probabilities\n\ndata:  c(65, 10, 5, 5, 15)\nX-squared = 7.9167, df = 4, p-value = 0.09468\n\nchisq.test(x = c(65, 10, 5, 5, 15),\n           p = c(.60, .10, .10, .10, .10))\n\n\n    Chi-squared test for given probabilities\n\ndata:  c(65, 10, 5, 5, 15)\nX-squared = 7.9167, df = 4, p-value = 0.09468\n\n\n\n○ x = data of frequencies\n○ p = expected probabilities\n○ rescale.p = [T/F], will rescale p to probabilities if you prefer to input frequencies"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-independence-1",
+    "href": "lab/slides/lab_04.html#chi2-test-of-independence-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Independence",
+    "text": "\\(\\chi^2\\) Test of Independence\nDo the observed frequencies of a categorical variable differ from what expected via properties of independence?\n○ Now considering more than one type of category\n○ E.g., Number of pets by cat vs. dog people and undergrad vs. post-graduate\n\n\n\n\nCat Person\nDog Person\n\n\n\nUndergrad\n\n\n\n\nPost-Graduate\n\n\n\n\n\n\nExpected frequencies calculated from the marginal totals of the contingency table\n○ Expected values determined from data"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-independence-hypotheses",
+    "href": "lab/slides/lab_04.html#chi2-test-of-independence-hypotheses",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Independence: Hypotheses",
+    "text": "\\(\\chi^2\\) Test of Independence: Hypotheses\n\\(H_0\\): Categorical Variable 1 and Categorical Variable 2 are independent (i.e., have no association)\n\\(H_1\\): Categorical Variable 1 and Categorical Variable 2 are not independent (i.e., have some association)\n○ Do expected frequencies match those expected via independence?\n\nMathematically the same as before:\n\\(H_0\\): \\(\\pi_j = \\pi_{j_0}\\) for all categories \\(j\\); difference for all categories is 0, where\n\\(\\pi_j\\) = observed proportion\n\\(\\pi_{j_0}\\) = expected proportion\n\\(H_1\\): \\(\\pi_j \\neq \\pi_{j_0}\\) for any category \\(j\\)\n\n\nJust changing the expected frequencies"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-independence-generally",
+    "href": "lab/slides/lab_04.html#chi2-test-of-independence-generally",
+    "title": "Chi-Squared and T-Tests",
+    "section": "\n\\(\\chi^2\\) Test of Independence Generally",
+    "text": "\\(\\chi^2\\) Test of Independence Generally\n\\[ \\chi^2 = \\sum_{j_1=1}^{J_1}\\sum_{j_2=1}^{J_2} \\frac{(O_j – N\\pi_{j_0})^2}{N\\pi_{j_0}} = \\sum_{j_1=1}^{J_1}\\sum_{j_2=1}^{J_2} \\frac{(O_j – E_j)^2}{E_j} \\]\nBasically identical formula to calculate the \\(\\chi^2\\).\nThe difference is that our expected frequencies \\(E_j\\) are derived from the data. Just like before, we calculate the difference from each cell, but now we have two categories that make up the cell.\nThe sum of the squared differences between the observed and expected frequencies, divided by the expected frequency, for each cell."
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-independence-cutoffs",
+    "href": "lab/slides/lab_04.html#chi2-test-of-independence-cutoffs",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Independence Cutoffs",
+    "text": "\\(\\chi^2\\) Test of Independence Cutoffs\nWhat is the critical \\(\\chi^2\\) value in a test of independence for a 3x2?\n\n\n\\(\\text{df} = (J_1 - 1) \\times (J_2 - 1)\\) or\n\\(\\text{df} = (n_{rows} - 1) \\times (n_{cols} - 1)\\)\n\n\n\n\ndf &lt;- (3 - 1) * (2 - 1)\ndf\n\n[1] 2\n\nqchisq(.95, df)\n\n[1] 5.991465"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-independence-example",
+    "href": "lab/slides/lab_04.html#chi2-test-of-independence-example",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Independence Example",
+    "text": "\\(\\chi^2\\) Test of Independence Example\n\nYou are another educational psychologist, and you’re interested in examining your department’s student body makeup. You wonder whether there is an association between students’ level (graduate vs. undergraduate) and whether they are an in-state student or not. You sample 50 students from your department, and these are the frequencies you observe.\n\n\n\n\n\n\n\n\nIn-State\nOut-of-State\n\n\n\nUndergrad\n25\n10\n\n\nGraduate\n5\n10\n\n\n\n\n\n\n\nFirst, what are your expected frequencies for each category?"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-independence-example-calculating-expected-frequencies",
+    "href": "lab/slides/lab_04.html#chi2-test-of-independence-example-calculating-expected-frequencies",
+    "title": "Chi-Squared and T-Tests",
+    "section": "\n\\(\\chi^2\\) Test of Independence Example: Calculating Expected Frequencies",
+    "text": "\\(\\chi^2\\) Test of Independence Example: Calculating Expected Frequencies\nFirst, get the marginal totals for each column\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn-State\nOut-of-State\nTotal\n\n\n\nUndergrad\n25\n10\n\n\n\nGraduate\n5\n10\n\n\n\nTotal"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-independence-example-calculating-expected-frequencies-1",
+    "href": "lab/slides/lab_04.html#chi2-test-of-independence-example-calculating-expected-frequencies-1",
+    "title": "Chi-Squared and T-Tests",
+    "section": "\n\\(\\chi^2\\) Test of Independence Example: Calculating Expected Frequencies",
+    "text": "\\(\\chi^2\\) Test of Independence Example: Calculating Expected Frequencies\nFirst, get the marginal totals for each column\n\n\n\n\n\n\n\nIn-State\nOut-of-State\nTotal\n\n\n\nUndergrad\n25\n10\n35\n\n\nGraduate\n5\n10\n15\n\n\nTotal\n30\n20\n50"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-independence-example-calculating-expected-frequencies-2",
+    "href": "lab/slides/lab_04.html#chi2-test-of-independence-example-calculating-expected-frequencies-2",
+    "title": "Chi-Squared and T-Tests",
+    "section": "\n\\(\\chi^2\\) Test of Independence Example: Calculating Expected Frequencies",
+    "text": "\\(\\chi^2\\) Test of Independence Example: Calculating Expected Frequencies\n\n\n\n\n\n\n\n\n\nIn-State\nOut-of-State\nTotal\n\n\n\nUndergrad\n25\n10\n35\n\n\nGraduate\n5\n10\n15\n\n\nTotal\n30\n20\n50\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn-State\nOut-of-State\nTotal\n\n\n\nUndergrad\n21\n14\n35\n\n\nGraduate\n9\n6\n15\n\n\nTotal\n30\n20\n50\n\n\n\n\n\n\n\nExpected cell frequency = \\(E_j\\) = \\(\\frac{\\text{column total} \\times \\text{row total}}{N}\\)\n○ Undergrad & In-State = \\(\\frac{35 \\times 30}{50} = 21\\)\n○ Undergrad & Out-of-State = \\(\\frac{35 \\times 20}{50} = 14\\)\n○ Graduate & In-State = \\(\\frac{15 \\times 30}{50} = 9\\)\n○ Graduate & Out-of-State = \\(\\frac{15 \\times 20}{50} = 6\\)"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-7",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-example-7",
+    "title": "Chi-Squared and T-Tests",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit Example",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit Example\n\\[ \\chi^2 = \\sum_{j=0}^{J} \\frac{(O_j – N\\pi_j)^2}{N\\pi_j} = \\sum_{j=0}^{J} \\frac{(O_j – E_j)^2}{E_j} \\]\n\n\n\n\ndata.frame(type = c(\"Undergrad\", \"Graduate\", \"Total\"),\n           `In-State` = c(25, 5, 30),\n           `Out-of-State` = c(10, 10, 20),\n           Total = c(35, 15, 50)) \n\n       type In.State Out.of.State Total\n1 Undergrad       25           10    35\n2  Graduate        5           10    15\n3     Total       30           20    50\n\nchisq_crit &lt;- qchisq(.95, df = (2 - 1) * (2 - 1))\nchisq_crit\n\n[1] 3.841459\n\n\n\n\nobs_chisq &lt;- (25 - 21)^2 / 21 +\n  (10 - 14)^2 / 14 +\n  (5 - 9)^2 / 9 +\n  (10 - 6)^2 / 6\nobs_chisq\n\n[1] 6.349206\n\nobs_chisq &gt; chisq_crit\n\n[1] TRUE"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-independence-r-function",
+    "href": "lab/slides/lab_04.html#chi2-test-of-independence-r-function",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Independence R Function",
+    "text": "\\(\\chi^2\\) Test of Independence R Function\n\n\n\nstuddat &lt;- data.frame(type = c(\"Undergrad\", \"Graduate\"),\n           `In-State` = c(25, 5),\n           `Out-of-State` = c(10, 10))\nstuddat |&gt;\n  select(-type) |&gt;\n  chisq.test(correct = F)\n\n\n    Pearson's Chi-squared test\n\ndata:  select(studdat, -type)\nX-squared = 6.3492, df = 1, p-value = 0.01174\n\n\n\n○ correct = [T/F], applies a “continuity correction” to the \\(\\chi^2\\) value. Default is T. Change to F!\n\nWe can reject the null in favor of the alternative that students’ level (graduate vs. undergraduate) and whether they are an in-state student or not are not independent."
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#working-with-count-data",
+    "href": "lab/slides/lab_04.html#working-with-count-data",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Working With Count Data",
+    "text": "Working With Count Data\n\nuntallied_admissions_data |&gt; head(12)\n\n   year              college student_id\n1  2023 College of Computing          1\n2  2023 College of Computing          2\n3  2023 College of Computing          3\n4  2023 College of Computing          4\n5  2023 College of Computing          5\n6  2023 College of Computing          6\n7  2023 College of Computing          7\n8  2023 College of Computing          8\n9  2023 College of Computing          9\n10 2023 College of Computing         10\n11 2023 College of Computing         11\n12 2023 College of Computing         12"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#working-with-count-data-table",
+    "href": "lab/slides/lab_04.html#working-with-count-data-table",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Working With Count Data: table()\n",
+    "text": "Working With Count Data: table()\n\nSome ways to generate frequencies from categorical variables\n\ntable(untallied_admissions_data$college)\n\n\n        College of Computing            College of Design \n                        4108                          882 \n      College of Engineering          College of Sciences \n                       10949                         4580 \n          Ivan Allen College Scheller College of Business \n                        1578                         1488 \n\n\n\ntable(untallied_admissions_data$college) |&gt;\n  data.frame()\n\n                          Var1  Freq\n1         College of Computing  4108\n2            College of Design   882\n3       College of Engineering 10949\n4          College of Sciences  4580\n5           Ivan Allen College  1578\n6 Scheller College of Business  1488"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#working-with-count-data-table-1",
+    "href": "lab/slides/lab_04.html#working-with-count-data-table-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Working With Count Data: table()\n",
+    "text": "Working With Count Data: table()\n\n\n\n\ntable(untallied_admissions_data$college, untallied_admissions_data$year)\n\n                              \n                               2023 2024 2025\n  College of Computing         1533 1265 1310\n  College of Design             287  282  313\n  College of Engineering       3584 3570 3795\n  College of Sciences          1532 1507 1541\n  Ivan Allen College            520  500  558\n  Scheller College of Business  464  513  511\n\n\n\n\ntable(untallied_admissions_data$college, untallied_admissions_data$year) |&gt;\n  data.frame()\n\n                           Var1 Var2 Freq\n1          College of Computing 2023 1533\n2             College of Design 2023  287\n3        College of Engineering 2023 3584\n4           College of Sciences 2023 1532\n5            Ivan Allen College 2023  520\n6  Scheller College of Business 2023  464\n7          College of Computing 2024 1265\n8             College of Design 2024  282\n9        College of Engineering 2024 3570\n10          College of Sciences 2024 1507\n11           Ivan Allen College 2024  500\n12 Scheller College of Business 2024  513\n13         College of Computing 2025 1310\n14            College of Design 2025  313\n15       College of Engineering 2025 3795\n16          College of Sciences 2025 1541\n17           Ivan Allen College 2025  558\n18 Scheller College of Business 2025  511"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#working-with-count-data-summarize",
+    "href": "lab/slides/lab_04.html#working-with-count-data-summarize",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Working With Count Data: summarize()\n",
+    "text": "Working With Count Data: summarize()\n\nSome ways to generate frequencies from categorical variables\n\n\n\nuntallied_admissions_data |&gt;\n  summarize(.by = c(college, year),\n            n = n())\n\n                        college year    n\n1          College of Computing 2023 1533\n2             College of Design 2023  287\n3        College of Engineering 2023 3584\n4           College of Sciences 2023 1532\n5            Ivan Allen College 2023  520\n6  Scheller College of Business 2023  464\n7          College of Computing 2024 1265\n8             College of Design 2024  282\n9        College of Engineering 2024 3570\n10          College of Sciences 2024 1507\n11           Ivan Allen College 2024  500\n12 Scheller College of Business 2024  513\n13         College of Computing 2025 1310\n14            College of Design 2025  313\n15       College of Engineering 2025 3795\n16          College of Sciences 2025 1541\n17           Ivan Allen College 2025  558\n18 Scheller College of Business 2025  511\n\n\n\n\nuntallied_admissions_data |&gt;\n  summarize(.by = c(college, year),\n            n = n()) |&gt;\n  arrange(college, year)\n\n                        college year    n\n1          College of Computing 2023 1533\n2          College of Computing 2024 1265\n3          College of Computing 2025 1310\n4             College of Design 2023  287\n5             College of Design 2024  282\n6             College of Design 2025  313\n7        College of Engineering 2023 3584\n8        College of Engineering 2024 3570\n9        College of Engineering 2025 3795\n10          College of Sciences 2023 1532\n11          College of Sciences 2024 1507\n12          College of Sciences 2025 1541\n13           Ivan Allen College 2023  520\n14           Ivan Allen College 2024  500\n15           Ivan Allen College 2025  558\n16 Scheller College of Business 2023  464\n17 Scheller College of Business 2024  513\n18 Scheller College of Business 2025  511"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#working-with-count-data-count",
+    "href": "lab/slides/lab_04.html#working-with-count-data-count",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Working With Count Data: count()\n",
+    "text": "Working With Count Data: count()\n\ncount(x, grouping_var1, grouping_var2, etc.)\n○ x = dataframe\n\n○ grouping_vars = variable names to group by\n\nBasically shorthand for:\n\ndf |&gt;\n  summarise(.by = c(a, b),\n            n = n())\n\nAlso seems to arrange by default"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#working-with-count-data-count-1",
+    "href": "lab/slides/lab_04.html#working-with-count-data-count-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Working With Count Data: count()\n",
+    "text": "Working With Count Data: count()\n\ncount(x, grouping_var1, grouping_var2, etc.)\n○ x = dataframe\n\n○ grouping_vars = variable names to group by\n\n\n\n\nuntallied_admissions_data |&gt;\n  summarize(.by = c(college, year),\n            n = n())\n\n                        college year    n\n1          College of Computing 2023 1533\n2             College of Design 2023  287\n3        College of Engineering 2023 3584\n4           College of Sciences 2023 1532\n5            Ivan Allen College 2023  520\n6  Scheller College of Business 2023  464\n7          College of Computing 2024 1265\n8             College of Design 2024  282\n9        College of Engineering 2024 3570\n10          College of Sciences 2024 1507\n11           Ivan Allen College 2024  500\n12 Scheller College of Business 2024  513\n13         College of Computing 2025 1310\n14            College of Design 2025  313\n15       College of Engineering 2025 3795\n16          College of Sciences 2025 1541\n17           Ivan Allen College 2025  558\n18 Scheller College of Business 2025  511\n\n\n\n\nuntallied_admissions_data |&gt;\n  count(college, year)\n\n                        college year    n\n1          College of Computing 2023 1533\n2          College of Computing 2024 1265\n3          College of Computing 2025 1310\n4             College of Design 2023  287\n5             College of Design 2024  282\n6             College of Design 2025  313\n7        College of Engineering 2023 3584\n8        College of Engineering 2024 3570\n9        College of Engineering 2025 3795\n10          College of Sciences 2023 1532\n11          College of Sciences 2024 1507\n12          College of Sciences 2025 1541\n13           Ivan Allen College 2023  520\n14           Ivan Allen College 2024  500\n15           Ivan Allen College 2025  558\n16 Scheller College of Business 2023  464\n17 Scheller College of Business 2024  513\n18 Scheller College of Business 2025  511"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#working-with-count-data-summarize-1",
+    "href": "lab/slides/lab_04.html#working-with-count-data-summarize-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Working With Count Data: summarize()\n",
+    "text": "Working With Count Data: summarize()\n\nIf going to put into the chisq.test() function, want to pivot and get rid of additional columns.\nMany ways to do this, but one example:\n\n\n\nchisqdat &lt;- untallied_admissions_data |&gt;\n  count(college, year) |&gt;\n  pivot_wider(names_from = college,\n              values_from = n) |&gt;\n  select(-year)\nchisqdat\n\n# A tibble: 3 × 6\n  `College of Computing` `College of Design` `College of Engineering`\n                   &lt;int&gt;               &lt;int&gt;                    &lt;int&gt;\n1                   1533                 287                     3584\n2                   1265                 282                     3570\n3                   1310                 313                     3795\n# ℹ 3 more variables: `College of Sciences` &lt;int&gt;, `Ivan Allen College` &lt;int&gt;,\n#   `Scheller College of Business` &lt;int&gt;\n\n\n\n\nchisq.test(chisqdat)\n\n\n    Pearson's Chi-squared test\n\ndata:  chisqdat\nX-squared = 36.938, df = 10, p-value = 5.801e-05\n\nchisq.test(chisqdat, correct = F)\n\n\n    Pearson's Chi-squared test\n\ndata:  chisqdat\nX-squared = 36.938, df = 10, p-value = 5.801e-05"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#working-with-count-data-geom_bar",
+    "href": "lab/slides/lab_04.html#working-with-count-data-geom_bar",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Working With Count Data: geom_bar()\n",
+    "text": "Working With Count Data: geom_bar()\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nuntallied_admissions_data |&gt;\n  ggplot(aes(x = college)) +\n  geom_bar() +\n  theme_classic(base_size = 14) +\n  theme(axis.text.x = element_text(angle = 15, vjust = .7))"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#working-with-count-data-geom_bar-1",
+    "href": "lab/slides/lab_04.html#working-with-count-data-geom_bar-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Working With Count Data: geom_bar()\n",
+    "text": "Working With Count Data: geom_bar()\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nuntallied_admissions_data |&gt;\n  ggplot(aes(y = college)) +\n  geom_bar() +\n  theme_classic(base_size = 14)"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#working-with-count-data-geom_bar-2",
+    "href": "lab/slides/lab_04.html#working-with-count-data-geom_bar-2",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Working With Count Data: geom_bar()\n",
+    "text": "Working With Count Data: geom_bar()\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nuntallied_admissions_data |&gt;\n  ggplot(aes(y = college, fill = factor(year))) +\n  geom_bar(position = \"dodge\") +\n  theme_classic(base_size = 14)"
+  },
+  {
+    "objectID": "lab/slides/lab_03.html#more-tidyverse-syntax",
+    "href": "lab/slides/lab_03.html#more-tidyverse-syntax",
+    "title": "Data Manipulation and Simulation",
+    "section": "More tidyverse syntax",
+    "text": "More tidyverse syntax\nOne more thing…\ntidyverse verbs work best in a pipe: |&gt;\n\n\nHow we’ve been using functions:\noutput &lt;- function(input)\n\nFunctions in a pipe:\noutput &lt;- input |&gt; function()\n\nWhy is this helpful?\n\n\nMany functions together:\nanother_function(other_function(function(input)))\n\nFunctions in a pipe:\ninput |&gt;\n  function() |&gt;\n  other_function() |&gt;\n  another_function()"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-2",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-2",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit\n\\[ \\chi^2 = \\sum_{j=1}^{J} \\frac{(O_j – N\\pi_{j_0})^2}{N\\pi_{j_0}} = \\sum_{j=1}^{J} \\frac{(O_j – E_j)^2}{E_j} \\]\nwhere\n\\(O_j\\) = observed frequency\n\\(N\\) = total sample size\n\\(E_j\\) = expected frequency\n\\(j\\) = individual category out of \\(J\\) total categories\nThe sum of the squared differences between the observed and expected frequencies, divided by the expected frequency, for each group."
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-3",
+    "href": "lab/slides/lab_04.html#chi2-test-of-goodness-of-fit-3",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Goodness of Fit",
+    "text": "\\(\\chi^2\\) Test of Goodness of Fit\n\\(\\text{df} = J - 1\\), where\n\\(J\\) = number of categories\nUse to identify critical \\(\\chi^2\\) value from \\(\\chi^2\\) table, R, etc.\nFor \\(\\chi^2\\), as \\(\\text{df}\\) increases, so does the critical-\\(\\chi^2\\) value (at same \\(\\alpha\\))\nOnly ever a one-tailed test! For the upper end of the distribution."
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#r-function",
+    "href": "lab/slides/lab_04.html#r-function",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "R Function",
+    "text": "R Function\n\n\nadmissions_data &lt;- read.csv(here::here(\"lab\", \"data\", \"gatech_admissions.csv\"))\n\nadmissions_data_2025 &lt;- admissions_data |&gt;\n  filter(year == 2025)\n\nchisq &lt;- admissions_data_2025 |&gt;\n  select(applied) |&gt;\n  chisq.test()\nchisq\n\n\n    Chi-squared test for given probabilities\n\ndata:  select(admissions_data_2025, applied)\nX-squared = 61919, df = 5, p-value &lt; 2.2e-16\n\n\n\n\n\n\n\nchisq$expected\n\n[1] 10994.67 10994.67 10994.67 10994.67 10994.67 10994.67\n\n\n\n\nchisq$statistic\n\nX-squared \n 61919.01 \n\n\n\n\nchisq$p.value\n\n[1] 0"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#r-function-1",
+    "href": "lab/slides/lab_04.html#r-function-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "R Function",
+    "text": "R Function\n\n\n\nchisq.test(x = c(65, 10, 5, 5, 15),\n           p = c(60, 10, 10, 10, 10),\n           rescale.p = T)\n\n\n    Chi-squared test for given probabilities\n\ndata:  c(65, 10, 5, 5, 15)\nX-squared = 7.9167, df = 4, p-value = 0.09468\n\nchisq.test(x = c(65, 10, 5, 5, 15),\n           p = c(.60, .10, .10, .10, .10))\n\n\n    Chi-squared test for given probabilities\n\ndata:  c(65, 10, 5, 5, 15)\nX-squared = 7.9167, df = 4, p-value = 0.09468\n\n\n\n○ x = data of frequencies\n○ p = expected probabilities\n○ rescale.p = [T/F], will rescale p to probabilities if you prefer to input frequencies"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-independence-2",
+    "href": "lab/slides/lab_04.html#chi2-test-of-independence-2",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Independence",
+    "text": "\\(\\chi^2\\) Test of Independence\n\\[ \\chi^2 = \\sum_{j_1=1}^{J_1}\\sum_{j_2=1}^{J_2} \\frac{(O_j – N\\pi_{j_0})^2}{N\\pi_{j_0}} = \\sum_{j_1=1}^{J_1}\\sum_{j_2=1}^{J_2} \\frac{(O_j – E_j)^2}{E_j} \\]\nBasically identical formula to calculate the \\(\\chi^2\\).\nThe difference is that our expected frequencies \\(E_j\\) are derived from the data. Just like before, we calculate the difference from each cell, but now we have two categories that make up the cell.\nThe sum of the squared differences between the observed and expected frequencies, divided by the expected frequency, for each cell."
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#calculating-expected-frequencies",
+    "href": "lab/slides/lab_04.html#calculating-expected-frequencies",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Calculating Expected Frequencies",
+    "text": "Calculating Expected Frequencies\nFirst, get the marginal totals for each column\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn-State\nOut-of-State\nTotal\n\n\n\nUndergrad\n25\n10\n\n\n\nGraduate\n5\n10\n\n\n\nTotal"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#calculating-expected-frequencies-1",
+    "href": "lab/slides/lab_04.html#calculating-expected-frequencies-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Calculating Expected Frequencies",
+    "text": "Calculating Expected Frequencies\nFirst, get the marginal totals for each column\n\n\n\n\n\n\n\nIn-State\nOut-of-State\nTotal\n\n\n\nUndergrad\n25\n10\n35\n\n\nGraduate\n5\n10\n15\n\n\nTotal\n30\n20\n50"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#calculating-expected-frequencies-2",
+    "href": "lab/slides/lab_04.html#calculating-expected-frequencies-2",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Calculating Expected Frequencies",
+    "text": "Calculating Expected Frequencies\n\n\n\n\n\n\n\n\n\nIn-State\nOut-of-State\nTotal\n\n\n\nUndergrad\n25\n10\n35\n\n\nGraduate\n5\n10\n15\n\n\nTotal\n30\n20\n50\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nIn-State\nOut-of-State\nTotal\n\n\n\nUndergrad\n21\n14\n35\n\n\nGraduate\n9\n6\n15\n\n\nTotal\n30\n20\n50\n\n\n\n\n\n\n\nExpected cell frequency = \\(E_j\\) = \\(\\frac{\\text{column total} \\times \\text{row total}}{N}\\)\n○ Undergrad & In-State = \\(\\frac{35 \\times 30}{50} = 21\\)\n○ Undergrad & Out-of-State = \\(\\frac{35 \\times 20}{50} = 14\\)\n○ Graduate & In-State = \\(\\frac{15 \\times 30}{50} = 9\\)\n○ Graduate & Out-of-State = \\(\\frac{15 \\times 20}{50} = 6\\)"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#chi2-test-of-independence-example-1",
+    "href": "lab/slides/lab_04.html#chi2-test-of-independence-example-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\n\\(\\chi^2\\) Test of Independence Example",
+    "text": "\\(\\chi^2\\) Test of Independence Example\n\\[ \\chi^2 = \\sum_{j=0}^{J} \\frac{(O_j – N\\pi_j)^2}{N\\pi_j} = \\sum_{j=0}^{J} \\frac{(O_j – E_j)^2}{E_j} \\]\n\n\n\n\ndata.frame(type = c(\"Undergrad\", \"Graduate\", \"Total\"),\n           `In-State` = c(25, 5, 30),\n           `Out-of-State` = c(10, 10, 20),\n           Total = c(35, 15, 50)) \n\n       type In.State Out.of.State Total\n1 Undergrad       25           10    35\n2  Graduate        5           10    15\n3     Total       30           20    50\n\nchisq_crit &lt;- qchisq(.95, df = (2 - 1) * (2 - 1))\nchisq_crit\n\n[1] 3.841459\n\n\n\n\nobs_chisq &lt;- (25 - 21)^2 / 21 +\n  (10 - 14)^2 / 14 +\n  (5 - 9)^2 / 9 +\n  (10 - 6)^2 / 6\nobs_chisq\n\n[1] 6.349206\n\nobs_chisq &gt; chisq_crit\n\n[1] TRUE"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#t-statistic-cutoffs",
+    "href": "lab/slides/lab_04.html#t-statistic-cutoffs",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\nT-Statistic Cutoffs",
+    "text": "T-Statistic Cutoffs\nSay you want to find the cutoff t values: \\(t(\\text{df}=3)\\) and \\(t(\\text{df}=37)\\) for \\(\\alpha = .05\\), both upper one-tailed and two-tailed.\n\nWhich will have the larger magnitude cutoff values?\n\n\n\nOne-Tailed\nAll of our \\(\\alpha = .05\\) goes on the upper side\nNeed a cutoff for \\(.95\\)\n\nqt(p = .95, df = 3)\n\n[1] 2.353363\n\nqt(p = .05, df = 37, lower.tail = F)\n\n[1] 1.687094\n\n\n\\(t_{crit}(\\text{df}=3) = 2.35\\)\n\\(t_{crit}(\\text{df}=37) = 1.69\\)\n\nTwo-Tailed\n\\(\\alpha = 1 - .95 = 5\\%\\) on both sides\nSo \\(.05 / 2 = .025\\) on each side\nNeed value for \\(.025\\) and \\(.95 + .025\\) (\\([.025, .975]\\))\n\nqt(p = c(.025, .975), df = 3)\n\n[1] -3.182446  3.182446\n\nqt(p = c(.025, .975), df = 37)\n\n[1] -2.026192  2.026192\n\n\n\\(t_{crit}(\\text{df}=3) = [-3.18, 3.18]\\)\n\\(t_{crit}(\\text{df}=37) = [-2.03, 2.03]\\)"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#t-statistic-cutoffs-table",
+    "href": "lab/slides/lab_04.html#t-statistic-cutoffs-table",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\nT-Statistic Cutoffs: Table",
+    "text": "T-Statistic Cutoffs: Table"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#types-of-t-tests",
+    "href": "lab/slides/lab_04.html#types-of-t-tests",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Types of T-Tests",
+    "text": "Types of T-Tests"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#independent-sample-t-test",
+    "href": "lab/slides/lab_04.html#independent-sample-t-test",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Independent Sample T-Test",
+    "text": "Independent Sample T-Test\nMight want to compare two samples of observations\n○ Post-graduation salaries of GT vs. UGA grads\n○ Treatment vs. control group\n○ Cats vs. dogs\nWe can represent each group with their mean on some outcome and compare the means\nConsider whether the mean difference is significant but also have to account for different levels of variability within group"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#independent-sample-t-test-pooled-sd",
+    "href": "lab/slides/lab_04.html#independent-sample-t-test-pooled-sd",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Independent Sample T-Test: Pooled SD",
+    "text": "Independent Sample T-Test: Pooled SD\nNeed to pool the sample SDs while noting different sample sizes\n\\[ s_p^2 = \\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{(n_1 - 1) + (n_2 - 1)} = \\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{n_1 + n_2 - 2}\\]"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#independent-sample-t-test-pooled-sd-1",
+    "href": "lab/slides/lab_04.html#independent-sample-t-test-pooled-sd-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Independent Sample T-Test: Pooled SD",
+    "text": "Independent Sample T-Test: Pooled SD\nNote that when sample size is equal (i.e., \\(n_1 = n_2 = n\\)),\n\n\\[\\begin{array}{ll}\n  s_p^2 \\bigg|_{n_1 = n_2 = n} & = \\frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1) + (n - 1)} = \\frac{(n - 1) (s_1^2 + s_2^2)}{(n - 1) + (n - 1)} \\\\[0.6em]\n   & = \\frac{(n - 1) (s_1^2 + s_2^2)}{2(n - 1)} = \\frac{s_1^2 + s_2^2}{2}\n\\end{array}\\]\n\n\nSquare root to get back to standard deviation\n\\[ s_p = \\sqrt{s_p^2} = \\sqrt{\\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{(n_1 - 1) + (n_2 - 1)}} = \\sqrt{\\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{n_1 + n_2 - 2}} \\]"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#independent-sample-t-test-test-statistic",
+    "href": "lab/slides/lab_04.html#independent-sample-t-test-test-statistic",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Independent Sample T-Test: Test statistic",
+    "text": "Independent Sample T-Test: Test statistic\n\\[ t = \\frac{\\bar{x_1} - \\bar{x_2}}{\\sqrt{\\frac{s_p^2}{n_1} + \\frac{s_p^2}{n_2}}} = \\frac{\\bar{x_1} - \\bar{x_2}}{s_p\\sqrt{\\frac{1}{n_1} + \\frac{1}{n_2}}}\\]\nCompare against critical t-value with df = \\((n_1 - 1) + (n_2 - 2)\\)"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#independent-sample-t-test-r-calculation",
+    "href": "lab/slides/lab_04.html#independent-sample-t-test-r-calculation",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Independent Sample T-Test: R Calculation",
+    "text": "Independent Sample T-Test: R Calculation\n\nsummary(candy)\n\n       candy        sales      \n Length   :40   Min.   : 2.12  \n N.unique : 2   1st Qu.: 5.48  \n N.blank  : 0   Median : 9.75  \n Min.nchar: 9   Mean   :10.15  \n Max.nchar:10   3rd Qu.:15.32  \n                Max.   :17.83  \n\nccorn &lt;- candy |&gt; filter(candy == \"candy corn\") |&gt; pluck(\"sales\")\nchoc &lt;- candy |&gt; filter(candy == \"chocolate\") |&gt; pluck(\"sales\")\n\n\n\nccorn\n\n [1] 5.51 4.09 5.57 6.85 4.83 8.60 4.53 2.12 7.60 3.24 4.82 5.56 6.17 4.53 6.15\n[16] 3.75 6.61 5.39 6.44 4.82\n\nchoc\n\n [1] 17.06 14.46 14.21 14.66 16.90 13.16 17.83 10.90 11.31 15.46 15.52 13.72\n[13] 15.43 17.10 14.97 15.94 15.70 15.29 12.24 17.09"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#independent-sample-t-test-r-calculation-1",
+    "href": "lab/slides/lab_04.html#independent-sample-t-test-r-calculation-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Independent Sample T-Test: R Calculation",
+    "text": "Independent Sample T-Test: R Calculation\n\n\nx_bar_ccorn &lt;- mean(ccorn)\nsd_ccorn &lt;- sd(ccorn)\nn_ccorn &lt;- length(ccorn)\n\nx_bar_choc &lt;- mean(choc)\nsd_choc &lt;- sd(choc)\nn_choc &lt;- length(choc)\n\npooled_sd &lt;- sqrt( ((n_ccorn - 1) * sd_ccorn^2 + (n_choc - 1) * sd_choc^2) /\n                     ((n_ccorn - 1) + (n_choc - 1)) )\npooled_sd\n\n[1] 1.732816"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#independent-sample-t-test-r-calculation-2",
+    "href": "lab/slides/lab_04.html#independent-sample-t-test-r-calculation-2",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Independent Sample T-Test: R Calculation",
+    "text": "Independent Sample T-Test: R Calculation\n\n\ndf &lt;- (n_ccorn - 1) + (n_choc - 1)\n\nt_crit &lt;- qt(c(.025, .975), df)\nt_crit\n\n[1] -2.024394  2.024394\n\n\nIf our observed t-statistic exceeds the bounds of [-2.02, 2.02], we reject the null.\n\n\n\nt_stat &lt;- (x_bar_ccorn - x_bar_choc) / (pooled_sd * sqrt(1 / n_ccorn + 1 / n_choc))\nt_stat\n\n[1] -17.49839\n\n\n\nWe reject the null! Can we tell which had a larger mean?"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#independent-sample-t-test-r-function",
+    "href": "lab/slides/lab_04.html#independent-sample-t-test-r-function",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Independent Sample T-Test: R Function",
+    "text": "Independent Sample T-Test: R Function\nt.test(outcome ~ group_var, data, var.equal = T)\n\nt.test(sales ~ candy, candy, var.equal = T)\n\n\n    Two Sample t-test\n\ndata:  sales by candy\nt = -17.498, df = 38, p-value &lt; 2.2e-16\nalternative hypothesis: true difference in means between group candy corn and group chocolate is not equal to 0\n95 percent confidence interval:\n -10.697796  -8.479204\nsample estimates:\nmean in group candy corn  mean in group chocolate \n                  5.3590                  14.9475"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#paired-sample-t-test",
+    "href": "lab/slides/lab_04.html#paired-sample-t-test",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Paired Sample T-Test",
+    "text": "Paired Sample T-Test\nComparing the same subjects under two conditions (typically two timepoints)\n○ Stress levels before vs. after a test\n○ Reaction times before vs. after caffiene consumption\n○ Anxiety levels before vs. after a mindfulness intervention\nWe can still use the mean to represent the observations in each condition and make comparisons\nThis time, focus on difference scores (individual differences in the observations between the two conditions)"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#paired-sample-t-test-1",
+    "href": "lab/slides/lab_04.html#paired-sample-t-test-1",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Paired Sample T-Test",
+    "text": "Paired Sample T-Test\nNeed difference score for each observation \\(d_i = x_2 - x_1\\)\nThen, get mean difference \\(\\bar{d} = \\frac{d_1+d_2+...+d_n}{n}\\) and standard deviation of those difference scores \\(s_d = \\sqrt{\\frac{(d_1-\\bar{d})^2 + (d_2-\\bar{d})^2 + ... + (d_n-\\bar{d})^2}{n - 1}}\\)\n\\[ t = \\frac{\\bar{d} - \\mu_{d_0}}{\\frac{s_d}{\\sqrt{n}}} = \\text{(usually)} \\frac{\\bar{d} - 0}{\\frac{s_d}{\\sqrt{n}}} = \\frac{\\bar{d}}{\\frac{s_d}{\\sqrt{n}}}\\]\nCompare against critical t-value with df = \\(n - 1\\)"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#paired-sample-t-test-r-calculation",
+    "href": "lab/slides/lab_04.html#paired-sample-t-test-r-calculation",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Paired Sample T-Test: R Calculation",
+    "text": "Paired Sample T-Test: R Calculation\n\n\npumpkin &lt;- pumpkin |&gt;\n  mutate(diff = oct1 - oct31)\n\nmean_diff &lt;- mean(pumpkin$diff)\nsd_diff &lt;- sd(pumpkin$diff)\ndf &lt;- nrow(pumpkin) - 1\n\nqt(c(.025, .975), df)\n\n[1] -2.093024  2.093024\n\nt_stat &lt;- (mean_diff - 0) / (sd_diff / sqrt(nrow(pumpkin)))\nt_stat\n\n[1] 10.43826\n\n\n\nWe can reject the null in favor of the alternative that there is a difference in pumpkin weights between October 1st and October 31st in the population!"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#paired-sample-t-test-r-function",
+    "href": "lab/slides/lab_04.html#paired-sample-t-test-r-function",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Paired Sample T-Test: R Function",
+    "text": "Paired Sample T-Test: R Function\nt.test(y1_vector, y2_vector, paired = T, var.equal = T)\n\nt.test(pumpkin$oct1, pumpkin$oct31, paired = T, var.equal = T)\n\n\n    Paired t-test\n\ndata:  pumpkin$oct1 and pumpkin$oct31\nt = 10.438, df = 19, p-value = 2.626e-09\nalternative hypothesis: true mean difference is not equal to 0\n95 percent confidence interval:\n 2.043085 3.067915\nsample estimates:\nmean difference \n         2.5555"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#cohens-d-revisited",
+    "href": "lab/slides/lab_04.html#cohens-d-revisited",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "Cohen’s D Revisited",
+    "text": "Cohen’s D Revisited\nNow that we have two groups, R functions for Cohen’s D will be more helpful to us. The cohens_d() function from the effectsize package allows for many formats of inputs.\n\n\n\n(x_bar_ccorn - x_bar_choc) / pooled_sd\n\n[1] -5.533478\n\neffectsize::cohens_d(sales ~ candy,\n                     data = candy)\n\nCohen's d |         95% CI\n--------------------------\n-5.53     | [-6.91, -4.14]\n\n- Estimated using pooled SD.\n\n\n\n\nmean_diff / sd_diff\n\n[1] 2.334066\n\neffectsize::cohens_d(pumpkin$oct1, pumpkin$oct31,\n                     paired = T)\n\nCohen's d |       95% CI\n------------------------\n2.33      | [1.47, 3.18]"
+  },
+  {
+    "objectID": "lab/slides/lab_04.html#t-test-interpretation-and-write-up",
+    "href": "lab/slides/lab_04.html#t-test-interpretation-and-write-up",
+    "title": "Chi-Squared Tests, T-Tests, Effect Size",
+    "section": "\nT-Test: Interpretation and write-up",
+    "text": "T-Test: Interpretation and write-up\nAn [independent samples / repeated measures] t-test analysis was conducted between [group 1] and [group 2]. We [fail to reject / reject] H0 [in favor of H1], t([df]) = [____], p [&lt; 0.05 / p-value]. We [did not] observe[d] a significant difference between the mean [DV] of [group 1] and [group 2] in our sample."
   }
 ]
