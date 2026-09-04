@@ -2405,7 +2405,7 @@
     "href": "lab/slides/lab_02.html#outline",
     "title": "Data Visualization with ggplot2\n",
     "section": "Outline",
-    "text": "Outline\n\n\ntidyverse introduction\n\nggplot2 introduction\nBuilding plots\n\nAesthetic mappings\nGeoms\nLayering"
+    "text": "Outline\n\n\ntidyverse introduction\nImporting data\nR packages\n\nggplot2 introduction\nBuilding plots\n\nAesthetic mappings\nGeoms\nLayering"
   },
   {
     "objectID": "lab/slides/lab_02.html#the-tidyverse",
@@ -2447,7 +2447,7 @@
     "href": "lab/slides/lab_02.html#import-download-data-and-move-it",
     "title": "Data Visualization with ggplot2\n",
     "section": "Import: Download Data and Move It",
-    "text": "Import: Download Data and Move It\nYou can access the data through our class GitHub source page\nAlso accessible by clicking the GitHub icon on the class website\nNavigate to lab/data/world_cup_player_stats.csv, and download.\nThen, move the .csv file to the folder you want it in.\nWithin your folder for this class, I recommend either having a data/ subfolder or a subfolder for each lab (e.g., lab_01/, lab_02/, …)."
+    "text": "Import: Download Data and Move It\nYou can access the data through our class GitHub source page\nAlso accessible by clicking the GitHub icon on the class website\nNavigate to lab/data/lab_02/world_cup_player_stats.csv, and download.\nThen, move the .csv file to the folder you want it in.\nWithin your folder for this class, I recommend either having a data/ subfolder or a subfolder for each lab (e.g., lab_01/, lab_02/, …)."
   },
   {
     "objectID": "lab/slides/lab_02.html#import-read-data-into-r",
@@ -2461,7 +2461,7 @@
     "href": "lab/slides/lab_02.html#import-paths-to-files",
     "title": "Data Visualization with ggplot2\n",
     "section": "Import: Paths to Files",
-    "text": "Import: Paths to Files\nHow do we specify paths to data files?\nSometimes, you’ll see something like this\n\nsetwd(\"path/to/a/folder/that/only/works/on/my/computer/my_project_folder\")\nread.csv(\"data/my_data.csv\")\n\nBad! This will never work on someone else’s computer. Or your own computer three months from now, if you decide to change your folder structure."
+    "text": "Import: Paths to Files\nHow do we specify paths to data files?\nSometimes, you’ll see something like this\n\nsetwd(\"path/to/a/folder/that/only/works/on/my/computer/my_project_folder\")\nread.csv(\"data/my_data.csv\")\n\nBad! This will never work on someone else’s computer. Or your own computer three months from now, if you decide to change your folder structure.\nRead more about why at this post on Project-Based Workflow."
   },
   {
     "objectID": "lab/slides/lab_02.html#import-paths-to-files-1",
@@ -2475,14 +2475,14 @@
     "href": "lab/slides/lab_02.html#import-read-data-into-r-1",
     "title": "Data Visualization with ggplot2\n",
     "section": "Import: Read Data into R",
-    "text": "Import: Read Data into R\nLet’s do this for real!\n\nhere::here()\n\n[1] \"C:/Users/jessi/OneDrive - Georgia Institute of Technology/Courses/GTA/PSYC 6019/PSYC6019-2026\"\n\nhere::here(\"lab\", \"data\", \"world_cup_player_stats.csv\")\n\n[1] \"C:/Users/jessi/OneDrive - Georgia Institute of Technology/Courses/GTA/PSYC 6019/PSYC6019-2026/lab/data/world_cup_player_stats.csv\"\n\nhead(read.csv(here::here(\"lab\", \"data\", \"world_cup_player_stats.csv\")), 2)\n\n  team_name fifa_code           player_name position matches_played matches_started minutes_played goals assists\n1    Mexico       MEX      José Raúl Rangel       GK              5               5            438     0       0\n2    Mexico       MEX Jorge Eduardo Sanchez      DEF              5               5            439     0       1\n  yellow_cards red_cards own_goals saves goals_conceded\n1            0         0         0     7              3\n2            0         0         0    NA             NA\n\n\nGood, we can successfully read in the data. Now, to keep using it, let’s assign it to a variable.\n\nplayer_stats &lt;- read.csv(here::here(\"lab\", \"data\", \"world_cup_player_stats.csv\"))"
+    "text": "Import: Read Data into R\nLet’s do this for real!\n\nhere::here()\n\n[1] \"C:/Users/jessi/OneDrive - Georgia Institute of Technology/Courses/GTA/PSYC 6019/PSYC6019-2026\"\n\n\n\n\nhere::here(\"lab\", \"data\", \"lab 02\", \"world_cup_player_stats.csv\")\n\n[1] \"C:/Users/jessi/OneDrive - Georgia Institute of Technology/Courses/GTA/PSYC 6019/PSYC6019-2026/lab/data/lab 02/world_cup_player_stats.csv\"\n\n\n\n\n\nhead(read.csv(here::here(\"lab\", \"data\", \"lab_02\", \"world_cup_player_stats.csv\")), 2)\n\n  team_name fifa_code           player_name position matches_played matches_started minutes_played goals assists\n1    Mexico       MEX      José Raúl Rangel       GK              5               5            438     0       0\n2    Mexico       MEX Jorge Eduardo Sanchez      DEF              5               5            439     0       1\n  yellow_cards red_cards own_goals saves goals_conceded\n1            0         0         0     7              3\n2            0         0         0    NA             NA\n\n\nGood, we can successfully read in the data. Now, to keep using it, let’s assign it to a variable.\n\n\n\nplayer_stats &lt;- read.csv(here::here(\"lab\", \"data\", \"lab_02\", \"world_cup_player_stats.csv\"))"
   },
   {
     "objectID": "lab/slides/lab_02.html#import-read-data-into-r-2",
     "href": "lab/slides/lab_02.html#import-read-data-into-r-2",
     "title": "Data Visualization with ggplot2\n",
     "section": "Import: Read Data into R",
-    "text": "Import: Read Data into R\nThis file is a CSV file, so we can use the read.csv(file) function, where file is a path to the data file.\n\nhead(player_stats)\n\n  team_name fifa_code           player_name position matches_played matches_started minutes_played goals assists\n1    Mexico       MEX      José Raúl Rangel       GK              5               5            438     0       0\n2    Mexico       MEX Jorge Eduardo Sanchez      DEF              5               5            439     0       1\n3    Mexico       MEX    César Jasib Montes      DEF              3               2            165     0       0\n4    Mexico       MEX    Edson Omar Alvarez      DEF              2               0             75     0       0\n5    Mexico       MEX  Johan Felipe Vasquez      DEF              2               2            180     0       0\n6    Mexico       MEX     Erik Antonio Lira      MID              5               5            450     0       1\n  yellow_cards red_cards own_goals saves goals_conceded\n1            0         0         0     7              3\n2            0         0         0    NA             NA\n3            0         1         0    NA             NA\n4            1         0         0    NA             NA\n5            0         0         0    NA             NA\n6            1         0         0    NA             NA"
+    "text": "Import: Read Data into R\n\nhead(player_stats)\n\n  team_name fifa_code           player_name position matches_played matches_started minutes_played goals assists\n1    Mexico       MEX      José Raúl Rangel       GK              5               5            438     0       0\n2    Mexico       MEX Jorge Eduardo Sanchez      DEF              5               5            439     0       1\n3    Mexico       MEX    César Jasib Montes      DEF              3               2            165     0       0\n4    Mexico       MEX    Edson Omar Alvarez      DEF              2               0             75     0       0\n5    Mexico       MEX  Johan Felipe Vasquez      DEF              2               2            180     0       0\n6    Mexico       MEX     Erik Antonio Lira      MID              5               5            450     0       1\n  yellow_cards red_cards own_goals saves goals_conceded\n1            0         0         0     7              3\n2            0         0         0    NA             NA\n3            0         1         0    NA             NA\n4            1         0         0    NA             NA\n5            0         0         0    NA             NA\n6            1         0         0    NA             NA"
   },
   {
     "objectID": "lab/slides/lab_02.html#import-world-cup-2026",
@@ -2643,7 +2643,7 @@
     "href": "lab/slides/lab_02.html#visualize-ggplot2-3",
     "title": "Data Visualization with ggplot2\n",
     "section": "Visualize: ggplot2\n",
-    "text": "Visualize: ggplot2\n\nNow, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?\n\n\nStill no data, though!\nNeed to define some geom, a geometric display of our data\nWill usually start with geom_\n\n\n\ngeom_line()\nline graph\n\n\ngeom_bar()\nbar graph\n\n\ngeom_boxplot()\nboxplot\n\n\ngeom_point()\nscatterplot\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = goals)) +\n  geom_bar()"
+    "text": "Visualize: ggplot2\n\nNow, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?\n\n\nStill no data, though!\nNeed to define some geom, a geometric display of our data\nWill usually start with geom_\n\n\n\ngeom_line()\nline graph\n\n\ngeom_bar()\nbar graph\n\n\ngeom_boxplot()\nboxplot\n\n\ngeom_point()\nscatterplot\n\n\n\n{tidyverse} documentation with all geoms{target = “blank”}\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = goals)) +\n  geom_bar()"
   },
   {
     "objectID": "lab/slides/lab_02.html#visualize-ggplot2-4",
@@ -2657,7 +2657,7 @@
     "href": "lab/slides/lab_02.html#visualize-ggplot2-5",
     "title": "Data Visualization with ggplot2\n",
     "section": "Visualize: ggplot2\n",
-    "text": "Visualize: ggplot2\n\nNow, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?\n\n\nSo crowded, and so hard to compare between groups! So, let’s separate by position.\nCan use facet_wrap(~ grouping_variable) to make different panels\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = goals, fill = position)) +\n  geom_bar() +\n  facet_wrap(~ position)"
+    "text": "Visualize: ggplot2\n\nNow, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?\n\n\nSo crowded, and so hard to compare between groups! So, let’s separate by position.\nCan use facet_wrap(~ grouping_variable) to make different panels. Or facet_wrap(\"grouping_variable\").\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = goals, fill = position)) +\n  geom_bar() +\n  facet_wrap(~ position)"
   },
   {
     "objectID": "lab/slides/lab_02.html#visualize-ggplot2-6",
@@ -2685,14 +2685,14 @@
     "href": "lab/slides/lab_02.html#visualize-ggplot2-9",
     "title": "Data Visualization with ggplot2\n",
     "section": "Visualize: ggplot2\n",
-    "text": "Visualize: ggplot2\n\nNow, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?\n\n\nTo improve the overall look of the plot, we can add a ggplot theme.\nI like increasing the base_size argument to improve readability.\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = goals, fill = position_fct)) +\n  geom_bar(mapping = aes(y = after_stat(prop))) +\n  facet_wrap(~ position_fct) +\n  scale_y_continuous(\"Proportion\", limits = 0:1, labels = scales::label_percent()) +\n  scale_x_continuous(\"Goals Scored\", breaks = 0:10) +\n  labs(title = \"2026 World Cup Goals by Player Position\",\n       caption = \"Data from doi.org/10.5281/zenodo.21592427\") +\n  theme_classic(base_size = 12)"
+    "text": "Visualize: ggplot2\n\nNow, let’s get to visualizing! Let’s explore: what is the relationship between players’ positions and the number of goals they score?\n\n\nTo improve the overall look of the plot, we can add a ggplot theme.\nList of ggplot themes\nI like increasing the base_size argument to improve readability.\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = goals, fill = position_fct)) +\n  geom_bar(mapping = aes(y = after_stat(prop))) +\n  facet_wrap(~ position_fct) +\n  scale_y_continuous(\"Proportion\", limits = 0:1, labels = scales::label_percent()) +\n  scale_x_continuous(\"Goals Scored\", breaks = 0:10) +\n  labs(title = \"2026 World Cup Goals by Player Position\",\n       caption = \"Data from doi.org/10.5281/zenodo.21592427\") +\n  theme_classic(base_size = 12)"
   },
   {
     "objectID": "lab/slides/lab_02.html#visualize-ggplot2-10",
     "href": "lab/slides/lab_02.html#visualize-ggplot2-10",
     "title": "Data Visualization with ggplot2\n",
     "section": "Visualize: ggplot2\n",
-    "text": "Visualize: ggplot2\n\n\n\nWe can use the theme() function to further customize our plot.\nWe can remove the redundant color legend by setting legend.position to \"none\".\nWe can center and increase the plot title by specifying that it is a text element with element_text(), and customizing its hjust (horizontal justification) and size argument.\nI also like to cap the axes with the guides() and guide_axis(cap = T) function.\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = goals, fill = position_fct)) +\n  geom_bar(mapping = aes(y = after_stat(prop))) +\n  facet_wrap(~ position_fct) +\n  scale_y_continuous(\"Proportion\", limits = 0:1, labels = scales::label_percent()) +\n  scale_x_continuous(\"Goals Scored\", breaks = 0:10) +\n  labs(title = \"2026 World Cup Goals by Player Position\",\n       caption = \"Data from doi.org/10.5281/zenodo.21592427\") +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T)) +\n  theme_classic(base_size = 12) +\n  theme(legend.position = \"none\",\n        plot.title = element_text(size = 20, hjust = 0.5, face = \"bold\"),\n        text = element_text(family = \"Roboto\"))"
+    "text": "Visualize: ggplot2\n\n\n\nWe can use the theme() function to further customize our plot.\nDocumentation for everything you can do with the theme() function\nWe can remove the redundant color legend by setting legend.position to \"none\".\nWe can center and increase the plot title by specifying that it is a text element with element_text(), and customizing its hjust (horizontal justification) and size argument.\nI also like to cap the axes with the guides() and guide_axis(cap = T) function.\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = goals, fill = position_fct)) +\n  geom_bar(mapping = aes(y = after_stat(prop))) +\n  facet_wrap(~ position_fct) +\n  scale_y_continuous(\"Proportion\", limits = 0:1, labels = scales::label_percent()) +\n  scale_x_continuous(\"Goals Scored\", breaks = 0:10) +\n  labs(title = \"2026 World Cup Goals by Player Position\",\n       caption = \"Data from doi.org/10.5281/zenodo.21592427\") +\n  guides(x = guide_axis(cap = T),\n         y = guide_axis(cap = T)) +\n  theme_classic(base_size = 12) +\n  theme(legend.position = \"none\",\n        plot.title = element_text(size = 20, hjust = 0.5, face = \"bold\"),\n        text = element_text(family = \"Roboto\"))"
   },
   {
     "objectID": "lab/slides/lab_02.html#some-more-ggplots",
@@ -9846,7 +9846,7 @@
     "href": "lab/slides/lab_02.html#aside-packages-in-r-1",
     "title": "Data Visualization with ggplot2\n",
     "section": "Aside: Packages in R",
-    "text": "Aside: Packages in R\nSteps of using an R package:\n1. Installing\ninstall.packages(package)\n\n○ package = (character) package name\n\n\ninstall.packages(\"here\")\n\nOnly have to do this once"
+    "text": "Aside: Packages in R\nSteps of using an R package:\n1. Installing\ninstall.packages(\"package\")\n\n○ package = (character) package name\n\n\ninstall.packages(\"here\")\n\nOnly have to do this once"
   },
   {
     "objectID": "lab/slides/lab_02.html#aside-packages-in-r-2",
@@ -9867,7 +9867,7 @@
     "href": "lab/slides/lab_02.html#import-paths-to-files-2",
     "title": "Data Visualization with ggplot2\n",
     "section": "Import: Paths to Files",
-    "text": "Import: Paths to Files\nhere::here() specifies paths relatively, using the .Rproj file as the starting point.\nPSYC6019/\n├── PSYC6019.Rproj\n├── data/\n│   ├── survey_data.csv\n│   └── participant_info.csv\n├── scripts/\n│   ├── clean_data.R\n│   └── fit_model.R\n├── media/\n│   └── results.png\n└── reports/\n    └── lab_report.qmd\nHow do we access each of these files from each of these starting places?\n\n\nparticipant_info.csv from clean_data.R\nhere::here(\"data\", \"participant_info.csv\")\n\nsurvey_data.csv to fit_model.R\nhere::here(\"data\", \"survey_data.csv\")\n\nresults.png to lab_report.qmd\nhere::here(\"media\", \"lab_report.qmd\")"
+    "text": "Import: Paths to Files\nhere::here() specifies paths relatively, using the .Rproj file as the starting point.\nPSYC6019/\n├── PSYC6019.Rproj\n├── README.md\n├── data/\n│   └── survey_data.csv\n├── scripts/\n│   ├── clean_data.R\n│   └── fit_model.R\n├── media/\n│   └── results.png\n└── reports/\n    └── lab_report.qmd\nHow do we access each of these files from each of these starting places?\n\n\nREADME.md from lab_report.qmd\nhere::here(\"README.md\")\n\nsurvey_data.csv from fit_model.R\nhere::here(\"data\", \"survey_data.csv\")\n\nresults.png from lab_report.qmd\nhere::here(\"media\", \"results.png\")"
   },
   {
     "objectID": "lab/slides/lab_02.html#data-types-interlude-factors",
@@ -9902,21 +9902,21 @@
     "href": "lab/slides/lab_02.html#some-more-ggplots-5",
     "title": "Data Visualization with ggplot2\n",
     "section": "Some More ggplots",
-    "text": "Some More ggplots\nTo plot two continuous variables, we can specify both the x- and y-axes in aes() and add a point plot with geom_point().\n\n\nIf we wanted to add a trendline to this, would we need to change the mapping or geom? geom_smooth()!\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals)) +\n  geom_point()"
+    "text": "Some More ggplots\n\n\nCan also layer on a boxplot!\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = position_fct)) +\n  geom_violin() +\n  geom_boxplot(width = 0.2) +\n  geom_jitter()"
   },
   {
     "objectID": "lab/slides/lab_02.html#some-more-ggplots-6",
     "href": "lab/slides/lab_02.html#some-more-ggplots-6",
     "title": "Data Visualization with ggplot2\n",
     "section": "Some More ggplots",
-    "text": "Some More ggplots\nWe can add a trend line with geom_smooth(). Note that geom_smooth() picks up the same x and y assignment as already specified in aes().\n\n\nIf we wanted to see the points with color representing player position, would we need to change the mapping or geom? aes(color = position_fct)!\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals)) +\n  geom_point() +\n  geom_smooth()"
+    "text": "Some More ggplots\nTo plot two continuous variables, we can specify both the x- and y-axes in aes() and add a point plot with geom_point().\n\n\nIf we wanted to add a trendline to this, would we need to change the mapping or geom? geom_smooth()!\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals)) +\n  geom_point()"
   },
   {
     "objectID": "lab/slides/lab_02.html#some-more-ggplots-7",
     "href": "lab/slides/lab_02.html#some-more-ggplots-7",
     "title": "Data Visualization with ggplot2\n",
     "section": "Some More ggplots",
-    "text": "Some More ggplots\nIf we want to see the points labeled by player position, we can specify the color mapping in aes(). Also, because data is the first argument, we can pipe right into ggplot()!\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals, color = position_fct)) +\n  geom_point() +\n  geom_smooth()\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals, color = position_fct)) +\n  geom_point() +\n  geom_smooth()"
+    "text": "Some More ggplots\nWe can add a trend line with geom_smooth(). Note that geom_smooth() picks up the same x and y assignment as already specified in aes().\n\n\nIf we wanted to see the points with color representing player position, would we need to change the mapping or geom? aes(color = position_fct)!\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals)) +\n  geom_point() +\n  geom_smooth()"
   },
   {
     "objectID": "lab/slides/lab_02.html#removing-missing-data",
@@ -10666,5 +10666,12 @@
     "title": "Chi-Squared Tests, T-Tests, Effect Size",
     "section": "\nT-Test: Interpretation and write-up",
     "text": "T-Test: Interpretation and write-up\nAn [independent samples / repeated measures] t-test analysis was conducted between [group 1] and [group 2]. We [fail to reject / reject] H0 [in favor of H1], t([df]) = [____], p [&lt; 0.05 / p-value]. We [did not] observe[d] a significant difference between the mean [DV] of [group 1] and [group 2] in our sample."
+  },
+  {
+    "objectID": "lab/slides/lab_02.html#some-more-ggplots-8",
+    "href": "lab/slides/lab_02.html#some-more-ggplots-8",
+    "title": "Data Visualization with ggplot2\n",
+    "section": "Some More ggplots",
+    "text": "Some More ggplots\nIf we want to see the points labeled by player position, we can specify the color mapping in aes(). Also, because data is the first argument, we can pipe right into ggplot()!\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals, color = position_fct)) +\n  geom_point() +\n  geom_smooth()\n\n\n\n\n\n\n\nPlot\nCode\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = player_stats,\n       mapping = aes(x = minutes_played, y = goals, color = position_fct)) +\n  geom_point() +\n  geom_smooth()"
   }
 ]

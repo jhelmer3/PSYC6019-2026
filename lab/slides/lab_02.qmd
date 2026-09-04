@@ -24,6 +24,8 @@ knitr:
 ## Outline
 
 - `tidyverse` introduction
+- Importing data
+- R packages
 - `ggplot2` introduction
 - Building plots
   - Aesthetic mappings
@@ -116,7 +118,7 @@ refs <- bibentry(
 
 data_citation <- format(refs, style = "text")
 
-read.csv(here::here("lab", "data", "world_cup_player_stats.csv")) |>
+read.csv(here::here("lab", "data", "lab_02", "world_cup_player_stats.csv")) |>
   tibble::tibble() |>
   head(5) |>
   gt::gt()
@@ -134,7 +136,7 @@ read.csv(here::here("lab", "data", "world_cup_player_stats.csv")) |>
 4. Assign it to a variable
 
 ::: callout-note
-I found this dataset on [Kaggle](https://www.kaggle.com/), a website where people can share datasets (real or simulated). Helpful place to look for interesting datasets!
+I found this dataset on [Kaggle](https://www.kaggle.com/){preview-link="true"}, a website where people can share datasets (real or simulated). Helpful place to look for interesting datasets!
 :::
 
 :::
@@ -149,11 +151,11 @@ I found this dataset on [Kaggle](https://www.kaggle.com/), a website where peopl
 
 ## Import: Download Data and Move It
 
-You can access the data through our [class GitHub source page](https://github.com/jhelmer3/PSYC6019-2026)
+You can access the data through our [class GitHub source page](https://github.com/jhelmer3/PSYC6019-2026){target="blank"}
 
 Also accessible by clicking the GitHub icon on the class website
 
-Navigate to `lab/data/world_cup_player_stats.csv`, and download.
+Navigate to `lab/data/lab_02/world_cup_player_stats.csv`, and download.
 
 Then, move the `.csv` file to the folder you want it in.
 
@@ -185,6 +187,8 @@ read.csv("data/my_data.csv")
 
 Bad! This will never work on someone else's computer. Or your own computer three months from now, if you decide to change your folder structure.
 
+Read more about why at this post on [Project-Based Workflow](https://tidyverse.org/blog/2017/12/workflow-vs-script/){target="blank"}.
+
 
 ## Import: Paths to Files
 
@@ -209,7 +213,7 @@ install.packages("here")
 :::
 
 ::: footer
-[What They Forgot to Teach You About R](https://rstats.wtf/practice-safe-paths), [Ode to the `here` Package](https://github.com/jennybc/here_here)
+[What They Forgot to Teach You About R](https://rstats.wtf/practice-safe-paths){target="blank"}, [Ode to the `here` Package](https://github.com/jennybc/here_here){target="blank"}
 :::
 
 
@@ -224,7 +228,7 @@ Steps of using an R package:
 
 #### 1. Installing
 
-`install.packages(package)`
+`install.packages("package")`
 
 <div class="subpoint">○ `package` = (character) package name </div>
 
@@ -298,9 +302,9 @@ here()
 ```
 PSYC6019/
 ├── PSYC6019.Rproj
+├── README.md
 ├── data/
-│   ├── survey_data.csv
-│   └── participant_info.csv
+│   └── survey_data.csv
 ├── scripts/
 │   ├── clean_data.R
 │   └── fit_model.R
@@ -314,21 +318,21 @@ How do we access each of these files from each of these starting places?
 
 :::: {.columns style="font-size:66%"}
 ::: {.column width=33%}
-`participant_info.csv` from `clean_data.R`
+`README.md` from `lab_report.qmd`
 
-[`here::here("data", "participant_info.csv")`]{.fragment}
+[`here::here("README.md")`]{.fragment}
 :::
 
 ::: {.column width=33%}
-`survey_data.csv` to `fit_model.R` 
+`survey_data.csv` from `fit_model.R` 
 
 [`here::here("data", "survey_data.csv")`]{.fragment}
 :::
 
 ::: {.column width=33%}
-`results.png` to `lab_report.qmd` 
+`results.png` from `lab_report.qmd` 
 
-[`here::here("media", "lab_report.qmd")`]{.fragment}
+[`here::here("media", "results.png")`]{.fragment}
 :::
 ::::
 
@@ -338,24 +342,30 @@ How do we access each of these files from each of these starting places?
 Let’s do this for real!
 
 ```{r}
-#| render: !expr function(x, ...) knitr::knit_print(x)
 here::here()
+```
 
-here::here("lab", "data", "world_cup_player_stats.csv")
+::: fragment
+```{r}
+here::here("lab", "data", "lab 02", "world_cup_player_stats.csv")
+```
+:::
 
-head(read.csv(here::here("lab", "data", "world_cup_player_stats.csv")), 2)
+::: fragment
+```{r}
+head(read.csv(here::here("lab", "data", "lab_02", "world_cup_player_stats.csv")), 2)
 ```
 
 Good, we can successfully read in the data. Now, to keep using it, let's assign it to a variable.
+:::
 
+::: fragment
 ```{r}
-player_stats <- read.csv(here::here("lab", "data", "world_cup_player_stats.csv"))
+player_stats <- read.csv(here::here("lab", "data", "lab_02", "world_cup_player_stats.csv"))
 ```
-
+:::
 
 ## Import: Read Data into R
-
-This file is a CSV file, so we can use the `read.csv(file)` function, where `file` is a path to the data file.
 
 ```{r}
 head(player_stats)
@@ -431,7 +441,7 @@ glimpse(player_stats)
 
 # Whole Game
 
-<span style="color: #C5C5C5;">Import → </span>**Tidy**<span style="color: #C5C5C5;"> → Transform → Visualize → Model → Communicate</span>
+<span style="color: #C5C5C5;">Import → </span>[**Tidy**]{style="color: $navy"}<span style="color: #C5C5C5;"> → Transform → Visualize → Model → Communicate</span>
 
 
 ## Tidy
@@ -538,10 +548,10 @@ ggplot(data, aes(x = V1, y = V2)) +
 
 ## Visualizations!
 
-![Datasaurus Dozen](../media/lab_02/datasaurus.png){height=500 fig-align="center"}
+![Datasaurus Dozen](../media/lab_02/datasaurus.png){height=500 fig-align="center" target="blank"}
 
 ::: footer
-[research.autodesk.com/publications/same-stats-different-graphs](https://www.research.autodesk.com/publications/same-stats-different-graphs/)
+[research.autodesk.com/publications/same-stats-different-graphs](https://www.research.autodesk.com/publications/same-stats-different-graphs/){target="blank"}
 :::
 
 
@@ -550,7 +560,7 @@ ggplot(data, aes(x = V1, y = V2)) +
 
 Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
-:::: {.columns}
+:::: {.columns .fragment}
 ::: {.column width=33%}
 Let's begin at the end:
 :::
@@ -592,7 +602,7 @@ player_stats |>
 
 Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
-:::: {.columns style="font-size:60%"}
+:::: {.columns style="font-size:80%"}
 
 ::: {.column width=33%}
 When we just call the `ggplot()` function with our data as the first argument, we get this blank area
@@ -628,7 +638,7 @@ ggplot(data = player_stats)
 
 Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
-:::: {.columns style="font-size:60%"}
+:::: {.columns style="font-size:80%"}
 
 ::: {.column width=33%}
 Next, we want to tell `ggplot()` what information we want in our plot and where we want it
@@ -669,7 +679,7 @@ ggplot(data = player_stats,
 
 Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
-:::: {.columns style="font-size:60%"}
+:::: {.columns style="font-size:80%"}
 
 ::: {.column width=33%}
 Still no data, though!
@@ -678,7 +688,7 @@ Need to define some **geom**, a geometric display of our data
 
 Will usually start with `geom_`
 
-<div style="font-size:60%">
+<div style="font-size:80%">
 |   |   |
 |---|---|
 | `geom_line()` | line graph |
@@ -686,6 +696,8 @@ Will usually start with `geom_`
 | `geom_boxplot()` | boxplot |
 | `geom_point()` | scatterplot |
 </div>
+
+[`{tidyverse}` documentation with all geoms](https://ggplot2.tidyverse.org/reference/){target = "blank"}
 :::
 
 ::: {.column width=66%}
@@ -758,12 +770,12 @@ ggplot(data = player_stats,
 
 Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
-:::: {.columns style="font-size:60%"}
+:::: {.columns style="font-size:80%"}
 
 ::: {.column width=33%}
 So crowded, and so hard to compare between groups! So, let's separate by position.
 
-Can use `facet_wrap(~ grouping_variable)` to make different panels
+Can use `facet_wrap(~ grouping_variable)` to make different panels. Or `facet_wrap("grouping_variable")`.
 :::
 
 ::: {.column width=66%}
@@ -876,7 +888,7 @@ player_stats$position_fct |> head()
 
 Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
-:::: {.columns style="font-size:60%"}
+:::: {.columns style="font-size:80%"}
 
 ::: {.column width=33%}
 Swap `position` to `position_fct`
@@ -917,7 +929,7 @@ ggplot(data = player_stats,
 
 Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
-:::: {.columns style="font-size:60%"}
+:::: {.columns style="font-size:80%"}
 
 ::: {.column width=33%}
 Now, we can start tidying this up. Let's make the y-axis have percentage signs with `label_percent()` from the `scales` package, let's make the x-axis only have integers (since goals scored is a count variable) by specifying its `breaks` argument.
@@ -960,7 +972,7 @@ ggplot(data = player_stats,
 
 Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
-:::: {.columns style="font-size:60%"}
+:::: {.columns style="font-size:80%"}
 
 ::: {.column width=33%}
 To help anyone viewing our plot understand it, we can add some labels with the `labs()` function.
@@ -1005,10 +1017,12 @@ ggplot(data = player_stats,
 
 Now, let's get to visualizing! Let's explore: what is the relationship between players' positions and the number of goals they score?
 
-:::: {.columns style="font-size:60%"}
+:::: {.columns style="font-size:80%"}
 
 ::: {.column width=33%}
 To improve the overall look of the plot, we can add a `ggplot` theme.
+
+[List of `ggplot` themes](https://ggplot2.tidyverse.org/reference/ggtheme.html){target="blank"}
 
 I like increasing the `base_size` argument to improve readability.
 :::
@@ -1052,10 +1066,12 @@ ggplot(data = player_stats,
 
 ## Visualize: `ggplot2`
 
-:::: {.columns style="font-size:60%"}
+:::: {.columns style="font-size:80%"}
 
 ::: {.column width=33%}
 We can use the `theme()` function to further customize our plot.
+
+[Documentation for everything you can do with the `theme()` function](https://ggplot2.tidyverse.org/reference/theme.html){target="blank"}
 
 We can remove the redundant color legend by setting `legend.position` to `"none"`.
 
@@ -1117,7 +1133,7 @@ That was a barplot created with `geom_bar()`, which plots discrete variables. To
 
 ::: fragment
 
-:::: {.columns style="font-size:60%"}
+:::: {.columns style="font-size:80%"}
 
 ::: {.column width=50%}
 ::: {.panel-tabset}
@@ -1397,6 +1413,46 @@ d |>
 
 ## Some More `ggplot`s
 
+
+:::: {.columns style="font-size:60%"}
+
+::: {.column width=50%}
+Can also layer on a boxplot!
+:::
+
+::: {.column width=50%}
+::: fragment
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.5
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position_fct)) +
+  geom_violin() +
+  geom_boxplot(width = 0.2) +
+  geom_jitter()
+```
+
+### Code
+```{r}
+#| eval: false
+ggplot(data = player_stats,
+       mapping = aes(x = minutes_played, y = position_fct)) +
+  geom_violin() +
+  geom_boxplot(width = 0.2) +
+  geom_jitter()
+```
+:::
+:::
+:::
+
+::::
+
+
+## Some More `ggplot`s
+
 To plot two continuous variables, we can specify both the x- and y-axes in `aes()` and add a point plot with `geom_point()`. 
 
 :::: {.columns style="font-size:60%"}
@@ -1617,22 +1673,22 @@ Plotting in `ggplot2` is very powerful and flexible but can take some getting us
 ::::
 
 
-## Removing Missing Data
+<!-- ## Removing Missing Data -->
 
-One more thing (relevant for Homework 1!)
+<!-- One more thing (relevant for Homework 1!) -->
 
-R has a special type for missing data: `NA`. If there are `NA`s in your data, some common functions will not work as expected.
+<!-- R has a special type for missing data: `NA`. If there are `NA`s in your data, some common functions will not work as expected. -->
 
-```{r}
-test_scores <- c(90, 82, 98, 76, 86, 98, NA, 93, 89)
-mean(test_scores); sd(test_scores)
-```
+<!-- ```{r} -->
+<!-- test_scores <- c(90, 82, 98, 76, 86, 98, NA, 93, 89) -->
+<!-- mean(test_scores); sd(test_scores) -->
+<!-- ``` -->
 
-Some functions (like these) have an `na.rm` function: tells it to remove the `NA`s before calculating.
+<!-- Some functions (like these) have an `na.rm` function: tells it to remove the `NA`s before calculating. -->
 
-```{r}
-mean(test_scores, na.rm = T); sd(test_scores, na.rm = T)
-```
+<!-- ```{r} -->
+<!-- mean(test_scores, na.rm = T); sd(test_scores, na.rm = T) -->
+<!-- ``` -->
 
 
 ## Lab 02 Activity
