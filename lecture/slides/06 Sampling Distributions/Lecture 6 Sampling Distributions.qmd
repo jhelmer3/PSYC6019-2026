@@ -117,13 +117,15 @@ text(x = 1.9, y = 0.3, "Statistics", col = my_purple)
 
 ## Ordinary vs Sampling distributions
 
-**Ordinary Distribution:** A probability distribution for how data are generated one datapoint at a time
+- **Ordinary Distribution:** A probability distribution for how data are generated one datapoint at a time
 
-**Sampling Distribution:** A probability distribution for how *statistics* are generated one **sample** at a time
+- **Sampling Distribution:** A probability distribution for how *statistics* are generated one **sample** at a time
 
-We've actually already seen an example of a sampling distribution: [The binomial distribution represents how **proportions** of successes are distributed in samples of a fixed size for a given probability of success]{.answer .fragment .content-visible unless-meta="params.v0"}
+We've actually already seen an example of a sampling distribution: 
 
-[For binary data, proportions are means, so the binomial distribution is really a sampling distribution of means for binary data]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [The binomial distribution represents how **proportions** of successes are distributed in samples of a fixed size for a given probability of success]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+- [For binary data, proportions are means, so the binomial distribution is really a sampling distribution of means for binary data]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ## Back to Bears
 
@@ -200,7 +202,7 @@ successes/N
 
 Better yet, let's graph the cumulative proportions (sample means) as we repeatedly sample
 
-## Repeated Draws (N = 5)
+## Repeated Samples (N = 5)
 
 ```{r}
 #| cache: true
@@ -227,7 +229,7 @@ p1 <- ggplot(bear_data_cum, aes(x = result)) +
   geom_col(fill = my_orange, alpha = .66, stat = "count") +
   scale_x_continuous(breaks = round(unique(bear_data_cum$result),3)) +
   labs(
-    subtitle = "Number of Draws: {closest_state}",
+    subtitle = "Number of Samples: {closest_state}",
     x = "Proportion of Pineapple Bears",
     y = "Count of Samples"
   ) +
@@ -250,7 +252,7 @@ animate(
 
 [Now let's bump up the sample size]{.fragment}
 
-## Repeated Draws (N = 10)
+## Repeated Samples (N = 10)
 
 ```{r}
 #| cache: true
@@ -277,7 +279,7 @@ p2 <- ggplot(bear_data_cum, aes(x = result)) +
   geom_col(fill = my_orange, alpha = .66, stat = "count") +
   scale_x_continuous(limits = c(-.05, .85), breaks = seq(0, .8, by = .1)) +
   labs(
-    subtitle = "Number of Draws: {closest_state}",
+    subtitle = "Number of Samples: {closest_state}",
     x = "Proportion of Pineapple Bears",
     y = "Count of Samples"
   ) +
@@ -300,7 +302,7 @@ animate(
 
 [Again....]{.fragment}
 
-## Repeated Draws (N = 25)
+## Repeated Samples (N = 25)
 
 ```{r}
 #| cache: true
@@ -327,7 +329,7 @@ p3 <- ggplot(bear_data_cum, aes(x = result)) +
   geom_col(fill = my_orange, alpha = .66, stat = "count") +
   scale_x_continuous(limits = c(-.05, .85), breaks = seq(0, .8, .1)) +
   labs(
-    subtitle = "Number of Draws: {closest_state}",
+    subtitle = "Number of Samples: {closest_state}",
     x = "Proportion of Pineapple Bears",
     y = "Count of Samples"
   ) +
@@ -350,7 +352,7 @@ animate(
 
 [And again....]{.fragment}
 
-## Repeated Draws (N = 100)
+## Rep. Samples (N = 100)
 
 ```{r}
 #| cache: true
@@ -377,7 +379,7 @@ p4 <- ggplot(bear_data_cum, aes(x = result)) +
   geom_col(fill = my_orange, alpha = .66, stat = "count") +
   scale_x_continuous(limits = c(-.05, .85), breaks = seq(0, .8, .1)) +
   labs(
-    subtitle = "Number of Draws: {closest_state}",
+    subtitle = "Number of Samples: {closest_state}",
     x = "Proportion of Pineapple Bears",
     y = "Count of Samples"
   ) +
@@ -406,15 +408,15 @@ animate(
 
 total_n <- nrow(bear_data_cum) # 5050 rows total
 
-p1a <- p1 + labs(
-  title = "N = 5",
-    subtitle = "Number of Draws: 100")
+p2a <- p2 + labs(
+  title = "N = 10",
+    subtitle = "Number of Samples: 100")
 
 p4a <- p4 + labs(
   title = "N = 100",
-    subtitle = "Number of Draws: 100") 
+    subtitle = "Number of Samples: 100") 
 
-gridExtra::grid.arrange(p1a, p4a, nrow = 1)
+gridExtra::grid.arrange(p2a, p4a, nrow = 1)
 ```
 
 What about now?
@@ -422,6 +424,8 @@ What about now?
 ## [The Central Limit Theorem]{style="font-size: 0.667em;"}
 
 As $N$ increases:
+
+::: {style="font-size: 0.9em;"}
 
 -   Sampling distribution becomes narrower
 -   Sampling distribution becomes more symmetrical/bell-shaped
@@ -432,13 +436,17 @@ As $N$ increases:
 -   Otherwise, as $N$ (sample size) $\rightarrow \infty$
     -   Mean of sample statistics converges on population parameter
     -   SD of sample statistics = **standard error** = $\sigma / \sqrt{N}$
-    -   Sampling distribution becomes increasingly \textbf{normal}
+    -   Sampling distribution becomes increasingly **normal**
+    
+:::
+
 
 ## How Does This Help?
 
--   For most *statistics* we care about, if we have a large enough sample, the distribution of those statistics in repeated samples *becomes* normal in large enough sample sizes
--   The more symmetrical the ordinary probability distribution, the more normal the sampling distribution
--   The more skewed the ordinary distribution, the less normal the sampling distribution
+-   For most **statistics** we care about, the **distribution** of those **statistics becomes normal** in in repeated samples, as long as the sample size is large enough
+-   The more symmetrical the ordinary probability distribution, the more normal the sampling distribution even in smaller samples
+-   The more skewed the ordinary distribution, the less normal the sampling distribution in smaller samples
+    - Need a larger sample for sampling distribution to become more normalish
 -   *If* we can assume statistics are normally distributed, we can unlock a lot of ways to make inferences using some well-known properties of the normal distribution
 
 ## The Normal Distribution
@@ -449,7 +457,7 @@ Parameters
 
 -   $\mu$: Mean
 -   $\sigma^2$: Variance
-    -   aka $\sigma$: Standard deviation
+    -   Alternatively $\sigma$: Standard deviation
 
 ## Normal Densities
 
@@ -515,7 +523,7 @@ ggplot(df, aes(x = x, y = y)) +
   )
 ```
 
-For example, we can "slice up" the normal distribution into densities within 1 and 2 standard deviations
+We can "slice up" the normal distribution into densities within 1 and 2 standard deviations
 
 ## Normal Distribution Properties
 
@@ -525,7 +533,7 @@ For example, we can "slice up" the normal distribution into densities within 1 a
 **Any number that is more than 2 SDs from the mean would show up infrequently in this distribution**
 
 -   Not never! But it would be uncommon
--   If we know what the mean and SD of our sampling distribution are, it can let us say something about how how (un)likely it would be to see a statistic we collected in our sample.
+-   If we know what the mean and SD of our sampling distribution are, it can let us say something about how how (un)likely it would for a statistic to really belong to this distribution
 
 ## Sampling Scorers
 
@@ -535,15 +543,15 @@ Let's imagine:
 -   On average, they score 14.5 points per game
 -   I want to test the hypothesis that on average, the population I sampled from scores 12 points per game
 -   In the population, the standard deviation of basketball player points per game is 6
--   14.5 is not 12! But how do I know how likely or unlikely this *statistic* would be in my sampling distribution?
+-   14.5 is not 12! But how do I know how likely or unlikely this *statistic* would be if my sampling distribution were the true sampling distribution?
 
 ## Standard Errors
 
 A **standard error** is our term for the **standard deviation of a sampling distribution**.
 
-A few minutes ago I mentioned that As $N$ increases a sampling distribution becomes narrower. In fact, under the CLT, we know exactly **how much** narrower it becomes for the sampling distribution of the mean!
+I mentioned that As $N$ increases a sampling distribution becomes narrower. In fact, under the CLT, we know exactly **how much** narrower it becomes for the sampling distribution of the mean!
 
-$$\text{Standard Error (SE) of the mean} = \frac{SD}{\sqrt{N}}$$
+$$\text{Standard Error (SE) of the mean} = \frac{\sigma}{\sqrt{N}}$$
 
 More precisely, the squared standard error is the variance of the ordinary distribution proportional to the sample size
 
@@ -557,18 +565,18 @@ $$SE = \frac{6.5}{44} = 0.90$$
 
 This means, if my population has a mean of 12, I would expect
 
--   68% of samples to have a mean in the range of $12 \pm 0.90 = [11.10, 12.90]$
--   96% of samples to have a mean in the range of $12 \pm 2 \times 0.90 = [10.20, 13.80]$
+-   68% of samples to have a sample mean within 1 SE of the population mean: $12 \pm 0.90 = [11.10, 12.90]$
+-   96% of samples to have a sample mean within 2 SEs of the population mean: $12 \pm 2 \times 0.90 = [10.20, 13.80]$
 
 ## $Z$-transformations
 
 We can also *transform* our statistic into a $Z$-score for our hypothesized sampling distribution
 
 -   $Z$-score transformation: converting raw data or statistics into standard deviation units
--   In our case, we are going to transform our sample mean, $\bar{x}$, based on the mean and standard deviation (standard error) for our proposed sampling distribution
+-  We are going to transform our sample mean, $\bar{x}$, based on the mean and standard deviation (standard error) for our proposed sampling distribution
     -   $Z = \frac{\bar{x} - \mu}{\text{SE}} = \frac{14.5 - 12}{0.90} = 2.78$
 
-**Interpretation:** Our sample mean is 2.78 SEs (SDs) larger than the sample mean
+**Interpretation:** Our sample (14.5) mean is 2.78 SEs (SDs) larger than the proposed population mean (12)
 
 ## How (Un)likely?
 
@@ -648,323 +656,176 @@ ggplot(x, aes(x)) +
 
 This result would be very surprising if our hypothesis $\mu = 12$ were true!
 
+## Our Statistic's Area
+
+```{r}
+
+
+
+ggplot(x, aes(x)) + 
+  stat_function(fun = dnorm) +
+  stat_function(fun = dnorm, xlim = c(-4, qnorm(.025)), geom = "area", fill = my_red) +
+  stat_function(fun = dnorm, xlim = c(qnorm(.025), qnorm(.975)), geom = "area", fill = my_blue) +
+
+  stat_function(fun = dnorm, xlim = c(qnorm(.975), 2.78), geom = "area", fill = my_red) +
+  stat_function(fun = dnorm, xlim = c(2.78, 4), geom = "area", fill = my_purple) +
+  theme_bw() +
+  labs(x = "Standard Errors", y = "",
+       title = "The Standard Normal Sampling Distribution") +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) +
+  geom_vline(aes(xintercept = qnorm(.025), size = I(2)), col = my_orange) +
+  geom_vline(aes(xintercept = qnorm(.975), size = I(2)), col = my_orange) +
+  
+  geom_vline(aes(xintercept = 2.78, size = I(1)), col = my_blue) +
+
+  annotate(
+    "text", 
+    x = 2.78, 
+    y = 0.25, 
+    label = "sample mean is\n2.78 SEs from\nhypothesized\npopulation mean", 
+    color = my_blue, 
+    size = 3.5, 
+    hjust = -0.05
+  ) +
+  
+  # Text annotation for the tail past 2.78
+  annotate(
+    "text", 
+    x = 3.2, 
+    y = 0.12, 
+    label = "0.27% of the\narea of the\ndistribution", 
+    color = my_purple, 
+    size = 3.5, 
+    hjust = 0
+  ) +
+  # Arrow pointing to the shaded region past 2.78
+  annotate(
+    "segment", 
+    x = 3.2, xend = 2.9, 
+    y = 0.10, yend = 0.02, 
+    color = my_purple, 
+    arrow = arrow(length = unit(0.08, "inches"))
+  ) +
+  
+  geom_text(aes(label = "Critical Values", x = 0, y = .43), size = 6, color = my_orange) +
+  geom_segment(aes(x = 1.1, xend = qnorm(.975) - .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_segment(aes(x = -1.1, xend = qnorm(.025) + .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches")))
+```
+
+## Equally Unlikely Outcome
+
+```{r}
+# Define purple color if not already defined
+my_purple <- "#6a3d9a"
+
+ggplot(x, aes(x)) + 
+  stat_function(fun = dnorm) +
+  # Lower tail split at -2.78
+  stat_function(fun = dnorm, xlim = c(-4, -2.78), geom = "area", fill = my_purple) +
+  stat_function(fun = dnorm, xlim = c(-2.78, qnorm(.025)), geom = "area", fill = my_red) +
+  # Middle area
+  stat_function(fun = dnorm, xlim = c(qnorm(.025), qnorm(.975)), geom = "area", fill = my_blue) +
+  # Upper tail split at 2.78
+  stat_function(fun = dnorm, xlim = c(qnorm(.975), 2.78), geom = "area", fill = my_red) +
+  stat_function(fun = dnorm, xlim = c(2.78, 4), geom = "area", fill = my_purple) +
+  theme_bw() +
+  labs(x = "Standard Errors", y = "",
+       title = "The Standard Normal Sampling Distribution") +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) +
+  geom_vline(aes(xintercept = qnorm(.025), size = I(2)), col = my_orange) +
+  geom_vline(aes(xintercept = qnorm(.975), size = I(2)), col = my_orange) +
+  
+  # Vertical indicator lines
+  geom_vline(aes(xintercept = -2.78, size = I(1)), col = my_blue) +
+  geom_vline(aes(xintercept = 2.78, size = I(1)), col = my_blue) +
+
+  # Upper tail annotations
+  annotate(
+    "text", 
+    x = 2.78, y = 0.25, 
+    label = "sample mean is\n2.78 SEs from\nhypothesized\npopulation mean", 
+    color = my_blue, size = 3.5, hjust = -0.05
+  ) +
+  annotate(
+    "text", 
+    x = 3.2, y = 0.12, 
+    label ="0.27% of the\narea of the\ndistribution", 
+    color = my_purple, size = 3.5, hjust = 0
+  ) +
+  annotate(
+    "segment", 
+    x = 3.2, xend = 2.9, 
+    y = 0.10, yend = 0.02, 
+    color = my_purple, arrow = arrow(length = unit(0.08, "inches"))
+  ) +
+
+  annotate(
+    "text", 
+    x = -2.78, y = 0.25, 
+    label = "a sample mean\n-2.78 SEs from\nhypothesized\npopulation mean\nwould be\nequally unlikely", 
+    color = my_blue, size = 3.5, hjust = 1.05
+  ) +
+  annotate(
+    "text", 
+    x = -3.2, y = 0.12, 
+    label = "0.27% of the\narea of the\ndistribution",  
+    color = my_purple, size = 3.5, hjust = 1
+  ) +
+  annotate(
+    "segment", 
+    x = -3.2, xend = -2.9, 
+    y = 0.10, yend = 0.02, 
+    color = my_purple, arrow = arrow(length = unit(0.08, "inches"))
+  ) +
+  
+  geom_text(aes(label = "Critical Values", x = 0, y = .43), size = 6, color = my_orange) +
+  geom_segment(aes(x = 1.1, xend = qnorm(.975) - .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_segment(aes(x = -1.1, xend = qnorm(.025) + .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches")))
+```
+
 ## NHST
+
+::: {style="font-size: 0.95em;"}
 
 This is the core logic of Null Hypothesis Significance Testing (NHST):
 
 -   Propose a sampling distribution
 -   Collect data
 -   Calculate a statistic
--   Calculate what percentage of statistics would have a magnitude at least as large as the one you collected
+-   Calculate what percentage of statistics would have a magnitude at least as extreme as the one you collected
 -   Draw a conclusion
 -   **Ronald Fisher** proposed setting $\alpha = .05$
     -   Arbitrary cutoff to decide whether a statistic is surprising enough to conclude the null hypothesis is likely false
     -   **Proper Interpretation:** For all true null hypotheses, I'm willing to **incorrectly** reject them 5% of the time (make Type I Error, more later!)
 
-## Back to Gummy Bears
-
-![](../../Figs/gummytypes.jpg)
-
-## Two Hypotheses
-
-In our gummy bear examples we've only thought about Pineapple so far. Now let's consider each different flavor.
-
--   **Equal Categories (EC)**: All flavors are distributed evenly ($\frac{1}{5}$ chance each, equiprobable hypothesis)
-
-But I secretly suspect that instead:
-
--   **Too many raspberries (TMR):** The candymakers are biased in favor of raspberry ($\frac{1}{3}$ chance) over the other flavors ($\frac{1}{6} chance each$)
-
-I buy a party sized back of 354 bears and randomly split it into two halves of 177 pieces each to independently test each hypothesis.
-
-## Sample 1
-
-Under the EC hypothesis, in repeated samples, my *expected frequency* of each flavor would be:
-
-$$f_{E1} = f_{E2} = f_{E3} = f_{E4} = f_{E5} = \frac{1}{5}177 =  35.4$$
-
-However, my *observed frequencies* are:
-
-$$f_{O1} =62,f_{O2} = 26, f_{O3} = 29, = f_{O4} = 28, f_{O5} = 32$$
-
-How unlikely are are observed frequencies under the hypothesis that the expected frequencies are the true frequencies in the population?
-
-## [Constructing our Sampling Distribution]{style="font-size: 0.667em;"}
-
-We could look at how different our observed frequencies are from our expected frequencies, but if we just do that and sum them up, what would happen?
-
--   [The differences would cancel out to 0!]{.answer .fragment .content-visible unless-meta="params.v0"}
-
--   Instead we are going to look at *squared* differences
-
--   We are also going to *normalize* the squared differences by dividing by the expected frequencies
-
--   For each category, we will calculate $k$
-
-$$\frac{(F_{Ok} - F_{Ek})^2}{F_{Ek}}$$
-
-## [The $\chi^2$ Distribution]{style="font-size: 0.667em;"}
-
-::: {style="font-size: 0.95em;"}
-Under the CLT, each of these will *separately* be distributed standard normal *squared*
-
--   Take every value in a normal distribution with $\mu = 0$, $\sigma = 1$ and square them
-
-The sum of multiple squared random standard normal variables has a known distributional form of it's own: the $\chi^2$ distribution.
-
--   Any $\chi^2$ distribution has degrees of freedom equal to the number of elements that can freely vary. of our separate sums can freely vary, assuming we hold the total number of gummy bears ($N = 177$) constant?
-
--   [Once we know the observed frequencies of four of the categories, if the total stays constant, the fifth becomes determined, so we have $K - 1 = 5 - 1 = 4$ degrees of freedom]{.answer .fragment .content-visible unless-meta="params.v0"}
 :::
 
-## The Messy Truth
 
-::: {style="font-size: 0.95em;"}
-The $chi^2$ distribution has the following density function:
+## Hypothesis and Test
 
-$$f_{df}(\chi^2) = \frac{(\frac{1}{2})^{df/2}}{\Gamma(\frac{df}{2})} \chi^{2(df/2 - 1)} e^{-\chi^2/2}$$
+-   Set up a null hypothesis $H_0$
 
--   $df$: degrees of freedom
--   $\Gamma$: the gamma function
+  -   $H_0: \mu_{PPG} = 12$
 
-Fortunately, we never need to use this equation directly
+-   Set up alternative hypothesis $H_a$
 
-The sum of $df$ squared independent standard normal variables follows a $\chi^2$ distribution with $df$ degrees of freedom
+  -   $H_a: \mu_{PPG} \neq 12$
 
--   The $\chi^2$ distribution is defined on the interval $[0, \infty]$
--   $\mathcal{E}(\chi^2) =$ mean $\chi^2$ value = $df$
--   $\text{Var}(\chi^2) = 2df$
-:::
+- Conducting Test
 
-## $\chi^2$ Distributions
+  -   Construct sampling distribution
+  -   Calculate test statistic
+  -   Determine how unlikely test statistic is for sampling distribution
+  -   If $P(\text{statistic}) < .05$, reject null hypothesis.
+    -   For a "two-tailed" test (e.g. a $Z$-test) we multiply by two to account for possibility that under the proposed sampling distribution the statistic was equally likely to have been above or below $\mu$
 
-```{r}
-d <- tibble(x = seq(.01, 10, by = .01))
-d <- d %>% mutate("1" = dchisq(x, 1), "2" = dchisq(x, 2), "3" = dchisq(x, 3),
-             "5" = dchisq(x, 5), "7" = dchisq(x, 7)) %>%
-    pivot_longer("1":"7", names_to = "df", values_to = "density")
+## $Z$-test in APA
 
-ggplot(d, aes(x, density, col = df, size = I(2))) + geom_path(na.rm = TRUE) +
-  scale_color_manual(values = c(my_red, my_orange, my_green, my_blue, my_purple)) + xlab(NULL) + ylab(NULL) +
-  lims(y = c(0, .6)) + theme_light()
-```
+Congratulations! We've just learned how to do our first statistical test: a $Z$-test
 
-## Sampling $\chi^2$s
+Based on a sample of $N = 44$ NBA players, we conduced a $Z$-test to test the null hypothesis that they came from a population with $\mu = 12$ points per game, assuming that $\sigma = 6$. Our sample mean scored $\bar{x} = 14.5$ points per game, $Z = 2.78, p = .003$. We reject the null hypothesis that the population mean from which this sample was drawn had $\mu = 12$ points per game with known $\sigma = 6$. 
 
-If our EC hypothesis is true, that means that in repeated random samples, if we calculate
-
-$$\chi^2 = \sum_{k=1}^K \frac{(F_{Ok} - F_{Ek})^2}{F_{Ek}}$$
-
-The $\chi^2$ *statistic* that results will follow a $\chi^2$ *distribution* with $df = K - 1$
-
-Under Fisher's $\alpha = .05$ convention, if there is less than a 5% chance that we would obtain a $\chi^2$ *statistic* at least as large as the one we observe under this distribution, we reject the proposed hypothesis.
-
-## $\chi^2$ Critical Value
-
-```{r}
-  x <- data.frame(x = c(0, 10))
-ggplot(x, aes(x)) + stat_function(fun = dnorm) +
-  stat_function(fun = dchisq, args = list(df = 2), xlim = c(0, qchisq(.95, 2)), geom = "area", fill = my_blue) +
-  stat_function(fun = dchisq, args = list(df = 2), xlim = c(qchisq(.95, 2), 10), geom = "area", fill = my_red) +
-  theme_light() +
-  labs(x = expression(chi^2), y = "density") +
-  geom_vline(aes(xintercept = qchisq(.95, 2), size = 1), col = my_orange) +
-  geom_text(aes(label = "Critical Value", x = 7.5, y = .49), size = 6, color = my_orange) + guides(size = "none") +
-  geom_text(aes(label = "Retention\nRegion\n(Area = .95)", x = 2.5, y = .32), size = 6, color = my_blue) +
-  geom_text(aes(label = "Rejection\nRegion\n(Area = .05)", x = 8.5, y = .15), size = 6, color = my_red) +
-  geom_segment(aes(x = 2.4, xend = 2.1, y = .25, yend = .2), col = my_blue, arrow = arrow(length = unit(.1, "inches"))) +
-  geom_segment(aes(x = 8.5, xend = 8, y = .07, yend = .015), col = my_red, arrow = arrow(length = unit(.1, "inches")))
-```
-
-## The EC Hypothesis
-
-In my first sample of gummy bears, I have 62 raspberries, 26 pineapples, 29 lemons, 28 oranges, and 32 strawberries
-
-::: {style="font-size: 0.7em;"}
-$$\chi^2_{\rm{obs}} = \frac{(62 - 35.4)^2}{35.4} + \frac{(26 - 35.4)^2}{35.4} + \frac{(29 - 35.4)^2}{35.4} + \frac{(28 - 35.4)^2}{35.4} + \frac{(32 - 35.4)^2}{35.4}  = {25.51}$$
-:::
-
-```{r}
-#| echo: true
-pchisq(25.51, df = 4, lower.tail = FALSE)
-
-```
-
-The probability of obtaining a $\chi^2$ *statistic* of at least 25.51 from a $\chi^2$ *distribution* with four degrees of freedom is $3.97 \times 10^{-5}$ (VERY unlikely)
-
-Thus, we reject the EC hypothesis.
-
-## EC Visualized
-
-```{r}
-
-
-
-
-
-# Extend domain to 30 to accommodate x = 25.51
-x <- data.frame(x = c(0, 30))
-
-ggplot(x, aes(x)) +
-  # Chi-square curve outline
-  stat_function(fun = dchisq, args = list(df = 4), color = "black", linewidth = 0.6) +
-  
-  # Retention region (Area = 0.95)
-  stat_function(fun = dchisq, args = list(df = 4), xlim = c(0, qchisq(.95, 4)), geom = "area", fill = my_blue, alpha = 0.8) +
-  
-  # Rejection region (Area = 0.05)
-  stat_function(fun = dchisq, args = list(df = 4), xlim = c(qchisq(.95, 4), 30), geom = "area", fill = my_red, alpha = 0.8) +
-  
-  # Critical Value Line (qchisq(.95, 4) ≈ 9.49)
-  geom_vline(xintercept = qchisq(.95, 4), color = my_orange, linewidth = 1) +
-  geom_text(aes(label = paste0("Critical Value\n(", round(qchisq(.95, 4), 2), ")"), 
-                x = qchisq(.95, 4) + 1.5, y = 0.17), size = 4.5, color = my_orange, hjust = 0) +
-  
-  # Annotated Line at 25.51
-  geom_vline(xintercept = 25.51, color = my_red, linewidth = 1, linetype = "dashed") +
-  geom_text(aes(label = "Observed Statistic\n(x = 25.51, p < 0.001)", 
-                x = 24.5, y = 0.12), size = 4.5, color = my_red, hjust = 1) +
-  geom_segment(aes(x = 22, xend = 25.2, y = 0.10, yend = 0.05), 
-               color = my_red, arrow = arrow(length = unit(.1, "inches"))) +
-  
-  # Region Labels and Arrows
-  geom_text(aes(label = "Rejection\nRegion\n(Area = .05)", x = 14, y = 0.05), size = 4.5, color = my_red) +
-  geom_segment(aes(x = 13.5, xend = 11, y = 0.035, yend = 0.01), color = my_red, arrow = arrow(length = unit(.1, "inches"))) +
-  
-  # Labels and Theme
-  labs(x = expression(chi^2), y = "density", title = expression(paste("Chi-Square Distribution (", df == 4, ")"))) +
-  theme_light()
-```
-
-## The TMR Hypothesis
-
--   **Too many raspberries (TMR):** The candymakers are biased in favor of raspberry ($\frac{1}{3}$ chance) over the other flavors ($\frac{1}{6} chance each$)
-
-For 177 pieces, what are the *expected* frequencies in each category
-
--   [$f_{E1} = \frac{1}{3}177 = 59, f_{E2} = f_{E3} = f_{E4} = f_{E5} = \frac{1}{6}177 =  29.5$]{.answer .fragment .content-visible unless-meta="params.v0"}
-
-## The TMR $\chi^2$
-
-Now let's say I observe
-
--   $f_{O1} =55,f_{O2} = 29, f_{O3} = 44, = f_{O4} = 30, f_{O5} = 30$
-
-What is my $\chi^2$ test statistic?
-
-::: {style="font-size: 0.7em;"}
-[$$\chi^2_{\rm{obs}} = \frac{(55 - 59)^2}{59} + \frac{(29 - 29.5)^2}{29.5} + \frac{(33 - 29.5)^2}{29.5} + \frac{(30 - 29.5)^2}{29.5} + \frac{(30 - 29.5)^2}{29.5}  = {0.712}$$]{.answer .fragment .content-visible unless-meta="params.v0"}
-:::
-
-## The TMR $p$-value
-
-And what is the probability I would observe a statistic at least this large?
-
-:::: {.content-visible unless-meta="params.v0"}
-::: fragment
-```{r}
-#| echo: true
-pchisq(0.712, df = 4, lower.tail = FALSE)
-
-```
-:::
-::::
-
-Thus, we do *not* reject the TMR hypothesis.
-
-## Visualizing the TMR
-
-```{r}
-
-
-x <- data.frame(x = c(0, 30))
-
-ggplot(x, aes(x)) +
-  stat_function(fun = dchisq, args = list(df = 4), color = "black", linewidth = 0.6) +
-  stat_function(fun = dchisq, args = list(df = 4), xlim = c(0, qchisq(.95, 4)), geom = "area", fill = my_blue, alpha = 0.8) +
-  stat_function(fun = dchisq, args = list(df = 4), xlim = c(qchisq(.95, 4), 30), geom = "area", fill = my_red, alpha = 0.8) +
-  geom_vline(xintercept = qchisq(.95, 4), color = my_orange, linewidth = 1) +
-  geom_text(aes(label = paste0("Critical Value\n(", round(qchisq(.95, 4), 2), ")"), 
-                x = qchisq(.95, 4) + 0.3, y = 0.12), size = 4, color = my_orange, hjust = 0) +
-
-  geom_vline(xintercept = 0.712, color = my_purple, linewidth = 1, linetype = "dashed") +
-  geom_text(aes(label = "Observed Statistic\n(x = 0.712, p = 0.950)", 
-                x = 3.2, y = 0.16), size = 4, color = my_purple, hjust = 0) +
-  geom_segment(aes(x = 3.1, xend = 0.85, y = 0.15, yend = 0.09), 
-               color = my_purple, arrow = arrow(length = unit(.1, "inches"))) +
-
-  geom_text(aes(label = "Rejection\nRegion\n(Area = .05)", x = 12.5, y = 0.05), size = 4, color = my_red) +
-  geom_segment(aes(x = 12, xend = 10.5, y = 0.035, yend = 0.01), 
-               color = my_red, arrow = arrow(length = unit(.1, "inches"))) +
-
-  labs(x = expression(chi^2), y = "density", title = expression(paste("Chi-Square Distribution (", df == 4, ")"))) +
-  theme_light()
-```
-
-## APA Style Writeup
-
-A sample of 177 gummy bears included 62 (35%) raspberry, 26 (15%) pineapple, 29 (16%) lemon, 28 (16%) orange, and 32 (18%) strawberry gummy bears. This distribution of gummy bears is significantly different from the hypothesis that each flavor occurs with equal frequency, $\chi^2(4) = 25.51, p < .001$.
-
-An independent sample of 177 gummy bears was used to test the hypothesis that raspberry gummy bears occurred twice as often as all other flavors of gummy bears. The second sample of gummy bears (55 (31%) raspberry, 29 (16%) pineapple, 33 (19%) lemon, 30 (17%) orange, 30 (17%) strawberry) is not significantly different from this hypothesis, $\chi^2(4) = 0.71, p = .95$.
-
-## Rejection and Retention
-
-**Note:** We do not treat this as evidence in favor of our specific TMR hypothesis, why?
-
-[What if our TMR hypothesis was 40% raspberry instead of 1/3 Raspberry]{.fragment}
-
-::::: {.content-visible unless-meta="params.v0"}
-:::: fragment
-::: {style="font-size: 0.67em;"}
-$$f_{E1} = .4(177) = 70.80, f_{E2} = f_{E3} = f_{E4} = f_{E5} = .15(177) =  26.55$$
-
-$$\chi^2_{\rm{obs}} = \frac{(55 - 70.8)^2}{70.8} + \frac{(29 - 26.55)^2}{26.55} + \frac{(33 - 26.55)^2}{26.55} + \frac{(30 - 26.55)^2}{26.55} + \frac{(30 - 26.55)^2}{26.55}  = {6.22}$$
-:::
-
-```{r}
-#| echo: true
-
-pchisq(6.22, df = 4, lower.tail = FALSE)
-
-```
-
-There are *many* hypotheses that data like this would be reasonably consistent with, and our approach does not provide a clear quantifiable way to differentiate them!
-::::
-:::::
-
-## The Other TMR
-
-```{r}
-
-
-x <- data.frame(x = c(0, 30))
-
-ggplot(x, aes(x)) +
-  stat_function(fun = dchisq, args = list(df = 4), color = "black", linewidth = 0.6) +
-  stat_function(fun = dchisq, args = list(df = 4), xlim = c(0, qchisq(.95, 4)), geom = "area", fill = my_blue, alpha = 0.8) +
-  stat_function(fun = dchisq, args = list(df = 4), xlim = c(qchisq(.95, 4), 30), geom = "area", fill = my_red, alpha = 0.8) +
-  geom_vline(xintercept = qchisq(.95, 4), color = my_orange, linewidth = 1) +
-  geom_text(aes(label = paste0("Critical Value\n(", round(qchisq(.95, 4), 2), ")"), 
-                x = qchisq(.95, 4) + 0.3, y = 0.12), size = 4, color = my_orange, hjust = 0) +
-
-  geom_vline(xintercept = 6.22, color = my_purple, linewidth = 1, linetype = "dashed") +
-  geom_text(aes(label = "Observed Statistic\n(x = 6.22, p = 0.183)", 
-                x = 8.7, y = 0.16), size = 4, color = my_purple, hjust = 0) +
-  geom_segment(aes(x = 8.6, xend = 6.4, y = 0.15, yend = 0.09), 
-               color = my_purple, arrow = arrow(length = unit(.1, "inches"))) +
-
-  geom_text(aes(label = "Rejection\nRegion\n(Area = .05)", x = 12.5, y = 0.05), size = 4, color = my_red) +
-  geom_segment(aes(x = 12, xend = 10.5, y = 0.035, yend = 0.01), 
-               color = my_red, arrow = arrow(length = unit(.1, "inches"))) +
-
-  labs(x = expression(chi^2), y = "density", title = expression(paste("Chi-Square Distribution (", df == 4, ")"))) +
-  theme_light()
-```
-
-## What Can We Say?
-
--   We have evidence against the EC hypothesis
--   We failed to find evidence against the TMR hypothesis
--   This is evidence that the population is biased towards raspberries *in general*
--   But is the population $1/3$ raspberry? 40% raspberry?
-    -   We don't have great evidence differentiating these one way or the other

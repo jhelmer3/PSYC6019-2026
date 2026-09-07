@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.6.42">
 
   <meta name="author" content="Mark Himmelstein">
-  <title>PSYC 6019 – Lecture 7: More Chi-Square</title>
+  <title>PSYC 6019 – Lecture 7: Chi-Square</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -94,7 +94,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-5f4f28e8bfc7f39b89cc2436db0d29b7.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-5aced4f1f84d9a2545a5ea1e8a9610b9.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -202,7 +202,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Lecture 7: More Chi-Square</h1>
+  <h1 class="title">Lecture 7: Chi-Square</h1>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -216,69 +216,212 @@ Mark Himmelstein
 <section id="last-time" class="slide level2">
 <h2>Last Time</h2>
 <ul>
-<li>We learned the conceptual foundation of null hypothesis significance testing (NHST)</li>
-<li>We saw two examples
+<li>We learned the conceptual foundation of null hypothesis significance testing (NHST)
 <ul>
 <li><span class="math inline">\(Z\)</span>-test
 <ul>
 <li>Test of a hypothesis about a continuous variable</li>
 <li>Were our sampled NBA players consistent with a population that scored 12 points per game?</li>
 </ul></li>
-<li><span class="math inline">\(\chi^2\)</span> test (aka <span class="math inline">\(\chi^2\)</span> “goodness of fit” test)
-<ul>
-<li>Were our sampled gummy bears consistent with equal categories, or consistent with the more raspberries hypothesis?</li>
 </ul></li>
-</ul></li>
-</ul>
-</section>
-<section id="setting-up-hypotheses" class="slide level2">
-<h2>Setting Up Hypotheses</h2>
+<li>The <span class="math inline">\(Z\)</span>-test allows us to test a specific hypothesis about a continuous variable, but <strong>assumes we know the population value of</strong> <span class="math inline">\(\sigma\)</span>
 <ul>
-<li><p>Set up a null hypothesis <span class="math inline">\(H_0\)</span></p>
-<ul>
-<li><span class="math inline">\(H_0: \mu_{PPG} = 12\)</span></li>
-<li><span class="math inline">\(H_0: \pi_{raspberry} = \pi_{pineapple} = \pi_{orange} = \pi_{strawberry} = \pi_{lemon} = \frac{1}{5}\)</span>
-<ul>
-<li><span class="math inline">\(\pi\)</span> = notation for parameter representing probability in the population</li>
-</ul></li>
-</ul></li>
-<li><p>Set up alternative hypothesis <span class="math inline">\(H_a\)</span></p>
-<ul>
-<li><span class="math inline">\(H_0: \mu_{PPG} \neq 12\)</span></li>
-<li><span class="math inline">\(H_0: \text{At least one } \pi_k \neq \frac{1}{5}\)</span>
-<ul>
-<li><span class="math inline">\(\pi\)</span> = notation for parameter representing probability in the population</li>
-</ul></li>
-</ul></li>
-</ul>
-</section>
-<section id="conducting-test" class="slide level2">
-<h2>Conducting Test</h2>
-<ul>
-<li>Construct sampling distribution</li>
-<li>Calculate test statistic</li>
-<li>Determine how unlikely test statistic is for sampling distribution</li>
-<li>If <span class="math inline">\(P(\text{statistic}) &lt; .05\)</span>, reject null hypothesis.
-<ul>
-<li>For a “two-tailed” test (e.g.&nbsp;a <span class="math inline">\(Z\)</span>-test) we multiply by two to account for possibility that under the proposed sampling distribution the statistic was equally likely to have been above or below <span class="math inline">\(\mu\)</span></li>
+<li>Major limitation! But good for building a conceptual foundation</li>
 </ul></li>
 </ul>
 </section>
 <section id="more-tests" class="slide level2">
 <h2>More Tests</h2>
 <ul>
-<li>The <span class="math inline">\(Z\)</span>-test allows us to test a specific hypothesis about a continuous variable, but <strong>assumes we know the population value of</strong> <span class="math inline">\(\sigma\)</span>
-<ul>
-<li>Major limitation! But good for building a conceptual foundation</li>
-</ul></li>
 <li>The <span class="math inline">\(\chi^2\)</span> goodness of fit test allows us to test a hypothesis about the probability of each category for a categorical variable in the population
 <ul>
-<li>E.g. hypothesis about how common each flavor of gummy bears are</li>
+<li>E.g. are each flavor of gummy bear equally common?</li>
+</ul></li>
+<li>The <span class="math inline">\(\chi^2\)</span> test of independence allows us to test if membership in one category is <em>independent</em> or membership in another category.
+<ul>
+<li>E.g. is the sentence for a crime independent of the defendant’s race?</li>
 </ul></li>
 </ul>
-<p>In this module we’re going to discuss more things you can do with a <span class="math inline">\(\chi^2\)</span> sampling distribution:</p>
+</section>
+<section id="back-to-gummy-bears" class="slide level2">
+<h2>Back to Gummy Bears</h2>
+
+<img data-src="../../Figs/gummytypes.jpg" class="r-stretch"></section>
+<section id="two-hypotheses" class="slide level2">
+<h2>Two Hypotheses</h2>
+<p>In our gummy bear examples we’ve only thought about Pineapple so far. Now let’s consider each different flavor.</p>
 <ul>
-<li>The <span class="math inline">\(\chi^2\)</span> test of independence for two categorical variables</li>
+<li><strong>Equal Categories (EC)</strong>: All flavors are distributed evenly (<span class="math inline">\(\frac{1}{5}\)</span> chance each, equiprobable hypothesis)</li>
+</ul>
+<p>But I secretly suspect that instead:</p>
+<ul>
+<li><strong>Too many raspberries (TMR):</strong> The candymakers are biased in favor of raspberry (<span class="math inline">\(\frac{1}{3}\)</span> chance) over the other flavors (<span class="math inline">\(\frac{1}{6}\)</span> chance each)</li>
+</ul>
+<p>I buy a party sized back of 354 bears and randomly split it into two halves of 177 pieces each to independently test each hypothesis.</p>
+</section>
+<section id="sample-1" class="slide level2">
+<h2>Sample 1</h2>
+<p>Under the EC hypothesis, in repeated samples, my <em>expected frequency</em> of each flavor would be:</p>
+<p><span class="math display">\[f_{E1} = f_{E2} = f_{E3} = f_{E4} = f_{E5} = \frac{1}{5}177 =  35.4\]</span></p>
+<p>However, my <em>observed frequencies</em> are:</p>
+<p><span class="math display">\[f_{O1} =62,f_{O2} = 26, f_{O3} = 29, = f_{O4} = 28, f_{O5} = 32\]</span></p>
+<p>How unlikely are are observed frequencies under the hypothesis that the expected frequencies are the true frequencies in the population?</p>
+</section>
+<section id="constructing-our-sampling-distribution" class="slide level2">
+<h2><span style="font-size: 0.667em;">Constructing our Sampling Distribution</span></h2>
+<p>We could look at how different our observed frequencies are from our expected frequencies, but if we just do that and sum them up, what would happen?</p>
+<ul>
+<li><p><span class="answer fragment" data-unless-meta="params.v0">The differences would cancel out to 0!</span></p></li>
+<li><p>Instead we are going to look at <em>squared</em> differences</p></li>
+<li><p>We are also going to <em>normalize</em> the squared differences by dividing by the expected frequencies</p></li>
+<li><p>For each category, we will calculate <span class="math inline">\(k\)</span></p></li>
+</ul>
+<p><span class="math display">\[\frac{(F_{Ok} - F_{Ek})^2}{F_{Ek}}\]</span></p>
+</section>
+<section id="the-chi2-distribution" class="slide level2">
+<h2><span style="font-size: 0.667em;">The <span class="math inline">\(\chi^2\)</span> Distribution</span></h2>
+<div style="font-size: 0.9em;">
+<p>Under the CLT, each of these will <em>separately</em> be distributed standard normal <em>squared</em></p>
+<ul>
+<li>Take every value in a normal distribution with <span class="math inline">\(\mu = 0\)</span>, <span class="math inline">\(\sigma = 1\)</span> and square them</li>
+</ul>
+<p>The sum of multiple squared random standard normal variables has a known distributional form of it’s own: the <span class="math inline">\(\chi^2\)</span> distribution.</p>
+<ul>
+<li>Any <span class="math inline">\(\chi^2\)</span> distribution has degrees of freedom equal to the number of elements that can freely vary.
+<ul>
+<li>How many of our flavors can freely vary, assuming we hold the total number of gummy bears (<span class="math inline">\(N = 177\)</span>) constant?</li>
+</ul></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">Once we know the observed frequencies of four of the categories, if the total stays constant, the fifth becomes determined, so we have <span class="math inline">\(K - 1 = 5 - 1 = 4\)</span> degrees of freedom</span></li>
+</ul>
+</div>
+</section>
+<section id="the-messy-truth" class="slide level2">
+<h2>The Messy Truth</h2>
+<div style="font-size: 0.87em;">
+<p>The <span class="math inline">\(\chi^2\)</span> distribution has the following density function:</p>
+<p><span class="math display">\[f_{df}(\chi^2) = \frac{(\frac{1}{2})^{df/2}}{\Gamma(\frac{df}{2})} \chi^{2(df/2 - 1)} e^{-\chi^2/2}\]</span></p>
+<ul>
+<li><span class="math inline">\(df\)</span>: degrees of freedom</li>
+<li><span class="math inline">\(\Gamma\)</span>: the gamma function</li>
+</ul>
+<p>Fortunately, we never need to use this equation directly</p>
+<p>The sum of <span class="math inline">\(df\)</span> squared independent standard normal variables follows a <span class="math inline">\(\chi^2\)</span> distribution with <span class="math inline">\(df\)</span> degrees of freedom</p>
+<ul>
+<li>The <span class="math inline">\(\chi^2\)</span> distribution is defined on the interval <span class="math inline">\([0, \infty]\)</span></li>
+<li><span class="math inline">\(\mathcal{E}(\chi^2) =\)</span> mean <span class="math inline">\(\chi^2\)</span> value = <span class="math inline">\(df\)</span></li>
+<li><span class="math inline">\(\text{Var}(\chi^2) = 2df\)</span></li>
+</ul>
+</div>
+</section>
+<section id="chi2-distributions" class="slide level2">
+<h2><span class="math inline">\(\chi^2\)</span> Distributions</h2>
+
+<img data-src="Lecture-7-Chi-Square_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="sampling-chi2s" class="slide level2">
+<h2>Sampling <span class="math inline">\(\chi^2\)</span>s</h2>
+<p>If our EC hypothesis is true, that means that in repeated random samples, if we calculate</p>
+<p><span class="math display">\[\chi^2 = \sum_{k=1}^K \frac{(F_{Ok} - F_{Ek})^2}{F_{Ek}}\]</span></p>
+<p>The <span class="math inline">\(\chi^2\)</span> <em>statistic</em> that results will follow a <span class="math inline">\(\chi^2\)</span> <em>distribution</em> with <span class="math inline">\(df = K - 1\)</span></p>
+<p>Under Fisher’s <span class="math inline">\(\alpha = .05\)</span> convention, if there is less than a 5% chance that we would obtain a <span class="math inline">\(\chi^2\)</span> <em>statistic</em> at least as large as the one we observe under this distribution, we reject the proposed hypothesis.</p>
+</section>
+<section id="chi2-critical-value" class="slide level2">
+<h2><span class="math inline">\(\chi^2\)</span> Critical Value</h2>
+
+<img data-src="Lecture-7-Chi-Square_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="the-ec-hypothesis" class="slide level2">
+<h2>The EC Hypothesis</h2>
+<p>In my first sample of gummy bears, I have 62 raspberries, 26 pineapples, 29 lemons, 28 oranges, and 32 strawberries</p>
+<div style="font-size: 0.7em;">
+<p><span class="math display">\[\chi^2_{\rm{obs}} = \frac{(62 - 35.4)^2}{35.4} + \frac{(26 - 35.4)^2}{35.4} + \frac{(29 - 35.4)^2}{35.4} + \frac{(28 - 35.4)^2}{35.4} + \frac{(32 - 35.4)^2}{35.4}  = {25.51}\]</span></p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">pchisq</span>(<span class="fl">25.51</span>, <span class="at">df =</span> <span class="dv">4</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a></a><span class="ex">[1]</span> 3.972231e-05</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p>The probability of obtaining a <span class="math inline">\(\chi^2\)</span> <em>statistic</em> of at least 25.51 from a <span class="math inline">\(\chi^2\)</span> <em>distribution</em> with four degrees of freedom is <span class="math inline">\(3.97 \times 10^{-5}\)</span> (VERY unlikely)</p>
+<p>Thus, we reject the EC hypothesis.</p>
+</section>
+<section id="ec-visualized" class="slide level2">
+<h2>EC Visualized</h2>
+
+<img data-src="Lecture-7-Chi-Square_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="the-tmr-hypothesis" class="slide level2">
+<h2>The TMR Hypothesis</h2>
+<ul>
+<li><strong>Too many raspberries (TMR):</strong> The candymakers are biased in favor of raspberry (<span class="math inline">\(\frac{1}{3}\)</span> chance) over the other flavors (<span class="math inline">\(\frac{1}{6}\)</span> chance each)</li>
+</ul>
+<p>For 177 pieces, what are the <em>expected</em> frequencies in each category</p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(f_{E1} = \frac{1}{3}177 = 59, f_{E2} = f_{E3} = f_{E4} = f_{E5} = \frac{1}{6}177 =  29.5\)</span></span></li>
+</ul>
+</section>
+<section id="the-tmr-chi2" class="slide level2">
+<h2>The TMR <span class="math inline">\(\chi^2\)</span></h2>
+<p>Now let’s say I observe</p>
+<ul>
+<li><span class="math inline">\(f_{O1} =55,f_{O2} = 29, f_{O3} = 44, = f_{O4} = 30, f_{O5} = 30\)</span></li>
+</ul>
+<p>What is my <span class="math inline">\(\chi^2\)</span> test statistic?</p>
+<div style="font-size: 0.7em;">
+<p><span class="answer fragment" data-unless-meta="params.v0"><span class="math display">\[\chi^2_{\rm{obs}} = \frac{(55 - 59)^2}{59} + \frac{(29 - 29.5)^2}{29.5} + \frac{(33 - 29.5)^2}{29.5} + \frac{(30 - 29.5)^2}{29.5} + \frac{(30 - 29.5)^2}{29.5}  = {0.712}\]</span></span></p>
+</div>
+</section>
+<section id="the-tmr-p-value" class="slide level2">
+<h2>The TMR <span class="math inline">\(p\)</span>-value</h2>
+<p>And what is the probability I would observe a statistic at least this large?</p>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">pchisq</span>(<span class="fl">0.712</span>, <span class="at">df =</span> <span class="dv">4</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a></a><span class="ex">[1]</span> 0.9498409</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<p>Thus, we do <em>not</em> reject the TMR hypothesis.</p>
+</section>
+<section id="visualizing-the-tmr" class="slide level2">
+<h2>Visualizing the TMR</h2>
+
+<img data-src="Lecture-7-Chi-Square_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="apa-style-writeup" class="slide level2">
+<h2>APA Style Writeup</h2>
+<p>A sample of 177 gummy bears included 62 (35%) raspberry, 26 (15%) pineapple, 29 (16%) lemon, 28 (16%) orange, and 32 (18%) strawberry gummy bears. This distribution of gummy bears is significantly different from the hypothesis that each flavor occurs with equal frequency, <span class="math inline">\(\chi^2(4) = 25.51, p &lt; .001\)</span>.</p>
+<p>An independent sample of 177 gummy bears was used to test the hypothesis that raspberry gummy bears occurred twice as often as all other flavors of gummy bears. The second sample of gummy bears (55 (31%) raspberry, 29 (16%) pineapple, 33 (19%) lemon, 30 (17%) orange, 30 (17%) strawberry) is not significantly different from this hypothesis, <span class="math inline">\(\chi^2(4) = 0.71, p = .95\)</span>.</p>
+</section>
+<section id="rejection-and-retention" class="slide level2">
+<h2>Rejection and Retention</h2>
+<p><strong>Note:</strong> We do not treat this as evidence in favor of our specific TMR hypothesis, why?</p>
+<p><span class="fragment">What if our TMR hypothesis was 40% raspberry instead of 1/3 Raspberry</span></p>
+<div class="fragment">
+<div style="font-size: 0.67em;">
+<p><span class="math display">\[f_{E1} = .4(177) = 70.80, f_{E2} = f_{E3} = f_{E4} = f_{E5} = .15(177) =  26.55\]</span></p>
+<p><span class="math display">\[\chi^2_{\rm{obs}} = \frac{(55 - 70.8)^2}{70.8} + \frac{(29 - 26.55)^2}{26.55} + \frac{(33 - 26.55)^2}{26.55} + \frac{(30 - 26.55)^2}{26.55} + \frac{(30 - 26.55)^2}{26.55}  = {6.22}\]</span></p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">pchisq</span>(<span class="fl">6.22</span>, <span class="at">df =</span> <span class="dv">4</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a></a><span class="ex">[1]</span> 0.1833099</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p>There are <em>many</em> hypotheses that data like this would be reasonably consistent with, and our approach does not provide a clear quantifiable way to differentiate them!</p>
+</div>
+</section>
+<section id="the-other-tmr" class="slide level2">
+<h2>The Other TMR</h2>
+
+<img data-src="Lecture-7-Chi-Square_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="what-can-we-say" class="slide level2">
+<h2>What Can We Say?</h2>
+<ul>
+<li>We have evidence against the EC hypothesis</li>
+<li>We failed to find evidence against the TMR hypothesis</li>
+<li>This is evidence that the population is biased towards raspberries <em>in general</em></li>
+<li>But is the population <span class="math inline">\(1/3\)</span> raspberry? 40% raspberry?
+<ul>
+<li>We don’t have great evidence differentiating these one way or the other</li>
+</ul></li>
 </ul>
 </section>
 <section id="contingency-tables" class="slide level2">
@@ -366,12 +509,12 @@ Mark Himmelstein
 </tbody>
 </table>
 <ul>
-<li><p><span class="math inline">\(P(\text{white} \cap \text{death sentence}) =\)</span> <span class="fragment"><span class="math inline">\(\frac{33}{825} = .04\)</span> (joint)</span></p></li>
-<li><p><span class="math inline">\(P(\text{nonwhite} \cap \text{death sentence}) =\)</span> <span class="fragment"><span class="math inline">\(\frac{33}{825} = .04\)</span> (joint)</span></p></li>
-<li><p><span class="math inline">\(P(\text{white}) =\)</span> <span class="fragment"><span class="math inline">\(\frac{541}{825} = .66\)</span> (marginal)</span></p></li>
-<li><p><span class="math inline">\(P(\text{nonwhite}) =\)</span> <span class="fragment"><span class="math inline">\(\frac{284}{825} = .34\)</span> (marginal)</span></p></li>
-<li><p><span class="math inline">\(P(\text{death sentence} | \text{white}) =\)</span> <span class="fragment"><span class="math inline">\(\frac{33}{541} = .06\)</span> (conditional)</span></p></li>
-<li><p><span class="math inline">\(P(\text{death sentence} | \text{nonwhite}) =\)</span> <span class="fragment"><span class="math inline">\(\frac{33}{284} = .12\)</span> (conditional)</span></p></li>
+<li><p><span class="math inline">\(P(\text{white} \cap \text{death sentence}) =\)</span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{33}{825} = .04\)</span> (joint)</span></p></li>
+<li><p><span class="math inline">\(P(\text{nonwhite} \cap \text{death sentence}) =\)</span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{33}{825} = .04\)</span> (joint)</span></p></li>
+<li><p><span class="math inline">\(P(\text{white}) =\)</span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{541}{825} = .66\)</span> (marginal)</span></p></li>
+<li><p><span class="math inline">\(P(\text{nonwhite}) =\)</span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{284}{825} = .34\)</span> (marginal)</span></p></li>
+<li><p><span class="math inline">\(P(\text{death sentence} | \text{white}) =\)</span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{33}{541} = .06\)</span> (conditional)</span></p></li>
+<li><p><span class="math inline">\(P(\text{death sentence} | \text{nonwhite}) =\)</span> <span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{33}{284} = .12\)</span> (conditional)</span></p></li>
 </ul>
 </div>
 </section>
@@ -394,8 +537,8 @@ Mark Himmelstein
 </div>
 </div>
 </section>
-<section id="expected-frequency-calculations" class="slide level2">
-<h2>Expected Frequency Calculations</h2>
+<section id="notation" class="slide level2">
+<h2>Notation</h2>
 <p>We next need to calculate expected frequencies based on <span class="math inline">\(H_0\)</span></p>
 <p>First, a bit of notation: We often index <em>rows</em> with a subscript <em>i</em>, and <em>columns</em> with a subscript <em>j</em></p>
 <ul>
@@ -407,14 +550,14 @@ Mark Himmelstein
 <li><p><span class="math inline">\(f_{Eij}\)</span>: expected joint frequency for row <span class="math inline">\(i\)</span> and column <span class="math inline">\(j\)</span></p></li>
 </ul>
 </section>
-<section id="expected-frequency-calculations-1" class="slide level2">
-<h2>Expected Frequency Calculations</h2>
+<section id="expected-frequency" class="slide level2">
+<h2>Expected Frequency</h2>
 <p>We next need to calculate expected frequencies based on <span class="math inline">\(H_0\)</span></p>
 <p>To get expected frequencies, we use the <strong>observed marginal</strong> frequencies to determine the <strong>expected joint</strong> frequencies.</p>
 <p>Thus, under the assumption of independence,</p>
 <p><span class="math display">\[P(R_i \cap C_j) = P(R_i)P(C_j) = \bigg(\frac{f_{Oi}}{N}\bigg) \bigg(\frac{f_{Oj}}{N}\bigg) = \frac{f_{Oi}f_{Oj}}{N^2}\]</span> <span class="math display">\[f_{Eij} = N\times P(R_i \cap C_j) = N\bigg(\frac{f_{Oi}f_{Oj}}{N^2}\bigg) =  \frac{f_{Oi}f_{Oj}}{N}\]</span></p>
 </section>
-<section id="expected-frequency-calculations-2" class="slide level2">
+<section id="expected-frequency-calculations" class="slide level2">
 <h2><span style="font-size: 0.667em;">Expected Frequency Calculations</span></h2>
 <div style="font-size: 0.85em;">
 <table class="caption-top">
@@ -464,7 +607,7 @@ Mark Himmelstein
 </section>
 <section id="chi2-test-of-independence" class="slide level2">
 <h2><span class="math inline">\(\chi^2\)</span> Test of Independence</h2>
-<p>The <span class="math inline">\(\chi^2\)</span> test statistic is computed in the same way as for the GoF test</p>
+<p>The <span class="math inline">\(\chi^2\)</span> test statistic is computed in the same way as for the goodness of fit test: summing the normalized squared differences between observed and expected frequencies</p>
 <p><span class="math display">\[\chi^2_{\text{obs}} = \sum_{i=1}^R \sum_{j=1}^C \frac{(f_{Oij} - f_{Eij})^2}{f_{Eij}}\]</span></p>
 <ul>
 <li>sum over all cells</li>
@@ -568,21 +711,22 @@ Mark Himmelstein
 <h2>Our Test</h2>
 <p><span class="math display">\[df = (R-1)(C-1) = (2-1)(2-1) = 1\]</span></p>
 <div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">pchisq</span>(<span class="fl">7.71</span>, <span class="at">df =</span> <span class="dv">1</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a></a><span class="ex">[1]</span> 0.005491575</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a></a><span class="ex">[1]</span> 0.005491575</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </section>
 <section id="visual-of-our-test" class="slide level2">
 <h2>Visual of Our Test</h2>
 
-<img data-src="Lecture-7-Chi-Square_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-7-Chi-Square_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="yates-correction" class="slide level2">
 <h2>Yates’ Correction</h2>
 <div style="font-size: 0.8em;">
 <p>With small sample sizes, the <span class="math inline">\(\chi^2\)</span> test of independence may be <strong>overly liberal</strong></p>
 <ul>
-<li>We will be more likely to reject the null hypothesis even if it’s true than we want</li>
+<li>We will be more likely than intended to reject the null hypothesis even if it’s true</li>
 </ul>
 <p>Yates’ correction attempts to correct for the “discontinuity” implied by having small frequencies</p>
 <ul>
@@ -591,7 +735,7 @@ Mark Himmelstein
 <p><span class="math display">\[\chi^2_{\text{obs}} = \sum_{i=1}^R \sum_{j=1}^C \frac{(|f_{Oij} - f_{Eij}| - 0.5)^2}{f_{Eij}}\]</span></p>
 <p>Yates’ correction is <strong>conservative</strong></p>
 <ul>
-<li>We will be more likely to retain the null hypothesis even if it’s false than we want</li>
+<li>We will be more likely than intended to retain the null hypothesis even if it’s false</li>
 </ul>
 <p>The corrected <span class="math inline">\(p\)</span>-value is necessarily higher than the uncorrected <span class="math inline">\(p\)</span>-value</p>
 </div>
@@ -599,7 +743,7 @@ Mark Himmelstein
 <section id="father-and-son" class="slide level2">
 <h2>Father and Son</h2>
 <p>Ordinary <span class="math inline">\(\chi^2\)</span> test developed by Karl Pearson</p>
-<p>Egon Pearson is K. Pearson’s son, another leader of early statistics!</p>
+<p>Egon Pearson is Karl’s son, another leader of early statistics!</p>
 <p>Same <span class="math inline">\(H_0\)</span> and <span class="math inline">\(H_1\)</span> as Pearson’s <span class="math inline">\(\chi^2\)</span> test of independence</p>
 <p>Test statistic:</p>
 <p><span class="math display">\[\chi^2(df) = \frac{\text{Pearson's } \chi^2 \times N}{N - 1}\]</span></p>
@@ -612,8 +756,8 @@ Mark Himmelstein
 <section id="egon-pearsons-adjusted-chi2-test" class="slide level2">
 <h2>Egon Pearson’s Adjusted <span class="math inline">\(\chi^2\)</span> Test</h2>
 <p>E. Pearson’s adjusted <span class="math inline">\(\chi^2\)</span> test statistic is always larger than Pearson’s <span class="math inline">\(\chi^2\)</span></p>
-<p><span class="math inline">\(p\)</span>-value of E. Pearson’s test is always smaller than Pearson’s <span class="math inline">\(p\)</span>-value</p>
 <ul>
+<li><p><span class="math inline">\(p\)</span>-value of E. Pearson’s test is always smaller than K. Pearson’s <span class="math inline">\(p\)</span>-value</p></li>
 <li><p>We say that E. Pearson’s test is <strong>liberal</strong></p></li>
 <li><p>E. Pearson’s test has <strong>higher statistical power</strong> to reject the false <span class="math inline">\(H_0\)</span></p></li>
 </ul>
@@ -642,7 +786,7 @@ Mark Himmelstein
 <h2>Recommendations by Campbell (2007)</h2>
 <ul>
 <li><p>For large sample sizes, the standard <span class="math inline">\(\chi^2\)</span> test is best.</p></li>
-<li><p>Default in R uses Yates’ correction, which helps with smaller samples and will have minimal cost in larger samples.</p></li>
+<li><p>Default in <code>R</code> uses Yates’ correction, which helps with smaller samples and will have minimal cost in larger samples.</p></li>
 <li><p>When at least one cell has expected frequency &lt; 5, instead consider:</p>
 <ul>
 <li><p>If one cell has expected frequency = 1, choose E. Pearson’s adjusted <span class="math inline">\(\chi^2\)</span></p></li>

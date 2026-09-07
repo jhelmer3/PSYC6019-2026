@@ -108,12 +108,17 @@ text(x = 1.9, y = 0.3, "Statistics", col = my_purple)
 ::: {style="margin-top: -10px;"}
 Monte Carlo simulation is a method of **generating** *random* data using the rules of probability
 
+:::
+
+## Monte Carlo 
+
+Monte Carlo simulation is a method of **generating** *random* data using the rules of probability
+
 -   Powerful tool for helping to understand the interplay between probability and statistics
 -   Many methodological developments rely purely on simulation!
 -   We will use simulation to
     -   Boost our intuitions about statistical methods
     -   Develop our computational chops
-:::
 
 ## What Is Randomness?
 
@@ -152,16 +157,18 @@ A **random variable** is any variable defined by
 For example, consider a coin flip:
 
 -   **Domain:** {heads, tails}
--   **Function:**: $X(\text{coin flip}) = \text{heads} = 1; \text{tails} = 0$
+-   **Function:** $X(\text{coin flip}) = \text{heads} = 1; \text{tails} = 0$
 -   **Probability distribution:** $P(X = 1) = \pi = .5$
 
-## Computational Randomness
+## Computing Randomness
 
-Computers can generate sequences of *pseudo* random numbers, which we can use to represent random variables
+- Computers can generate sequences of *pseudo* random numbers, which we can use to represent random variables
 
-For example, I can generate numbers from a Bernoulli distribution with $\pi = .5$ to represent my coin flips.
+- **Example:** I can generate numbers from a Bernoulli distribution with $\pi = .5$ to represent my coin flips.
 
-Random number generating functions in `R` typically start with `r` and then the name of the probability distribution. In this case, I'm actually going to use the `rbinom()` function. Why not `rbernoulli()`?
+- Random number generating functions in `R` typically start with `r` and then the name of the probability distribution. 
+
+- In this case, I'm actually going to use the `rbinom()` function. Why not `rbernoulli()`?
 
 [The Bernoulli distribution is a special case of the binomial where there is only one trial]{.answer .fragment .content-visible unless-meta="params.v0"}
 
@@ -169,24 +176,37 @@ Random number generating functions in `R` typically start with `r` and then the 
 
 ```{r}
 #| echo: true
-
 set.seed(1204)
-
 rbinom(n = 1, size = 1, prob = .5)
+```
 
+::: {.fragment}
+```{r}
+#| echo: true
 set.seed(5632)
-
-rbinom(n = 1, size = 1, prob = .5)
-
-set.seed(11234)
-
-rbinom(n = 1, size = 1, prob = .5)
-
-set.seed(865)
-
 rbinom(n = 1, size = 1, prob = .5)
 
 ```
+
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+set.seed(11234)
+rbinom(n = 1, size = 1, prob = .5)
+```
+
+:::
+
+::: {.fragment}
+```{r}
+#| echo: true
+set.seed(865)
+rbinom(n = 1, size = 1, prob = .5)
+```
+
+:::
 
 ## `rbinom()`
 
@@ -200,12 +220,15 @@ By increasing `n` I can sample a sequence of zeros and ones, and map those onto 
 
 ```{r}
 #| echo: true
-
 set.seed(4210)
 (zeros_and_ones <- rbinom(n = 10, size = 1, prob = .5))
 ```
 
+## Inverse Function
+
 The `ifelse()` function takes a vector and checks if a `test` condition is met. If it is, it returns the output specified as `yes`, otherwise it specifies the output returned as `no`.
+
+
 
 ```{r}
 
@@ -213,10 +236,15 @@ The `ifelse()` function takes a vector and checks if a `test` condition is met. 
                          yes = "heads", no = "tails"))
 ```
 
+
+-  Takes our original function: $X(\text{coin flip}) = \text{heads} = 1; \text{tails} = 0$
+- Inverts it: $X^{-1}(X) = 1 = \text{heads}; 0 = \text{tails}$
+
+
 ## Pseudo Randomness
 
 -   Computers are not capable of generating truly random sequences of numbers
--   However, the sequence before a repetition can be so large that it becomes functionally random
+-   However, the sequence before observing repetition can be so large that it becomes functionally random
 -   The random number generator in `R` will repeat after $2^{19937} - 1$ numbers
     -   More than the number of seconds in the history of the universe!
 
@@ -263,21 +291,23 @@ I am going to
 Let's first look at how this simulation would look if I just did it *once*
 
 ```{r}
+#| echo: true
 flips  <- 10 ## number of flips
 p <- .5 ## probability heads
 
 set.seed(521)
-raw_outcome <- rbinom(n = flips, size = 1, prob = p)
-raw_outcome
-mean(raw_outcome) ## proportion heads
+outcome <- rbinom(n = flips, size = 1, prob = p)
+outcome
+mean(outcome) ## proportion heads
 ```
 
 In this sequence, the fifth outcome was heads, so I will change it to tails
 
 ```{r}
-raw_outcome[5] <- 0
-raw_outcome
-mean(raw_outcome)
+#| echo: true
+outcome[5] <- 0
+outcome
+mean(outcome)
 ```
 
 Note that the proportion dropped because I "lost" one heads.
@@ -285,19 +315,21 @@ Note that the proportion dropped because I "lost" one heads.
 ## Another Case
 
 ```{r}
+#| echo: true
 set.seed(331)
-raw_outcome <- rbinom(n = flips, size = 1, prob = p)
-raw_outcome
-mean(raw_outcome)
+outcome <- rbinom(n = flips, size = 1, prob = p)
+outcome
+mean(outcome)
 
 ```
 
 In this one, the fifth outcome was **not** heads, so changing it does nothing
 
 ```{r}
-raw_outcome[5] <- 0
-raw_outcome
-mean(raw_outcome)
+#| echo: true
+outcome[5] <- 0
+outcome
+mean(outcome)
 
 ```
 
@@ -305,20 +337,22 @@ mean(raw_outcome)
 
 Now let's do this 1000 times, and each time, save the proportion of heads that resulted.
 
-To do this, I'll start by creating an empty vector, then initialize my `for` loop. The for loop uses an index variable, which I am naming `i`, to index iterations. I will save my result into the `i`th entry of my empty vector
+- I'll start by creating an empty vector, then initialize my `for` loop
+- The for loop uses an index variable, which I am naming `i`, to index iterations. - I will save my result into the `i`th entry of my empty vector
 
-I'm going to use a variable `i` to index each iteration
+
 
 ```{r}
+#| echo: true
 iter <- 1000 ## how many iterations in my simulation
-raw_result <- numeric(iter) ## empty vector to save results
+original_result <- numeric(iter) ## empty vector to save results
 altered_result <- numeric(iter) ## empty vector to save results
 set.seed(124)
 for(i in 1:iter){
-  raw_outcome <- rbinom(n = 10, size = 1, prob = p)
-  raw_result[i] <- mean(raw_outcome) ## save raw result
-  raw_outcome[5] <- 0
-  altered_result[i] <- mean(raw_outcome) # save altered result
+  outcome <- rbinom(n = 10, size = 1, prob = p)
+  original_result[i] <- mean(outcome) ## save raw result
+  outcome[5] <- 0
+  altered_result[i] <- mean(outcome) # save altered result
 }
 
 ```
@@ -328,7 +362,8 @@ for(i in 1:iter){
 I can check descriptive statistics for my results
 
 ```{r}
-summary(raw_result)
+#| echo: true
+summary(original_result)
 summary(altered_result)
 ```
 
@@ -338,13 +373,13 @@ Unsurprisingly, the mean before altering our data is approximately 0.50, and is 
 
 ```{r}
 df <- data.frame(
-  value = factor(c(raw_result, altered_result), levels = seq(0, 1, by = 0.1)),
-  group = rep(c("Raw", "Altered"), each = 1000)
+  value = factor(c(original_result, altered_result), levels = seq(0, 1, by = 0.1)),
+  group = rep(c("Original", "Altered"), each = 1000)
 )
 
 ggplot(df, aes(x = value, fill = group)) +
   geom_bar(position = position_dodge(preserve = "single"), alpha = 0.85) +
-  scale_fill_manual(values = c("Raw" = "#377eb8", "Altered" = "#e41a1c")) +
+  scale_fill_manual(values = c("Original" = "#377eb8", "Altered" = "#e41a1c")) +
   scale_x_discrete(drop = FALSE) +
   labs(
     x = "Value",
@@ -358,11 +393,9 @@ ggplot(df, aes(x = value, fill = group)) +
 
 ## Other Functions
 
-We will make use of Monte Carlo throughout the semester, often using the normal distribution functions, such as
+We will make use of Monte Carlo throughout the semester, often using the random *normal* distribution functions: `rnorm(n, mean, sd)`
 
--   `rnorm(n, mean, sd)`
-
-These functions also have associated `p` (probability), `q` (quantile), and `d` (density) functions that are all part of the same families that we will make use of throughout the semester
+There are also `pnorm` (probability), `qnorm` (quantile), and `dnorm` (density) functions that are all part of the same families that we may make use of
 
 ```{r}
 #| eval: false

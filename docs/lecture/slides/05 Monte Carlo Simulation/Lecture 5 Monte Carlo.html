@@ -94,7 +94,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-5f4f28e8bfc7f39b89cc2436db0d29b7.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-5aced4f1f84d9a2545a5ea1e8a9610b9.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -218,6 +218,11 @@ Mark Himmelstein
 
 <img data-src="Lecture-5-Monte-Carlo_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><div style="margin-top: -10px;">
 <p>Monte Carlo simulation is a method of <strong>generating</strong> <em>random</em> data using the rules of probability</p>
+</div>
+</section>
+<section id="monte-carlo" class="slide level2">
+<h2>Monte Carlo</h2>
+<p>Monte Carlo simulation is a method of <strong>generating</strong> <em>random</em> data using the rules of probability</p>
 <ul>
 <li>Powerful tool for helping to understand the interplay between probability and statistics</li>
 <li>Many methodological developments rely purely on simulation!</li>
@@ -227,7 +232,6 @@ Mark Himmelstein
 <li>Develop our computational chops</li>
 </ul></li>
 </ul>
-</div>
 </section>
 <section id="what-is-randomness" class="slide level2">
 <h2>What Is Randomness?</h2>
@@ -259,43 +263,54 @@ Mark Himmelstein
 <p>For example, consider a coin flip:</p>
 <ul>
 <li><strong>Domain:</strong> {heads, tails}</li>
-<li><strong>Function:</strong>: <span class="math inline">\(X(\text{coin flip}) = \text{heads} = 1; \text{tails} = 0\)</span></li>
+<li><strong>Function:</strong> <span class="math inline">\(X(\text{coin flip}) = \text{heads} = 1; \text{tails} = 0\)</span></li>
 <li><strong>Probability distribution:</strong> <span class="math inline">\(P(X = 1) = \pi = .5\)</span></li>
 </ul>
 </section>
-<section id="computational-randomness" class="slide level2">
-<h2>Computational Randomness</h2>
-<p>Computers can generate sequences of <em>pseudo</em> random numbers, which we can use to represent random variables</p>
-<p>For example, I can generate numbers from a Bernoulli distribution with <span class="math inline">\(\pi = .5\)</span> to represent my coin flips.</p>
-<p>Random number generating functions in <code>R</code> typically start with <code>r</code> and then the name of the probability distribution. In this case, I’m actually going to use the <code>rbinom()</code> function. Why not <code>rbernoulli()</code>?</p>
+<section id="computing-randomness" class="slide level2">
+<h2>Computing Randomness</h2>
+<ul>
+<li><p>Computers can generate sequences of <em>pseudo</em> random numbers, which we can use to represent random variables</p></li>
+<li><p><strong>Example:</strong> I can generate numbers from a Bernoulli distribution with <span class="math inline">\(\pi = .5\)</span> to represent my coin flips.</p></li>
+<li><p>Random number generating functions in <code>R</code> typically start with <code>r</code> and then the name of the probability distribution.</p></li>
+<li><p>In this case, I’m actually going to use the <code>rbinom()</code> function. Why not <code>rbernoulli()</code>?</p></li>
+</ul>
 <p><span class="answer fragment" data-unless-meta="params.v0">The Bernoulli distribution is a special case of the binomial where there is only one trial</span></p>
 </section>
 <section id="simulating-single-bernoullis" class="slide level2">
 <h2>Simulating Single Bernoullis</h2>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">set.seed</span>(<span class="dv">1204</span>)</span>
-<span id="cb1-2"><a></a></span>
-<span id="cb1-3"><a></a><span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> .<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a></a><span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> .<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a></a><span class="ex">[1]</span> 0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">set.seed</span>(<span class="dv">5632</span>)</span>
-<span id="cb3-2"><a></a></span>
-<span id="cb3-3"><a></a><span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> .<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a></a><span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> .<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a></a><span class="ex">[1]</span> 1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">set.seed</span>(<span class="dv">11234</span>)</span>
-<span id="cb5-2"><a></a></span>
-<span id="cb5-3"><a></a><span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> .<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-2"><a></a><span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> .<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a></a><span class="ex">[1]</span> 1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">set.seed</span>(<span class="dv">865</span>)</span>
-<span id="cb7-2"><a></a></span>
-<span id="cb7-3"><a></a><span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> .<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-2"><a></a><span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> .<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <div class="sourceCode" id="cb8"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a></a><span class="ex">[1]</span> 1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 </div>
 </section>
@@ -315,6 +330,9 @@ Mark Himmelstein
 <div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a></a> <span class="ex">[1]</span> 1 1 0 1 1 1 0 0 1 1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
+</section>
+<section id="inverse-function" class="slide level2">
+<h2>Inverse Function</h2>
 <p>The <code>ifelse()</code> function takes a vector and checks if a <code>test</code> condition is met. If it is, it returns the output specified as <code>yes</code>, otherwise it specifies the output returned as <code>no</code>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
@@ -322,12 +340,16 @@ Mark Himmelstein
 <span id="cb11-2"><a></a> <span class="ex">[8]</span> <span class="st">"tails"</span> <span class="st">"heads"</span> <span class="st">"heads"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
+<ul>
+<li>Takes our original function: <span class="math inline">\(X(\text{coin flip}) = \text{heads} = 1; \text{tails} = 0\)</span></li>
+<li>Inverts it: <span class="math inline">\(X^{-1}(X) = 1 = \text{heads}; 0 = \text{tails}\)</span></li>
+</ul>
 </section>
 <section id="pseudo-randomness" class="slide level2">
 <h2>Pseudo Randomness</h2>
 <ul>
 <li>Computers are not capable of generating truly random sequences of numbers</li>
-<li>However, the sequence before a repetition can be so large that it becomes functionally random</li>
+<li>However, the sequence before observing repetition can be so large that it becomes functionally random</li>
 <li>The random number generator in <code>R</code> will repeat after <span class="math inline">\(2^{19937} - 1\)</span> numbers
 <ul>
 <li>More than the number of seconds in the history of the universe!</li>
@@ -380,20 +402,30 @@ Mark Himmelstein
 <h2>Deleting Odd Heads</h2>
 <p>Let’s first look at how this simulation would look if I just did it <em>once</em></p>
 <div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>flips  <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="do">## number of flips</span></span>
+<span id="cb12-2"><a></a>p <span class="ot">&lt;-</span> .<span class="dv">5</span> <span class="do">## probability heads</span></span>
+<span id="cb12-3"><a></a></span>
+<span id="cb12-4"><a></a><span class="fu">set.seed</span>(<span class="dv">521</span>)</span>
+<span id="cb12-5"><a></a>outcome <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> flips, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> p)</span>
+<span id="cb12-6"><a></a>outcome</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a></a> <span class="ex">[1]</span> 1 1 0 0 1 1 1 1 1 0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a></a> <span class="ex">[1]</span> 1 1 0 0 1 1 1 1 1 0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">mean</span>(outcome) <span class="do">## proportion heads</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a></a><span class="ex">[1]</span> 0.7</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a></a><span class="ex">[1]</span> 0.7</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <p>In this sequence, the fifth outcome was heads, so I will change it to tails</p>
 <div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>outcome[<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb16-2"><a></a>outcome</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a></a> <span class="ex">[1]</span> 1 1 0 0 0 1 1 1 1 0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a></a> <span class="ex">[1]</span> 1 1 0 0 0 1 1 1 1 0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">mean</span>(outcome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a></a><span class="ex">[1]</span> 0.6</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a></a><span class="ex">[1]</span> 0.6</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <p>Note that the proportion dropped because I “lost” one heads.</p>
@@ -401,40 +433,63 @@ Mark Himmelstein
 <section id="another-case" class="slide level2">
 <h2>Another Case</h2>
 <div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">set.seed</span>(<span class="dv">331</span>)</span>
+<span id="cb20-2"><a></a>outcome <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> flips, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> p)</span>
+<span id="cb20-3"><a></a>outcome</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a></a> <span class="ex">[1]</span> 1 1 1 1 0 0 1 0 1 0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a></a> <span class="ex">[1]</span> 1 1 1 1 0 0 1 0 1 0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">mean</span>(outcome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a></a><span class="ex">[1]</span> 0.6</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a></a><span class="ex">[1]</span> 0.6</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <p>In this one, the fifth outcome was <strong>not</strong> heads, so changing it does nothing</p>
 <div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>outcome[<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb24-2"><a></a>outcome</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a></a> <span class="ex">[1]</span> 1 1 1 1 0 0 1 0 1 0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a></a> <span class="ex">[1]</span> 1 1 1 1 0 0 1 0 1 0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">mean</span>(outcome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a></a><span class="ex">[1]</span> 0.6</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a></a><span class="ex">[1]</span> 0.6</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </section>
 <section id="monte-carloing" class="slide level2">
 <h2>Monte Carloing</h2>
 <p>Now let’s do this 1000 times, and each time, save the proportion of heads that resulted.</p>
-<p>To do this, I’ll start by creating an empty vector, then initialize my <code>for</code> loop. The for loop uses an index variable, which I am naming <code>i</code>, to index iterations. I will save my result into the <code>i</code>th entry of my empty vector</p>
-<p>I’m going to use a variable <code>i</code> to index each iteration</p>
+<ul>
+<li>I’ll start by creating an empty vector, then initialize my <code>for</code> loop</li>
+<li>The for loop uses an index variable, which I am naming <code>i</code>, to index iterations. - I will save my result into the <code>i</code>th entry of my empty vector</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>iter <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="do">## how many iterations in my simulation</span></span>
+<span id="cb28-2"><a></a>original_result <span class="ot">&lt;-</span> <span class="fu">numeric</span>(iter) <span class="do">## empty vector to save results</span></span>
+<span id="cb28-3"><a></a>altered_result <span class="ot">&lt;-</span> <span class="fu">numeric</span>(iter) <span class="do">## empty vector to save results</span></span>
+<span id="cb28-4"><a></a><span class="fu">set.seed</span>(<span class="dv">124</span>)</span>
+<span id="cb28-5"><a></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>iter){</span>
+<span id="cb28-6"><a></a>  outcome <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> p)</span>
+<span id="cb28-7"><a></a>  original_result[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(outcome) <span class="do">## save raw result</span></span>
+<span id="cb28-8"><a></a>  outcome[<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb28-9"><a></a>  altered_result[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(outcome) <span class="co"># save altered result</span></span>
+<span id="cb28-10"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="results" class="slide level2">
 <h2>Results</h2>
 <p>I can check descriptive statistics for my results</p>
 <div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="fu">summary</span>(original_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb20"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a></a>   <span class="ex">Min.</span> 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
-<span id="cb20-2"><a></a> <span class="ex">0.0000</span>  0.4000  0.5000  0.5043  0.6000  1.0000 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a></a>   <span class="ex">Min.</span> 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
+<span id="cb30-2"><a></a> <span class="ex">0.0000</span>  0.4000  0.5000  0.5043  0.6000  1.0000 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="fu">summary</span>(altered_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a></a>   <span class="ex">Min.</span> 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
-<span id="cb21-2"><a></a> <span class="ex">0.0000</span>  0.3000  0.5000  0.4528  0.6000  0.9000 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a></a>   <span class="ex">Min.</span> 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
+<span id="cb32-2"><a></a> <span class="ex">0.0000</span>  0.3000  0.5000  0.4528  0.6000  0.9000 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <p>Unsurprisingly, the mean before altering our data is approximately 0.50, and is smaller in the cases where we did change our result.</p>
@@ -442,16 +497,13 @@ Mark Himmelstein
 <section id="results-visualized" class="slide level2">
 <h2>Results Visualized</h2>
 
-<img data-src="Lecture-5-Monte-Carlo_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-5-Monte-Carlo_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="other-functions" class="slide level2">
 <h2>Other Functions</h2>
-<p>We will make use of Monte Carlo throughout the semester, often using the normal distribution functions, such as</p>
-<ul>
-<li><code>rnorm(n, mean, sd)</code></li>
-</ul>
-<p>These functions also have associated <code>p</code> (probability), <code>q</code> (quantile), and <code>d</code> (density) functions that are all part of the same families that we will make use of throughout the semester</p>
+<p>We will make use of Monte Carlo throughout the semester, often using the random <em>normal</em> distribution functions: <code>rnorm(n, mean, sd)</code></p>
+<p>There are also <code>pnorm</code> (probability), <code>qnorm</code> (quantile), and <code>dnorm</code> (density) functions that are all part of the same families that we may make use of</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>?<span class="fu">rnorm</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>?<span class="fu">rnorm</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <iframe src="rnorm_help.html" width="100%" height="500" style="border:none;">
 </iframe>
