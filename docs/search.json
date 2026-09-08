@@ -6234,7 +6234,7 @@
     "href": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo.html#rbinom",
     "title": "Lecture 5: Monte Carlo Simulation",
     "section": "rbinom()",
-    "text": "rbinom()\nIn the rbinom() function I have three arguments\n\nn is the number of “draws”\nsize is the number of trials per draw\nprob is the probability of success on each trial\n\nBy increasing n I can sample a sequence of zeros and ones, and map those onto heads or tails, per my random variable function\n\nset.seed(4210)\n(zeros_and_ones &lt;- rbinom(n = 10, size = 1, prob = .5))\n\n [1] 1 1 0 1 1 1 0 0 1 1"
+    "text": "rbinom()\nIn the rbinom() function I have three arguments\n\nn is the number of “draws” or samples taken\nsize is the number of trials per draw\nprob is the probability of success on each trial\n\nBy increasing n I can sample a sequence of zeros and ones, and map those onto heads or tails, per my random variable function\n\nset.seed(4210)\n(zeros_and_ones &lt;- rbinom(n = 10, size = 1, prob = .5))\n\n [1] 1 1 0 1 1 1 0 0 1 1"
   },
   {
     "objectID": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo.html#pseudo-randomness",
@@ -6255,7 +6255,7 @@
     "href": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo.html#loops",
     "title": "Lecture 5: Monte Carlo Simulation",
     "section": "Loops",
-    "text": "Loops\nThere are different techniques for simulating data. One that is common across many programming languages is to use “loops”\n\nExample: a for loop\nRepeats a procedure a finite number of times\neach iteration is indexed\nIndexed outputs can thus be saved and analyzed after loop is complete"
+    "text": "Loops\nThere are different techniques for simulating data. One that is common across many programming languages is to use “loops”\n\nExample: a for loop\nRepeats a procedure a finite number of times\nEach iteration is indexed\nIndexed outputs can thus be saved and analyzed after loop is complete"
   },
   {
     "objectID": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo.html#example",
@@ -6283,7 +6283,7 @@
     "href": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo.html#monte-carloing",
     "title": "Lecture 5: Monte Carlo Simulation",
     "section": "Monte Carloing",
-    "text": "Monte Carloing\nNow let’s do this 1000 times, and each time, save the proportion of heads that resulted.\n\nI’ll start by creating an empty vector, then initialize my for loop\nThe for loop uses an index variable, which I am naming i, to index iterations. - I will save my result into the ith entry of my empty vector\n\n\niter &lt;- 1000 ## how many iterations in my simulation\noriginal_result &lt;- numeric(iter) ## empty vector to save results\naltered_result &lt;- numeric(iter) ## empty vector to save results\nset.seed(124)\nfor(i in 1:iter){\n  outcome &lt;- rbinom(n = 10, size = 1, prob = p)\n  original_result[i] &lt;- mean(outcome) ## save raw result\n  outcome[5] &lt;- 0\n  altered_result[i] &lt;- mean(outcome) # save altered result\n}"
+    "text": "Monte Carloing\nNow let’s do this 1000 times, and each time, save the proportion of heads that resulted.\n\nI’ll start by creating an empty vector, then initialize my for loop\nThe for loop uses an index variable, which I am naming i, to index iterations.\nI will save my result into the ith entry of my empty vector\n\n\niter &lt;- 1000 ## how many iterations in my simulation\noriginal_result &lt;- numeric(iter) ## empty vector to save results\naltered_result &lt;- numeric(iter) ## empty vector to save results\nset.seed(124)\nfor(i in 1:iter){\n  outcome &lt;- rbinom(n = 10, size = 1, prob = p)\n  original_result[i] &lt;- mean(outcome) ## save raw result\n  outcome[5] &lt;- 0\n  altered_result[i] &lt;- mean(outcome) # save altered result\n}"
   },
   {
     "objectID": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo.html#results",
@@ -6444,21 +6444,21 @@
     "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#standard-errors",
     "title": "Lecture 6: Sampling Distributions",
     "section": "Standard Errors",
-    "text": "Standard Errors\nA standard error is our term for the standard deviation of a sampling distribution.\nI mentioned that As \\(N\\) increases a sampling distribution becomes narrower. In fact, under the CLT, we know exactly how much narrower it becomes for the sampling distribution of the mean!\n\\[\\text{Standard Error (SE) of the mean} = \\frac{\\sigma}{\\sqrt{N}}\\]\nMore precisely, the squared standard error is the variance of the ordinary distribution proportional to the sample size\n\\[\\text{SE}^2 = \\frac{\\sigma^2}{N}\\]"
+    "text": "Standard Errors\nA standard error is our term for the standard deviation of a sampling distribution.\nI mentioned that as \\(N\\) increases a sampling distribution becomes narrower. In fact, under the CLT, we know exactly how much narrower it becomes for the sampling distribution of the mean!\n\\[\\text{Standard Error (SE) of the mean} = \\frac{\\sigma}{\\sqrt{N}}\\]\nMore precisely, the squared standard error is the variance of the ordinary distribution proportional to the sample size\n\\[\\text{SE}^2 = \\frac{\\sigma^2}{N}\\]"
   },
   {
     "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#standard-error-of-scorers",
     "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#standard-error-of-scorers",
     "title": "Lecture 6: Sampling Distributions",
     "section": "Standard Error of Scorers",
-    "text": "Standard Error of Scorers\nTherefore, if I know my population of NBA scorers has a standard deviation of 6, a sampling distribution of means for \\(N = 44\\) from this population would have\n\\[SE = \\frac{6.5}{44} = 0.90\\]\nThis means, if my population has a mean of 12, I would expect\n\n68% of samples to have a sample mean within 1 SE of the population mean: \\(12 \\pm 0.90 = [11.10, 12.90]\\)\n96% of samples to have a sample mean within 2 SEs of the population mean: \\(12 \\pm 2 \\times 0.90 = [10.20, 13.80]\\)"
+    "text": "Standard Error of Scorers\nTherefore, if I know my population of NBA scorers has a standard deviation of 6, a sampling distribution of means for \\(N = 44\\) from this population would have\n\\[SE = \\frac{6}{\\sqrt{44}} = 0.90\\]\nThis means, if my population has a mean of 12, I would expect\n\n68% of samples to have a sample mean within 1 SE of the population mean: \\(12 \\pm 0.90 = [11.10, 12.90]\\)\n96% of samples to have a sample mean within 2 SEs of the population mean: \\(12 \\pm 2 \\times 0.90 = [10.20, 13.80]\\)"
   },
   {
     "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#z-transformations",
     "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#z-transformations",
     "title": "Lecture 6: Sampling Distributions",
     "section": "\\(Z\\)-transformations",
-    "text": "\\(Z\\)-transformations\nWe can also transform our statistic into a \\(Z\\)-score for our hypothesized sampling distribution\n\n\\(Z\\)-score transformation: converting raw data or statistics into standard deviation units\nWe are going to transform our sample mean, \\(\\bar{x}\\), based on the mean and standard deviation (standard error) for our proposed sampling distribution\n\n\\(Z = \\frac{\\bar{x} - \\mu}{\\text{SE}} = \\frac{14.5 - 12}{0.90} = 2.78\\)\n\n\nInterpretation: Our sample (14.5) mean is 2.78 SEs (SDs) larger than the proposed population mean (12)"
+    "text": "\\(Z\\)-transformations\n\n\n\\(Z\\)-score transformation: converting raw data or statistics into standard deviation units\nGeneral formula:\n\n\\[Z = \\frac{x-\\mu}{\\sigma}\\]\nWhat exactly are \\(Z\\)-scores?\n\n\\(Z\\)-scores transform a variable from it’s original units into standard deviation units\nAllows us to compare different variables that may have very different units\ne.g. How many standard deviations taller am I than the population average?\ne.g. How many standard deviations more anxious am I the night before an exam than I am on average?"
   },
   {
     "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#how-unlikely",
@@ -11176,7 +11176,7 @@
     "href": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo.html#inverse-function",
     "title": "Lecture 5: Monte Carlo Simulation",
     "section": "Inverse Function",
-    "text": "Inverse Function\nThe ifelse() function takes a vector and checks if a test condition is met. If it is, it returns the output specified as yes, otherwise it specifies the output returned as no.\n\n\n [1] \"heads\" \"heads\" \"tails\" \"heads\" \"heads\" \"heads\" \"tails\"\n [8] \"tails\" \"heads\" \"heads\"\n\n\n\nTakes our original function: \\(X(\\text{coin flip}) = \\text{heads} = 1; \\text{tails} = 0\\)\nInverts it: \\(X^{-1}(X) = 1 = \\text{heads}; 0 = \\text{tails}\\)"
+    "text": "Inverse Function\nThe ifelse() function takes a vector and checks if a test condition is met. If it is, it returns the output specified as yes, otherwise it specifies the output returned as no.\n\n(heads_or_tals &lt;- ifelse(test = zeros_and_ones == 1, \n                         yes = \"heads\", no = \"tails\"))\n\n [1] \"heads\" \"heads\" \"tails\" \"heads\" \"heads\" \"heads\" \"tails\"\n [8] \"tails\" \"heads\" \"heads\"\n\n\n\nTakes our original function: \\(X(\\text{coin flip}) = \\text{heads} = 1; \\text{tails} = 0\\)\nInverts it: \\(X^{-1}(X) = 1 = \\text{heads}; 0 = \\text{tails}\\)"
   },
   {
     "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#repeated-samples-n-5",
@@ -11365,7 +11365,7 @@
     "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#hypothesis-and-test",
     "title": "Lecture 6: Sampling Distributions",
     "section": "Hypothesis and Test",
-    "text": "Hypothesis and Test\n\nSet up a null hypothesis \\(H_0\\)\n\\(H_0: \\mu_{PPG} = 12\\)\nSet up alternative hypothesis \\(H_a\\)\n\\(H_a: \\mu_{PPG} \\neq 12\\)\nConducting Test\n\nConstruct sampling distribution\nCalculate test statistic\nDetermine how unlikely test statistic is for sampling distribution\nIf \\(P(\\text{statistic}) &lt; .05\\), reject null hypothesis.\nFor a “two-tailed” test (e.g. a \\(Z\\)-test) we multiply by two to account for possibility that under the proposed sampling distribution the statistic was equally likely to have been above or below \\(\\mu\\)"
+    "text": "Hypothesis and Test\n\n\nSet up a null hypothesis \\(H_0\\)\n\\(H_0: \\mu_{PPG} = 12\\)\nSet up alternative hypothesis \\(H_a\\)\n\\(H_a: \\mu_{PPG} \\neq 12\\)\nConducting Test\n\nConstruct sampling distribution\nCalculate test statistic\nDetermine how unlikely test statistic is for sampling distribution\nIf \\(P(\\text{statistic}) &lt; .05\\), reject null hypothesis.\nFor a “two-tailed” test (e.g. a \\(Z\\)-test) we multiply by two to account for possibility that under the proposed sampling distribution the statistic was equally likely to have been above or below \\(\\mu\\)"
   },
   {
     "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#z-test-in-apa",
@@ -11785,21 +11785,21 @@
     "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#standard-errors",
     "title": "Lecture 6: Sampling Distributions",
     "section": "Standard Errors",
-    "text": "Standard Errors\nA standard error is our term for the standard deviation of a sampling distribution.\nI mentioned that As \\(N\\) increases a sampling distribution becomes narrower. In fact, under the CLT, we know exactly how much narrower it becomes for the sampling distribution of the mean!\n\\[\\text{Standard Error (SE) of the mean} = \\frac{\\sigma}{\\sqrt{N}}\\]\nMore precisely, the squared standard error is the variance of the ordinary distribution proportional to the sample size\n\\[\\text{SE}^2 = \\frac{\\sigma^2}{N}\\]"
+    "text": "Standard Errors\nA standard error is our term for the standard deviation of a sampling distribution.\nI mentioned that as \\(N\\) increases a sampling distribution becomes narrower. In fact, under the CLT, we know exactly how much narrower it becomes for the sampling distribution of the mean!\n\\[\\text{Standard Error (SE) of the mean} = \\frac{\\sigma}{\\sqrt{N}}\\]\nMore precisely, the squared standard error is the variance of the ordinary distribution proportional to the sample size\n\\[\\text{SE}^2 = \\frac{\\sigma^2}{N}\\]"
   },
   {
     "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#standard-error-of-scorers",
     "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#standard-error-of-scorers",
     "title": "Lecture 6: Sampling Distributions",
     "section": "Standard Error of Scorers",
-    "text": "Standard Error of Scorers\nTherefore, if I know my population of NBA scorers has a standard deviation of 6, a sampling distribution of means for \\(N = 44\\) from this population would have\n\\[SE = \\frac{6.5}{44} = 0.90\\]\nThis means, if my population has a mean of 12, I would expect\n\n68% of samples to have a sample mean within 1 SE of the population mean: \\(12 \\pm 0.90 = [11.10, 12.90]\\)\n96% of samples to have a sample mean within 2 SEs of the population mean: \\(12 \\pm 2 \\times 0.90 = [10.20, 13.80]\\)"
+    "text": "Standard Error of Scorers\nTherefore, if I know my population of NBA scorers has a standard deviation of 6, a sampling distribution of means for \\(N = 44\\) from this population would have\n\\[SE = \\frac{6}{\\sqrt{44}} = 0.90\\]\nThis means, if my population has a mean of 12, I would expect\n\n68% of samples to have a sample mean within 1 SE of the population mean: \\(12 \\pm 0.90 = [11.10, 12.90]\\)\n96% of samples to have a sample mean within 2 SEs of the population mean: \\(12 \\pm 2 \\times 0.90 = [10.20, 13.80]\\)"
   },
   {
     "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#z-transformations",
     "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#z-transformations",
     "title": "Lecture 6: Sampling Distributions",
     "section": "\\(Z\\)-transformations",
-    "text": "\\(Z\\)-transformations\nWe can also transform our statistic into a \\(Z\\)-score for our hypothesized sampling distribution\n\n\\(Z\\)-score transformation: converting raw data or statistics into standard deviation units\nWe are going to transform our sample mean, \\(\\bar{x}\\), based on the mean and standard deviation (standard error) for our proposed sampling distribution\n\n\\(Z = \\frac{\\bar{x} - \\mu}{\\text{SE}} = \\frac{14.5 - 12}{0.90} = 2.78\\)\n\n\nInterpretation: Our sample (14.5) mean is 2.78 SEs (SDs) larger than the proposed population mean (12)"
+    "text": "\\(Z\\)-transformations\n\n\n\\(Z\\)-score transformation: converting raw data or statistics into standard deviation units\nGeneral formula:\n\n\\[Z = \\frac{x-\\mu}{\\sigma}\\]\nWhat exactly are \\(Z\\)-scores?"
   },
   {
     "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#how-unlikely",
@@ -11848,7 +11848,7 @@
     "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#hypothesis-and-test",
     "title": "Lecture 6: Sampling Distributions",
     "section": "Hypothesis and Test",
-    "text": "Hypothesis and Test\n\nSet up a null hypothesis \\(H_0\\)\n\\(H_0: \\mu_{PPG} = 12\\)\nSet up alternative hypothesis \\(H_a\\)\n\\(H_a: \\mu_{PPG} \\neq 12\\)\nConducting Test\n\nConstruct sampling distribution\nCalculate test statistic\nDetermine how unlikely test statistic is for sampling distribution\nIf \\(P(\\text{statistic}) &lt; .05\\), reject null hypothesis.\nFor a “two-tailed” test (e.g. a \\(Z\\)-test) we multiply by two to account for possibility that under the proposed sampling distribution the statistic was equally likely to have been above or below \\(\\mu\\)"
+    "text": "Hypothesis and Test\n\n\nSet up a null hypothesis \\(H_0\\)\n\\(H_0: \\mu_{PPG} = 12\\)\nSet up alternative hypothesis \\(H_a\\)\n\\(H_a: \\mu_{PPG} \\neq 12\\)\nConducting Test\n\nConstruct sampling distribution\nCalculate test statistic\nDetermine how unlikely test statistic is for sampling distribution\nIf \\(P(\\text{statistic}) &lt; .05\\), reject null hypothesis.\nFor a “two-tailed” test (e.g. a \\(Z\\)-test) we multiply by two to account for possibility that under the proposed sampling distribution the statistic was equally likely to have been above or below \\(\\mu\\)"
   },
   {
     "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#z-test-in-apa",
@@ -11911,14 +11911,14 @@
     "href": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo_v0.html#rbinom",
     "title": "Lecture 5: Monte Carlo Simulation",
     "section": "rbinom()",
-    "text": "rbinom()\nIn the rbinom() function I have three arguments\n\nn is the number of “draws”\nsize is the number of trials per draw\nprob is the probability of success on each trial\n\nBy increasing n I can sample a sequence of zeros and ones, and map those onto heads or tails, per my random variable function\n\nset.seed(4210)\n(zeros_and_ones &lt;- rbinom(n = 10, size = 1, prob = .5))\n\n [1] 1 1 0 1 1 1 0 0 1 1"
+    "text": "rbinom()\nIn the rbinom() function I have three arguments\n\nn is the number of “draws” or samples taken\nsize is the number of trials per draw\nprob is the probability of success on each trial\n\nBy increasing n I can sample a sequence of zeros and ones, and map those onto heads or tails, per my random variable function\n\nset.seed(4210)\n(zeros_and_ones &lt;- rbinom(n = 10, size = 1, prob = .5))\n\n [1] 1 1 0 1 1 1 0 0 1 1"
   },
   {
     "objectID": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo_v0.html#inverse-function",
     "href": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo_v0.html#inverse-function",
     "title": "Lecture 5: Monte Carlo Simulation",
     "section": "Inverse Function",
-    "text": "Inverse Function\nThe ifelse() function takes a vector and checks if a test condition is met. If it is, it returns the output specified as yes, otherwise it specifies the output returned as no.\n\n\n [1] \"heads\" \"heads\" \"tails\" \"heads\" \"heads\" \"heads\" \"tails\"\n [8] \"tails\" \"heads\" \"heads\"\n\n\n\nTakes our original function: \\(X(\\text{coin flip}) = \\text{heads} = 1; \\text{tails} = 0\\)\nInverts it: \\(X^{-1}(X) = 1 = \\text{heads}; 0 = \\text{tails}\\)"
+    "text": "Inverse Function\nThe ifelse() function takes a vector and checks if a test condition is met. If it is, it returns the output specified as yes, otherwise it specifies the output returned as no.\n\n(heads_or_tals &lt;- ifelse(test = zeros_and_ones == 1, \n                         yes = \"heads\", no = \"tails\"))\n\n [1] \"heads\" \"heads\" \"tails\" \"heads\" \"heads\" \"heads\" \"tails\"\n [8] \"tails\" \"heads\" \"heads\"\n\n\n\nTakes our original function: \\(X(\\text{coin flip}) = \\text{heads} = 1; \\text{tails} = 0\\)\nInverts it: \\(X^{-1}(X) = 1 = \\text{heads}; 0 = \\text{tails}\\)"
   },
   {
     "objectID": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo_v0.html#pseudo-randomness",
@@ -11939,7 +11939,7 @@
     "href": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo_v0.html#loops",
     "title": "Lecture 5: Monte Carlo Simulation",
     "section": "Loops",
-    "text": "Loops\nThere are different techniques for simulating data. One that is common across many programming languages is to use “loops”\n\nExample: a for loop\nRepeats a procedure a finite number of times\neach iteration is indexed\nIndexed outputs can thus be saved and analyzed after loop is complete"
+    "text": "Loops\nThere are different techniques for simulating data. One that is common across many programming languages is to use “loops”\n\nExample: a for loop\nRepeats a procedure a finite number of times\nEach iteration is indexed\nIndexed outputs can thus be saved and analyzed after loop is complete"
   },
   {
     "objectID": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo_v0.html#example",
@@ -11967,7 +11967,7 @@
     "href": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo_v0.html#monte-carloing",
     "title": "Lecture 5: Monte Carlo Simulation",
     "section": "Monte Carloing",
-    "text": "Monte Carloing\nNow let’s do this 1000 times, and each time, save the proportion of heads that resulted.\n\nI’ll start by creating an empty vector, then initialize my for loop\nThe for loop uses an index variable, which I am naming i, to index iterations. - I will save my result into the ith entry of my empty vector\n\n\niter &lt;- 1000 ## how many iterations in my simulation\noriginal_result &lt;- numeric(iter) ## empty vector to save results\naltered_result &lt;- numeric(iter) ## empty vector to save results\nset.seed(124)\nfor(i in 1:iter){\n  outcome &lt;- rbinom(n = 10, size = 1, prob = p)\n  original_result[i] &lt;- mean(outcome) ## save raw result\n  outcome[5] &lt;- 0\n  altered_result[i] &lt;- mean(outcome) # save altered result\n}"
+    "text": "Monte Carloing\nNow let’s do this 1000 times, and each time, save the proportion of heads that resulted.\n\nI’ll start by creating an empty vector, then initialize my for loop\nThe for loop uses an index variable, which I am naming i, to index iterations.\nI will save my result into the ith entry of my empty vector\n\n\niter &lt;- 1000 ## how many iterations in my simulation\noriginal_result &lt;- numeric(iter) ## empty vector to save results\naltered_result &lt;- numeric(iter) ## empty vector to save results\nset.seed(124)\nfor(i in 1:iter){\n  outcome &lt;- rbinom(n = 10, size = 1, prob = p)\n  original_result[i] &lt;- mean(outcome) ## save raw result\n  outcome[5] &lt;- 0\n  altered_result[i] &lt;- mean(outcome) # save altered result\n}"
   },
   {
     "objectID": "lecture/slides/05 Monte Carlo Simulation/Lecture 5 Monte Carlo_v0.html#results",
@@ -11989,5 +11989,33 @@
     "title": "Lecture 5: Monte Carlo Simulation",
     "section": "Other Functions",
     "text": "Other Functions\nWe will make use of Monte Carlo throughout the semester, often using the random normal distribution functions: rnorm(n, mean, sd)\nThere are also pnorm (probability), qnorm (quantile), and dnorm (density) functions that are all part of the same families that we may make use of\n\n?rnorm()"
+  },
+  {
+    "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#three-blue-one-brown",
+    "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#three-blue-one-brown",
+    "title": "Lecture 6: Sampling Distributions",
+    "section": "Three Blue One Brown",
+    "text": "Three Blue One Brown\n https://www.youtube.com/watch?v=zeJD6dqJ5lo"
+  },
+  {
+    "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#sampling-zs",
+    "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions.html#sampling-zs",
+    "title": "Lecture 6: Sampling Distributions",
+    "section": "Sampling \\(Z\\)’s",
+    "text": "Sampling \\(Z\\)’s\nWe can also transform our statistic (sample mean) into a \\(Z\\)-score for our hypothesized sampling distribution\n\nWe are going to transform our sample mean, \\(\\bar{x}\\), based on the mean and standard deviation (standard error) for our proposed sampling distribution\n\n\\(Z = \\frac{\\bar{x} - \\mu}{\\text{SE}} = \\frac{14.5 - 12}{0.90} = 2.78\\)\n\n\nInterpretation: Our sample (14.5) mean is 2.78 SEs (SDs) larger than the proposed population mean (12)"
+  },
+  {
+    "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#three-blue-one-brown",
+    "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#three-blue-one-brown",
+    "title": "Lecture 6: Sampling Distributions",
+    "section": "Three Blue One Brown",
+    "text": "Three Blue One Brown\n https://www.youtube.com/watch?v=zeJD6dqJ5lo"
+  },
+  {
+    "objectID": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#sampling-zs",
+    "href": "lecture/slides/06 Sampling Distributions/Lecture 6 Sampling Distributions_v0.html#sampling-zs",
+    "title": "Lecture 6: Sampling Distributions",
+    "section": "Sampling \\(Z\\)’s",
+    "text": "Sampling \\(Z\\)’s\nWe can also transform our statistic (sample mean) into a \\(Z\\)-score for our hypothesized sampling distribution\n\nWe are going to transform our sample mean, \\(\\bar{x}\\), based on the mean and standard deviation (standard error) for our proposed sampling distribution\n\n\\(Z = \\frac{\\bar{x} - \\mu}{\\text{SE}} = \\frac{14.5 - 12}{0.90} = 2.78\\)\n\n\nInterpretation: Our sample (14.5) mean is 2.78 SEs (SDs) larger than the proposed population mean (12)"
   }
 ]
