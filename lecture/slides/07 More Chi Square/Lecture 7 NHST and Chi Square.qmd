@@ -72,6 +72,8 @@ bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
 
 ## NHST Procedure
 
+::: {style="font-size: 0.9em;"}
+
 1. Specify null hypothesis $H_0$
 2. Specify Sampling distribution of **test statistic** based on the null hypothesis
     - **Test statistic:** Some transformation of one or more descriptive statistics from your sample that correspond to a research question
@@ -80,6 +82,8 @@ bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
     - Value such that, if the test statistic is sufficiently **improbable** based on our sampling distribution, we reject the null hypothesis
     - Usually $\alpha = .05$
     - Arbitrary convention adopted because of off-the-cuff comment by Fisher How "how unlikely" is "sufficiently unlikely"
+    
+::: 
 
 ## More NHST Procedure
 
@@ -89,14 +93,181 @@ bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
     - Represents the probability of our test statistic (or any test statistic less likely than our test statistic) **assuming the null hypothesis is true**
     - If sampling distribution is symmetrical, might include chance of observing of equally unlikely outcome in **opposite direction**
       - Means we multiply $p \times 2$
+      
+## Even More NHST Procedure
+
 4. If $p >  \alpha$, do not reject null hypothesis
     - Choose to believe Null hypothesis remains a plausible explanation for our observed statistic
 5. If $p \leq \alpha$, reject null hypothesis
     - Choose to believe Null hypothesis is implausible explanation for our observed statistic
 
+## Dated Reframing
 
-## More Tests
+::: {style="font-size: 0.9em;"}
 
+Before it was easy to compute exact $p$-values with computers, an alternative approach was more common
+
+- Define the **critical value:** value of test statistic that corresponds to $\alpha = .05$
+    - If null is true, 5% of test statistics would be as or more extreme than this value
+    - For a standard normal distribution with $\alpha = .05$: 
+      - $Z$ = 1.68 is the critical value for a one-tailed test
+      - $Z$ = 1.96 is the critical value for a two-tailed test
+- **For lower tailed test:** if test statistic $<$ critical value, reject
+- **For upper tailed test:** if test statistic is $>$ critical value, reject
+- **For two-tailed test:** if |test statistic| $>$ critical value, reject
+    - Observed mean that is 1.96 (or more) standard errors away from the null hypothesis is more extreme than critical value
+
+:::
+
+## Example
+
+::: {style="font-size: 0.9em;"}
+
+**Research question:** Do NBA players who play the shooting guard position score more than 12 points per game (PPG) on average 
+
+- Maybe 12 PPG is based on some knowledge of historical averages I have
+    - Maybe I also know historically the standard deviation of player PPG is $\sigma = 6$ (usually won't know stuff like this)
+- I want to determine if shooting guards beat historical averages
+- I sample 44 shooting guards
+- My **sample** scores 14.5 PPG
+- How unlikely would a random sample of players be to score 14.5 PPG if their true population had $\mu = 12$, $\sigma = 6$?
+    - $H_0: \mu = 12$ 
+    - How many standard errors away from $12$ is $14.5$? 
+
+:::
+
+
+## [Null and Alternative Hypotheses]{style="font-size: 0.667em;"}
+
+
+::: {style="font-size: 0.85em;"}
+
+- Fisher's framework focused on the **null hypothesis**
+    - Did **not** include alternative hypothesis
+    - Emphasized that $\alpha$ cutoff value was arbitrary
+    - Focused more on proper interpretation of $p$-value as probability of a statistic if the null is true
+    - Small values as evidence against null
+- Alternative hypothesis introduced later by Jerzy Neyman and Egon Pearson
+    - Built around deciding between competing hypotheses
+    - $H_0$ (null) specified as **equality** 
+       - $H_0: \mu = 12$ or $H_0: \mu \leq 12$ 
+     $H_a$ (alternative) specified as **inequality**
+        - $H_a: \mu \neq 12$ or $H_a: \mu > 12$
+    - Introduced Type I, II errors, power (more later)
+
+Modern methods are weird hybrid between Fisher and Neyman/Pearson
+
+:::
+
+## Visualized Test
+
+```{r}
+x <- data.frame(x = c(-4, 4))
+
+
+ggplot(x, aes(x)) + 
+  stat_function(fun = dnorm) +
+  # Lower tail split at -2.78
+  stat_function(fun = dnorm, xlim = c(-4, -2.78), geom = "area", fill = my_purple) +
+  stat_function(fun = dnorm, xlim = c(-2.78, qnorm(.025)), geom = "area", fill = my_red) +
+  # Middle area
+  stat_function(fun = dnorm, xlim = c(qnorm(.025), qnorm(.975)), geom = "area", fill = my_blue) +
+  # Upper tail split at 2.78
+  stat_function(fun = dnorm, xlim = c(qnorm(.975), 2.78), geom = "area", fill = my_red) +
+  stat_function(fun = dnorm, xlim = c(2.78, 4), geom = "area", fill = my_purple) +
+  theme_bw() +
+  labs(x = "Standard Errors", y = "",
+       title = "The Standard Normal Sampling Distribution") +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) +
+  geom_vline(aes(xintercept = qnorm(.025), size = I(2)), col = my_orange) +
+  geom_vline(aes(xintercept = qnorm(.975), size = I(2)), col = my_orange) +
+  
+  # Vertical indicator lines
+  geom_vline(aes(xintercept = -2.78, size = I(1)), col = my_blue) +
+  geom_vline(aes(xintercept = 2.78, size = I(1)), col = my_blue) +
+
+  # Upper tail annotations
+  annotate(
+    "text", 
+    x = 2.78, y = 0.25, 
+    label = "sample mean is\n2.78 SEs from\nhypothesized\npopulation mean", 
+    color = my_blue, size = 3.5, hjust = -0.05
+  ) +
+  annotate(
+    "text", 
+    x = 3.2, y = 0.12, 
+    label ="0.27% of the\narea of the\ndistribution", 
+    color = my_purple, size = 3.5, hjust = 0
+  ) +
+  annotate(
+    "segment", 
+    x = 3.2, xend = 2.9, 
+    y = 0.10, yend = 0.02, 
+    color = my_purple, arrow = arrow(length = unit(0.08, "inches"))
+  ) +
+
+  annotate(
+    "text", 
+    x = -2.78, y = 0.25, 
+    label = "a sample mean\n-2.78 SEs from\nhypothesized\npopulation mean\nwould be\nequally unlikely", 
+    color = my_blue, size = 3.5, hjust = 1.05
+  ) +
+  annotate(
+    "text", 
+    x = -3.2, y = 0.12, 
+    label = "0.27% of the\narea of the\ndistribution",  
+    color = my_purple, size = 3.5, hjust = 1
+  ) +
+  annotate(
+    "segment", 
+    x = -3.2, xend = -2.9, 
+    y = 0.10, yend = 0.02, 
+    color = my_purple, arrow = arrow(length = unit(0.08, "inches"))
+  ) +
+  
+  geom_text(aes(label = "Critical Values", x = 0, y = .43), size = 6, color = my_orange) +
+  geom_segment(aes(x = 1.1, xend = qnorm(.975) - .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_segment(aes(x = -1.1, xend = qnorm(.025) + .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches")))
+```
+
+
+
+
+
+
+## [More Sampling Distributions]{style="font-size: 0.667em;"}
+
+
+The following are among the most common sampling distributions for test statistics. We will cover each of these in class
+
+- $Z$-distribution (aka standard normal distribution)
+    - Example we have already seen
+    - Used for testing something about means when the **population variance is known** (it usually won't be)
+- $t$-distribution 
+    - Tests about means 
+    - Correlation coefficients
+    - Linear model coefficients
+    - **does not require known population variance**
+    - More next week
+
+
+
+## [Even More Sampling Distributions]{style="font-size: 0.667em;"}
+
+- $F$-distribution
+  - Used for testing (in)equality among many means simultaneously
+  - Many linear model coefficients simultaneously
+  - More in a few weeks
+- $\chi^2$ distribution
+  - Used for tests about **categorical variables**
+  - Whether observed proportions in different categories match expected proportions
+  - More today!
+
+## $\chi^2$ tests
+
+Today we will discuss:
 
 -   The $\chi^2$ goodness of fit test allows us to test a hypothesis about the probability of each category for a categorical variable in the population
     -   E.g. are each flavor of gummy bear equally common? 
