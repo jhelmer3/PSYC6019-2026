@@ -1,0 +1,184 @@
+---
+title: "Effect Size and Power Analysis"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2025-09-25 | Lab 5"
+author: "Jess Helmer"
+footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
+format: 
+  revealjs:
+    code-link: true
+    slide-number: true
+    code-line-numbers: false
+    theme: ../../gt-theme.scss
+    width: 1200
+execute: 
+  echo: true
+  dpi: 600
+  freeze: auto
+---
+
+## Outline
+
+- Effect size
+- Power analysis
+
+```{r setup}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(gt)
+```
+
+
+## Cohen's *D*
+
+Standardized mean difference, interpretable effect size
+
+Derived with two means (represented as $\mu_1$ and $\mu_2$) and standard deviation ($s$)
+
+$$d = \frac{\mu_1 - \mu_2}{s}$$
+
+For a one-sample *t* test, $\mu_1$ would be our sample mean $\bar{x}$, $\mu_2$ would be our population mean $\mu$, and the standard deviation $\sigma$ would be our observed standard deviation $s$.
+
+Not a statistical test---just a measure of difference.
+## Cohen's *D* Example
+
+Let's say a researcher claims the average highway miles per gallon across all cars is 30mpg. We found earlier that the sample had a significant difference between the hypothesized and sample mean. What is the effect size of that difference?
+
+$$d = \frac{\bar{x} - \mu}{s}$$
+
+::: fragment
+```{r}
+x_bar <- mean(mpg$hwy)
+x_sd <- sd(mpg$hwy)
+
+d <- (x_bar - 30) / x_sd
+d
+```
+:::
+
+[How would be characterize this difference? What is the direction?]{.fragment}
+
+
+## Cohen's *D* Strength Visualization
+
+Based on mean ($\bar{x}$ = `round(x_bar, 2)` = `r round(x_bar, 2)`) and SD ($\bar{\sigma}$ = `round(x_sd, 2)` = `r round(x_sd, 2)`) of cars' highway MPG (`hwy`).
+
+Solved backwards for ($\mu$) based on different potential levels of *d*. "What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
+
+$$\bar{x} - d \times s = \mu$$
+
+```{r}
+dat <- data.frame(x = rnorm(100000, x_bar, x_sd))
+
+mu_ex1 <- x_bar - .2 * x_sd
+mu_ex2 <- x_bar - .5 * x_sd
+mu_ex3 <- x_bar - .8 * x_sd
+```
+
+
+## Cohen's *D* Strength Visualization
+
+"What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
+
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+ggplot(dat, aes(x = x)) +
+  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
+  geom_vline(aes(xintercept = x_bar),
+             color = "skyblue3", linewidth = 1, linetype = "dashed") +
+  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
+  guides(y = "none", x = NULL) +
+  labs(y = NULL, x = "Highway MPG") +
+  theme_classic(base_size = 18)
+```
+
+
+## Cohen's *D* Strength Visualization
+
+"What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
+
+
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| layout-ncol: 3
+#| fig-align: center
+ggplot(dat, aes(x = x)) +
+  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
+  geom_vline(aes(xintercept = x_bar),
+             color = "skyblue3", linewidth = 1, linetype = "dashed") +
+  geomtextpath::geom_textvline(aes(xintercept = mu_ex1, label = "d = 0.2"),
+                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
+  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
+  guides(y = "none", x = NULL) +
+  labs(y = NULL, x = "Highway MPG") +
+  theme_classic(base_size = 18)
+
+ggplot(dat, aes(x = x)) +
+  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
+  geom_vline(aes(xintercept = x_bar),
+             color = "skyblue3", linewidth = 1, linetype = "dashed") +
+  geomtextpath::geom_textvline(aes(xintercept = mu_ex2, label = "d = 0.5"),
+                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
+  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
+  guides(y = "none", x = NULL) +
+  labs(y = NULL, x = "Highway MPG") +
+  theme_classic(base_size = 18)
+
+ggplot(dat, aes(x = x)) +
+  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
+  geom_vline(aes(xintercept = x_bar),
+             color = "skyblue3", linewidth = 1, linetype = "dashed") +
+  geomtextpath::geom_textvline(aes(xintercept = mu_ex3, label = "d = 0.8"),
+                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
+  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
+  guides(y = "none", x = NULL) +
+  labs(y = NULL, x = "Highway MPG") +
+  theme_classic(base_size = 18)
+
+```
+
+
+## Cohen's *D* in R: One Sample
+
+For one sample, simplest to just program it ourselves `(x_bar - mu) / x_sd`
+
+Example: effect size of observed iris petal length against a hypothesized population mean of 3.
+
+```{r}
+(mean(iris$Petal.Length) - 3) / sd(iris$Petal.Length)
+```
+
+
+## Cohen's *D*
+
+The `cohens_d()` function from the `effectsize` package allows for many formats of inputs.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| code-line-numbers: false
+# install.packages("effectsize")
+
+(x_bar_vanilla - x_bar_cookie_dough) / pooled_sd
+
+effectsize::cohens_d(sales ~ candy,
+                     data = candy)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| code-line-numbers: false
+mean_diff / sd_diff
+
+effectsize::cohens_d(pumpkin$oct1, pumpkin$oct31,
+                     paired = T)
+```
+:::
+::::
+
