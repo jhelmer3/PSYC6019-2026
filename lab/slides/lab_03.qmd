@@ -32,8 +32,21 @@ knitr:
 #| output: false
 library(tidyverse)
 library(gt)
-targets::tar_load(c(player_stats, gatech_admissions_data_file), store = here::here("_targets"))
 ```
+
+
+## Extra Credit: R Conference
+
+:::: {.columns}
+::: {.column width="25%"}
+<br>
+[Assignment and Registration Details](https://jhelmer3.github.io/PSYC6019-2026/extra-credit.html){preview-link="true"}
+:::
+
+::: {.column width="75%"}
+[![](../media/lab_01/posit-conf-2026.png)](https://conf.posit.co/2026/){target="blank" preview-link="true"}
+:::
+::::
 
 
 ## Whole Game
@@ -267,10 +280,10 @@ Notice the documentation for `pivot_longer()`
 
 ## Selecting Functions
 
-:::: {.columns}
-::: {.column}
 Simple example, but...
 
+:::: {.columns}
+::: {.column}
 ```{r}
 dat <- data.frame(
   id = 1:5,
@@ -299,7 +312,7 @@ dat |>
 :::: {.columns style="font-size:70%"}
 ::: {.column width=70%}
 ```{r}
-player_stats <- read.csv(here::here("lab", "data", "world_cup_player_stats.csv"))
+player_stats <- read.csv(here::here("lab", "data", "lab_02", "world_cup_player_stats.csv"))
 head(player_stats, n = 10)
 ```
 :::
@@ -905,7 +918,7 @@ Then, sketch out a plan. Try to build things up step-by-step, not all at once.
 
 4. Incorporate different distributions.
 
-5. Incorporate different sample sizes.
+<!-- 5. Incorporate different sample sizes. -->
 
 
 ## Simulation Example: CLT
@@ -985,6 +998,7 @@ sim_data
 We can then draw `n_reps * sample_size = total_n` values from a normal distribution with `rnorm()`.
 
 ```{r}
+#| code-line-numbers: "|7-9"
 sim_data <- tibble(
   n_reps = n_reps,
   sample_size = sample_size
@@ -1017,6 +1031,26 @@ sim_data |>
 
 2. Repeat this process multiple times, generating replications of data samples and sample means.
 
+:::: {.columns style="font-size:80%"}
+::: {.column width="50%"}
+Let' finish out #2 by `summarize()`ing our `sim_data` into one sample mean per replication.
+
+```{r}
+means <- sim_data |>
+  summarize(.by = rep,
+            sample_mean = mean(draw))
+means
+```
+:::
+
+::: {.column width="50%"}
+
+:::
+::::
+
+
+## Simulation Example: CLT
+
 3. Visualize both: the original distribution of the data (sample distribution), the distribution of the the samples' means (sampling distribution).
 
 :::: {.columns style="font-size:80%"}
@@ -1031,7 +1065,7 @@ means
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 And, we can plot those draws (getting a head start on #4).
 
 ```{r}
@@ -1054,6 +1088,7 @@ Before we start incorporating other conditions, let's scale this up.
 We can then draw `n_reps * sample_size = total_n` values from a normal distribution with `rnorm()`.
 
 ```{r}
+#| code-line-numbers: "|1-2"
 n_reps <- 1000
 sample_size <- 10
 total_n <- n_reps * sample_size
@@ -1067,7 +1102,7 @@ sim_data <- tibble(
   mutate(
     draw = rnorm(total_n, mean = 1, sd = 0.5)
   )
-sim_data
+sim_data |> head()
 ```
 :::
 
@@ -1196,6 +1231,7 @@ chisquared_samples
 4. Incorporate different distributions.
 
 ```{r}
+#| code-line-numbers: "|13-14"
 n_reps <- 1000
 sample_size <- 10
 total_n <- n_reps * sample_size
@@ -1211,11 +1247,11 @@ sim_data <- tibble(
     draw_uniform = runif(total_n, min = -1, max = 3),
     draw_chisquared = rchisq(total_n, df = 1)
   )
-sim_data
+sim_data |> head(3)
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column width="50%" style="font-size:80%"}
 We want to plot these draws as distributions, but `facet_wrap(~ grouping_var)` or `aes(fill / color)` are all expecting the values to be in one column, and a grouping variable that distinguishes them in another column.
 
 ```{r}
@@ -1250,15 +1286,17 @@ sim_data <- tibble(
     draw_uniform = runif(total_n, min = -1, max = 3),
     draw_chisquared = rchisq(total_n, df = 1)
   )
-sim_data
+sim_data |> head(3)
 ```
 :::
 
 ::: {.column width="50%"}
 ```{r}
+#| code-line-numbers: "|2-4"
 sim_data |>
   pivot_longer(starts_with("draw"),
-               names_to = "distribution", values_to = "draw")
+               names_to = "distribution", 
+               values_to = "draw")
 ```
 :::
 ::::
@@ -1273,10 +1311,7 @@ sim_data |>
 We can then draw `n_reps * sample_size = total_n` values from a normal distribution with `rnorm()`.
 
 ```{r}
-n_reps <- 1000
-sample_size <- 10
-total_n <- n_reps * sample_size
-
+#| code-line-numbers: "|12-13"
 sim_data <- tibble(
   n_reps = n_reps,
   sample_size = sample_size
@@ -1290,7 +1325,7 @@ sim_data <- tibble(
   ) |>
   pivot_longer(starts_with("draw"),
                names_to = "distribution", values_to = "draw")
-sim_data
+sim_data |> head()
 ```
 :::
 
@@ -1402,6 +1437,15 @@ means |>
 :::::
 
 
+## Lab 04 Activity
+
+
+
+# Bonus Simulation Stuff
+
+Totally optional, just for demonstration / if interested.
+
+
 ## Simulation Example: CLT
 
 ::::: {.columns style="font-size:80%"}
@@ -1417,7 +1461,10 @@ Because `n_reps` is length one, it will be "recycled" (repeated) to match the le
 
 For more complicated designs, we might have to use an `expand()` function
 
+:::: {.columns}
+::: {.column width="50%"}
 ```{r}
+#| eval: false
 n_reps <- 3
 sample_size <- c(1, 3)
 total_n <- n_reps * sample_size
@@ -1427,6 +1474,23 @@ tibble(
   sample_size = sample_size
 )
 ```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+n_reps <- 3
+sample_size <- c(1, 3)
+total_n <- n_reps * sample_size
+
+tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+)
+```
+:::
+::::
+
 
 ### `expand_grid()`
 
@@ -1470,6 +1534,7 @@ tibble(
 5. Incorporate different sample sizes.
 
 ```{r}
+#| eval: false
 n_reps <- 1000
 sample_size <- c(3, 10, 30, 100)
 total_n <- sum(n_reps * sample_size)
@@ -1493,6 +1558,39 @@ sim_data
 
 ::: {.column width="50%"}
 ```{r}
+#| echo: false
+n_reps <- 1000
+sample_size <- c(3, 10, 30, 100)
+total_n <- sum(n_reps * sample_size)
+
+sim_data <- tibble(
+  n_reps = n_reps,
+  sample_size = sample_size
+) |>
+  uncount(n_reps, .id = "rep") |>
+  uncount(sample_size, .id = "index", .remove = F) |>
+  mutate(
+    draw_normal = rnorm(total_n, mean = 1, sd = 0.5),
+    draw_uniform = runif(total_n, min = -1, max = 3),
+    draw_chisquared = rchisq(total_n, df = 1)
+  ) |>
+  pivot_longer(starts_with("draw"),
+               names_to = "distribution", values_to = "draw")
+sim_data
+```
+:::
+::::
+
+
+## Simulation Example: CLT
+
+:::: {.columns}
+::: {.column width="50%"}
+And grab the means for each sample.
+:::
+
+::: {.column width="50%"}
+```{r}
 means <- sim_data |>
   summarize(.by = c(rep, distribution, sample_size),
             sample_mean = mean(draw))
@@ -1504,7 +1602,7 @@ means
 
 ## Simulation Example: CLT
 
-5. Incorporate different sample sizes.
+::: {style="font-size:70%"}
 
 Now, let's think about how we want to visualize these results. We now have two condition variables (`sample_size` and `distribution`). We need to plot in a way that distinguishes both factors.
 
@@ -1593,9 +1691,12 @@ sim_data |>
 ::::
 :::::
 
+:::
 
 
 ## Simulation Example: CLT
+
+::: {style="font-size:70%"}
 
 ::::: {.columns}
 :::: {.column width="50%"}
@@ -1676,6 +1777,5 @@ means |>
 ::::
 :::::
 
-
-## Lab 04 Activity
+:::
 
