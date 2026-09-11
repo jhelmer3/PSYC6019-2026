@@ -162,7 +162,7 @@ ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
 
 df <- data.frame(val = z_statistic)
 
-ggplot(df, aes(x = val)) +
+p1 <- ggplot(df, aes(x = val)) +
   # 1. Standard Normal Area (Blue & Filled)
   stat_function(
     fun = dnorm,
@@ -198,6 +198,7 @@ ggplot(df, aes(x = val)) +
   ) +
   xlim(c(-4, 4)) +
   theme_minimal() + theme(legend.position = "none")
+p1
 ```
 
 ## What Went Wrong?
@@ -215,14 +216,7 @@ What's the practical implication of this result?
 ## Type I Errors
 
 ```{r}
-ggplot(df, aes(x = val)) +
-  # 1. Base Standard Normal Area
-  stat_function(
-    fun = dnorm,
-    geom = "area",
-    aes(fill = "Standard Normal N(0,1)", color = "Standard Normal N(0,1)"),
-    alpha = 0.3
-  ) +
+p1 +
   # 2. Critical Region Tail Shading (Left & Right)
   stat_function(
     fun = dnorm,
@@ -271,7 +265,7 @@ ggplot(df, aes(x = val)) +
   # Label in the white space above the standard normal tail
   annotate(
     "text",
-    x = 2.8, y = 0.07,
+    x = 2.6, y = 0.07,
     label = "Extra Type I errors",
     color = "#E74C3C",
     size = 3.8,
@@ -398,7 +392,7 @@ sigma <- 6
 ## Initialize empty vector
 z_statistic44 <- numeric(Samples)
 
-set.seed(124)
+set.seed(122442)
 ## Initialize Loop
 for(i in 1:Samples){
   ## Draw random sample
