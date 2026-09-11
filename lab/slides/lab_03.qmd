@@ -2,7 +2,7 @@
 title: "Data Manipulation and Simulation"
 subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2025-09-11 | Lab 3"
 author: "Jess Helmer"
-footer: "[jhelmer3.github.io/PSYC6019-2026/](https://jhelmer3.github.io/PSYC6019-2026/)"
+footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
 format: 
   revealjs:
     code-link: true
@@ -145,6 +145,67 @@ Three rules to a tidy dataset
 :::
 
 
+## `tidyverse` Expectations 
+
+The `tidyverse` website mentioned that each package shares a common language for their functions
+
+Based off of `dplyr` (one of the packages) verbs
+
+::: blockquote
+1. The first argument is always a dataframe.
+2. The subsequent arguments typically describe which columns to operate on using the variable names (without quotes).
+3. The output is always a new data frame.
+:::
+
+::: footer
+<https://r4ds.hadley.nz/data-transform.html#dplyr-basics>
+:::
+
+
+## `tidyverse` Syntax 
+
+One more thing...
+
+`tidyverse` verbs work best in a **pipe**: |>
+
+:::: {.columns}
+::: {.column}
+How we've been using functions:
+
+`output <- function(input)`
+:::
+
+::: {.column}
+Functions in a pipe:
+
+`output <- input |> function()`
+:::
+::::
+
+Why is this helpful?
+
+:::: {.columns}
+::: {.column .fragment}
+Many functions together:
+
+```
+another_function(other_function(function(input)))
+```
+:::
+
+::: {.column .fragment}
+Functions in a pipe:
+
+```
+input |>
+  function() |>
+  other_function() |>
+  another_function()
+```
+:::
+::::
+
+
 ## Long vs. Wide Data
 
 Long: each observation is a row (tidy)
@@ -189,6 +250,28 @@ Long data typically easier to work with
 ::: {.column}
 ##### Wide to Long
 `pivot_longer()`
+<div class="subpoint-narrow">○ `data` = a dataframe to pivot </div>
+<div class="subpoint-narrow">○ `cols` = set of columns to pivot </div>
+<div class="subpoint-narrow">○ `names_to` = name of new column with the column names from before </div>
+<div class="subpoint-narrow">○ `values_to` = name of new column with the values from before </div>
+:::
+
+::: {.column}
+##### Long to Wide
+`pivot_wider()`
+<div class="subpoint-narrow">○ `data` = a dataframe to pivot </div>
+<div class="subpoint-narrow">○ `names_from` = column with values to be column names </div>
+<div class="subpoint-narrow">○ `values_from` = column with values to be in those columns </div>
+:::
+::::
+
+
+## Key Functions
+
+:::: {.columns}
+::: {.column}
+##### Wide to Long
+`pivot_longer()`
 ```{r}
 #| code-line-numbers: false
 longdat <- dat |>
@@ -207,26 +290,6 @@ widedat <- longdat |>
   pivot_wider(names_from = book, values_from = score)
 widedat
 ```
-:::
-::::
-
-
-## Key Functions
-
-:::: {.columns}
-::: {.column}
-##### Wide to Long
-`pivot_longer()`
-<div class="subpoint-narrow">○ `cols` = set of columns to pivot </div>
-<div class="subpoint-narrow">○ `names_to` = name of new column with the column names from before </div>
-<div class="subpoint-narrow">○ `values_to` = name of new column with the values from before </div>
-:::
-
-::: {.column}
-##### Long to Wide
-`pivot_wider()`
-<div class="subpoint-narrow">○ `names_from` = column with values to be column names </div>
-<div class="subpoint-narrow">○ `values_from` = column with values to be in those columns </div>
 :::
 ::::
 
@@ -345,67 +408,9 @@ Sometimes we need...
 
 * Reordered variables
 
+[`{dplyr}` cheatsheet](https://rstudio.github.io/cheatsheets/html/data-transformation.html)
 
-
-## Transform: `tidyverse` syntax 
-
-The `tidyverse` website mentioned that each package shares a common language for their functions
-
-Based off of `dplyr` (one of the packages) verbs
-
-::: blockquote
-1. The first argument is always a dataframe.
-2. The subsequent arguments typically describe which columns to operate on using the variable names (without quotes).
-3. The output is always a new data frame.
-:::
-
-::: footer
-<https://r4ds.hadley.nz/data-transform.html#dplyr-basics>
-:::
-
-
-## More `tidyverse` syntax 
-
-One more thing...
-
-`tidyverse` verbs work best in a **pipe**: |>
-
-:::: {.columns}
-::: {.column}
-How we've been using functions:
-
-`output <- function(input)`
-:::
-
-::: {.column}
-Functions in a pipe:
-
-`output <- input |> function()`
-:::
-::::
-
-Why is this helpful?
-
-:::: {.columns}
-::: {.column .fragment}
-Many functions together:
-
-```
-another_function(other_function(function(input)))
-```
-:::
-
-::: {.column .fragment}
-Functions in a pipe:
-
-```
-input |>
-  function() |>
-  other_function() |>
-  another_function()
-```
-:::
-::::
+[R for Data Science transformation section](https://r4ds.hadley.nz/data-transform.html)
 
 
 ## Transform: Goals For Our Data
@@ -575,6 +580,7 @@ player_stats |>
 ::: {.column width="50%"}
 1. What team had the most goals overall?
 
+::: fragment
 ```{r}
 total_goals_df <- player_stats |>
   summarize(.by = team_name,
@@ -585,8 +591,9 @@ total_goals_df |>
   head(10)
 ```
 :::
+:::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
 total_goals_df |>
   filter(total_goals == max(total_goals))
@@ -599,17 +606,19 @@ total_goals_df |>
 
 2. What goalie had the highest saves per match played?
 
+::: fragment
 ```{r}
 player_stats$position |> unique()
 
 player_stats |>
-  filter(when_all(position == "GK",
-                  matches_played > 0)) |>
+  filter(position == "GK") |>
+  filter(matches_played > 0) |>
   select(team_name, player_name, saves, matches_played) |>
   mutate(saves_per_match = saves / matches_played) |>
   arrange(desc(saves_per_match)) |>
   head()
 ```
+:::
 
 
 ## Transform: Questions
@@ -898,9 +907,9 @@ See if the distribution of means from repeatedly sampling data looks normal
 ○ Does this change with different original distributions from which the data is drawn?
 :::
 
-::: subpoint-narrow
-○ Does this change with sample size? 
-:::
+<!-- ::: subpoint-narrow -->
+<!-- ○ Does this change with sample size?  -->
+<!-- ::: -->
 
 :::
 ::::
@@ -1308,8 +1317,6 @@ sim_data |>
 ::: {.column width="50%"}
 4. Incorporate different distributions.
 
-We can then draw `n_reps * sample_size = total_n` values from a normal distribution with `rnorm()`.
-
 ```{r}
 #| code-line-numbers: "|12-13"
 sim_data <- tibble(
@@ -1438,6 +1445,16 @@ means |>
 
 
 ## Lab 04 Activity
+
+Reminder: Please don't use AI-generated code for the activities!
+
+`self-contained: true` at the top of your Quarto document will make it look nicer on Canvas
+
+::: subpoint
+○ I've already added this to the assignment template, so nothing needed from you!
+:::
+
+Please avoid printing out entire datasets in the assignments---makes it tricky to scroll through and find answers!
 
 
 
@@ -1614,8 +1631,8 @@ Now, let's think about how we want to visualize these results. We now have two c
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
-#| fig-height: 5
+#| fig-width: 4.5
+#| fig-height: 4.5
 #| fig-align: center
 sim_data |>
   filter(rep %in% sample(n_reps, size = 30)) |>
