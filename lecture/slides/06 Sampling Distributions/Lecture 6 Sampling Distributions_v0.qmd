@@ -1,0 +1,895 @@
+---
+title: "Lecture 6: Sampling Distributions"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: true 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(gganimate)
+library(gifski)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+
+bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
+                                                draft_year != "")
+
+```
+
+## Probability $\rightarrow$ Data
+
+```{r}
+#| fig.width: 6
+#| fig.height: 2
+#| out.width: "100%"
+
+# Zero out standard plot margins
+par(mar = c(0, 0, 0, 0))
+
+# Initialize empty canvas
+plot(0, 0, col = "white", xlim = c(0, 5), ylim = c(0, 3.5),
+     bty = "n", xlab = "", ylab = "", xaxt = "n", yaxt = "n")
+
+# --- Left Box (Population) ---
+polygon(x = c(0.2, 1.7, 1.7, 0.2), y = c(2, 2, 3, 3), border = my_blue, lwd = 2)
+
+# --- Right Box (Sample) ---
+polygon(x = c(3.3, 4.8, 4.8, 3.3), y = c(.5, .5, 1.5, 1.5), border = my_purple, lwd = 2)
+
+# --- Top Curve (Probability) ---
+x_top <- seq(0.95, 4.05, length = 30)
+y_top <- -0.478 * x_top^2 + 1.905 * x_top + 1.621
+points(x_top, y_top, type = 'l', col = my_blue, lwd = 2)
+
+# Top Arrow (pointing to Sample)
+arrows(x0 = x_top[28], x1 = x_top[30], 
+       y0 = y_top[28], y1 = y_top[30], 
+       col = my_blue, lwd = 2)
+
+# --- Bottom Curve (Statistics) ---
+x_bot <- seq(0.95, 4.05, length = 30)
+y_bot <- 0.435 * x_bot^2 - 2.656 * x_bot + 4.132
+points(x_bot, y_bot, type = 'l', col = my_purple, lwd = 2)
+
+# Bottom Arrow (pointing to Population)
+arrows(x0 = x_bot[3], x1 = x_bot[1], 
+       y0 = y_bot[3], y1 = y_bot[1], 
+       col = my_purple, lwd = 2)
+
+# --- Text Labels ---
+text(x = 0.95, y = 2.65, "Population", col = my_blue)
+text(x = 0.95, y = 2.35, "(Parameter)", col = my_blue)
+
+text(x = 4.05, y = 1.15, "Sample", col = my_purple)
+text(x = 4.05, y = 0.85, "(Data)", col = my_purple)
+
+text(x = 3.1, y = 3.3, "Probability", col = my_blue)
+text(x = 1.9, y = 0.3, "Statistics", col = my_purple)
+```
+
+-   We began this class by talking about how *statistics* like means and standard deviations help us summarize data
+-   We next looked at how the rules of probability govern how data are generated
+-   Now we are going to talk about the rules of probability govern how *statistics* are generated
+
+## Ordinary vs Sampling distributions
+
+- **Ordinary Distribution:** A probability distribution for how data are generated one datapoint at a time
+
+- **Sampling Distribution:** A probability distribution for how *statistics* are generated one **sample** at a time
+
+We've actually already seen an example of a sampling distribution: 
+
+- [The binomial distribution represents how **proportions** of successes are distributed in samples of a fixed size for a given probability of success]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+- [For binary data, proportions are means, so the binomial distribution is really a sampling distribution of means for binary data]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Back to Bears
+
+![](../../Figs/gummytypes.jpg)
+
+## Sampling Gummy Bears
+
+-   $1/5$ gummy bears are pineapple
+-   If we randomly sample gummy bears, what will the distribution of proportions (sample means) of look like for repeated samples of....
+    -   ....5
+    -   ....10
+    -   ....25
+    -   ....100
+
+## Simulating Gummy Bears
+
+We can simulate this procedure in `R` and look at the results
+
+```{r}
+#| echo: true
+
+N <- 5
+
+set.seed(21)
+(successes <- rbinom(n = 1, size = N, prob = .2))
+
+```
+
+To get the proportion we just divide the number of successes by the sample size
+
+```{r}
+#| echo: true
+successes/N
+
+```
+
+## Simulating Again
+
+We can repeat the process and see how the results change
+
+```{r}
+#| echo: true
+
+set.seed(2513)
+(successes <- rbinom(n = 1, size = N, prob = .2))
+
+successes/N
+
+```
+
+## ...Again
+
+```{r}
+#| echo: true
+
+set.seed(643)
+(successes <- rbinom(n = 1, size = N, prob = .2))
+
+successes/N
+
+```
+
+## ...And Again
+
+```{r}
+#| echo: true
+
+set.seed(77865)
+(successes <- rbinom(n = 1, size = N, prob = .2))
+
+successes/N
+
+```
+
+Better yet, let's graph the cumulative proportions (sample means) as we repeatedly sample
+
+## Repeated Samples (N = 5)
+
+```{r}
+#| cache: true
+# Setup parameters
+set.seed(13344)
+n_draws <- 100     
+N <- 5
+
+
+raw_draws <- rbinom(n_draws, size = N, prob = 0.2) / N
+
+
+bear_data_cum <- map_dfr(1:n_draws, ~ tibble(
+  frame = .x,
+  result = raw_draws[1:.x]
+)) |> 
+  mutate(n_draw = 1:n()) |> group_by(result) %>%
+  mutate(n_result = 1:n()) |> ungroup() %>%
+  mutate(prop_result = n_result/n_draw)
+
+
+p1 <- ggplot(bear_data_cum, aes(x = result)) +
+  geom_vline(xintercept = 0.2, linetype = "dashed", color = "gray50", linewidth = 1) +
+  geom_col(fill = my_orange, alpha = .66, stat = "count") +
+  scale_x_continuous(breaks = round(unique(bear_data_cum$result),3)) +
+  labs(
+    subtitle = "Number of Samples: {closest_state}",
+    x = "Proportion of Pineapple Bears",
+    y = "Count of Samples"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+anim1 <- p1 + transition_states(frame, transition_length = 1 , state_length = 1)
+
+animate(
+  anim1, 
+  nframes = n_draws, 
+  fps = 20, 
+  renderer = gifski_renderer()
+)
+```
+
+[Now let's bump up the sample size]{.fragment}
+
+## Repeated Samples (N = 10)
+
+```{r}
+#| cache: true
+# Setup parameters
+set.seed(532)
+n_draws <- 100     
+N <- 10
+
+
+raw_draws <- rbinom(n_draws, size = N, prob = 0.2) / N
+
+
+bear_data_cum <- map_dfr(1:n_draws, ~ tibble(
+  frame = .x,
+  result = raw_draws[1:.x]
+)) |> 
+  mutate(n_draw = 1:n()) |> group_by(result) %>%
+  mutate(n_result = 1:n()) |> ungroup() %>%
+  mutate(prop_result = n_result/n_draw)
+
+
+p2 <- ggplot(bear_data_cum, aes(x = result)) +
+  geom_vline(xintercept = 0.2, linetype = "dashed", color = "gray50", linewidth = 1) +
+  geom_col(fill = my_orange, alpha = .66, stat = "count") +
+  scale_x_continuous(limits = c(-.05, .85), breaks = seq(0, .8, by = .1)) +
+  labs(
+    subtitle = "Number of Samples: {closest_state}",
+    x = "Proportion of Pineapple Bears",
+    y = "Count of Samples"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+anim2 <- p2 + transition_states(frame, transition_length = 1 , state_length = 1)
+
+animate(
+  anim2, 
+  nframes = n_draws, 
+  fps = 20, 
+  renderer = gifski_renderer()
+)
+```
+
+[Again....]{.fragment}
+
+## Repeated Samples (N = 25)
+
+```{r}
+#| cache: true
+# Setup parameters
+set.seed(42123)
+n_draws <- 100
+N <- 25
+
+
+raw_draws <- round(rbinom(n_draws, size = N, prob = 0.2) / N, 1)
+
+
+bear_data_cum <- map_dfr(1:n_draws, ~ tibble(
+  frame = .x,
+  result = raw_draws[1:.x]
+)) |> 
+  mutate(n_draw = 1:n()) |> group_by(result) %>%
+  mutate(n_result = 1:n()) |> ungroup() %>%
+  mutate(prop_result = n_result/n_draw)
+
+
+p3 <- ggplot(bear_data_cum, aes(x = result)) +
+  geom_vline(xintercept = 0.2, linetype = "dashed", color = "gray50", linewidth = 1) +
+  geom_col(fill = my_orange, alpha = .66, stat = "count") +
+  scale_x_continuous(limits = c(-.05, .85), breaks = seq(0, .8, .1)) +
+  labs(
+    subtitle = "Number of Samples: {closest_state}",
+    x = "Proportion of Pineapple Bears",
+    y = "Count of Samples"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+anim3 <- p3 + transition_states(frame, transition_length = 1 , state_length = 1)
+
+animate(
+  anim3, 
+  nframes = n_draws, 
+  fps = 20, 
+  renderer = gifski_renderer()
+)
+```
+
+[And again....]{.fragment}
+
+## Rep. Samples (N = 100)
+
+```{r}
+#| cache: true
+# Setup parameters
+set.seed(424211)
+n_draws <- 100     
+N <- 100
+
+
+raw_draws <- round(rbinom(n_draws, size = N, prob = 0.2) / N / .05) * .05
+
+
+bear_data_cum <- map_dfr(1:n_draws, ~ tibble(
+  frame = .x,
+  result = raw_draws[1:.x]
+)) |> 
+  mutate(n_draw = 1:n()) |> group_by(result) %>%
+  mutate(n_result = 1:n()) |> ungroup() %>%
+  mutate(prop_result = n_result/n_draw)
+
+
+p4 <- ggplot(bear_data_cum, aes(x = result)) +
+  geom_vline(xintercept = 0.2, linetype = "dashed", color = "gray50", linewidth = 1) +
+  geom_col(fill = my_orange, alpha = .66, stat = "count") +
+  scale_x_continuous(limits = c(-.05, .85), breaks = seq(0, .8, .1)) +
+  labs(
+    subtitle = "Number of Samples: {closest_state}",
+    x = "Proportion of Pineapple Bears",
+    y = "Count of Samples"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.y = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+anim4 <- p4 + transition_states(frame, transition_length = 1 , state_length = 1)
+
+animate(
+  anim4, 
+  nframes = n_draws, 
+  fps = 20, 
+  renderer = gifski_renderer()
+)
+```
+
+[Thoughts?]{.fragment}
+
+## Comparing Sample Sizes
+
+```{r}
+
+total_n <- nrow(bear_data_cum) # 5050 rows total
+
+p2a <- p2 + labs(
+  title = "N = 10",
+    subtitle = "Number of Samples: 100")
+
+p4a <- p4 + labs(
+  title = "N = 100",
+    subtitle = "Number of Samples: 100") 
+
+gridExtra::grid.arrange(p2a, p4a, nrow = 1)
+```
+
+What about now?
+
+## [The Central Limit Theorem]{style="font-size: 0.667em;"}
+
+As $N$ increases:
+
+::: {style="font-size: 0.9em;"}
+
+-   Sampling distribution becomes narrower
+-   Sampling distribution becomes more symmetrical/bell-shaped
+-   Applies to (nearly) all sampling distributions
+    -   **Exception:** Some distributions do not have finite variance
+    -   These are cases where outliers that are orders of magnitude larger than the mean happen more often than would be expected
+    -   "Heavy tailed" distributions (e.g. Cauchy)
+-   Otherwise, as $N$ (sample size) $\rightarrow \infty$
+    -   Mean of sample statistics converges on population parameter
+    -   SD of sample statistics = **standard error** = $\sigma / \sqrt{N}$
+    -   Sampling distribution becomes increasingly **normal**
+    
+:::
+
+<<<<<<< Updated upstream
+## The Normal Distribution
+
+$$f(x) = \frac{1}{\sqrt{2\pi \sigma^2}}e^{\frac{(-x-\mu)^2}{2\sigma^2}}$$
+
+Parameters
+
+-   $\mu$: Mean
+-   $\sigma^2$: Variance
+    -   Alternatively $\sigma$: Standard deviation
+    
+    
+## Three Blue One Brown
+
+{{< video https://www.youtube.com/watch?v=zeJD6dqJ5lo width="1000" height="500">}}
+[https://www.youtube.com/watch?v=zeJD6dqJ5lo](https://www.youtube.com/watch?v=zeJD6dqJ5lo)
+=======
+>>>>>>> Stashed changes
+
+## How Does This Help?
+
+-   For most **statistics** we care about, the **distribution** of those **statistics becomes normal** in in repeated samples, as long as the sample size is large enough
+-   The more symmetrical the ordinary probability distribution, the more normal the sampling distribution even in smaller samples
+-   The more skewed the ordinary distribution, the less normal the sampling distribution in smaller samples
+    - Need a larger sample for sampling distribution to become more normalish
+-   *If* we can assume statistics are normally distributed, we can unlock a lot of ways to make inferences using some well-known properties of the normal distribution
+
+<<<<<<< Updated upstream
+
+=======
+## The Normal Distribution
+
+$$f(x) = \frac{1}{\sqrt{2\pi \sigma^2}}e^{\frac{(-x-\mu)^2}{2\sigma^2}}$$
+
+Parameters
+
+-   $\mu$: Mean
+-   $\sigma^2$: Variance
+    -   Alternatively $\sigma$: Standard deviation
+>>>>>>> Stashed changes
+
+## Normal Densities
+
+```{r}
+
+
+# 1. Create standard normal data (-4 to +4 SD)
+df <- data.frame(x = seq(-4, 4, length.out = 1000)) %>%
+  mutate(
+    y = dnorm(x),
+    # Separate every contiguous region so ggplot doesn't draw bridges across gaps
+    segment = case_when(
+      x < -2 ~ "left_tail",
+      x >= -2 & x < -1 ~ "left_shoulder",
+      x >= -1 & x <= 1 ~ "center",
+      x > 1 & x <= 2 ~ "right_shoulder",
+      x > 2 ~ "right_tail"
+    ),
+    region = case_when(
+      segment == "center" ~ "Within 1 SD (68.3%)",
+      segment %in% c("left_shoulder", "right_shoulder") ~ "1 to 2 SDs (13.6% each)",
+      TRUE ~ "Beyond 2 SDs (2.3% each)"
+    )
+  )
+
+df$region <- factor(df$region, levels = c("Within 1 SD (68.3%)",
+                                          "1 to 2 SDs (13.6% each)",
+                                          "Beyond 2 SDs (2.3% each)"))
+
+# 2. Plot with geom_ribbon and position = "identity"
+ggplot(df, aes(x = x, y = y)) +
+  # Ribbon fills from 0 to y without stacking
+  geom_ribbon(aes(ymin = 0, ymax = y, fill = region, group = segment), alpha = 0.75) +
+  # Outline curve
+  geom_line(color = "black", linewidth = 0.8) +
+  # SD dashed boundary lines
+  geom_vline(xintercept = c(-2, -1, 0, 1, 2), linetype = "dashed", color = "gray40", linewidth = 0.5) +
+  # Percentage labels
+  annotate("text", x = 0, y = 0.18, label = "68.3%", fontface = "bold", color = "white", size = 5) +
+  annotate("text", x = c(-1.5, 1.5), y = 0.07, label = "13.6%", fontface = "bold", color = "white", size = 4) +
+  annotate("text", x = c(-2.5, 2.5), y = 0.02, label = "2.3%", fontface = "bold", color = "black", size = 3.5) +
+  # Custom colors
+  scale_fill_manual(
+    values = c(
+      "Within 1 SD (68.3%)"      = "#4C72B0",
+      "1 to 2 SDs (13.6% each)"  = "#55A868",
+      "Beyond 2 SDs (2.3% each)" = "#C44E52"
+    )
+  ) +
+  scale_x_continuous(
+    breaks = -3:3,
+    labels = c("-3σ", "-2σ", "-1σ", "μ\n(Mean)", "+1σ", "+2σ", "+3σ")
+  ) +
+  labs(
+    x = "Standard Deviations from Mean",
+    y = "Density",
+    fill = "Interval"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    legend.position = "none"
+  )
+```
+
+We can "slice up" the normal distribution into densities within 1 and 2 standard deviations
+
+## Normal Distribution Properties
+
+-   68% of observations are within 1 SD of the mean
+-   96% of observations are within 2 SD of the mean
+
+**Any number that is more than 2 SDs from the mean would show up infrequently in this distribution**
+
+-   Not never! But it would be uncommon
+-   If we know what the mean and SD of our sampling distribution are, it can let us say something about how how (un)likely it would for a statistic to really belong to this distribution
+
+## Sampling Scorers
+
+Let's imagine:
+
+-   I sample a group of 44 NBA basketball players
+-   On average, they score 14.5 points per game
+-   I want to test the hypothesis that on average, the population I sampled from scores 12 points per game
+-   In the population, the standard deviation of basketball player points per game is 6
+-   14.5 is not 12! But how do I know how likely or unlikely this *statistic* would be if my sampling distribution were the true sampling distribution?
+
+## Standard Errors
+
+A **standard error** is our term for the **standard deviation of a sampling distribution**.
+
+<<<<<<< Updated upstream
+I mentioned that as $N$ increases a sampling distribution becomes narrower. In fact, under the CLT, we know exactly **how much** narrower it becomes for the sampling distribution of the mean!
+=======
+I mentioned that As $N$ increases a sampling distribution becomes narrower. In fact, under the CLT, we know exactly **how much** narrower it becomes for the sampling distribution of the mean!
+>>>>>>> Stashed changes
+
+$$\text{Standard Error (SE) of the mean} = \frac{\sigma}{\sqrt{N}}$$
+
+More precisely, the squared standard error is the variance of the ordinary distribution proportional to the sample size
+
+$$\text{SE}^2 = \frac{\sigma^2}{N}$$
+
+## Standard Error of Scorers
+
+Therefore, if I know my population of NBA scorers has a standard deviation of 6, a sampling distribution of means for $N = 44$ from this population would have
+
+<<<<<<< Updated upstream
+$$SE = \frac{6}{\sqrt{44}} = 0.90$$
+=======
+$$SE = \frac{6.5}{44} = 0.90$$
+>>>>>>> Stashed changes
+
+This means, if my population has a mean of 12, I would expect
+
+-   68% of samples to have a sample mean within 1 SE of the population mean: $12 \pm 0.90 = [11.10, 12.90]$
+-   96% of samples to have a sample mean within 2 SEs of the population mean: $12 \pm 2 \times 0.90 = [10.20, 13.80]$
+
+## $Z$-transformations
+
+<<<<<<< Updated upstream
+::: {style="font-size: 0.85em;"}
+
+-   $Z$-score transformation: converting raw data or statistics into standard deviation units
+- General formula:
+
+$$Z = \frac{x-\mu}{\sigma}$$
+
+What exactly *are* $Z$-scores?
+
+- [$Z$-scores *transform* a variable from it's original units into *standard deviation* units]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Allows us to compare different variables that may have very different units]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [e.g. How many standard deviations taller am I than the population average?]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [e.g. How many standard deviations more anxious am I the night before an exam than I am on average?]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+:::
+
+## Sampling $Z$'s
+
+We can also *transform* our *statistic* (sample mean) into a $Z$-score for our hypothesized sampling distribution
+
+
+=======
+We can also *transform* our statistic into a $Z$-score for our hypothesized sampling distribution
+
+-   $Z$-score transformation: converting raw data or statistics into standard deviation units
+>>>>>>> Stashed changes
+-  We are going to transform our sample mean, $\bar{x}$, based on the mean and standard deviation (standard error) for our proposed sampling distribution
+    -   $Z = \frac{\bar{x} - \mu}{\text{SE}} = \frac{14.5 - 12}{0.90} = 2.78$
+
+**Interpretation:** Our sample (14.5) mean is 2.78 SEs (SDs) larger than the proposed population mean (12)
+
+## How (Un)likely?
+
+We can use this information to determine exactly *how* unusual our statistic is.
+
+```{r}
+#| echo: true
+pnorm(2.78, lower.tail = FALSE)
+```
+
+If we repeatedly sampled 44 NBA players with mean points per game $\mu = 12$ and SD $\sigma = 6$, only 0.27% of those samples would have a sample mean $\bar{x} = 14.5$ or larger.
+
+Because the normal distribution is symmetric, we also might consider the possibility that a random sample would be equally surprising in the opposite direction and say only 0.54% of sample means would have a magnitude at least this far from the population mean.
+
+## [The Standard Normal Distribution]{style="font-size: 0.667em;"}
+
+```{r}
+x <- data.frame(x = c(-4, 4))
+ggplot(x, aes(x)) + stat_function(fun = dnorm) +
+  stat_function(fun = dnorm, xlim = c(-4, qnorm(.025)), geom = "area", fill = my_red) +
+  stat_function(fun = dnorm, xlim = c(qnorm(.025), qnorm(.975)), geom = "area", fill = my_blue) +
+  stat_function(fun = dnorm, xlim = c(qnorm(.975), 4), geom = "area", fill = my_red) +
+  theme_bw() +
+  labs(x = "Standard Errors", y = "",
+       title = "The Standard Normal Sampling Distribution") +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) +
+  geom_vline(aes(xintercept = qnorm(.025), size = I(2)), col = my_orange) +
+  geom_vline(aes(xintercept = qnorm(.975), size = I(2)), col = my_orange) +
+  geom_text(aes(label = "Critical Values", x = 0, y = .43), size = 6, color = my_orange) +
+  geom_text(aes(label = "Retention\nRegion\n(Area = .95)", x = -2.9, y = .3), size = 6, color = my_blue) +
+  geom_text(aes(label = "Rejection\nRegions\n(Areas sum\nto .05)", x = 2.9, y = .2), size = 6, color = my_red) +
+  geom_segment(aes(x = 1.1, xend = qnorm(.975) - .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_segment(aes(x = -1.1, xend = qnorm(.025) + .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_segment(aes(x = -2.3, xend = -1, y = .3, yend = .3), col = my_blue, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_segment(aes(x = 3, xend = 2.5, y = .11, yend = .025), col = my_red, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_curve(aes(x = 2.1, xend = -2.5, y = .2, yend = .025), col = my_red, arrow = arrow(length = unit(.1, "inches")))
+```
+
+The **standard** normal distribution is "scale free" (units are standard deviations).
+
+## Our Statistic
+
+```{r}
+
+ggplot(x, aes(x)) + 
+  stat_function(fun = dnorm) +
+  stat_function(fun = dnorm, xlim = c(-4, qnorm(.025)), geom = "area", fill = my_red) +
+  stat_function(fun = dnorm, xlim = c(qnorm(.025), qnorm(.975)), geom = "area", fill = my_blue) +
+  stat_function(fun = dnorm, xlim = c(qnorm(.975), 4), geom = "area", fill = my_red) +
+  theme_bw() +
+  labs(x = "Standard Errors", y = "",
+       title = "The Standard Normal Sampling Distribution") +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) +
+  geom_vline(aes(xintercept = qnorm(.025), size = I(2)), col = my_orange) +
+  geom_vline(aes(xintercept = qnorm(.975), size = I(2)), col = my_orange) +
+  
+  geom_vline(aes(xintercept = 2.78, size = I(1)), col = my_blue) +
+
+  annotate(
+    "text", 
+    x = 2.78, 
+    y = 0.25, 
+    label = "sample mean is\n2.78 SEs from\nhypothesized\npopulation mean", 
+    color = my_blue, 
+    size = 3.5, 
+    hjust = -0.05
+  ) +
+  
+  geom_text(aes(label = "Critical Values", x = 0, y = .43), size = 6, color = my_orange) +
+  geom_segment(aes(x = 1.1, xend = qnorm(.975) - .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_segment(aes(x = -1.1, xend = qnorm(.025) + .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches"))) 
+```
+
+This result would be very surprising if our hypothesis $\mu = 12$ were true!
+
+## Our Statistic's Area
+
+```{r}
+
+
+
+ggplot(x, aes(x)) + 
+  stat_function(fun = dnorm) +
+  stat_function(fun = dnorm, xlim = c(-4, qnorm(.025)), geom = "area", fill = my_red) +
+  stat_function(fun = dnorm, xlim = c(qnorm(.025), qnorm(.975)), geom = "area", fill = my_blue) +
+
+  stat_function(fun = dnorm, xlim = c(qnorm(.975), 2.78), geom = "area", fill = my_red) +
+  stat_function(fun = dnorm, xlim = c(2.78, 4), geom = "area", fill = my_purple) +
+  theme_bw() +
+  labs(x = "Standard Errors", y = "",
+       title = "The Standard Normal Sampling Distribution") +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) +
+  geom_vline(aes(xintercept = qnorm(.025), size = I(2)), col = my_orange) +
+  geom_vline(aes(xintercept = qnorm(.975), size = I(2)), col = my_orange) +
+  
+  geom_vline(aes(xintercept = 2.78, size = I(1)), col = my_blue) +
+
+  annotate(
+    "text", 
+    x = 2.78, 
+    y = 0.25, 
+    label = "sample mean is\n2.78 SEs from\nhypothesized\npopulation mean", 
+    color = my_blue, 
+    size = 3.5, 
+    hjust = -0.05
+  ) +
+  
+  # Text annotation for the tail past 2.78
+  annotate(
+    "text", 
+    x = 3.2, 
+    y = 0.12, 
+    label = "0.27% of the\narea of the\ndistribution", 
+    color = my_purple, 
+    size = 3.5, 
+    hjust = 0
+  ) +
+  # Arrow pointing to the shaded region past 2.78
+  annotate(
+    "segment", 
+    x = 3.2, xend = 2.9, 
+    y = 0.10, yend = 0.02, 
+    color = my_purple, 
+    arrow = arrow(length = unit(0.08, "inches"))
+  ) +
+  
+  geom_text(aes(label = "Critical Values", x = 0, y = .43), size = 6, color = my_orange) +
+  geom_segment(aes(x = 1.1, xend = qnorm(.975) - .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_segment(aes(x = -1.1, xend = qnorm(.025) + .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches")))
+```
+
+## Equally Unlikely Outcome
+
+```{r}
+# Define purple color if not already defined
+my_purple <- "#6a3d9a"
+
+ggplot(x, aes(x)) + 
+  stat_function(fun = dnorm) +
+  # Lower tail split at -2.78
+  stat_function(fun = dnorm, xlim = c(-4, -2.78), geom = "area", fill = my_purple) +
+  stat_function(fun = dnorm, xlim = c(-2.78, qnorm(.025)), geom = "area", fill = my_red) +
+  # Middle area
+  stat_function(fun = dnorm, xlim = c(qnorm(.025), qnorm(.975)), geom = "area", fill = my_blue) +
+  # Upper tail split at 2.78
+  stat_function(fun = dnorm, xlim = c(qnorm(.975), 2.78), geom = "area", fill = my_red) +
+  stat_function(fun = dnorm, xlim = c(2.78, 4), geom = "area", fill = my_purple) +
+  theme_bw() +
+  labs(x = "Standard Errors", y = "",
+       title = "The Standard Normal Sampling Distribution") +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) +
+  geom_vline(aes(xintercept = qnorm(.025), size = I(2)), col = my_orange) +
+  geom_vline(aes(xintercept = qnorm(.975), size = I(2)), col = my_orange) +
+  
+  # Vertical indicator lines
+  geom_vline(aes(xintercept = -2.78, size = I(1)), col = my_blue) +
+  geom_vline(aes(xintercept = 2.78, size = I(1)), col = my_blue) +
+
+  # Upper tail annotations
+  annotate(
+    "text", 
+    x = 2.78, y = 0.25, 
+    label = "sample mean is\n2.78 SEs from\nhypothesized\npopulation mean", 
+    color = my_blue, size = 3.5, hjust = -0.05
+  ) +
+  annotate(
+    "text", 
+    x = 3.2, y = 0.12, 
+    label ="0.27% of the\narea of the\ndistribution", 
+    color = my_purple, size = 3.5, hjust = 0
+  ) +
+  annotate(
+    "segment", 
+    x = 3.2, xend = 2.9, 
+    y = 0.10, yend = 0.02, 
+    color = my_purple, arrow = arrow(length = unit(0.08, "inches"))
+  ) +
+
+  annotate(
+    "text", 
+    x = -2.78, y = 0.25, 
+    label = "a sample mean\n-2.78 SEs from\nhypothesized\npopulation mean\nwould be\nequally unlikely", 
+    color = my_blue, size = 3.5, hjust = 1.05
+  ) +
+  annotate(
+    "text", 
+    x = -3.2, y = 0.12, 
+    label = "0.27% of the\narea of the\ndistribution",  
+    color = my_purple, size = 3.5, hjust = 1
+  ) +
+  annotate(
+    "segment", 
+    x = -3.2, xend = -2.9, 
+    y = 0.10, yend = 0.02, 
+    color = my_purple, arrow = arrow(length = unit(0.08, "inches"))
+  ) +
+  
+  geom_text(aes(label = "Critical Values", x = 0, y = .43), size = 6, color = my_orange) +
+  geom_segment(aes(x = 1.1, xend = qnorm(.975) - .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_segment(aes(x = -1.1, xend = qnorm(.025) + .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches")))
+```
+
+## NHST
+
+::: {style="font-size: 0.95em;"}
+
+This is the core logic of Null Hypothesis Significance Testing (NHST):
+
+-   Propose a sampling distribution
+-   Collect data
+-   Calculate a statistic
+-   Calculate what percentage of statistics would have a magnitude at least as extreme as the one you collected
+-   Draw a conclusion
+-   **Ronald Fisher** proposed setting $\alpha = .05$
+    -   Arbitrary cutoff to decide whether a statistic is surprising enough to conclude the null hypothesis is likely false
+    -   **Proper Interpretation:** For all true null hypotheses, I'm willing to **incorrectly** reject them 5% of the time (make Type I Error, more later!)
+
+:::
+
+
+## Hypothesis and Test
+
+<<<<<<< Updated upstream
+::: {style="font-size: 0.95em;"}
+
+=======
+>>>>>>> Stashed changes
+-   Set up a null hypothesis $H_0$
+
+  -   $H_0: \mu_{PPG} = 12$
+
+-   Set up alternative hypothesis $H_a$
+
+  -   $H_a: \mu_{PPG} \neq 12$
+
+- Conducting Test
+
+  -   Construct sampling distribution
+  -   Calculate test statistic
+  -   Determine how unlikely test statistic is for sampling distribution
+  -   If $P(\text{statistic}) < .05$, reject null hypothesis.
+    -   For a "two-tailed" test (e.g. a $Z$-test) we multiply by two to account for possibility that under the proposed sampling distribution the statistic was equally likely to have been above or below $\mu$
+
+<<<<<<< Updated upstream
+:::
+
+=======
+>>>>>>> Stashed changes
+## $Z$-test in APA
+
+Congratulations! We've just learned how to do our first statistical test: a $Z$-test
+
+Based on a sample of $N = 44$ NBA players, we conduced a $Z$-test to test the null hypothesis that they came from a population with $\mu = 12$ points per game, assuming that $\sigma = 6$. Our sample mean scored $\bar{x} = 14.5$ points per game, $Z = 2.78, p = .003$. We reject the null hypothesis that the population mean from which this sample was drawn had $\mu = 12$ points per game with known $\sigma = 6$. 
+

@@ -1,0 +1,958 @@
+---
+title: "Lecture 16: One Way ANOVA"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(readxl)
+library(tidyverse)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+```
+
+## Frequentist and Bayesian
+
+Today will give us a picture for how the rest of the course will go
+
+- We will learn about one way ANOVA as a method for comparing the means of multiple groups
+- Review the "traditional" frequentist perspective
+- Contrast this with the Bayesian approach
+- Emphasize the model based perspective
+
+
+## Analysis of Variance
+
+::: {style="font-size: 0.95em;"}
+
+Analysis of variance (ANOVA) is one of the most popular statistical tests.
+
+Today, we'll learn about the simplest case of ANOVA (one-way ANOVA):
+
+- Groups are defined between (not within) subjects
+  - Separate individuals in separate groups
+- One independent variable with 3+ independent groups
+- Can be considered generalization of independent sample $t$-test to more than two groups
+
+Although it's called the analysis of **variance**, we use ANOVA to test hypotheses about **means**. For our frequentist setup:
+
+$$H_0: \mu_1 = \mu_2 = \mu_3 = \cdots$$
+
+$$H_1: \text{at least one of the means are different}$$
+
+:::
+
+
+## Example Data
+
+Example: weight of plants under one of three conditions
+
+- Control (ctrl), 10 observations
+- Treatment 1 (trt1), 10 observations
+- Treatment 2 (trt2), 10 observations
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+#| echo: true
+data("PlantGrowth", package = "datasets")
+summary(PlantGrowth)
+```
+
+:::
+
+## Group Means
+
+```{r}
+ggplot(PlantGrowth, aes(group, weight, fill = group)) + 
+  geom_boxplot() + theme_light() + 
+  scale_fill_manual(values = c(my_purple2, my_green2, my_blue2)) + 
+  theme(legend.position = "none") + labs(x = "") + 
+  stat_summary(fun=mean, geom="point", shape=7, size=4)
+```
+
+::: {.fragment style="text-align: center; margin-top: -10px;"}
+Are these means equal **in the population?**
+:::
+
+
+## The Traditional Model
+
+Suppose subject $i$ belongs to group $g$. The observed response is $y_{ig}$.
+
+The **structural model** decomposes observations into different sources of variability (hence Analysis of **Variance**):
+
+$$\begin{align*}
+y_{ig} &= \color{#377EB8}{\mu} + \color{#4DAF4A}{(\mu_g - \mu)} + \color{#984EA3}{(y_{ig} - \mu_g)} \\
+y_{ig} &= \color{#377EB8}{\mu} + \color{#4DAF4A}{\tau_g} + \color{#984EA3}{\epsilon_{ig}}
+\end{align*}$$
+
+- $\mu$: grand mean, population mean disregarding group membership
+- $\mu_g$: population group mean for group $g$
+- $\tau_{g}$: deviation of group $g$'s mean from the grand mean
+- $\epsilon_{ig}$: deviation of individual $i$ from group $g$'s mean
+
+
+
+## [Map to General Linear Model]{style="font-size: 0.8em;"}
+
+$$\begin{align*}
+y_{ig} &= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_2 x_{2i}} + \color{#984EA3}{\epsilon_i} 
+\end{align*}$$
+
+Where $x_1$ and $x_2$ are defined as follows:
+
+|  | $g_1$ | $g_2$ | $g_3$ |
+| :---: | :---: | :---: | :---: |
+| $x_1$ | 1 | 0 | -1 |
+| $x_2$ | 0 | 1 | -1 |
+
+::::: {.columns .v-center-container}
+::: {.column width="30%"}
+And
+
+- $\beta_0: = \mu$
+- $\beta_1: = \mu_{1} - \mu$
+- $\beta_2: = \mu_{2} - \mu$
+
+:::
+
+::: {.column width="70%"}
+
+::: {style="font-size: 0.75em;"}
+
+
+[What about $\mu_{3}$?]{.fragment}
+
+
+
+[Let's say $\mu = 2$, $\mu_{1} = 1$, and $\mu_{2} = 3$ (equal sample sizes in each group). What is $\mu_3?$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+
+:::: {.content-visible unless-meta="params.v0"}
+::: {.answer .fragment}
+$\mu_{3} = \mu - (\mu_{1} - \mu) - (\mu_{2} - \mu) =$
+$2 - (1 - 2) - (2 - 2) = 3$
+:::
+::::
+
+:::: {.content-visible unless-meta="params.v0"}
+::: {.answer .fragment}
+$\mu_{3} = \mu - (\mu_{1} - \mu) - (\mu_{2} - \mu) =$
+$\beta_0 - \beta_1 - \beta_2$
+:::
+[Coding $g - 1$ $x$'s give us all the info about $g$ group means]{.answer .fragment .content-visible unless-meta="params.v0"}
+:::
+::::
+
+
+
+:::
+::::: 
+
+
+## Coding Options
+
+::: {style="font-size: 0.75em;"}
+
+
+Effects or contrast coding compares $g-1$ groups to $\beta_0 =$ **grand mean**:
+
+| Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| $x_1$ | 1 | 0 | $\cdots$ | 0 | -1 |
+| $x_2$ | 0 | 1 | $\cdots$ | 0 | -1 |
+| $\vdots$ | $\vdots$ | $\vdots$ | $\ddots$ | $\vdots$ | $\vdots$ |
+| $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | -1 |
+
+
+Dummy coding compares $g-1$ groups to $\beta_0 =$ **reference group mean**:
+
+| Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| $x_1$ | 1 | 0 | $\cdots$ | 0 | 0 |
+| $x_2$ | 0 | 1 | $\cdots$ | 0 | 0 |
+| $\vdots$ | $\vdots$ | $\vdots$ | $\ddots$ | $\vdots$ | $\vdots$ |
+| $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | 0 |
+
+Coding scheme of choice **only matters for interpreting coefficients** ($\beta$'s)
+
+:::
+
+## Coding Scheme Comparison
+
+$$\begin{align*}
+y_{ig} &= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_2 x_{2i}} + \color{#984EA3}{\epsilon_i} 
+\end{align*}$$
+
+
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+**Contrast/Effects coding:**
+
+- $\beta_0: = \mu$
+- $\beta_1: = \mu_{1} - \mu$
+- $\beta_2: = \mu_{2} - \mu$
+
+Compares groups to **grand mean**
+
+:::
+
+::: {.column width="50%"}
+
+**Dummy coding:**
+
+- $\beta_0: = \mu_3$
+- $\beta_1: = \mu_{1} - \mu_3$
+- $\beta_2: = \mu_{2} - \mu_3$
+
+Compares groups to **reference group mean** (in this case group three)
+
+:::
+:::::
+
+
+## Decomposition
+
+Sticking with the traditional model structure:
+
+$$y_{ig} = \color{#377EB8}{\mu} + \color{#4DAF4A}{\tau_g} + \color{#984EA3}{\epsilon_{ig}}$$
+
+From this equation, scores are affected by three effects:
+
+- [**Overall mean effect**]{style="color: #377EB8;"}
+- [**Between Group (treatment) effect**]{style="color: #4DAF4A;"}
+- [**Within Group effects (individual differences)**]{style="color: #984EA3;"}
+
+In ANOVA, we consider the magnitude of these effects by **decomposing** the [**total variance**]{style="color: #377EB8;"} into [**Between**]{style="color: #4DAF4A;"} and [**Within**]{style="color: #984EA3;"} group effects.
+
+
+## Decomposition Visual
+
+```{r}
+#| message: false
+mn <- mean(PlantGrowth$weight)
+
+p1 <- ggplot(PlantGrowth, aes(x = 1, y = weight, shape = group)) + 
+  geom_point(size = 2, color = my_blue) + theme_light() +  
+  scale_shape_manual(values = c(8, 18, 16)) + 
+  ylim(c(3.5,7)) +
+  theme(legend.position = "none", axis.text.x = element_blank(),
+        strip.background = element_rect(fill=my_blue)) + 
+  labs(x = "") + facet_wrap(~"Total Variance") + geom_hline(yintercept = mn, 
+                                                            linetype = 2, color = my_blue)
+
+p2 <- ggplot(PlantGrowth %>% group_by(group) %>% summarize(mean = mean(weight)),
+       aes(group, mean, shape = group)) + geom_point(size = 8, color = my_green) + theme_light() + 
+    scale_shape_manual(values = c(8, 18, 16)) + 
+  ylim(c(3.5,7)) + xlab(NULL) +
+  theme(legend.position = "none",
+        strip.background = element_rect(fill=my_green))  + facet_wrap(~"Group Means")  + geom_hline(yintercept = mn, 
+                                                            linetype = 2, color = my_blue)
+
+PlantGrowth <- PlantGrowth %>% group_by(group) %>% mutate(mean = mean(weight))
+
+plantmns <- PlantGrowth %>% group_by(group) %>%
+  summarize(weight = 0)
+
+p3 <- PlantGrowth %>% group_by(group) %>% 
+  mutate(weight = weight - mean(weight)) %>% 
+  ggplot(aes(group, weight, shape = group)) + 
+  geom_point(size = 3, color = my_purple) + 
+    geom_point(aes(group, weight, shape = group), data = plantmns, size = 8,
+             color = my_green) + theme_light() + 
+    scale_shape_manual(values = c(8, 18, 16)) + 
+  labs(x = NULL, y = "deviation scores") + 
+  ylim(c(-1.5,2)) +
+  theme(legend.position = "none",
+        strip.background = element_rect(fill=my_purple)) + 
+  facet_wrap(~"Variance Within Groups") + geom_hline(yintercept = 0, 
+                                                            linetype = 2, color = my_green)
+
+gridExtra::grid.arrange(p1, p2, p3, nrow = 1)
+```
+
+
+
+## Variance of Means
+
+::: {style="font-size: 0.8em;"}
+
+In the one-way ANOVA, the null hypothesis for $G$ groups is
+
+$$H_0: \mu_1 = \mu_2 = \cdots = \mu_G$$
+
+An equivalent way to express this is:
+
+$$H_0: \mu_1 - \mu_2 = \mu_1 - \mu_3 = \cdots = \mu_{-1} - \mu_G = 0$$
+
+Or, more succinctly 
+
+$$H_0: \frac{\sum_{g=1}^G (\mu_g - \mu)^2}{G-1} = 0$$
+
+**In English:** 
+
+- If **population** group means are equal, then the **population** variance of group means equals 0
+- **The problem (the one we always have):** even if $H_0$ is true, not all **sample** group means will be equal due to random sampling variation
+
+:::
+
+
+
+## Sums of Squares I
+
+We want to separate the variability in data into:
+
+- Variability between different group means
+- Variability within groups
+
+**Step 1**: Sums of Squares (SS)
+
+- Sound familiar? Think: numerator of the variance
+
+$$s^2 = \frac{\sum(x - \bar{x})^2}{N-1}$$
+
+$$SS = \sum(x - \bar{x})^2$$
+
+## Sums of Squares II
+
+We want to separate the variability in data into:
+
+- Variability between different group means
+- Variability within groups
+
+**Step 1**: Sums of Squares
+
+- In ANOVA we **decompose** the Sums of Squares into three components: 
+  - Sum of squares total ($SST$)
+  - Sum of squares between groups/treatments ($SSB$)
+  - Sum of squares within groups (error, residuals) ($SSW$)
+
+## Sums of Squares III
+
+::: {style="font-size: 0.8em;"}
+
+Individual scores $y_{ig}$:
+
+- $i$: individual indicator
+- $g$: group indicator
+- $n_g$: number of observations in group $g$
+- $\bar{y}$: sample grand mean (of all scores)
+
+Sample variation of $y = \sum_g\sum_i(y_{ig} - \bar{y})^2$
+
+$$\begin{align*}
+\underbrace{\sum_g\sum_i(y_{ig} - \bar{y})^2}_{\color{#377EB8}{SST}} &= \underbrace{\sum_gn_g(\bar{y}_g - \bar{y})^2}_{\color{#4DAF4A}{SSB}} + \underbrace{\sum_g\sum_i(y_{ig} - \bar{y}_g)^2}_{\color{#984EA3}{SSW}}
+\end{align*}$$
+
+- [**$SST$**]{style="color: #377EB8;"}: total variation of participants scores (total effect)
+- [**$SSB$**]{style="color: #4DAF4A;"}: total variation between groups (between-group effect)
+- [**$SSW$**]{style="color: #984EA3;"}: variation within groups (within-group effect)
+
+::: 
+
+## Sums of Squares IV
+
+::: {style="font-size: 0.8em;"}
+
+Plant Data: Overall $\bar{y} = 5.073$
+
+<style>
+.grouped-table table {
+  border-collapse: collapse;
+}
+/* Border before 1st column */
+.grouped-table th:nth-child(1),
+.grouped-table td:nth-child(1) {
+  border-left: 2px solid #444;
+}
+/* Borders after 2nd, 4th, and 6th columns */
+.grouped-table th:nth-child(2),
+.grouped-table td:nth-child(2),
+.grouped-table th:nth-child(4),
+.grouped-table td:nth-child(4),
+.grouped-table th:nth-child(6),
+.grouped-table td:nth-child(6) {
+  border-right: 2px solid #444;
+}
+</style>
+
+::: {.grouped-table}
+| Control | | Treatment 1 | | Treatment 2 | |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| 4.17 | 4.61 | 4.81 | 3.83 | 6.31 | 5.29 |
+| 5.58 | 5.17 | 4.17 | 6.03 | 5.12 | 4.92 |
+| 5.18 | 4.53 | 4.41 | 4.89 | 5.54 | 6.15 |
+| 6.11 | 5.33 | 3.59 | 4.32 | 5.50 | 5.80 |
+| 4.50 | 5.14 | 5.87 | 4.69 | 5.37 | 5.26 |
+| **$\bar{y}_1 = 5.03$** | | **$\bar{y}_2 = 4.66$** | | **$\bar{y}_3 = 5.53$** | |
+:::
+$$SST = (4.17 - 5.073)^2 + (5.58 - 5.073)^2 + \cdots + (5.26 - 5.073)^2 = \mathbf{14.26}$$
+
+$$SSB = 10(5.03 - 5.073)^2 + 10(4.66 - 5.073)^2 + 10(5.53 - 5.073)^2 = \mathbf{3.77}$$
+
+$$SSW = (4.17 - 5.03)^2 + \cdots + (4.81 - 4.66)^2 + \cdots + (5.26 - 5.53)^2 = \mathbf{10.49}$$
+
+$$SSW = SST - SSB = 14.26 - 3.77 = \mathbf{10.49}$$
+
+:::
+
+## Mean Squares I
+
+**Step 2**: Find **degrees of freedom** and calculate **mean squares**
+
+::: {style="font-size: 0.85em;"}
+
+| Component | Sum of Squares | Degrees of Freedom | Mean Squares |
+| :--- | :--- | :--- | :--- |
+| **Between-group effect** | $\sum_{g}n_g(\bar{y}_{g}-\bar{y})^{2}$ | $dfB = G - 1$ | $MSB = \frac{SSB}{dfB}$ |
+| **Within-group effect** | $\sum_{g}\sum_{i}(y_{ig}-\bar{y}_{g})^{2}$ | $dfW = N - G$ | $MSW = \frac{SSW}{dfW}$ |
+| **Total effect** | $\sum_{g}\sum_{i}(y_{ig}-\bar{y})^{2}$ | $dfT = N - 1$ | $MST = \frac{SST}{dfT} = s^2_y$ |
+
+$$SST = SSB + SSW \qquad dfT = dfB + dfW$$
+
+- $G$: number of groups
+- $N$: total sample size
+
+:::
+
+## Mean Squares II
+
+::: {style="font-size: 0.7em;"}
+
+Mean square $= SS / df$
+
+**Interpretation:** Mean squares can be interpreted like variances
+
+- $MST$: overall variance of $y$ across participants and groups
+- $MSB$: variance of the between-group effect
+- $MSW$: variance of the within-group effect (residual/error variance)
+
+:::: {.columns}
+
+::: {.column width="55%"}
+::: {style="background-color: #e8f5e9; border-left: 4px solid #4DAF4A; padding: 10px; margin-bottom: 10px;"}
+**Across repeated sampling:**
+
+$$\text{mean}(MSB) = N\theta^2_B + \sigma^2_W$$
+$$\text{mean}(MSW) = \sigma^2_W$$
+
+- $\theta^2_B$: population variance of between-group effect
+- $\sigma^2_W$: population variance of within-group effect
+:::
+:::
+
+::: {.column width="45%"}
+::: {style="background-color: #e3f2fd; border-left: 4px solid #377EB8; padding: 10px; margin-bottom: 10px;"}
+**If $H_0$ is true:**
+
+$$\theta^2_B = 0$$
+:::
+
+::: {style="background-color: #ffebee; border-left: 4px solid #E41A1C; padding: 10px;"}
+**If $H_1$ is true:**
+
+$$\theta^2_B > 0$$
+:::
+:::
+
+::::
+
+So what comparison does this imply for our test in terms of our **sample** statistics?
+
+
+
+:::
+
+
+## Mean Squares III
+
+::: {style="font-size: 0.7em;"}
+
+:::: {.columns}
+
+::: {.column width="55%"}
+::: {style="background-color: #e8f5e9; border-left: 4px solid #4DAF4A; padding: 10px;"}
+**Across repeated sampling:**
+
+$$\text{mean}(MSB) = N\theta^2_B + \sigma^2_W$$
+$$\text{mean}(MSW) = \sigma^2_W$$
+
+- $\theta^2_B$: population variance of between-group effect
+- $\sigma^2_W$: population variance of within-group effect
+:::
+:::
+
+::: {.column width="45%"}
+::: {style="background-color: #e3f2fd; border-left: 4px solid #377EB8; padding: 10px; margin-bottom: 10px;"}
+**If $H_0$ is true:**
+
+$$\text{mean}(MSB) = N(0) + \sigma^2_W$$
+$$\text{mean}(MSW) = \sigma^2_W$$
+
+$$\frac{\text{mean}(MSB)}{\text{mean}(MSW)} = 1$$
+:::
+
+::: {style="background-color: #ffebee; border-left: 4px solid #E41A1C; padding: 10px;"}
+**If $H_1$ is true:**
+
+$$\text{mean}(MSB) = N(\theta^2_B) + \sigma^2_W$$
+$$\text{mean}(MSW) = \sigma^2_W$$
+
+$$\frac{\text{mean}(MSB)}{\text{mean}(MSW)} > 1$$
+:::
+:::
+
+::::
+
+:::
+
+
+## ANOVA Table
+
+::: {style="font-size: 1.1em;"}
+
+| | **SS** | **df** | **MS** |
+| :--- | :---: | :---: | :---: |
+| **Between Groups** | 3.77 | 2 | 1.88 |
+| **Within Groups** | 10.49 | 27 | 0.39 |
+| **Total** | 14.26 | 29 | |
+
+:::
+
+## $F$ Distribution
+
+The $F$ distribution includes two parameters:
+
+- Numerator $df$ ($dfB$)
+- Denominator $df$ ($dfW$)
+
+Properties of the $F$ distribution:
+
+- $F$ is defined on the interval $[0, \infty]$
+- The $t$ distribution is equivalent to a special case of the $F$ distribution
+  - If $dfB = 1$, $F(1, dfW) = t(dfW)^2$
+
+## $F$ Distribution Visual
+
+```{r}
+x <- tibble(x = seq(.3, 5, length = 100))
+x <- x %>% mutate("dfB = 1, dfW = 1" = df(x, 1, 1),
+           "dfB = 1, dfW = 3" = df(x, 1, 3),
+           "dfB = 3, dfW = 10" = df(x, 3, 10),
+           "dfB = 3, dfW = 20" = df(x, 3, 20),
+           "dfB = 20, dfW = 20" = df(x, 20, 20))
+x <- x %>% pivot_longer("dfB = 1, dfW = 1":"dfB = 20, dfW = 20", 
+                        names_to = "type", values_to = "density")
+ggplot(x, aes(x, density, group = type, col = type)) + 
+geom_path(linewidth = 1.5) + theme_light() + 
+scale_color_manual(values = c(my_blue, my_purple, my_red, my_green, my_orange)) + 
+  xlab(NULL) + 
+theme(legend.title = element_blank())
+```
+
+## Hypothesis Testing
+
+- $H_0: \mu_1 = \mu_2 = \cdots = \mu_G$
+- $H_1$: at least one population mean is different
+
+Test statistic: $F$-statistic
+
+$$F(dfB, dfW) = \frac{MSB}{MSW}$$
+
+- $dfB = G - 1 \qquad (G = \text{number of groups})$
+- $dfW = N - G \qquad (N = \text{total sample size})$
+
+When $H_0$ is true, $F$ test statistic follows the $F$ distribution with $dfB$ numerator and $dfW$ denominator degrees of freedom.
+
+These calculations work for any number of groups and any group sizes.
+
+## ANOVA Table and Test
+
+::: {style="font-size: 1.1em;"}
+
+| | **SS** | **df** | **MS** | **F** | **p** |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Between Groups** | 3.77 | 2 | 1.88 | 4.85 | .02 |
+| **Within Groups** | 10.49 | 27 | 0.39 | | |
+| **Total** | 14.26 | 29 | | | |
+
+:::
+
+**Interpretation:** Were the null hypothesis true, there is only a 2% chance we would have observed variance between group means at least this large.
+
+## Effect Size
+
+
+## Effect Sizes
+
+**$d$-family**: standardized **difference** between groups
+- Cohen's $d$: standardized mean differences between pairs of groups
+- Will come back to this more next time
+
+**$r$-family**: standardized **association** between two variables
+- $\eta^2$ aka $R^2$: proportion of variance of outcome accounted for by predictor (group membership)
+- $\omega^2$: adjusted $\eta^2$
+- $f^2$: used for statistical power analysis
+
+
+## $\eta^2$ Effect Size
+
+$$\eta^2 = \frac{SSB}{SST} = \frac{SSB}{SSB + SSW} = R^2 = 1 - \frac{s^2_{\epsilon}}{s^2_y} = \frac{s_{\hat{y}}^2}{s_y^2}$$
+
+
+
+**Interpretation:**
+
+- Proportion of variation of outcome accounted for by group differences
+- Usually $\eta^2$ in ANOVA and $R^2$ in regression (more later)
+- Is a positively biased statistic to the population parameter
+- Positive bias: on average, statistic is larger than the parameter
+  - We are more likely to think our effect is too large than too small due to sample variation
+  - Sometimes called "overfit"
+
+
+## $f^2$ Effect Size
+
+$r$-family effect size measure, mostly used for conducting power analyses.
+
+$$f^2 = \frac{\eta^2}{1 - \eta^2} = \frac{SSB}{SSW}$$
+
+**Interpretation:** Ratio of between-group variability to within-group variability.
+
+Cohen's (1988, 1992) suggestions:
+
+- $f = 0.10, f^2 = 0.0100, \eta^2 = 0.010$: small effect
+- $f = 0.25, f^2 = 0.0625, \eta^2 = 0.059$: medium effect
+- $f = 0.40, f^2 = 0.1600, \eta^2 = 0.138$: large effect
+
+In practice, you may want to report effect size in terms of $\eta^2$ instead of $f^2$ because it is easier to interpret.
+
+## $\omega^2$ Effect Size
+
+$\omega^2$ is less biased than $\eta^2$:
+
+$$\omega^2 = \frac{SSB - (G - 1)\times MSW}{SST + MSW}$$
+
+- $G$: number of groups
+- Similar (but not identical to) to adjusted $R^2$ in regression (more later)
+- $\omega^2$ is not completely unbiased)
+
+**Interpretation:** Same interpretation as $\eta^2$ (proportion of variation accounted for by group differences).
+
+## The Story So Far
+
+- This is known as the "omnibus" test
+    - Is there **any** difference in group means **anywhere** among **all** groups?
+    - Says nothing about which specific groups differ
+    - Will get to that next time!
+- This is a bit awkward from a Bayesian perspective
+    - Some would argue all we really want to do in Bayes is obtain probability distributions about what the means of each group are likely to be
+      - Can then directly compare groups to one another
+    - Closest corollary is Bayes factor
+    - How much more/less likely is it that the means differ than they do not?
+    
+
+
+## Bayes Factor Refresher
+
+Bayes Factors are a way of comparing the support for different models in a Bayesian framework.
+
+They are ratios of posterior likelihoods between competing models. If we have two possible models for the same data, $M_1$ and $M_2$.
+
+$$BF = \frac{P(\boldsymbol{D}|M_1)}{P(\boldsymbol{D}|M_2)}$$
+
+- When $BF = 1$ the two models are equally likely
+- When $BF > 1$ then $M_1$ is more likely than $M_2$
+  - When $BF = 3$, $M_1$ is three times as likely to be the "true" model as $M_2$
+- When $BF < 1$, $M_2$ is more likely than $M_1$
+    - When $BF = \frac{1}{3}$, $M_2$ is three times as likely to be the "true" model as $M_1$
+
+
+## Bayes Factor Setup
+
+**Traditional ANOVA Model Setup**
+
+- $\boldsymbol{M_2}: y_{ig} = \color{#377EB8}{\mu} + \color{#984EA3}{\epsilon_{ig}}$
+- $\boldsymbol{M_1}: y_{ig} = \color{#377EB8}{\mu} + \color{#4DAF4A}{\tau_g} + \color{#984EA3}{\epsilon_{ig}}$
+
+**General Linear Model Setup**
+
+- $\boldsymbol{M_2}: y_{ig} = \color{#377EB8}{\beta_0} + \color{#984EA3}{\epsilon_{ig}}$
+-  $\boldsymbol{M_1}: y_{ig} = \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\sum_{p=1}^{g-1}\beta_p x_{p}} + \color{#984EA3}{\epsilon_i}$
+
+Where $x_p$ and are $g-1$ coded categorical variables representing group membership.
+
+**Interpretation:** The means being different is $BF$ times as likely as the means being equal
+
+## Jeffreys Lindley Paradox
+
+
+
+When using Bayes factors to "test the null hypothesis" that all means are equal
+
+- Using a "weaker" prior, e.g. $\text{normal}(0, 10)$, for the $\beta$'s can be more likely to support the null model $M_2$
+- Using a "stronger" prior, e.g. $\text{normal}(0, 1)$, for the $\beta$'s can be more likely to support the full model $M_1$
+
+Why would a stronger prior that the null hypothesis is likely to be **true** make it so a Bayes factor would say that a model that represents an **alternative** hypothesis is more likely than the null?
+
+## Jeffreys Lindley Reason
+
+Remember, priors are probability distributions, not point hypotheses
+
+- Stronger prior means there is more support for no difference, but **also** that very small differences are more likely than very large differences
+    - Will make posterior likelihood larger if there are only small differences in the sample means
+- Weaker prior will give less support to very small differences
+    - Posterior likelihood less likely to be concentrated in regions reflecting small differences
+
+**If unsure, do analysis with a few different priors** (sensitivity analysis)
+
+
+::: {style="font-size: 0.6em;"}
+Robert, C. P. (2014). On the Jeffreys-Lindley paradox. Philosophy of Science, 81(2), 216-232. [https://doi.org/10.1086/675729](https://doi.org/10.1086/675729)
+:::
+
+## Posterior Predictive
+
+Philosophically Bayesian inference is more about using probability to represent belief.
+
+- The **posterior predictive distribution** is a probability distribution representing our belief about possible values $y$ values might take on conditional on given $x$ values
+    - E.g., a probability distribution representing plausible values for a random member from a specific group
+    - If posterior predictive distribution for all groups are very similar, it means we believe differences between groups are small
+    - If posterior predictive distributions for some groups are very different, it means we believe differences between groups are large
+    
+## Bayesian $R^2$
+
+::: {style="font-size: .9em;"}
+
+Because Bayesian estimates aren't deterministic the way the simple frequentist ANOVA algorithm is, the traditional $R^2$ is not guaranteed to be $0 \leq R^2 \leq 1$
+
+- Means it is possible for the model to explain more than the total variance
+    - Not a sensible interpretation!
+    
+Alternative:
+
+$$\text{Bayesian } R^2 = \frac{s_{\hat{y}}^2}{s_{\hat{y}}^2 + s_{\epsilon}^2}$$
+
+
+- Is guaranteed to be $0 \leq \text{Bayesian } R^2 \leq 1$
+- Same interpretation as $\eta^2$ and $R^2$
+
+::: 
+
+
+
+## Another Example
+
+```{r}
+
+
+dat <- read_xls("../../data/Williams data.xls")
+
+dat <- dat %>% mutate(average_bond = (SIB_BOND + PAR_BOND + HOME_BOND) / 3) %>%
+  filter(!is.na(average_bond)) %>%
+  mutate(condition = recode(factor(COND), "1" = "close", "2" = "intermediate", "3" = "distant")) %>% dplyr::select(-COND)
+
+dat2 <- dat %>% 
+  pivot_longer(c(SIB_BOND:HOME_BOND, average_bond), names_to = "type", values_to = "strength") %>%
+  mutate(type = recode(type, SIB_BOND = "Sibling", PAR_BOND = "Parent", HOME_BOND = "Home"))
+
+ggplot(dat2 %>% filter(type == "average_bond")) + 
+  geom_boxplot(aes(x = condition, y = strength, fill = condition)) + 
+  scale_fill_manual(values = c(my_purple2, my_green2, my_blue2)) + 
+  theme(legend.position = "bottom") + theme_light() + 
+  facet_grid(. ~ "Average of Bond Types") + 
+  labs(x = "", y = "average bond strength rating") + 
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) + 
+  stat_summary(aes(x = condition, y = strength), fun=mean, geom="point", shape=7, size=4)
+```
+
+
+
+## ANOVA in R: Way 1
+
+The default `R` way to estimate an ANOVA model is with the `aov()` function using formula syntax.
+
+We can then get the $F$-test with the `summary()` function.
+
+```{r}
+#| echo: true
+a1 <- aov(average_bond ~ condition, dat)
+summary(a1)
+```
+
+## ANOVA in R: Way 2
+
+Between subjects one-way ANOVA in R is easy. Later it gets confusing when we have within subjects designs. The `ez` package and `ezANOVA()` function can do both easily, though you have to make sure to specify a subject ID as `wid = ID` even for between subjects analysis.
+
+```{r}
+#| echo: true
+#| warning: false
+#| message: false
+library(ez)
+ez1 <- ezANOVA(data = dat, dv = average_bond, wid = SUBJ, 
+               between = condition)
+ez1$ANOVA
+```
+
+What do you think `ges` might be?
+
+[Stands for **generalized** $\eta^2$ (same as our $\eta^2$) so far, slightly different in some other cases]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+## $\eta^2$ Example
+
+```{r}
+summary(a1)
+```
+
+$$\eta^2 = \frac{SSB}{SSB + SSW} = \frac{0.49}{0.49 + 125.9} = .004$$
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+library(effectsize)
+eta_squared(a1)
+```
+
+
+
+## $\omega^2$ Example
+
+```{r}
+summary(a1)
+```
+
+$$\omega^2 = \frac{SSB - (G - 1)\times MSW}{SST + MSW} = \frac{0.49 - (2)\times 1.03}{0.49 + 125.9 + 1.03} = -0.01$$
+
+*(Yes, $\omega^2$ can be negative, but we generally just interpret that as $\omega^2 = 0$, or more precisely, $\omega^2 < .001$)*
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+omega_squared(a1)
+```
+
+## Bayesian Version
+
+By default, most `R` packages use dummy coding. What is the reference group in this output? ["Close", since the coefficients represent "intermediate" and "distant" (differences with "close")]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+```{r}
+#| echo: true
+library(rstanarm)
+options(mc.cores = parallel::detectCores())
+```
+
+```{r}
+#| echo: true
+#| cache: true
+stan_lm1 <- stan_glm(average_bond ~ condition, dat, family = "gaussian",
+                     diagnostic_file = "df1.csv")
+
+summary(stan_lm1)
+```
+
+## Posterior Predictive Example
+
+For one way ANOVA, we can use the `emmeans::emmeans()` function to get posterior predictive distributions with 95% HPD credible intervals
+
+```{r}
+#| echo: true
+#| cache: true
+library(emmeans)
+em1 <- emmeans(stan_lm1, ~ condition)
+summary(em1, point.est = "mean")
+
+```
+
+
+## Bayesian $R^2$
+
+```{r}
+#| echo: true
+#| cache: true
+library(performance)
+r2_bayes(stan_lm1)
+```
+
+
+## Bayes Factors
+
+```{r}
+#| echo: true
+#| cache: true
+library(bayestestR)
+stan_lm2 <- stan_glm(average_bond ~ 1, dat, family = "gaussian",
+                     diagnostic_file = "df2.csv")
+
+(bfs1 <- bayesfactor_models(stan_lm2, stan_lm1))
+
+
+```
+## Jeffreys Lindley Paradox
+
+Let's see what happens if I use a stronger prior that the $\beta$'s are 0 (more likely that there are no group differences)
+
+```{r}
+#| echo: true
+#| cache: true
+stan_lm1a <- stan_glm(average_bond ~ condition, dat, family = "gaussian",
+                      prior = normal(0, .1),
+                     diagnostic_file = "df1a.csv")
+
+(bfs1 <- bayesfactor_models(stan_lm2, stan_lm1a))
+
+```
+
+
+Bayes factor now says the full model is about as likely than the null model!
+

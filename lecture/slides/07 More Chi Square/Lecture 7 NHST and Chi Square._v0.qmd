@@ -1,0 +1,880 @@
+---
+title: "Lecture 7: NHST and Chi-Square"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: true 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(gganimate)
+library(gifski)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+
+bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
+                                                draft_year != "")
+
+```
+
+## Last Time
+
+-   We learned how **sampling distributions** provide the conceptual foundation of **null hypothesis significance testing** (NHST)
+    -   $Z$-test
+        -   Test of a hypothesis about a continuous variable
+        -   Were our sampled NBA players consistent with a population that scored 12 points per game?
+-   The $Z$-test allows us to test a specific hypothesis about a continuous variable, but **assumes we know the population value of** $\sigma$
+    -   Major limitation! But good for building a conceptual foundation
+    
+
+## NHST Procedure
+
+::: {style="font-size: 0.9em;"}
+
+1. Specify null hypothesis $H_0$
+2. Specify sampling distribution of **test statistic** based on the null hypothesis
+    - **Test statistic:** Some transformation of one or more descriptive statistics from your sample that correspond to a research question
+    - E.g.: Transform **sample mean** $\bar(x)$ to a $Z$-score based on the **population mean** defined by the null hypothesis $\mu_0$ and the standard error
+3. Specify $\alpha$ value
+    - Value such that, if the test statistic is sufficiently **improbable** based on our sampling distribution, we reject the null hypothesis
+    - Usually $\alpha = .05$
+    - Arbitrary convention adopted because of off-the-cuff comment by Fisher 
+    - How "how unlikely" is "sufficiently unlikely"?
+    
+::: 
+
+## More NHST Procedure
+
+4. Determine probability of observing a test statistic as or more unlikely as the test statistic obtained from your sample under the null hypothesis
+    - I.e., what proportion of test statistics would be as or more extreme
+    - This is a $p$-value
+    - Represents the probability of our test statistic (or any test statistic less likely than our test statistic) **assuming the null hypothesis is true**
+    - If sampling distribution is symmetrical, might include chance of observing of equally unlikely outcome in **opposite direction**
+      - Means we multiply $p \times 2$
+      
+## [Even More NHST Procedure]{style="font-size: 0.667em;"}
+
+
+5. If $p >  \alpha$, do not reject null hypothesis
+    - Choose to believe Null hypothesis remains a plausible explanation for our observed statistic
+6. If $p \leq \alpha$, reject null hypothesis
+    - Choose to believe Null hypothesis is implausible explanation for our observed statistic
+    
+**Important:** Why do we either reject or fail to reject the null? Why do we not confirm the null?
+
+- [There are many different possible population values for a parameter that sample statistics are typically consistent with. We rarely have strong evidence **for** an **exact** null hypothesis. The null is a plausible explanation for our data, but not the **only** plausible explanation]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Dated Reframing
+
+::: {style="font-size: 0.9em;"}
+
+Before it was easy to compute exact $p$-values with computers, an alternative approach was more common
+
+- Define the **critical value:** value of test statistic that corresponds to $\alpha = .05$
+    - If null is true, 5% of test statistics would be as or more extreme than this value
+    - For a standard normal distribution with $\alpha = .05$: 
+      - $Z$ = 1.68 is the critical value for a one-tailed test
+      - $Z$ = 1.96 is the critical value for a two-tailed test
+- **For lower tailed test:** if test statistic $<$ critical value, reject
+- **For upper tailed test:** if test statistic is $>$ critical value, reject
+- **For two-tailed test:** if |test statistic| $>$ critical value, reject
+    - Observed mean that is 1.96 (or more) standard errors away from the null hypothesis is more extreme than critical value
+
+:::
+
+## Example
+
+::: {style="font-size: 0.9em;"}
+
+**Research question:** Do NBA players who play the shooting guard position score more than 12 points per game (PPG) on average 
+
+- Maybe 12 PPG is based on some knowledge of historical averages I have
+    - Maybe I also know historically the standard deviation of player PPG is $\sigma = 6$ (usually won't know stuff like this)
+- I want to determine if shooting guards beat historical averages
+- I sample 44 shooting guards
+- My **sample** scores 14.5 PPG
+- How unlikely would a random sample of players be to score 14.5 PPG if their true population had $\mu = 12$, $\sigma = 6$?
+    - $H_0: \mu = 12$ 
+    - How many standard errors away from $12$ is $14.5$? 
+
+:::
+
+
+## [Null and Alternative Hypotheses]{style="font-size: 0.667em;"}
+
+
+::: {style="font-size: 0.85em;"}
+
+- Fisher's framework focused on the **null hypothesis**
+    - Did **not** include alternative hypothesis
+    - Emphasized that $\alpha$ cutoff value was arbitrary
+    - Focused more on proper interpretation of $p$-value as probability of a statistic if the null is true
+    - Small values as evidence against null
+- Alternative hypothesis introduced later by Jerzy Neyman and Egon Pearson
+    - Built around deciding between competing hypotheses
+    - $H_0$ (null) specified as **equality** 
+       - $H_0: \mu = 12$ or $H_0: \mu \leq 12$ 
+     $H_a$ (alternative) specified as **inequality**
+        - $H_a: \mu \neq 12$ or $H_a: \mu > 12$
+    - Introduced Type I, II errors, power (more later)
+
+Modern methods are weird hybrid between Fisher and Neyman/Pearson
+
+:::
+
+## Visualized Test
+
+```{r}
+x <- data.frame(x = c(-4, 4))
+
+
+ggplot(x, aes(x)) + 
+  stat_function(fun = dnorm) +
+  # Lower tail split at -2.78
+  stat_function(fun = dnorm, xlim = c(-4, -2.78), geom = "area", fill = my_purple) +
+  stat_function(fun = dnorm, xlim = c(-2.78, qnorm(.025)), geom = "area", fill = my_red) +
+  # Middle area
+  stat_function(fun = dnorm, xlim = c(qnorm(.025), qnorm(.975)), geom = "area", fill = my_blue) +
+  # Upper tail split at 2.78
+  stat_function(fun = dnorm, xlim = c(qnorm(.975), 2.78), geom = "area", fill = my_red) +
+  stat_function(fun = dnorm, xlim = c(2.78, 4), geom = "area", fill = my_purple) +
+  theme_bw() +
+  labs(x = "Standard Errors", y = "",
+       title = "The Standard Normal Sampling Distribution") +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) +
+  geom_vline(aes(xintercept = qnorm(.025), size = I(2)), col = my_orange) +
+  geom_vline(aes(xintercept = qnorm(.975), size = I(2)), col = my_orange) +
+  
+  # Vertical indicator lines
+  geom_vline(aes(xintercept = -2.78, size = I(1)), col = my_blue) +
+  geom_vline(aes(xintercept = 2.78, size = I(1)), col = my_blue) +
+
+  # Upper tail annotations
+  annotate(
+    "text", 
+    x = 2.78, y = 0.25, 
+    label = "sample mean is\n2.78 SEs from\nhypothesized\npopulation mean", 
+    color = my_blue, size = 3.5, hjust = -0.05
+  ) +
+  annotate(
+    "text", 
+    x = 3.2, y = 0.12, 
+    label ="0.27% of the\narea of the\ndistribution", 
+    color = my_purple, size = 3.5, hjust = 0
+  ) +
+  annotate(
+    "segment", 
+    x = 3.2, xend = 2.9, 
+    y = 0.10, yend = 0.02, 
+    color = my_purple, arrow = arrow(length = unit(0.08, "inches"))
+  ) +
+
+  annotate(
+    "text", 
+    x = -2.78, y = 0.25, 
+    label = "a sample mean\n-2.78 SEs from\nhypothesized\npopulation mean\nwould be\nequally unlikely", 
+    color = my_blue, size = 3.5, hjust = 1.05
+  ) +
+  annotate(
+    "text", 
+    x = -3.2, y = 0.12, 
+    label = "0.27% of the\narea of the\ndistribution",  
+    color = my_purple, size = 3.5, hjust = 1
+  ) +
+  annotate(
+    "segment", 
+    x = -3.2, xend = -2.9, 
+    y = 0.10, yend = 0.02, 
+    color = my_purple, arrow = arrow(length = unit(0.08, "inches"))
+  ) +
+  
+  geom_text(aes(label = "Critical Values", x = 0, y = .43), size = 6, color = my_orange) +
+  geom_segment(aes(x = 1.1, xend = qnorm(.975) - .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_segment(aes(x = -1.1, xend = qnorm(.025) + .1, y = .43, yend = .43), col = my_orange, arrow = arrow(length = unit(.1, "inches")))
+```
+
+
+
+
+
+
+## [More Sampling Distributions]{style="font-size: 0.667em;"}
+
+
+The following are among the most common sampling distributions for test statistics. We will cover each of these in class
+
+- $Z$-distribution (aka standard normal distribution)
+    - Example we have already seen
+    - Used for testing something about means when the **population variance is known** (it usually won't be)
+- $t$-distribution 
+    - Tests about means 
+    - Correlation coefficients
+    - Linear model coefficients
+    - **does not require known population variance**
+    - More next week
+
+
+
+## [Even More Sampling Distributions]{style="font-size: 0.667em;"}
+
+- $F$-distribution
+  - Used for testing (in)equality among many means simultaneously
+  - Many linear model coefficients simultaneously
+  - More in a few weeks
+- $\chi^2$ distribution
+  - Used for tests about **categorical variables**
+  - Whether observed proportions in different categories match expected proportions
+  - More today!
+
+## $\chi^2$ tests
+
+Today we will discuss:
+
+-   The $\chi^2$ goodness of fit test allows us to test a hypothesis about the probability of each category for a categorical variable in the population
+    -   E.g. are each flavor of gummy bear equally common? 
+- The $\chi^2$ test of independence allows us to test if membership in one category is *independent* or membership in another category.
+    - E.g. is the sentence for a crime independent of the defendant's race?
+
+
+## Back to Gummy Bears
+
+![](../../Figs/gummytypes.jpg)
+
+## Two Hypotheses
+
+In our gummy bear examples we've only thought about Pineapple so far. Now let's consider each different flavor.
+
+-   **Equal Categories (EC)**: All flavors are distributed evenly ($\frac{1}{5}$ chance each, equiprobable hypothesis)
+
+But I secretly suspect that instead:
+
+-   **Too many raspberries (TMR):** The candymakers are biased in favor of raspberry ($\frac{1}{3}$ chance) over the other flavors ($\frac{1}{6}$ chance each)
+
+I buy a party sized bag of 354 bears and randomly split it into two halves of 177 pieces each to independently test each hypothesis.
+
+## Sample 1
+
+Under the EC hypothesis, in repeated samples, my *expected frequency* of each flavor would be:
+
+$$f_{E1} = f_{E2} = f_{E3} = f_{E4} = f_{E5} = \frac{1}{5}177 =  35.4$$
+
+However, my *observed frequencies* are:
+
+$$f_{O1} =62,f_{O2} = 26, f_{O3} = 29, = f_{O4} = 28, f_{O5} = 32$$
+
+How **unlikely** are these **observed frequencies* under the hypothesis that the **expected frequencies** are the true frequencies in the population?
+
+## [Constructing our Sampling Distribution]{style="font-size: 0.667em;"}
+
+We could look at how different our observed frequencies are from our expected frequencies, but if we just do that and sum them up, what would happen?
+
+-   [The differences would cancel out to 0!]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   Instead we are going to look at *squared* differences
+
+-   We are also going to *normalize* the squared differences by dividing by the expected frequencies
+
+-   For each category, we will calculate $k$
+
+$$\frac{(F_{Ok} - F_{Ek})^2}{F_{Ek}}$$
+
+## [The $\chi^2$ Distribution]{style="font-size: 0.667em;"}
+
+::: {style="font-size: 0.9em;"}
+Under the CLT, if I have a large enough sample size, each of these will *separately* be distributed standard normal *squared*
+
+-   Take every value in a normal distribution with $\mu = 0$, $\sigma = 1$ and square them
+
+The sum of multiple squared random standard normal variables has a known distributional form of it's own: the $\chi^2$ distribution.
+
+-   Any $\chi^2$ distribution has degrees of freedom equal to the number of elements that can freely vary. 
+    - How many of our flavors can freely vary, assuming we hold the total number of gummy bears ($N = 177$) constant?
+
+-   [Once we know the observed frequencies of four of the categories, if the total stays constant, the fifth becomes determined, so we have $K - 1 = 5 - 1 = 4$ degrees of freedom]{.answer .fragment .content-visible unless-meta="params.v0"}
+:::
+
+## The Messy Truth
+
+::: {style="font-size: 0.8em;"}
+The $\chi^2$ distribution has the following density function:
+
+$$f_{df}(\chi^2) = \frac{(\frac{1}{2})^{df/2}}{\Gamma(\frac{df}{2})} \chi^{2(df/2 - 1)} e^{-\chi^2/2}$$
+
+-   $df$: degrees of freedom
+-   $\Gamma$: the gamma function
+
+Fortunately, we never need to use this equation directly
+
+The sum of $df$ squared independent standard normal variables follows a $\chi^2$ distribution with $df$ degrees of freedom
+
+-   The $\chi^2$ distribution is defined on the interval $[0, \infty]$
+-   In the population, the $\chi^2$ distribution will have:
+      - $\mu$ = $df$
+      - $\sigma^2 = 2df$
+:::
+
+## $\chi^2$ Distributions
+
+```{r}
+d <- tibble(x = seq(.01, 10, by = .01))
+d <- d %>% mutate("1" = dchisq(x, 1), "2" = dchisq(x, 2), "3" = dchisq(x, 3),
+             "5" = dchisq(x, 5), "7" = dchisq(x, 7)) %>%
+    pivot_longer("1":"7", names_to = "df", values_to = "density")
+
+ggplot(d, aes(x, density, col = df, size = I(2))) + geom_path(na.rm = TRUE) +
+  scale_color_manual(values = c(my_red, my_orange, my_green, my_blue, my_purple)) + xlab(NULL) + ylab(NULL) +
+  lims(y = c(0, .6)) + theme_light()
+```
+
+## Sampling $\chi^2$s
+
+If our EC hypothesis is true, that means that in repeated random samples, if we calculate
+
+$$\chi^2 = \sum_{k=1}^K \frac{(F_{Ok} - F_{Ek})^2}{F_{Ek}}$$
+
+The $\chi^2$ *statistic* that results will follow a $\chi^2$ *distribution* with $df = K - 1$
+
+- Under Fisher's $\alpha = .05$ convention, if there is less than a 5% chance that we would obtain a $\chi^2$ *statistic* at least as large as the one we observe under this distribution, we reject the proposed (null) hypothesis.
+
+## $\chi^2$ Critical Value
+
+```{r}
+  x <- data.frame(x = c(0, 10))
+ggplot(x, aes(x)) + stat_function(fun = dnorm) +
+  stat_function(fun = dchisq, args = list(df = 2), xlim = c(0, qchisq(.95, 2)), geom = "area", fill = my_blue) +
+  stat_function(fun = dchisq, args = list(df = 2), xlim = c(qchisq(.95, 2), 10), geom = "area", fill = my_red) +
+  theme_light() +
+  labs(x = expression(chi^2), y = "density") +
+  geom_vline(aes(xintercept = qchisq(.95, 2), size = 1), col = my_orange) +
+  geom_text(aes(label = "Critical Value", x = 7.5, y = .49), size = 6, color = my_orange) + guides(size = "none") +
+  geom_text(aes(label = "Retention\nRegion\n(Area = .95)", x = 2.5, y = .32), size = 6, color = my_blue) +
+  geom_text(aes(label = "Rejection\nRegion\n(Area = .05)", x = 8.5, y = .15), size = 6, color = my_red) +
+  geom_segment(aes(x = 2.4, xend = 2.1, y = .25, yend = .2), col = my_blue, arrow = arrow(length = unit(.1, "inches"))) +
+  geom_segment(aes(x = 8.5, xend = 8, y = .07, yend = .015), col = my_red, arrow = arrow(length = unit(.1, "inches")))
+```
+
+## The EC Hypothesis
+
+In my first sample of gummy bears, I have 62 raspberries, 26 pineapples, 29 lemons, 28 oranges, and 32 strawberries
+
+::: {style="font-size: 0.7em;"}
+$$\chi^2_{\rm{obs}} = \frac{(62 - 35.4)^2}{35.4} + \frac{(26 - 35.4)^2}{35.4} + \frac{(29 - 35.4)^2}{35.4} + \frac{(28 - 35.4)^2}{35.4} + \frac{(32 - 35.4)^2}{35.4}  = {25.51}$$
+:::
+
+```{r}
+#| echo: true
+pchisq(25.51, df = 4, lower.tail = FALSE)
+
+```
+
+The probability of obtaining a $\chi^2$ *statistic* of at least 25.51 from a $\chi^2$ *distribution* with four degrees of freedom is $3.97 \times 10^{-5}$ (VERY unlikely)
+
+Thus, we reject the EC hypothesis.
+
+## EC Visualized
+
+```{r}
+
+
+# Extend domain to 30 to accommodate x = 25.51
+x <- data.frame(x = c(0, 30))
+
+ggplot(x, aes(x)) +
+  # Chi-square curve outline
+  stat_function(fun = dchisq, args = list(df = 4), color = "black", linewidth = 0.6) +
+  
+  # Retention region (Area = 0.95)
+  stat_function(fun = dchisq, args = list(df = 4), xlim = c(0, qchisq(.95, 4)), geom = "area", fill = my_blue, alpha = 0.8) +
+  
+  # Rejection region (Area = 0.05)
+  stat_function(fun = dchisq, args = list(df = 4), xlim = c(qchisq(.95, 4), 30), geom = "area", fill = my_red, alpha = 0.8) +
+  
+  # Critical Value Line (qchisq(.95, 4) ≈ 9.49)
+  geom_vline(xintercept = qchisq(.95, 4), color = my_orange, linewidth = 1) +
+  geom_text(aes(label = paste0("Critical Value\n(", round(qchisq(.95, 4), 2), ")"), 
+                x = qchisq(.95, 4) + 1.5, y = 0.17), size = 4.5, color = my_orange, hjust = 0) +
+  
+  # Annotated Line at 25.51 (Updated with Unicode \u03C7\u00B2)
+  geom_vline(xintercept = 25.51, color = my_red, linewidth = 1, linetype = "dashed") +
+  geom_text(aes(label = "Observed Statistic\n(\u03C7\u00B2 = 25.51, p < 0.001)", 
+                x = 24.5, y = 0.12), size = 4.5, color = my_red, hjust = 1) +
+  geom_segment(aes(x = 22, xend = 25.2, y = 0.10, yend = 0.05), 
+               color = my_red, arrow = arrow(length = unit(.1, "inches"))) +
+  
+  # Region Labels and Arrows
+  geom_text(aes(label = "Rejection\nRegion\n(Area = .05)", x = 14, y = 0.05), size = 4.5, color = my_red) +
+  geom_segment(aes(x = 13.5, xend = 11, y = 0.035, yend = 0.01), color = my_red, arrow = arrow(length = unit(.1, "inches"))) +
+  
+  # Labels and Theme
+  labs(x = expression(chi^2), y = "density", title = expression(paste("Chi-Square Distribution (", df == 4, ")"))) +
+  theme_light()
+```
+
+## The TMR Hypothesis
+
+-   **Too many raspberries (TMR):** The candymakers are biased in favor of raspberry ($\frac{1}{3}$ chance) over the other flavors ($\frac{1}{6}$ chance each)
+
+For 177 pieces, what are the *expected* frequencies in each category
+
+-   [$f_{E1} = \frac{1}{3}177 = 59, f_{E2} = f_{E3} = f_{E4} = f_{E5} = \frac{1}{6}177 =  29.5$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## The TMR $\chi^2$
+
+Now let's say I observe
+
+-   $f_{O1} =55,f_{O2} = 29, f_{O3} = 44, = f_{O4} = 30, f_{O5} = 30$
+
+What is my $\chi^2$ test statistic?
+
+::: {style="font-size: 0.7em;"}
+[$$\chi^2_{\rm{obs}} = \frac{(55 - 59)^2}{59} + \frac{(29 - 29.5)^2}{29.5} + \frac{(33 - 29.5)^2}{29.5} + \frac{(30 - 29.5)^2}{29.5} + \frac{(30 - 29.5)^2}{29.5}  = {0.712}$$]{.answer .fragment .content-visible unless-meta="params.v0"}
+:::
+
+## The TMR $p$-value
+
+And what is the probability I would observe a statistic at least this large?
+
+:::: {.content-visible unless-meta="params.v0"}
+::: fragment
+```{r}
+#| echo: true
+pchisq(0.712, df = 4, lower.tail = FALSE)
+
+```
+:::
+::::
+
+Thus, we do *not* reject the TMR hypothesis.
+
+## Visualizing the TMR
+
+```{r}
+
+
+x <- data.frame(x = c(0, 30))
+
+ggplot(x, aes(x)) +
+  stat_function(fun = dchisq, args = list(df = 4), color = "black", linewidth = 0.6) +
+  stat_function(fun = dchisq, args = list(df = 4), xlim = c(0, qchisq(.95, 4)), geom = "area", fill = my_blue, alpha = 0.8) +
+  stat_function(fun = dchisq, args = list(df = 4), xlim = c(qchisq(.95, 4), 30), geom = "area", fill = my_red, alpha = 0.8) +
+  geom_vline(xintercept = qchisq(.95, 4), color = my_orange, linewidth = 1) +
+  geom_text(aes(label = paste0("Critical Value\n(", round(qchisq(.95, 4), 2), ")"), 
+                x = qchisq(.95, 4) + 0.3, y = 0.12), size = 4, color = my_orange, hjust = 0) +
+
+  geom_vline(xintercept = 0.712, color = my_purple, linewidth = 1, linetype = "dashed") +
+  geom_text(aes(label = "Observed Statistic\n(\u03C7\u00B2 = 0.712, p = 0.950)", 
+                x = 3.2, y = 0.16), size = 4, color = my_purple, hjust = 0) +
+  geom_segment(aes(x = 3.1, xend = 0.85, y = 0.15, yend = 0.09), 
+               color = my_purple, arrow = arrow(length = unit(.1, "inches"))) +
+
+  geom_text(aes(label = "Rejection\nRegion\n(Area = .05)", x = 12.5, y = 0.05), size = 4, color = my_red) +
+  geom_segment(aes(x = 12, xend = 10.5, y = 0.035, yend = 0.01), 
+               color = my_red, arrow = arrow(length = unit(.1, "inches"))) +
+
+  labs(x = expression(chi^2), y = "density", title = expression(paste("Chi-Square Distribution (", df == 4, ")"))) +
+  theme_light()
+```
+
+## APA Style Writeup
+
+A sample of 177 gummy bears included 62 (35%) raspberry, 26 (15%) pineapple, 29 (16%) lemon, 28 (16%) orange, and 32 (18%) strawberry gummy bears. This distribution of gummy bears is significantly different from the hypothesis that each flavor occurs with equal frequency, $\chi^2(4) = 25.51, p < .001$.
+
+An independent sample of 177 gummy bears was used to test the hypothesis that raspberry gummy bears occurred twice as often as all other flavors of gummy bears. The second sample of gummy bears (55 (31%) raspberry, 29 (16%) pineapple, 33 (19%) lemon, 30 (17%) orange, 30 (17%) strawberry) is not significantly different from this hypothesis, $\chi^2(4) = 0.71, p = .95$.
+
+## Rejection and Retention
+
+**Note:** We do not treat this as evidence in favor of our specific TMR hypothesis, why?
+
+[What if our TMR hypothesis was 40% raspberry instead of 1/3 Raspberry]{.fragment}
+
+::::: {.content-visible unless-meta="params.v0"}
+:::: fragment
+::: {style="font-size: 0.67em;"}
+$$f_{E1} = .4(177) = 70.80, f_{E2} = f_{E3} = f_{E4} = f_{E5} = .15(177) =  26.55$$
+
+$$\chi^2_{\rm{obs}} = \frac{(55 - 70.8)^2}{70.8} + \frac{(29 - 26.55)^2}{26.55} + \frac{(33 - 26.55)^2}{26.55} + \frac{(30 - 26.55)^2}{26.55} + \frac{(30 - 26.55)^2}{26.55}  = {6.22}$$
+:::
+
+```{r}
+#| echo: true
+
+pchisq(6.22, df = 4, lower.tail = FALSE)
+
+```
+
+I would also be unable to reject **this** hypothesis. In fact, there are *many* hypotheses that data like this would be reasonably consistent with, and our approach does not provide a clear quantifiable way to differentiate them!
+::::
+:::::
+
+## The Other TMR
+
+```{r}
+
+
+x <- data.frame(x = c(0, 30))
+
+ggplot(x, aes(x)) +
+  stat_function(fun = dchisq, args = list(df = 4), color = "black", linewidth = 0.6) +
+  stat_function(fun = dchisq, args = list(df = 4), xlim = c(0, qchisq(.95, 4)), geom = "area", fill = my_blue, alpha = 0.8) +
+  stat_function(fun = dchisq, args = list(df = 4), xlim = c(qchisq(.95, 4), 30), geom = "area", fill = my_red, alpha = 0.8) +
+  geom_vline(xintercept = qchisq(.95, 4), color = my_orange, linewidth = 1) +
+  geom_text(aes(label = paste0("Critical Value\n(", round(qchisq(.95, 4), 2), ")"), 
+                x = qchisq(.95, 4) + 0.3, y = 0.12), size = 4, color = my_orange, hjust = 0) +
+
+  geom_vline(xintercept = 6.22, color = my_purple, linewidth = 1, linetype = "dashed") +
+  geom_text(aes(label = "Observed Statistic\n(x = 6.22, p = 0.183)", 
+                x = 8.7, y = 0.16), size = 4, color = my_purple, hjust = 0) +
+  geom_segment(aes(x = 8.6, xend = 6.4, y = 0.15, yend = 0.09), 
+               color = my_purple, arrow = arrow(length = unit(.1, "inches"))) +
+
+  geom_text(aes(label = "Rejection\nRegion\n(Area = .05)", x = 12.5, y = 0.05), size = 4, color = my_red) +
+  geom_segment(aes(x = 12, xend = 10.5, y = 0.035, yend = 0.01), 
+               color = my_red, arrow = arrow(length = unit(.1, "inches"))) +
+
+  labs(x = expression(chi^2), y = "density", title = expression(paste("Chi-Square Distribution (", df == 4, ")"))) +
+  theme_light()
+```
+
+## What Can We Say?
+
+-   We have evidence against the EC hypothesis
+-   We failed to find evidence against the TMR hypothesis
+-   This is evidence that the population is biased towards raspberries *in general*
+-   But is the population $1/3$ raspberry? 40% raspberry?
+    - Seems likely were closer to $1/3 than 40%
+    - But how much closer? We don't have a great way of quantifiably differentiating these one way or the other
+
+## Contingency Tables
+
+What if we have more than one categorical variable?
+
+We can arrange these data in a **contingency table**.
+
+*Example: Race and death penalty sentences*\
+*Data from Unah & Boger (2001), death-eligible cases in North Carolina from 1993 to 1997, white victim.*
+
+|                      | Death Sentence |         |           |
+|:---------------------|:--------------:|:-------:|:---------:|
+| **Defendant's Race** |    **Yes**     | **No**  | **Total** |
+| Nonwhite             |       33       |   251   |  **284**  |
+| White                |       33       |   508   |  **541**  |
+| **Total**            |     **66**     | **759** |  **825**  |
+
+What might we want to compare in this table?
+
+## Contingency Tables
+
+::: {style="font-size: 0.825em;"}
+Contingency tables give information about the joint, marginal, and conditional distributions of the observed variables
+
+|                      | Death Sentence |         |           |
+|:---------------------|:--------------:|:-------:|:---------:|
+| **Defendant's Race** |    **Yes**     | **No**  | **Total** |
+| Nonwhite             |       33       |   251   |  **284**  |
+| White                |       33       |   508   |  **541**  |
+| **Total**            |     **66**     | **759** |  **825**  |
+
+-   $P(\text{white} \cap \text{death sentence}) =$ [$\frac{33}{825} = .04$ (joint)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   $P(\text{nonwhite} \cap \text{death sentence}) =$ [$\frac{33}{825} = .04$ (joint)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   $P(\text{white}) =$ [$\frac{541}{825} = .66$ (marginal)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   $P(\text{nonwhite}) =$ [$\frac{284}{825} = .34$ (marginal)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   $P(\text{death sentence} | \text{white}) =$ [$\frac{33}{541} = .06$ (conditional)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   $P(\text{death sentence} | \text{nonwhite}) =$ [$\frac{33}{284} = .12$ (conditional)]{.answer .fragment .content-visible unless-meta="params.v0"}
+:::
+
+## Independence
+
+:::::: {style="font-size: 0.95em;"}
+In the $\chi^2$ test of independence, we want to know if two categorical variables are related (dependent on each other)
+
+$$H_0: \text{Categorical variables are independent}$$
+
+$$H_1: \text{Categorical variables are related}$$
+
+How do we define **independence**?
+
+::::: {.content-visible .answer unless-meta="params.v0"}
+:::: answer
+::: fragment
+If variables $X$ and $Y$ are **independent**, then $P(X \cap Y) = P(X)P(Y)$
+
+-   Joint distribution is the product of marginal distributions
+
+-   Similar to flipping two coins:
+
+$$P\left[\text{(flip 1 = heads)} \cap \text{(flip 2 = heads)}\right] = \frac{1}{2}\times\frac{1}{2} = \frac{1}{4}$$
+:::
+::::
+:::::
+::::::
+
+## Notation
+
+We next need to calculate expected frequencies based on $H_0$
+
+First, a bit of notation: We often index *rows* with a subscript *i*, and *columns* with a subscript *j*
+
+-   $R_i$: category $i$ of row variable $R$
+
+-   $C_j$: category $j$ of column variable $C$
+
+-   $N$: total number of observations
+
+-   $f_{Oi}$: observed marginal frequency for row $i$
+
+-   $f_{Oj}$: observed marginal frequency for column $j$
+
+-   $f_{Eij}$: expected joint frequency for row $i$ and column $j$
+
+## Expected Frequency
+
+We next need to calculate expected frequencies based on $H_0$
+
+To get expected frequencies, we use the **observed marginal** frequencies to determine the **expected joint** frequencies.
+
+Thus, under the assumption of independence,
+
+$$P(R_i \cap C_j) = P(R_i)P(C_j) = \bigg(\frac{f_{Oi}}{N}\bigg) \bigg(\frac{f_{Oj}}{N}\bigg) = \frac{f_{Oi}f_{Oj}}{N^2}$$ $$f_{Eij} = N\times P(R_i \cap C_j) = N\bigg(\frac{f_{Oi}f_{Oj}}{N^2}\bigg) =  \frac{f_{Oi}f_{Oj}}{N}$$
+
+## [Expected Frequency Calculations]{style="font-size: 0.667em;"}
+
+::: {style="font-size: 0.85em;"}
+|                      | Death Sentence |         |           |
+|:---------------------|:--------------:|:-------:|:---------:|
+| **Defendant's Race** |    **Yes**     | **No**  | **Total** |
+| Nonwhite             |       33       |   251   |  **284**  |
+| White                |       33       |   508   |  **541**  |
+| **Total**            |     **66**     | **759** |  **825**  |
+
+$$f_{Eij} = \frac{f_{Oi}f_{Oj}}{N}$$
+
+-   $f_{E}$ (nonwhite, death) = [$\frac{284 \times 66}{825} = \boldsymbol{22.72}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   $f_{E}$ (white, death) = [$\frac{541 \times 66}{825} = \boldsymbol{43.28}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   $f_{E}$ (nonwhite, no death) = [$\frac{284 \times 759}{825} = \boldsymbol{261.28}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+-   $f_{E}$ (white, no death) = [$\frac{541 \times 759}{825} = \boldsymbol{497.72}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+:::
+
+## $\chi^2$ Test of Independence
+
+The $\chi^2$ test statistic is computed in the same way as for the goodness of fit test: summing the normalized squared differences between observed and expected frequencies
+
+$$\chi^2_{\text{obs}} = \sum_{i=1}^R \sum_{j=1}^C \frac{(f_{Oij} - f_{Eij})^2}{f_{Eij}}$$
+
+-   sum over all cells
+
+::: {style="font-size: 0.85em;"}
+$$\frac{(33 - 22.72)^2}{22.72} + \frac{(33 - 43.28)^2}{43.28} + \frac{(251 - 261.28)^2}{261.28} + \frac{(508 - 497.72)^2}{497.72} = 7.71$$
+:::
+
+## Degrees of Freedom
+
+Given the marginal counts, how many cell counts can be freely chosen?
+
+|   | $C_1$ | $C_2$ | $C_3$ | **Total** |
+|:--------------|:-------------:|:-------------:|:-------------:|:-------------:|
+| $R_1$ | [**1**]{.fragment style="color: blue;"} | [**4**]{.fragment style="color: blue;"} |  | 10 |
+| $R_2$ |  |  |  | 15 |
+| **Total** | 5 | 5 | 15 | 25 |
+
+## None Left
+
+Given the marginal counts, how many cell counts can be freely chosen?
+
+|   | $C_1$ | $C_2$ | $C_3$ | **Total** |
+|:--------------|:-------------:|:-------------:|:-------------:|:-------------:|
+| $R_1$ | [**1**]{style="color: blue;"} | [**4**]{style="color: blue;"} | [**5**]{style="color: red;"} | 10 |
+| $R_2$ | [**4**]{style="color: red;"} | [**1**]{style="color: red;"} | [**5**]{style="color: red;"} | 15 |
+| **Total** | 5 | 5 | 15 | 25 |
+
+The degrees of freedom for the $\chi^2$ test of independence equals $(R-1)(C-1)$
+
+## Our Test
+
+$$df = (R-1)(C-1) = (2-1)(2-1) = 1$$
+
+```{r}
+#| echo: true
+pchisq(7.71, df = 1, lower.tail = FALSE)
+
+```
+
+## Visual of Our Test
+
+```{r}
+
+
+x <- data.frame(x = c(0, 8.5))
+
+ggplot(x, aes(x)) +
+  stat_function(fun = dchisq, args = list(df = 1), color = "black", linewidth = 0.6) +
+  stat_function(fun = dchisq, args = list(df = 1), xlim = c(0, qchisq(.95, 1)), geom = "area", fill = my_blue, alpha = 0.8) +
+  stat_function(fun = dchisq, args = list(df = 1), xlim = c(qchisq(.95, 1), 8.5), geom = "area", fill = my_red, alpha = 0.8) +
+  geom_vline(xintercept = qchisq(.95, 1), color = my_orange, linewidth = 1) +
+  geom_text(aes(label = paste0("Critical Value\n(", round(qchisq(.95, 1), 2), ")"), 
+                x = qchisq(.95, 1) + 0.3, y = 0.18), size = 4, color = my_orange, hjust = 0) +
+
+  geom_vline(xintercept = 7.71, color = my_purple, linewidth = 1, linetype = "dashed") +
+  geom_text(aes(label = "Observed Statistic\n(\u03C7\u00B2 = 7.71, p = 0.005)", 
+                x = 5, y = 0.5), size = 4, color = my_purple, hjust = 0) +
+  geom_segment(aes(x = 6.7, xend = 7.5, y = 0.35, yend = 0.09), 
+               color = my_purple, arrow = arrow(length = unit(.1, "inches"))) +
+  labs(x = expression(chi^2), y = "density", title = expression(paste("Chi-Square Distribution (", df == 1, ")"))) +
+ 
+  theme_light()
+```
+
+## Yates' Correction
+
+::: {style="font-size: 0.8em;"}
+With small sample sizes, the $\chi^2$ test of independence may be **overly liberal**
+
+-   We will be more likely than intended to reject the null hypothesis even if it's true
+
+Yates' correction attempts to correct for the "discontinuity" implied by having small frequencies
+
+-   i.e., marginal probabilities that are closer to discrete (0 or 1 exactly) rather than continuous
+
+$$\chi^2_{\text{obs}} = \sum_{i=1}^R \sum_{j=1}^C \frac{(|f_{Oij} - f_{Eij}| - 0.5)^2}{f_{Eij}}$$
+
+Yates' correction is **conservative**
+
+-   We will be more likely than intended to retain the null hypothesis even if it's false
+
+The corrected $p$-value is necessarily higher than the uncorrected $p$-value
+:::
+
+## Father and Son
+
+Ordinary $\chi^2$ test developed by Karl Pearson
+
+Egon Pearson is Karl's son, another leader of early statistics!
+
+Same $H_0$ and $H_1$ as Pearson's $\chi^2$ test of independence
+
+Test statistic:
+
+$$\chi^2(df) = \frac{\text{Pearson's } \chi^2 \times N}{N - 1}$$
+
+-   $\chi^2$: test statistic from ordinary test of independence
+
+-   $df$: $(R - 1) \times (C - 1)$
+
+-   $N$ total frequency
+
+## Egon Pearson's Adjusted $\chi^2$ Test
+
+E. Pearson's adjusted $\chi^2$ test statistic is always larger than Pearson's $\chi^2$
+
+- $p$-value of E. Pearson's test is always smaller than K. Pearson's $p$-value
+
+-   We say that E. Pearson's test is **liberal**
+
+-   E. Pearson's test has **higher statistical power** to reject the false $H_0$
+
+$$\chi^2_{\text{KP}} < \chi^2_{\text{EP}}$$
+
+$$p_{_\text{KP}} > p_{_\text{EP}}$$
+
+Slightly better performance when \underline{one} cell has a small expected frequency
+
+## Fisher's Exact Test
+
+::: {style="font-size: 0.9em;"}
+Yates' $\chi^2$ and E. Pearson's adjusted $\chi^2$ change the calculation of $\chi^2$. Fisher's exact test uses another method to overcome limitations of the $\chi^2$ test of independence.
+
+1.  Treat the observed marginals as fixed
+
+2.  Find all possible sets of cell counts
+
+3.  Calculate the probability of each set of cell counts (hypergeometric distribution)
+
+4.  Sum the probabilities corresponding to cell count sets that are more extreme (further from $H_0$) than the observed data $\rightarrow$ this is the $p$-value
+
+Limitations:
+
+-   Complicated for tables larger than $2 \times 2$
+-   Can be very slow when marginal frequencies are large
+:::
+
+## Recommendations by Campbell (2007)
+
+-   For large sample sizes, the standard $\chi^2$ test is best.
+
+-   Default in `R` uses Yates' correction, which helps with smaller samples and will have minimal cost in larger samples.
+
+-   When at least one cell has expected frequency \< 5, instead consider:
+
+    -   If one cell has expected frequency = 1, choose E. Pearson's adjusted $\chi^2$
+
+    -   If all cells have expected frequency \> 1, choose Fisher's exact test
+
+::: {style="font-size: 0.65em;"}
+Campbell, I. (2007). Chi-square and Fisher-Irwin tests of two-by-two tables with small sample recommendations. *Statistics in Medicine*, *26*, 3661-3675.
+:::
+
+## APA Writeup
+
+We tested the hypothesis that sentence was independent of defendant's race in death-eligible cases in North Carolina from 1993 to 1997 with a white victim. Results indicated defendant's race and sentence were not independent, $\chi^2(1) = 7.71, p = .005$.
+
+## Next Week
+
+- We will discuss how the $t$-distribution can help address the major shortcoming of the $Z$-test
+    - That we typically won't know the population variance $\sigma^2$
+    - $t$-tests allow us to use the **sample** $s^2$ without introducing bias
+- We will also discuss:
+    - **Confidence Intervals:** A way of capturing the **precision** of a statistical estimate
+    - **Effect sizes:** Ways of capturing the **magnitude** of a statistical estimate
+
