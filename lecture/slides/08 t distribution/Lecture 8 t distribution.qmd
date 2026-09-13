@@ -64,28 +64,29 @@ bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
 
 Let's imagine:
 
--   I sample a group of 44 NBA basketball players
--   On average, they score 14.5 points per game
--   I want to test the hypothesis that on average, the population I sampled from scores 12 points per game
--   In the population, the standard deviation of basketball player points per game is 6
+**Research question:** Do NBA players who play the shooting guard position score more than 12 points per game (PPG) on average 
+
+- I sample 44 shooting guards
+- My **sample** scores 14.5 PPG
 -   14.5 is not 12! But how do I know how likely or unlikely this *statistic* would be in my sampling distribution?
 
-## Sampling Distributions of Means
+## Sampling Means
 
 In general....
 
 -   The sampling distribution of **means** across **samples** will follow a normal distribution
 -   The **mean** of this distribution will be $\mu$, the population mean from which we are sampling
--   The standard deviation of this distribution will be the $\text{standard error (SE) =}\frac{\sigma}{\sqrt{N}}$
+-   The standard deviation of this distribution will be the $\text{standard error }  (\sigma_{\bar{x}}) =\frac{\sigma}{\sqrt{N}}$
     -   But what if we don't know $\sigma$?
     -   The sample standard deviation $s$ is our best estimate of $\sigma$, so let's try that!
-    -   What would happen if we use $\text{standard error (SE) =}\frac{s}{\sqrt{N}}$?
+    -   What would happen if we use $\text{standard error } (\sigma_{\bar{x}}) =\frac{s}{\sqrt{N}}$?
 
 ## Simulating Samples
 
 Let's imagine that I repeatedly sample basketball players from a population with $\mu = 12, \sigma = 6$
 
 -   Let's start by simulating 10000 repeated samples of $N = 5$
+    - Small samples are often where things "break" so we're seeing what would happen in small samples
 -   In each sample, I will calculate my $Z$-statistic as $Z = \frac{\bar{x} - \mu}{\text{SE}}$
 -   In theory, the distribution of $Z$-statistics should follow a standard normal ($\mu = 0, \sigma = 1$) distribution.
 -   But how would this distribution actually look if I calculate $\text{SE}  = \frac{s}{\sqrt{N}}$ instead of $\text{SE} = \frac{\sigma}{\sqrt{N}}$
@@ -119,7 +120,7 @@ for(i in 1:Samples){
   x_bar <- mean(sample)
   
   ## calculate sample SD
-    s <- sd(sample)
+  s <- sd(sample)
   
   ## calculate standard error
   SE <- s/sqrt(n)
@@ -127,6 +128,15 @@ for(i in 1:Samples){
   ## Save z-statistic
   z_statistic[i] <- (x_bar - mu)/SE
 }
+
+```
+
+
+## Simulation Output
+
+```{r}
+#| echo: true
+round(z_statistic, 2)
 
 ```
 
@@ -211,7 +221,7 @@ What's the practical implication of this result?
 
 -   [We are more likely to make a Type I error than we want]{.answer .fragment .content-visible unless-meta="params.v0"}
 
-**Type 1 Error:** Rejecting a true null hypothesis. $\alpha = .05$ means we are comfortable incorrectly rejecting a true null hypothesis 5% of the time.
+[**Type 1 Error:** Rejecting a true null hypothesis. $\alpha = .05$ means we are comfortable incorrectly rejecting a true null hypothesis 5% of the time.]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ## Type I Errors
 
@@ -315,6 +325,7 @@ p1 +
 
 -   $Z$-tests are designed to account for one source of randomness: variation in sample means ($\bar{x}$'s)
 -   But our calculation had a second source of randomness: using $s$ to calculate our standard error rather than $\sigma$
+    - $s$ is **on average** an unbiased **estimate** of $\sigma$, but varies from sample to sample
 -   Like the mean, the amount of randomness in our sampling distribution of $s$'s will also follow the CLT, but:
     -   The distribution of $s$ is skewed
     -   In larger $N \rightarrow$ will look more normal, vary less from $\sigma$
@@ -328,20 +339,44 @@ set.seed(214)
 R <- 10000
 mu <- 5
 sigma <- 6
-n1 <- 5
-n2 <- 30
+n1 <- 3
+n2 <- 5
+n3 <- 10
+n4 <- 30
 s2_1 <- sapply(1:R, function(i)
   sd(rnorm(n1, mean = mu, sd = sigma)))
 s2_2 <- sapply(1:R, function(i)
   sd(rnorm(n2, mean = mu, sd = sigma)))
+s2_3 <- sapply(1:R, function(i)
+  sd(rnorm(n3, mean = mu, sd = sigma)))
+s2_4 <- sapply(1:R, function(i)
+  sd(rnorm(n4, mean = mu, sd = sigma)))
 
 
 ```
 
 ```{r}
-res <- data.frame("n5" = s2_1, "n30" = s2_2)
+res <- data.frame("n2" = s2_1, "n5" = s2_2,
+                 "n10" = s2_3, "n30" = s2_4)
+
+
+
+
 p1 <- ggplot(res) + 
-  geom_histogram(aes(n5, after_stat(density)), bins = 20, fill = my_blue, na.rm = TRUE) + 
+  geom_histogram(aes(n2, after_stat(density)), bins = 20, fill = my_blue, na.rm = TRUE) + 
+  lims(x = c(0, 15)) +
+  labs(x = "", title = "N = 2", y = "") + 
+  theme_light() +
+  stat_function(fun = dnorm, args = list(mean = mean(res$n2), sd = sd(res$n2)), col = my_red) + 
+  # Add vertical reference line
+  geom_vline(xintercept = 6, linetype = "dashed", color = "darkgray") +
+  # Add mathematical annotation (sigma = 6)
+  annotate("text", x = 6, y = Inf, label = "sigma == 6", parse = TRUE, vjust = 1.5, hjust = -0.1) +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+        plot.title = element_text(hjust = 0.5))
+
+p2 <- ggplot(res) + 
+  geom_histogram(aes(n5, after_stat(density)), bins = 30, fill = my_purple, na.rm = TRUE) + 
   lims(x = c(0, 15)) +
   labs(x = "", title = "N = 5", y = "") + 
   theme_light() +
@@ -353,8 +388,23 @@ p1 <- ggplot(res) +
   theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
         plot.title = element_text(hjust = 0.5))
 
-p2 <- ggplot(res) + 
-  geom_histogram(aes(n30, after_stat(density)), bins = 30, fill = my_purple, na.rm = TRUE) + 
+
+
+p3 <- ggplot(res) + 
+  geom_histogram(aes(n10, after_stat(density)), bins = 20, fill = my_orange, na.rm = TRUE) + 
+  lims(x = c(0, 15)) +
+  labs(x = "", title = "N = 10", y = "") + 
+  theme_light() +
+  stat_function(fun = dnorm, args = list(mean = mean(res$n10), sd = sd(res$n10)), col = my_red) + 
+  # Add vertical reference line
+  geom_vline(xintercept = 6, linetype = "dashed", color = "darkgray") +
+  # Add mathematical annotation (sigma = 6)
+  annotate("text", x = 6, y = Inf, label = "sigma == 6", parse = TRUE, vjust = 1.5, hjust = -0.1) +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+        plot.title = element_text(hjust = 0.5))
+
+p4 <- ggplot(res) + 
+  geom_histogram(aes(n30, after_stat(density)), bins = 30, fill = my_red, na.rm = TRUE) + 
   lims(x = c(0, 15)) +
   labs(x = "", title = "N = 30", y = "") + 
   theme_light() +
@@ -366,12 +416,13 @@ p2 <- ggplot(res) +
   theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
         plot.title = element_text(hjust = 0.5))
 
-gridExtra::grid.arrange(p1, p2, nrow = 1)
+
+
+
+gridExtra::grid.arrange(p1, p2,p3, p4, nrow = 2)
 ```
 
 ## What About Larger Samples?
-
-## Simulation Code
 
 Let's redo our simulation for $N = 44$
 
@@ -392,7 +443,7 @@ sigma <- 6
 ## Initialize empty vector
 z_statistic44 <- numeric(Samples)
 
-set.seed(122442)
+set.seed(395)
 ## Initialize Loop
 for(i in 1:Samples){
   ## Draw random sample
@@ -491,6 +542,9 @@ William Gosset (1867-1937)
 
 ## What does the $t$-distribution do?
 
+
+::: {style="font-size: 0.9em;"}
+
 -   Adds an extra parameter: degrees of freedom $df$
     -   Same idea as $df$ in calculating the sample variance
     -   Number of datapoints that can freely vary after accounting for estimated values
@@ -499,6 +553,8 @@ William Gosset (1867-1937)
 -   Smaller $df \rightarrow$ fatter tails, less similar to normal distribution
     -   We need to move more standard errors away from the mean to include 95% of the distribution in the center (thus 5% in the tails)
     -   Need our sample mean to be further from hypothesized mean to reject null hypothesis
+    
+:::
 
 ## Comparing $df$
 
@@ -533,7 +589,7 @@ shade_left  <- filter(df_plot, Distribution == "Standard Normal N(0,1)" & x <= -
 shade_right <- filter(df_plot, Distribution == "Standard Normal N(0,1)" & x >= z_crit)
 
 # 4. Generate ggplot
-p <- ggplot(df_plot, aes(x = x, y = y, color = Distribution, linetype = Distribution)) +
+p2 <- ggplot(df_plot, aes(x = x, y = y, color = Distribution, linetype = Distribution)) +
   
   # Fill critical region tails
   geom_area(data = shade_left, aes(x = x, y = y), fill = "#d95f02", alpha = 0.2, inherit.aes = FALSE) +
@@ -584,7 +640,7 @@ p <- ggplot(df_plot, aes(x = x, y = y, color = Distribution, linetype = Distribu
     panel.grid.minor = element_blank()
   )
 
-p
+p2
 ```
 
 ## Comparing Critical Values
@@ -676,11 +732,11 @@ ggplot(df_plot, aes(x = x, y = y, color = Distribution, linetype = Distribution)
 
 ## Calculating our $t$-statistic
 
-The $t$-statistic is calculated *almost* exactly the same way as a $z$-statistic, just using $s$ instead of $\sigma$ in the standard error formula.
+The $t$-statistic is calculated *almost* exactly the same way as a $Z$-statistic, just using $s$ instead of $\sigma$ in the standard error formula.
 
 Revisiting our NBA example, let's now assume
 
--   I sample a group of 44 NBA basketball players
+-   I sample a group of 44 NBA shooting guards
 -   On average, they score 14.5 points per game
 -   I want to test the hypothesis that on average, the population I sampled from scores 12 points per game
 -   **In the my sample, the standard deviation of basketball player points per game is 6**
@@ -688,15 +744,15 @@ Revisiting our NBA example, let's now assume
 
 ## SE and $t$
 
-$$\text{standard error (SE)} = \frac{s}{\sqrt{N}} = \frac{6}{\sqrt{44}} = 0.90$$
+$$\text{ESTIMATED standard error } (s_{\bar{x}}) = \frac{s}{\sqrt{N}} = \frac{6}{\sqrt{44}} = 0.90$$
 
-$$t_{df} = \frac{\bar{x} = \mu}{SE} = \frac{14.5-12}{0.90} = 2.78$$
+$$t_{df} = \frac{\bar{x} - \mu}{SE} = \frac{14.5-12}{0.90} = 2.78$$
 
 **Notice:** This is numerically identical to what we did when it was a $z$-test!
 
 -   This time $s = 6$ rather than $\sigma = 6$
 
-Where our procedure differs is our reference sampling distribution. Instead of a standard normal distribution, we will us a $t$ distribution with $df = N = 1$
+Where our procedure differs is our reference sampling distribution. Instead of a standard normal distribution, we will us a $t$ distribution with $df = N - 1$
 
 -   In our case $N - 1 = 44 - 1 = 43$
 
@@ -709,7 +765,7 @@ pt(2.78, df = 43, lower.tail = FALSE)
 
 ```
 
-If we repeatedly sampled 44 NBA players with mean points per game $\mu = 12$ and an unknown SD that we estimate to be $\s = 6$, only 0.40% of those samples would have a sample mean $\bar{x} = 14.5$ or larger.
+If we repeatedly sampled 44 NBA players with mean points per game $\mu = 12$ and an unknown SD that we estimate to be $s = 6$, only 0.40% of those samples would have a sample mean $\bar{x} = 14.5$ or larger.
 
 -   This is larger than the $p$-value from our $z$-test example (.0024), but not much!
 
@@ -725,3 +781,210 @@ A two-tailed test would consider the possibility we get a result of equal magnit
 -   This result would be equally (un)likely under the null hypothesis
 -   Conceptually, we just multiply $p$-value by 2
     -   $.004 \times 2 = .008$
+    
+
+## Data Example
+
+**Original Study:**
+Armor, D. A., Massey, C., & Sackett, A. M. (2008). Prescribed optimism: Is it right to be wrong about the future? *Psychological Science*, *19*, 329-331.
+
+Replication study link: [https://osf.io/wbs96](https://osf.io/wbs96)
+
+Do people make optimistic predictions about their own futures?
+
+**Step 1:** Subjects were assigned to one of four prediction settings:
+
+::::: {.columns}
+::: {.column width="50%"}
+- financial investment
+- academic-award application
+:::
+
+::: {.column width="50%"}
+- surgical procedure
+- dinner party
+:::
+:::::
+
+Subjects within a setting received 8 vignettes that varied in (a) commitment, (b) agency, and (c) control.
+
+## Details
+
+
+
+
+**Step 2:** Subjects "prescribed" whether it would be best to be pessimistic, accurate, or optimistic on a 9-point scale:
+
+::::: {.columns}
+::: {.column width="60%"}
+::: {style="font-size: 0.9em;"}
+| Rating | Description |
+| :---: | :--- |
+| -4 | extremely pessimistic |
+| -3 | |
+| -2 | moderately pessimistic |
+| -1 | |
+| 0 | accurate |
+| 1 | |
+| 2 | moderately optimistic |
+| 3 | |
+| 4 | extremely optimistic |
+:::
+::: 
+
+::: {.column width="40%"}
+**IV**: none (all conditions combined)
+
+**DV**: average optimism score across 8 vignettes
+
+$N = 176$ observations
+
+$$\begin{align*}
+  H_0: & \,\,\mu = 0 \\
+  H_1: & \,\,\mu \neq 0
+\end{align*}$$
+:::
+:::::
+
+## Gathering Info
+
+What information do we need from our *sample* to calculate the $t$-statistic from our sample?
+
+- [The sample mean $\bar{x}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+-  [The sample standard deviation $s$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [The sample size $N$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Using Info
+
+And how are we going to use that info?
+
+- [We need $s$ and $N$ to calculate the standard error as $s_{\bar{x}} = \frac{s}{\sqrt{N}}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [The sample mean $\bar{x}$ to calculate the $t$-statistic as $t = \frac{\bar{x}-\mu_0}{s_{\bar{x}}}$ (how many standard errors $\bar{x}$ is from $\mu_0$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [The sample size $N$ to calculate degrees of freedom as $df = N - 1$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+## Assessing Sample
+
+```{r}
+#| echo: true
+dat <- read.csv("../../data/Armor_Replication_Lecture8.csv")
+
+(x_bar <- mean(dat$Best_mean))
+(s <- sd(dat$Best_mean))
+(N <- length(dat$Best_mean))
+```
+
+
+- $s_{\bar{x}} = \frac{s}{\sqrt{N}} =$[$\frac{1.09}{\sqrt{176}} = 0.08$]{.answer .fragment .content-visible unless-meta="params.v0"} 
+- $t = \frac{\bar{x}-\mu_0}{\text{SE}} =$[$\frac{1.28 - 0}{0.08} = 0.08 = 15.64$]{.answer .fragment .content-visible unless-meta="params.v0"} 
+- $df = N - 1=$[$176 - 1 = 175$]{.answer .fragment .content-visible unless-meta="params.v0"} 
+
+## Interpretations
+
+What is the correct interpretation of a standard error $s_{\bar{x}}$ again?
+
+[Standard deviation of the sampling distribution (standard deviation of the means in repeated samples of N = 176)]{.answer .fragment .content-visible unless-meta="params.v0"} 
+
+[Means our sample mean is **15** $s_{\bar{x}}$'s away from the population mean based on the sampling distribution implied by our null hypothesis. That's a lot of standard errors!]{.answer .fragment .content-visible unless-meta="params.v0"} 
+
+## Finding the Area
+
+`pt()` is `R`'s version of a $t$-table. It gives us the $p$-value for a $t$-statistic (which represents how many SEs the sample mean is from $\mu_0$)
+
+- If $t$ is positive, use `lower.tail = FALSE` to reference **upper tail** of $t$-distribution
+
+```{r}
+#| echo: true
+pt(15.64, df = 175, lower.tail = FALSE)
+```
+
+
+## Result Visualized
+
+```{r}
+
+df <- 175
+alpha <- 0.05
+t_crit <- qt(1 - alpha / 2, df = df) # ±1.974
+
+ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
+  # Shade critical regions (alpha = 0.05, two-tailed)
+  stat_function(
+    fun = dt, args = list(df = df),
+    xlim = c(-4, -t_crit),
+    geom = "area", fill = "#d95f02", alpha = 0.35
+  ) +
+  stat_function(
+    fun = dt, args = list(df = df),
+    xlim = c(t_crit, 4),
+    geom = "area", fill = "#d95f02", alpha = 0.35
+  ) +
+  # Main density curve
+  stat_function(fun = dt, args = list(df = df), linewidth = 1, color = "#2b5c8f") +
+  # Critical value lines
+  geom_vline(
+    xintercept = c(-t_crit, t_crit),
+    linetype = "dashed", color = "#d95f02", linewidth = 0.8
+  ) +
+  # Critical value labels
+  annotate(
+    "text",
+    x = -t_crit - 0.1, y = 0.32,
+    label = paste0("-t[crit] == -", round(t_crit, 3)),
+    parse = TRUE, hjust = 1, color = "#d95f02", fontface = "bold"
+  ) +
+  annotate(
+    "text",
+    x = t_crit + 0.1, y = 0.32,
+    label = paste0("t[crit] == ", round(t_crit, 3)),
+    parse = TRUE, hjust = 0, color = "#d95f02", fontface = "bold"
+  ) +
+  # Far right annotation & arrow
+  annotate(
+    "text",
+    x = 2.1, y = 0.07,
+    label = "t(175) = 15.64 way out here",
+    hjust = 0, size = 4
+  ) +
+  annotate(
+    "segment",
+    x = 3.5, xend = 4.3,
+    y = 0.05, yend = 0.05,
+    arrow = arrow(length = unit(0.25, "cm"), type = "closed")
+  ) +
+  coord_cartesian(xlim = c(-4, 4), clip = "off") +
+  labs(
+    title = expression(paste("Student's t-Distribution (df = 175, ", alpha, " = 0.05)")),
+    x = "t",
+    y = "Density"
+  ) +
+  theme_minimal() +
+  theme(plot.margin = margin(r = 45, l = 10, t = 10, b = 10))
+```
+
+
+## Actual `R` $t$-test
+
+Jess will show you more, but here's how you do a full, one-stop-shop $t$-test in `R`
+
+
+```{r}
+#| echo: true
+t.test(dat$Best_mean, mu = 0)
+```
+
+
+## Types of $t$-tests
+
+This is known as a **one sample** $t$-test
+
+- Compares a sample mean to some null mean $\mu_0$
+
+Still not the most practical (but used in some cases). Often we want to compare two (or more) means. We will look at two ways to compare two means with $t$-tests
+
+- Paired sample $t$-tests
+- Independent sample $t$-tests
+
+## APA Writeup
+
+We conducted a two-tailed, one-sample $t$-test comparing prescribed optimism ratings ($M = 1.28$) to 0 (prescribed accuracy). At $\alpha = .05$, the effect was statistically significant: $t(175) = 15.65, p < .001$,.

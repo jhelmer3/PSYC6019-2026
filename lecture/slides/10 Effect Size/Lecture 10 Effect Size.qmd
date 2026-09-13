@@ -23,7 +23,7 @@ format:
         </script>
 params:
   v0: false 
-editor: visual
+editor: source
 ---
 
 ```{r}
@@ -82,13 +82,13 @@ sp <- sqrt(s2p)
 t_crit <- qt(.025, df = n1 + n2 - 2, lower.tail = FALSE)
 ```
 
-## APA Writeup From Last Time
+## Last APA Writeup
 
 A two-tailed Welch-Satterthwaite $t$-test with $\alpha = .05$ indicated a significant difference between conditions, $t(51.9) = -2.29, p = .026$. Participants in the self-handicap condition correctly answered a lower percentage of items ($N = 32, M = .47, SD = .17$) than participants in the control condition ($N = 29, M = .58, SD = .22$), 95% CI of the difference $= [0.01, 0.22]$.
 
 [The observed difference between groups was $.58 - .47 = .11$. This is an **effect size**]{.fragment}
 
--   [**Effect size:** a statistical **estimate** rather than a **test**]{.fragment}
+-   [**Effect size:** a statistical **estimate** of a **magnitude** of an effect rather than a **test**]{.fragment}
 
 [**Problem:** How should we interpret this effect size?]{.fragment}
 
@@ -169,9 +169,94 @@ Difference in sample means divided by pooled standard deviation
 ::::::
 :::::::
 
+## Subtle Clarification
+
+$t$-test statistics and Cohen's $d$ have similar forms. They often have the same numerator, but slightly different denominators
+
+- $t$-statistics divide by the standard **error**
+
+
+
+
+::::::: {style="font-size: 0.7em;"}
+:::::: {.columns .v-center-container}
+::: {.column width="33%"}
+**One Sample**
+
+$$t = \frac{\bar{x} - \mu_0}{s_\bar{x}}$$
+
+:::
+
+::: {.column width="33%"}
+**Paired Sample**
+
+$$d = \frac{\bar{D}}{s_\bar{D}}$$
+
+:::
+
+::: {.column width="33%"}
+**Independent Samples**
+
+$$d = \frac{\bar{x}_1 - \bar{x}_2}{s_{\bar{x}_1 - \bar{x}_2}}$$
+
+:::
+::::::
+:::::::
+
+- $d$-effect sizes divide by standard **deviation**
+
+
+::::::: {style="font-size: 0.7em;"}
+:::::: {.columns .v-center-container}
+::: {.column width="33%"}
+**One Sample**
+
+$$d = \frac{\bar{x} - \mu_0}{s_x}$$
+
+:::
+
+::: {.column width="33%"}
+**Paired Sample**
+
+$$d = \frac{\bar{D}}{s_D}$$
+
+:::
+
+::: {.column width="33%"}
+**Independent Samples**
+
+$$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$$
+:::
+::::::
+:::::::
+
+
 ## Example
 
-This is using the same `McCrea.csv` we looked at last time. As a reminder, our means $\bar{x}_1$ and $\bar{x}_2$ were:
+**Original Study**:
+
+::: {style="font-size: 0.6em;"}
+McCrea, S. M. (2008). Self-handicapping, excuse making, and counterfactual thinking: Consequences for self-esteem and future motivation. *Journal of Personality and Social Psychology*, *2*, 274-292.
+:::
+
+::: {style="font-size: 0.95em;"}
+**Replication study link**: <https://osf.io/2kjgz>
+
+**Step 1**: Subject took a math exam and were told that they scored in the 35th percentile of university students
+
+**Step 2**: Subjects saw statements supposedly written by previous participants
+
+-   Self-handicap group: half of statements indicated that more practice would have improved their performance, half of statements were neutral
+
+-   Control group: all statements were neutral
+
+**Step 3**: Subjects took a second surprise math exam
+:::
+
+
+## Example
+
+As a reminder, our means $\bar{x}_1$ and $\bar{x}_2$ were:
 
 ```{r}
 #| echo: true
@@ -188,6 +273,10 @@ And our pooled standard deviation $s_p$
 sp
 ```
 
+
+
+## $d$-Effect size
+
 $$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$$
 
 ```{r}
@@ -196,6 +285,11 @@ $$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$$
 (d <- (x_bar1 - x_bar2)/sp)
 
 ```
+
+
+**Interpretation:** The mean number of correctly answered questions was 0.59 SDs lower in the self-handicap condition than in the control condition.
+
+- All we did was convert our difference into SDs instead of the total number of correctly answered questions
 
 ## Confidence Interval for $d$
 
@@ -212,11 +306,19 @@ d + t_crit * sqrt(1/n1 + 1/n2)
 
 ## Benchmarks
 
-Jacob Cohen proposed the following (very loose!) benchmarks for $d$:
+Jacob Cohen (another very important/famous statistician) proposed the following (very loose!) benchmarks for $d$:
 
 -   $d \approx .2$ is a small effect
 -   $d \approx .5$ is a medium effect
 -   $d \approx .8$ is a large effect
+
+These are rough point estimates
+
+- $d = .1$ would be *very small*
+- $d = .3$ is small-to-medium
+
+Just use this as a way to orient yourself, not as an objective rule
+
 
 ## Full APA Writeup
 
@@ -230,6 +332,17 @@ library(effectsize)
 cohens_d(percent ~ Cond, data = dat)
 
 ```
+
+## Practice
+
+Two classes of students, each $N = 21$, were assigned a different math curriculum, curriculum A or curriculum B. They each then took the same final exam. Students in the curriculum A class got an average score of 80 with a standard deviation of 8. Students in the curriculum B class got an average score of 77 with a standard deviation of 5. What is Cohen's $d$?
+
+
+
+[$s_p = \frac{(n_1 -1)s^2_1 + n_2 -1)s^2_2}{n_1 + n_2 -2} = \frac{(21 -1)8^2 + 21-1)5^2}{21 + 21 -2} = 6.67$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+[$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$ = 0.45]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ## Risk and Odds
 
@@ -290,7 +403,7 @@ Baden, L. R., El Sahly, H. M., Essink, B., Kotloff, K., Frey, S., Novak, R., ...
 ::: {.column width="50%"}
 **Odds** uses \# of vaccinated individuals who did not contract COVID-19 as the denominator
 
--   Odds(COVID-19 \| Vaccine) \$ = \frac{11}{14,123} = .0008\$
+-   Odds(COVID-19 \| Vaccine) $= \frac{11}{14,123} = .0008$
 
 -   If outcomes are equally probable, odds = 1
 :::
@@ -301,25 +414,31 @@ Risk and odds are not always similar - here they are because getting COVID-19 (i
 
 ## Risk Ratio
 
+::: {style="font-size: 0.8em;"}
+
 |             | **COVID-19** | **No COVID-19** | **Total**  |
 |:------------|:------------:|:---------------:|:----------:|
 | **Vaccine** |      11      |     14,123      |   14,134   |
 | **Placebo** |     185      |     13,888      |   14,073   |
 | **Total**   |   **196**    |   **28,011**    | **28,207** |
 
+
+
 **Risk ratio** (also known as **relative risk**)
 
-$$\text{Risk ratio} = \text{Risk (COVID-19 | Placebo)} / \text{Risk (COVID-19 | Vaccine)}$$ $$= \left(\frac{185}{14,073}\right) \bigg/ \left(\frac{11}{14,134}\right) = 16.89$$
+$$\text{Risk ratio} = \frac{\text{Risk (COVID-19 | Placebo)}}{\text{Risk (COVID-19 | Vaccine)}}$$ $$= \left(\frac{185}{14,073}\right) \bigg/ \left(\frac{11}{14,134}\right) = 16.89$$
 
-The risk of contracting COVID-19 without a vaccine is 16.89$\times$ higher than if you get the Moderna vaccine
+- The risk of contracting COVID-19 without a vaccine is 16.89$\times$ higher than if you get the Moderna vaccine
 
-If the two risks are equal, then the risk ratio equals 1
+- If the two risks are equal, then the risk ratio equals 1
+
+:::
 
 ## Odds Ratio
 
 **Odds ratio**
 
-$$\text{Odds ratio}  = \text{Odds (COVID-19 | Placebo)} / \text{Odds (COVID-19 | Vaccine)}$$ $$= \left(\frac{185}{13,388}\right) \bigg/ \left(\frac{11}{14,123}\right) = 17.10$$
+$$\text{Odds ratio}  = \frac{\text{Odds (COVID-19 | Placebo)}}{\text{Odds (COVID-19 | Vaccine)}}$$ $$= \left(\frac{185}{13,388}\right) \bigg/ \left(\frac{11}{14,123}\right) = 17.10$$
 
 The odds of contracting COVID-19 without a vaccine is over 17$\times$ higher than if you get the Moderna vaccine
 
@@ -354,3 +473,39 @@ Mathematically, the difference between risk and odds is what quantity goes in th
 -   The odds of **no** COVID-19 for those unvaccinated is $\frac{13,888}{185} = 75$
 
     -   A vaccinated person is 1284$\times$ more likely to *not* contract COVID-19 than to do so, whereas an unvaccinated person is only 75$\times$ more likely to *not* (in study's given time frame, pre-variants)
+
+
+## Practice
+
+::: {style="font-size: 0.8em;"}
+
+This contingency table compares the success rate of getting accepted by a PhD program depending on whether students did undergraduate research.
+
+
+|             | **Accepted** | **Rejected** | **Total**  |
+|:------------|:------------:|:---------------:|:----------:|
+| **Research** |      85      |     50     |   135   |
+| **No Research** |    22      |     91      |   113   |
+| **Total**   |   **107**    |   **141**    | **248** |
+
+
+What is the **risk ratio** of getting rejected for a student who did no research versus one who did? 
+
+[$\text{Risk ratio} = \frac{\text{Risk (rejected | no research)}}{\text{Risk (rejected | research)}} = \left(\frac{91}{113}\right) \bigg/ \left(\frac{50}{135}\right) = 2.17$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+What is the **odds ratio** of getting rejected for a student who did no research versus one who did?
+
+
+[$\text{Odds ratio}  = \frac{\text{Odds (rejected | no research)}}{\text{Odds (rejected | research)}}$$ $$= \left(\frac{91}{22}\right) \bigg/ \left(\frac{50}{85}\right) = 7.03$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+::: 
+
+## Next Time
+
+We'll wrap up the first phase of our semester by talking about **statistical power** and broaden our scope to consider the notion of **statistical models,** which will be important perspective for the remainder of the semester
+
+After that, we will have a review session and our first exam!
+
+- September 29 is a full day of review
+- Post REVIEW: questions on Ed Discussion by September 24 at midnight to guarantee I cover your REVIEW: question in this session
+

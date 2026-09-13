@@ -58,6 +58,8 @@ my_yellow2 <- "#FFFFCC"
 bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
                                                 draft_year != "")
 
+optim <- read.csv("../../data/Armor_Replication_Lecture8.csv")
+
 ```
 
 ## Last Time
@@ -80,7 +82,7 @@ Today we will discuss
 -   The sampling distribution follows a normal distribution
     -   [If $N$ is large enough, the CLT will take care of this for us! But the more normal the data is, the more normal our sampling distribution, so we can explore the data for extra peace of mind]{.answer .fragment .content-visible unless-meta="params.v0"}
 -   The observations are independent
-    -   [Make sure no datapoints come from the same person, clusters that are somehow related]{.answer .fragment .content-visible unless-meta="params.v0"}
+    -   [Make sure no datapoints come from the same person or clusters that are somehow related]{.answer .fragment .content-visible unless-meta="params.v0"}
 -   There are no outliers
     -   Influential data points that are not from our population
     -   [We should **only** remove points if we have reason to believe they come from a different population, not just because they stand out somehow]{.answer .fragment .content-visible unless-meta="params.v0"}
@@ -90,24 +92,25 @@ Today we will discuss
 How might we check these?
 :::
 
-## Normality Checks
-
-Numerical checks:
+## Numerical Normality Checks
 
 -   Skewness & kurtosis
     -   Both = 0 in a normal distribution
--   Kolmogorov-Smirnov test, Shapiro-Wilk test
+-   Kolmogorov-Smirnov (KS) test, Shapiro-Wilk (Shapiro) test
     -   Hypothesis tests of whether sample distribution is significantly different from a (population) normal distribution (null hypothesis = normality)
     -   Sensitive to $N$ (tend to always reject if $N$ is big, retain if $N$ is small)
     -   Shapiro-Wilk more powerful than Kolmogorov-Smirnov
 
-Graphical checks:
+
+## Graphical Normality Checks
 
 -   Histograms/density plots
 -   Quantile-quantile (QQ) plots
     -   $x$ axis: theoretical quantiles of the normal distribution
     -   $y$ axis: quantiles of the data
     -   If normal, points should fall in a straight line
+
+
 
 ## QQ Plot (Normal)
 
@@ -152,40 +155,92 @@ p2 <- ggplot(bball, aes(sample = MP)) + geom_qq(na.rm = TRUE) + geom_qq_line(na.
 gridExtra::grid.arrange(p1, p2, nrow = 1)
 ```
 
-## Normality Checks
+Not great!
 
-::: {style="font-size: 0.85em;"}
+
+## QQ Plot (Optimism Data)
+
+```{r}
+p1 <- ggplot(optim) + geom_histogram(aes(Best_mean, y = ..density..), bins = 9, na.rm = TRUE) +
+  stat_function(fun = dnorm, args = list(mean = 1.28, sd = 1.09), col = my_red, size = I(1)) + labs(x = "Optimism Ratings") + 
+  theme_light() + theme(axis.title = element_text(size = 14))
+
+p2 <- ggplot(optim, aes(sample = Best_mean)) + geom_qq(na.rm = TRUE) + geom_qq_line(na.rm = TRUE, col = my_red, size = I(1)) +
+  theme_light() + theme(axis.title = element_text(size = 14))
+
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+
+Not bad!
+
+## Skewness and Kurtosis
+
+The `e1071` package has functions for skewness and kurtosis. These provide descriptive numerical checks about deviations from normal (~0 is normal)
+
 ```{r echo = TRUE}
 library(e1071) # for skewness and kurtosis functions
 skewness(bball$MP)
 kurtosis(bball$MP)
-shapiro.test(bball$MP)
 
-ks.test(bball$MP, "pnorm")
+skewness(optim$Best_mean)
+kurtosis(optim$Best_mean)
+
 ```
 
-Rejecting the null is evidence **against** normality
 
--   **Remember:** This is evidence the **data** is non-normal. Sampling distribution still might be fine if $N$ is large enough (hard to quantify with precision)
+## Shapiro and KS Tests
+
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+#| echo: true
+#| warning: false
+shapiro.test(bball$MP) ## basketball data
+ks.test(bball$MP, "pnorm") ## basketball data
+shapiro.test(optim$Best_mean) ## optimism data
+ks.test(optim$Best_mean, "pnorm") ## optimism data
+```
+
 :::
 
+## Interpretations
+
+
+
+Rejecting the null in the Shapiro or KS tests is evidence **against** normality
+ 
+-   **Remember:** This is evidence the **data** is non-normal. Sampling distribution still might be fine if $N$ is large enough (hard to quantify with precision)
+
+**General recommendation:** 
+
+- Graphical evaluation $>$ these tests $>$ numerical evaluation
+- Collect enough data so it doesn't matter anyway where possible!
+
+
 ## Confidence Interval
+
+::: {style="font-size: 0.95em;"}
 
 Sample mean is the **point estimate** of the population mean
 
 -   Single value that will minimize our (squared) error to population mean
+    - Minimize "loss function" (squared error)
 
-Confidence interval gives an **interval estimate** of the range in which the population mean lies
+Confidence interval gives an **interval estimate**. 
 
-Definition of a confidence interval: range for which any random sample from the population will contain $\mu$ with probability $1 - \alpha$.
+-   Definition of a confidence interval: range for which any random sample from the population will contain $\mu$ with probability $1 - \alpha$.
 
 -   if $\alpha = .05$, we have a 95% confidence interval.
 
-Interpretation:
+**Interpretation:**
 
 -   95% of intervals (across repeated samples) will contain $\mu$
 
 -   If we treated any value inside the 95% confidence interval as the null, we could not reject it at $\alpha = .05$
+
+:::
 
 ## 20 Confidence Intervals
 
@@ -214,36 +269,42 @@ ggplot(d, aes(limit, x, group = rep, col = factor(zero_in_interval))) + geom_pat
 ## General Procedure
 
 1.  Find the critical values of our reference distribution
-    -   Values on the distribution such that 2.5% is in the left tail and 2.5% in the right tail
-    -   These correspond to the "critical values" of the distribution
-2.  Transform these values back onto the scale of the original variable using the sample mean and standard error ($\sigma_{\bar{x}}$)
+    - Discussed these briefly last week
+    -   Values on the distribution such that 2.5% is in the left tail and 2.5% in the right tail for $\alpha = .05$
+2.  Transform these values back onto the scale of the original variable using the sample mean and standard error ($s_{\bar{x}}$). How do we do this?
 
--   Lower limit of $\mu$: $\bar{x} - \text{Critical Value} \times \sigma_{\bar{x}}$
+-   Lower limit of $\mu$: $\bar{x} - \text{Critical Value} \times s_{\bar{x}}$
 
--   Upper limit of $\mu$: $\bar{x} + \text{Critical Value} \times \sigma_{\bar{x}}$
+-   Upper limit of $\mu$: $\bar{x} + \text{Critical Value} \times s_{\bar{x}}$
 
 This procedure corresponds to a **two-tailed test**
 
 ## NBA Example
 
+
+::: {style="font-size: 0.85em;"}
+
 -   $N = 44$
 -   $\bar{x} = 14.5$
--   $\sigma = 6$
--   $\sigma_{\bar{x}} = \frac{6}{\sqrt{44}} = 0.90$
+-   $s = 6$
+-   $s_{\bar{x}} = \frac{6}{\sqrt{44}} = 0.90$
 -   $df = N - 1 = 43$
 
-For a $t$-test, we can find the critical values as:
+Like `pt()`, the `qt()` function is also a way of "looking up" values on a $t$-table, but for finding the critical values for a given $\alpha$ level rather than $p$-values for a sample mean. For a $t$-test, we can find the critical values as:
 
 ```{r}
-qt(p = .025, df = 43, lower.tail = FALSE)
+#| echo: true
+qt(p = .05/2, df = 43, lower.tail = FALSE)
 
 ```
 
-Why `p = .025`?
+Why did I set $p = \frac{.05}{2}$?
 
-[We want 2.5% of the distribution in both the lowr and upper tails]{.answer .fragment .content-visible unless-meta="params.v0"}
+[For a two-tailed test, we want 2.5% of the distribution in both the lowr and upper tails]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 $95\% \text{CI} = 14.5 \pm 2.016 \times 0.90 = [12.69, 16.31]$
+
+::: 
 
 ## NBA Example Visual
 
@@ -363,11 +424,11 @@ We are not claiming the plot on the right is the "true" sampling distribution
 
 -   95% confidence intervals will vary sample to sample
 -   The true parameter does not vary, it is a single fixed value
--   IF our assumptions hold, what we guarantee is that in 95% of samples, the 95% confidence interval (different in every sample) will contain the parameter 95% of the time
+-   If our assumptions hold, what we guarantee is that if we repeatedly collect samples and estimate a 95% confidence interval (different in every sample), they will contain $\mu$ 95% of the time
 
 We can also say:
 
--   Any value inside the 95% confidence interval would be rejected if it were the null hypothesis
+-   Any value inside the 95% confidence interval would be retained if it were the null hypothesis
 -   Any value outside the 95% confidence interval would be rejected if it were the null hypothesis
 
 ## Comparing Two Means
@@ -386,7 +447,7 @@ But what if we want to compare two means?
 
 ## Paired Samples $t$-Test
 
-::: {style="font-size: 0.9em;"}
+::: {style="font-size: 0.85em;"}
 The one-sample $t$-test assumes **independent observations**
 
 Some ways that independence can be violated:
@@ -405,7 +466,7 @@ For the paired samples $t$-test, all observations are paired
 
 Take difference scores ($D$) for each pair of observations
 
--   **A paired samples** $\boldsymbol t$-test is equivalent to a one sample $\boldsymbol t$-test on difference scores
+-   **A paired samples** $t$-test is equivalent to a one sample $t$-test on difference scores
 :::
 
 ## Example
@@ -438,12 +499,15 @@ This is an example of the test of a *nil* hypothesis
 
 -   There is no difference between old and new
 
-Setting the null hypothesis to a difference of zero is so common it has it's own term, but it is not strictly required.
+Setting the null hypothesis to a difference of zero is so common it has it's own term! But really null hypothesis *could* be anything
 
 -   You could test $H_0: \mu_{new} - \mu_{old} = 5$ If you wanted!
 -   It is just unusual that a difference of 5 would have any special significance
+-   The nil hypothesis is a way to determine test for differences *in general*, which is often something we are interested in
 
 ## Scope
+
+
 
 -   Two groups where individual observations are matched across groups
 
@@ -455,7 +519,14 @@ Setting the null hypothesis to a difference of zero is so common it has it's own
 
 Null (nil) Hypothesis:
 
-$$H_0: \mu_{D} = \mu_0 = 0$$ $$t_{\bar{D}} = \frac{\bar{D} - \mu_0}{s_{D} / \sqrt{N}}$$
+$$H_0: \mu_{D} = \mu_0 = 0$$ 
+
+
+## Sampling Distribution
+
+Test statistic:
+
+$$t_{\bar{D}} = \frac{\bar{D} - \mu_0}{s_{D} / \sqrt{N}}$$
 
 Reference distribution:
 
@@ -464,6 +535,8 @@ $$t \text{ with } df = N-1$$
 -   $N$ is the number of *pairs*
 
 ## Our Data
+
+This data is in `.sav` format (comes from an SPSS file). The `haven` package has a function that lets us read `.sav` files into `R`
 
 ```{r}
 #| echo: true
@@ -474,6 +547,10 @@ dat <- read_sav("../../data/Berry Agg_priming_1.sav")
 dat |> glimpse()
 
 ```
+
+This dataset already has the variable `priming_effect` defined for us as:
+
+$$\text{priming\_effect} = \text{mRT\_new\_items} - \text{mRT\_old\_items}$$
 
 ## Evaluating Normality
 
@@ -508,10 +585,15 @@ Sample SD of differences $S_D$:
 Sample standard error of the mean differences $S_\bar{D}$:
 
 ```{r}
-(SE <- S_D/sqrt(32))
+#| echo: true
+(SE <- (S_D - 0)/sqrt(32))
 ```
 
-$t$ statistic $t_D = \frac{\bar{D} = \mu_0}{S_{\bar{D}}}$
+
+## Test Statistic
+
+
+$t$ statistic $t_D = \frac{\bar{D} - \mu_0}{S_{\bar{D}}}$
 
 ```{r}
 (t_d <- (D_bar - 0)/SE)
@@ -520,6 +602,7 @@ $t$ statistic $t_D = \frac{\bar{D} = \mu_0}{S_{\bar{D}}}$
 Two-tailed $p$-value with $df = 32 - 1 = 31$
 
 ```{r}
+#| echo: true
 pt(t_d, df = 31, lower.tail = FALSE) * 2
 ```
 
@@ -533,7 +616,7 @@ First we need to know our critical value ($t_{crit}$)
 
 ```{r}
 #| echo: true
-t_crit <- qt(p = .025, df = 31, lower.tail = FALSE)
+t_crit <- qt(p = .05/2, df = 31, lower.tail = FALSE)
 ```
 
 Then we plug into our formula
@@ -552,12 +635,24 @@ What important value can we reject based on this confidence interval?
 
 -   [$\mu_{D} = 0$]{.answer .fragment .content-visible}
 
-Using the built in `R` function:
+## Using `R` (way 1)
+
+We can equivalently either reference the two variables `mRT_new_items` and `mRT_new_items` separately and specify `paired = TRUE`
 
 ```{r}
 #| echo: true
 t.test(dat$mRT_new_items, dat$mRT_old_items, paired = TRUE)
 ```
+
+## Using `R` (way 2)
+
+Or we can do a one-sample test on the difference score
+
+```{r}
+#| echo: true
+t.test(dat$priming_effect)
+```
+
 
 ## APA Writeup
 
@@ -570,7 +665,7 @@ In many cases, we may want to test whether two **independently sampled** groups 
 -   Randomized experiments in which different groups get different treatments
     -   Does a new experimental drug lead to better patient outcomes than a control?
 -   Differences in pre-existing groups
-    -   Do people with PhDs in psychology have higher average career earnings than people who do not?
+    -   Do people with PhDs in psychology have higher average career earnings than people with PhDs in anthropology?
 
 $$H_0: \mu_1 - \mu_2 = 0$$ $$H_a: \mu_1 - \mu_2 \neq 0$$
 
@@ -616,15 +711,15 @@ The sampling distribution of mean differences will be normal
 
 An independent sample $t$-test has the same assumptions we've already established
 
--   Normality of sampling distribution
--   Indepence of observations
+-   Normality of sampling distribution (prior slide)
+-   Independence of observations
 -   No outliers
 -   Random sampling
 
 Plus one new one:
 
 -   **Homogeneity of Variance:** Even if the populations have different means, they have the same variance (SD) around those means
--   We assume in the population both groups have the same variance: $\sigma^2_1 = \sigma^2_2$
+-   We assume **in the population** both groups have the same variance: $\sigma^2_1 = \sigma^2_2$
 
 ## Pooled Variance
 
@@ -646,14 +741,16 @@ $s_p = \sqrt{s^2_p}$ is the **pooled standard deviation**
 
 ## Homogeneity Example
 
-Homogeneity of Variance means two populations have the same variance, even if they have different means:
+**Homogeneity of variance:** two populations have the same variance, even if they have different means. Example:
 
 $$\text{Population}_1 \sim \text{Normal}(10, 10) \ \ \text{Population}_2 \sim \text{Normal}(5, 10)$$
+
+Notice that both populations have **different** means but **equal** standard deviations ($\text{variance} = \text{standard deviation}^2$)
 
 -   $\mu_1 = 10 \neq \mu_2 = 5$
 -   $\sigma_1 = \sigma_2 = \sigma = 10$
 
-Let's simulate 10,000 samples of $N = 5$ from each population and calculate $s_1$, $s_2$, and $s_p$. Which do you think will be closest to $\sigma = 10$?
+Let's simulate 10,000 samples of $N = 5$ from each population and calculate $s_1$, $s_2$, and $s_p$. Which do you think will be closest to the true $\sigma = 10$ on average?
 
 ## Simulated Homogeneity
 
@@ -700,10 +797,12 @@ sd_estimates |> pivot_longer(1:3, names_to = "Estimate",
 ```
 
 ::: {style="font-size: 0.8em;"}
-$s_p$ is doing a better job of estimating $\sigma$ than either $s_1$ or $s_2$ because the sample size used to calculate it is twice as large.
+Even though the groups have different means, $s_p$ is doing a better job of estimating $\sigma$ than either $s_1$ or $s_2$ because both groups have the same standard deviation. So by pooling them, we double the sample size used to estimate $\sigma$.
 :::
 
 ## Test Statistic
+
+::: {style="font-size: 0.8em;"}
 
 $$t_{\bar{x}_1 - \bar{x}_2} = \frac{\bar{x}_1 - \bar{x}_2 }{s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}$$
 
@@ -718,6 +817,8 @@ Is our **pooled standard error**
 Reference distribution:
 
 $$t \text{ with } df = n_1 + n_2 -2$$
+
+::: 
 
 ## Example
 
@@ -747,11 +848,11 @@ Were scores different on the second exam between the self-handicap and control g
 
 $n_{\text{self-handicap}} = 32$, $n_{\text{control}} = 29$
 
-$$H_0: \mu_{self-handicap} = \mu_{control}$$ $$H_a: \mu_{self-handicap} \neq \mu_{control}$$
+$$H_0: \mu_{\text{self-handicap}} = \mu_{\text{control}}$$ $$H_a: \mu_{\text{self-handicap}} \neq \mu_{\text{control}}$$
 
-or
+or, written another way:
 
-$$H_0: \mu_{self-handicap} - \mu_{control} = 0$$ $$H_a: \mu_{self-handicap} - \mu_{control} \neq 0$$
+$$H_0: \mu_{\text{self-handicap}} - \mu_{\text{control}} = 0$$ $$H_a: \mu_{\text{self-handicap}} - \mu_{\text{control}} \neq 0$$
 
 ## Reading in Data
 
@@ -770,10 +871,10 @@ dat <- read.csv("../../data/McCrea.csv") |>
                        "2" = "control"))
 
 
-
+dat |> glimpse()
 ```
 
-## Calculating Statistics {.scrollable}
+## Descriptive Statistics 
 
 ```{r}
 #| echo: true
@@ -786,19 +887,29 @@ dat <- read.csv("../../data/McCrea.csv") |>
 
 (ns <- dat |> group_by(Cond) |>
   summarize(n = n()))
-
-## extract x_bar1, x_bar2, s1, s2, n1, and n2
-x_bar1 <- means$mean[1]
-x_bar2 <- means$mean[2]
-s1 <- sds$sd[1]
-s2 <- sds$sd[2]
-n1 <- ns$n[1]
-n2 <- ns$n[2]
 ```
 
-## More Stats
+## Saving Statistics
 
-Calculate the pooled variance and then SD:
+I'm going to save each of these values just so I can play around with them and do manual calculations (you usually won't need to do this)
+
+```{r}
+#| echo: true
+(x_bar1 <- means$mean[1])
+(x_bar2 <- means$mean[2])
+(s1 <- sds$sd[1])
+(s2 <- sds$sd[2])
+(n1 <- ns$n[1])
+(n2 <- ns$n[2])
+```
+
+## Calculations
+
+Calculate the pooled variance as:
+
+$$s^2_p = \frac{(n_1 - 1)s^2_1 + (n_2 - 1)s^2_2}{n_1 + n_2 - 2}$$
+
+and then pooled SD as: $\sqrt{s^2_p}$
 
 ```{r}
 #| echo: true
@@ -807,21 +918,41 @@ Calculate the pooled variance and then SD:
 (sp <- sqrt(s2p))
 ```
 
-Calculate the standard error $\sigma_{\bar{x}_1 - \bar{x}_2}$:
+## More calculations
+
+Calculate the pooled standard error as: 
+
+$$s_{\bar{x}_1 - \bar{x}_2} = s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}} = \sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}$$
 
 ```{r}
 #| echo: true
 (SE <- sp * sqrt((1/n1) + (1/n2)))
 ```
 
-Calculate the $t_{\bar{x}_1 - \bar{x}_2}$-statistic:
+
+## Even More calculations
+
+Calculate the $t_{\bar{x}_1 - \bar{x}_2}$ statistic as:
+
+
+$$t_{\bar{x}_1 - \bar{x}_2} = \frac{\bar{x}_1 - \bar{x}_2 }{s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}$$
 
 ```{r}
 #| echo: true
 (t_xbar1_xbar2 <- (x_bar1 - x_bar2)/SE)
 ```
 
-Calculate $p$-value (use absolute value of $t_{\bar{x}_1 - \bar{x}_2}$)
+## Get $p$-value
+
+In this case, $t$ is negative so I can either use the *lower* tail (and multiply by 2 for two-tailed test)
+
+```{r}
+#| echo: true
+
+pt(t_xbar1_xbar2, df = n1 + n2 - 2, lower.tail = TRUE) * 2
+```
+
+Or use absolute the value of $t_{\bar{x}_1 - \bar{x}_2}$ and the *upper* tail (and multiply by 2)
 
 ```{r}
 #| echo: true
@@ -833,13 +964,13 @@ pt(abs(t_xbar1_xbar2), df = n1 + n2 - 2, lower.tail = FALSE) * 2
 
 The confidence interval follows the same formula we have seen
 
-$$\bar{x}_1 - \bar{x}_2 \pm \text{Critical Value} \times \sigma_{\bar{x}_1 - \bar{x}_2}$$
+$$\bar{x}_1 - \bar{x}_2 \pm \text{Critical Value} \times s_{\bar{x}_1 - \bar{x}_2}$$
 
 Critical value:
 
 ```{r}
 #| echo: true
-(t_crit <- qt(.025, df = n1 + n2 - 2, lower.tail = FALSE))
+(t_crit <- qt(.05/2, df = n1 + n2 - 2, lower.tail = FALSE))
 ```
 
 Confidence Interval:
@@ -866,7 +997,7 @@ t.test(percent ~ Cond, data = dat, var.equal = TRUE)
 
 ## Behrens-Fisher Problem
 
-::: {style="font-size: 0.9em;"}
+::: {style="font-size: 0.85em;"}
 If all assumptions hold, then
 
 $$t = \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} \sim t(n_1 + n_2 - 2)$$
@@ -875,14 +1006,16 @@ $$t = \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} \sim
 
 -   What if the homogeneity assumption is not tenable (populations have different variances)?
 
-If we instead compute:
+- Can we just use each sample variance separately (instead of pooling?)
 
 $$t^\prime = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s^2_1}{n_1} + \frac{s^2_2}{n_2}}} \,\,\sim \,\,??$$
 
-**Problem:** $t^\prime$ follows a slightly different distribution
+**Problem:** $t^\prime$ follows a different distribution than $t(n_1 + n_2 - 2)$
 :::
 
-## Welch-Satterthwaite Correction
+## Welch-Satterthwaite
+
+
 
 **Welch-Satterthwaite** corrected $t$-test:
 
@@ -894,9 +1027,16 @@ Standard error (does not pool variances):
 
 $$s_{\bar{x}_1 - \bar{x}_2} = \sqrt{\frac{s^2_1}{n_1} + \frac{s^2_2}{n_2}}$$
 
-Degrees of freedom (adjust downwards, can be fractional:
+## $df$ adjustment
+
+The actual adjustment happens on the **degrees of freedom**. The Welch-Satterthwaite correction adjusts the degrees of freedom so they become smaller than $(n1 + n2 - 2)$. 
 
 $$df = \frac{\left(\frac{s^2_1}{n_1} + \frac{s^2_2}{n_2}\right)^2}{\left(\frac{s^2_1}{n_1}\right)^2 / (n_1 - 1) + \left(\frac{s^2_2}{n_2}\right)^2 / (n_2 - 1)}$$
+
+
+
+This adjustment is an **estimate** that allows the $df$ to become **fractional** (not necessarily integers)
+
 
 ## In `R`
 
