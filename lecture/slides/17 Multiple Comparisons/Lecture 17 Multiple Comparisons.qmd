@@ -1,0 +1,928 @@
+---
+title: "Lecture 17: Individual and Multiple Comparisons"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(readxl)
+library(gganimate)
+library(gifski)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+
+bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
+                                                draft_year != "")
+
+```
+
+## Last Time
+
+-   We learned how to use the ANOVA framework to test hypotheses that **all means** among many groups are equal
+-   Aka the "omnibus test"
+
+
+$$H_0: \mu_1 = \mu_2 = \mu_3 = \cdots$$
+
+$$H_1: \text{at least one of the means are different}$$
+
+- Also learned how to structure this procedure as a linear model and do corollary Bayesian analysis with Bayes factors to compare posterior likelihoods of competing models
+
+$$y_{ig} = \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\sum_{p=1}^{g-1}\beta_p x_{p}} + \color{#984EA3}{\epsilon_i}$$
+
+- Use coding schemes like contrast or dummy coding for $\beta$'s so model can represent all group means as parsimoniously as possible
+
+## Specific Comparisons
+
+What if we want to do specific comparisons between individual groups (not all groups at once)? Let's revisit the first example from last time
+
+Example: weight of plants under one of three conditions
+
+- Control (ctrl), 10 observations
+- Treatment 1 (trt1), 10 observations
+- Treatment 2 (trt2), 10 observations
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+#| echo: true
+data("PlantGrowth", package = "datasets")
+summary(PlantGrowth)
+```
+
+:::
+    
+
+## Group Means
+
+```{r}
+ggplot(PlantGrowth, aes(group, weight, fill = group)) + 
+  geom_boxplot() + theme_light() + 
+  scale_fill_manual(values = c(my_purple2, my_green2, my_blue2)) + 
+  theme(legend.position = "none") + labs(x = "") + 
+  stat_summary(fun=mean, geom="point", shape=7, size=4)
+```
+
+::: {.fragment style="text-align: center; margin-top: -10px;"}
+Are these means equal **in the population?** Last time we did this by hand, now lets use `R`
+:::
+
+
+## ANOVA in `R`
+
+```{R}
+#| echo: true
+
+a1 <- aov(weight ~ group, PlantGrowth)
+anova(a1)
+
+```
+
+Tells us there are differences **somewhere**. But where? What if we want to check `treatment1` vs. `control`? What might we do? 
+
+
+[An independent samples $t$-test, but how will it be differet from a regular independent samples $t$-test?]{.fragment }
+
+[Do we just ignore `treatment2` entirely, or can we use it for something?]{.fragment }
+
+## $t$ Revisited
+
+If we want to compare `treatment1` to `control` in a $t$-test, we have the following formula
+
+$$t = \frac{\bar{x}_{\text{treatment1}}- \bar{x}_{\text{control}}}{\sigma_{\bar{x}_{\text{treatment1}}- \bar{x}_{\text{control}}}}$$
+
+My question: how will I define $\sigma_{\bar{x}_{\text{treatment1}}- \bar{x}_{\text{control}}}$?
+
+I'll give you two options
+
+- Pooled standard error for treatment and control groups
+
+- Use $\sqrt{\text{MSW}}$ for something
+
+Which do you want to use?
+
+## Lets Simulate!
+
+In this simulation, I am going to simulate 1000 samples from three groups, each with $N = 5$:
+
+- $x_1 \sim \text{Normal(-5, 10)}$
+- $x_2 \sim \text{Normal(0, 10)}$
+- $x_3 \sim \text{Normal(5, 10)}$
+
+
+
+Then I am going to calculate
+
+- the pooled SD based on $x_1$ and $x_2$
+- $\sqrt{\text{MSW}}$ based on all three groups
+
+## Simulation Result
+
+```{r}
+
+iter <- 1000
+N <- 5
+
+
+
+sigmas <- data.frame(sigma_paired = rep(NA, iter),
+                     sqrt_msw = rep(NA, iter))
+
+set.seed(1024)
+for(i in 1:iter){
+  
+  sim_dat <- data.frame(x1 = rnorm(N, -5, 10),
+                      x2 = rnorm(N, 0, 10),
+                      x3 = rnorm(N, 5, 10))
+  
+  
+  sim_dat_long <- sim_dat |>  
+    pivot_longer(cols = c("x1","x2","x3"), names_to = "group", values_to = "x")
+  
+  ttest_result <- t.test(sim_dat$x1, sim_dat$x2)
+  
+  anova_result <- aov(x ~ group, sim_dat_long)
+  
+  sigmas$sigma_paired[i] <- ttest_result$stderr/sqrt(1/5 + 1/5)
+
+  sigmas$sqrt_msw[i] <- sigma(anova_result)
+
+}
+
+sigmas_long <- sigmas |> pivot_longer(1:2, names_to = "Estimator",
+                                      values_to = "Estimate")
+
+ggplot(sigmas_long, aes(x = Estimate, fill = Estimator)) + 
+  geom_density(alpha = 0.2) + 
+  geom_vline(xintercept = 10, linetype = 2) + 
+  annotate(
+    "text", 
+    x = 10, 
+    y = .22, 
+    label = "sigma == 10", 
+    parse = TRUE, 
+    vjust = 2, 
+    hjust = -0.1
+  ) + 
+  xlim(c(0, 20)) +
+  scale_fill_discrete(
+    labels = c("pooled SD", expression(sqrt(MSW)))
+  ) + 
+  theme_minimal() + 
+  theme(
+    axis.title.y = element_blank(),
+    axis.text.y  = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+```
+
+
+## Discussion
+
+Why did $\sqrt{\text{MSW}}$ provide a better estimate (on average) of the population pooled standard deviation than the sample pooled standard deviation for $x_1$ and $x_2$?
+
+- [Does $x_3$ have a different standard deviation than $x_1$ or $x_2$?]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Because we assumed **homogeneity of variance** we want to use **all of our data** to estimate the common standard deviation]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Even if our specific comparison omits a group, that group provides more data to estimate the shared variance]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [And $\text{MSW}$ IS an estimate of the shared, within group variance! (all groups)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Using MSW in $t$
+
+
+
+
+Modified $t$ test statistic:
+
+$$t(df) = \frac{\bar{x}_1 - \bar{x}_2}{s_{\bar{x}_1 - \bar{x}_2}}$$
+
+where
+
+$$s_{\bar{x}_1 - \bar{x}_2} = \sqrt{\frac{MSW}{n_1} + \frac{MSW}{n_2}}$$
+
+- $df = dfW$
+- $n_1, n_2$: sample sizes for groups 1 and 2
+
+
+
+## Back to Plants
+
+```{r}
+#| echo: true
+PlantGrowth |> group_by(group) |> summarize(weight = mean(weight),
+                                            n = n())
+anova(a1)
+
+```
+
+## `treatment1` vs `control`
+
+In the `anova()` output, MSW is in the `Residuals` row under `Mean Sq`
+
+- $s_{\bar{x}_1 - \bar{x}_2}  = \sqrt{\frac{MSW}{n_1} + \frac{MSW}{n_2}} = \sqrt{\frac{0.3886}{10} + \frac{0.3886}{10}} = 0.279$
+
+
+- $t(df) = \frac{\bar{x}_1 - \bar{x}_2}{s_{\bar{x}_1 - \bar{x}_2}} =\frac{5.032 - 4.661}{0.279} = 1.33$
+
+
+- Since $df = dfW$, we have $t(27) = 1.33$
+
+We can look this up in our `pt()` $t$-table function
+
+```{r}
+pt(1.331, 27, lower.tail = FALSE) * 2
+```
+
+## 95% CI
+
+How will we get the 95% confidence interval?
+
+:::::: {.answer}
+:::: {.content-visible unless-meta="params.v0"}
+:::: {.fragment}
+
+-  Find the critical value corresponding to $\alpha$ on our $t$-distribution
+
+```{r}
+qt(.05/2, 27, lower.tail = FALSE)
+```
+Then Calculate $95\% \text{CI} = \bar{x}_1 - \bar{x}_2 \pm t(df)_{\alpha/2} \times s_{\bar{x}_1 - \bar{x}_2} =$ 
+$5.032 - 4.661 \pm 2.05 \times 0.279 = [-0.20,.0.94]$
+::::
+::::
+::::::
+
+
+
+## Cohen's $d$
+
+How will we get Cohen's $d$?
+
+:::::: {.answer}
+:::: {.content-visible unless-meta="params.v0"}
+:::: {.fragment}
+
+-  Since MSW is our pooled variance, $\sqrt{\text{MSW}}$ is our pooled SD:
+
+$d = \frac{ \bar{x}_1 - \bar{x}_2}{\sqrt{MSW}} =$
+$\frac{5.032 - 4.661}{\sqrt{.389}} = 0.595$
+::::
+::::
+::::::
+
+## Multiple Comparisons
+
+
+What if we want to make more than one comparison?
+
+::: {.callout-note title="Family-Wise Error (FWE) Rate"}
+* The probability of rejecting **at least one** true $H_0$ in a series of comparisons.
+* The probability of committing **at least one** Type I error in a series of comparisons.
+:::
+
+[xkcd Significant Comic](http://xkcd.com/882/)
+
+- If **no** jelly bean color causes acne, there is a high probability that we will reject $H_0$ for at least one test.
+
+- To avoid high FWE, we test all the hypotheses at the same time with an omnibus test.
+
+::: {.fragment}
+- But what if we WANT to test the hypotheses individually?
+:::
+
+
+## Multiple Comparisons
+
+So far, we have only learned about the omnibus test against the null hypothesis:
+
+- Are **all group means** equal in the population?
+
+Or the test of a single comparison
+
+- Does one specific group differ from another
+
+Often, we want to also know whether differences occur among *all* pairs of groups.
+
+Running multiple tests on the same data leads to an **inflated Type I error rate**. If all of the tests are independent:
+
+\[
+  \alpha^\star = 1 - (1 - \alpha)^k
+\]
+
+- $k$: number of comparisons made or tests done
+-  $\alpha$: specified Type I error rate
+- $\alpha^\star$: actual Type I error rate (probability of rejecting at least one correct null)
+
+For a study with $G$ groups, there are $k = \frac{G(G-1)}{2}$ pairs of groups. That means we would do $k$ different tests if we want to compare each individual group to each other group.
+
+## Logic of Error Inflation I
+
+Recall, for two independent events:
+
+$$P(A \cap B) = P(A)P(B)$$
+
+- In this case, the independent events are the probability of **correctly retaining** the null. Since the probability of incorrectly rejecting is $\alpha$, the probability of correctly retaining is $1 - \alpha$.
+
+- If we have $k$ independent tests, then the probability of correctly retaining the null **for every single test jointly** is:
+
+## Logic of Error Inflation II
+
+$$P(\text{retain}_1 \cap \text{retain}_2 \cap \text{retain}_3 \cap \dots \cap \text{retain}_k) =$$ 
+$$P(\text{retain}_1) \times P(\text{retain}_2) \times \dots \times P(\text{retain}_k) =$$
+$$(1-\alpha)_1 \times (1-\alpha)_2 \times \dots \times (1-\alpha)_k =$$
+$$(1-\alpha)^k$$
+
+That means that the probability that we **incorrectly** reject **at least one** of those null hypotheses is:
+
+$$1 - (1 - \alpha)^k$$
+
+## Inflated Type I Errors for Jellybeans
+
+[xkcd Significant](http://xkcd.com/882/)
+
+In the jellybean comic, we aren't comparing groups to one another, but we do have $k = 20$ different tests.
+
+- Actual Type I error rate $\alpha^\star = 1 - (1 - .05)^{20} = \mathbf{.64}$ !!!
+
+**Interpretation:** There is a 64% chance we would reject the null hypothesis for **at least one** jellybean color just by chance even if **all null hypotheses were true\***.
+
+_\* And if all of the tests were independent_
+
+## Multiple Comparisons
+
+Traditional Procedures:
+
+- When ANOVA **is not** significant, we **DO NOT** conduct multiple comparisons of mean differences between pairs of groups.
+- When ANOVA **is** significant, we might conduct multiple comparisons to examine which pairs of groups contribute to the significant results.
+
+Modern Recommendations:
+
+- Conduct multiple comparisons **regardless** of the significance of the simple ANOVA test.
+- Multiple comparisons do not require a significant omnibus test.
+- Multiple comparison procedures control the Type I error rate of each comparison.
+
+## Post-Hoc vs. A Priori Comparisons
+
+**Post-hoc** comparisons:
+
+- Mean comparisons between all pairs of groups after data collection.
+- Requires extra statistical control for Type I error rates.
+
+**A priori** comparisons:
+
+- Mean comparisons based on planned hypotheses (before data collection).
+- Planned hypotheses are made before knowing ANOVA test results.
+- Usually fewer comparisons.
+    - Higher power than all pairwise comparisons.
+
+
+## Bonferroni and Holm
+
+::: {style="background-color: #f3e5f5; border-left: 4px solid #984EA3; padding: 10px; margin-bottom: 15px;"}
+**Bonferroni Correction:**
+
+$$\text{adjusted } \alpha = \alpha / k$$
+:::
+
+::: {style="background-color: #f3e5f5; border-left: 4px solid #984EA3; padding: 10px;"}
+**Holm Correction:**
+
+1. Sort $p$-values from low to high.
+2. Compare to adjusted $\alpha = \frac{\alpha}{k}, \frac{\alpha}{k-1}, \cdots, \frac{\alpha}{2}, \frac{\alpha}{1}$
+:::
+
+- $\alpha$: desired Type I error rate (e.g., .05) | $k$: number of comparisons
+- If $p < \text{adjusted } \alpha$: reject $H_0$ for that pair
+- Holm's adjustment is more powerful than Bonferroni's
+
+
+
+
+## Other Example
+
+
+Original Study:
+
+> Williams, L. E., & Bargh, J. A. (2008). Keeping one's distance: The influence of social cues on affect and evaluation. *Psychological Science*, 19, 302-308.
+
+Replication study link: [OSF Link](https://osf.io/p87cn)
+
+Does viewing objects that are close together affect your feelings of closeness toward people and places?
+
+
+
+
+## More Details
+
+::: {style="font-size: .8em;"}
+
+- **Step 1**: subjects drew two points on a coordinate plane
+  - **Closeness** prime: (2, 4) and (-3, 1)
+  - **Intermediate** prime: (8, 3) and (-6, -5)
+  - **Distant** prime: (12, 10) and (-11, -8)
+- **Step 2**: subjects rated the strength of their bonds to:
+  - siblings
+  - parents
+  - hometown
+
+
+**IV: distance prime**
+
+- 3 levels: close, intermediate, distant
+
+
+**DV: bond ratings** (average rating for siblings, parents, hometown)
+
+- 7-point scale (1 = "not at all strong", 7 = "extremely strong")
+
+:::
+
+## Visual
+
+```{r}
+
+
+dat <- read_xls("../../data/Williams data.xls")
+
+dat <- dat %>% mutate(average_bond = (SIB_BOND + PAR_BOND + HOME_BOND) / 3) %>%
+  filter(!is.na(average_bond)) %>%
+  mutate(condition = recode(factor(COND), "1" = "close", "2" = "intermediate", "3" = "distant")) %>% dplyr::select(-COND)
+
+dat2 <- dat %>% 
+  pivot_longer(c(SIB_BOND:HOME_BOND, average_bond), names_to = "type", values_to = "strength") %>%
+  mutate(type = recode(type, SIB_BOND = "Sibling", PAR_BOND = "Parent", HOME_BOND = "Home"))
+
+ggplot(dat2 %>% filter(type == "average_bond")) + 
+  geom_boxplot(aes(x = condition, y = strength, fill = condition)) + 
+  scale_fill_manual(values = c(my_purple2, my_green2, my_blue2)) + 
+  theme(legend.position = "bottom") + theme_light() + 
+  facet_grid(. ~ "Average of Bond Types") + 
+  labs(x = "", y = "average bond strength rating") + 
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) + 
+  stat_summary(aes(x = condition, y = strength), fun=mean, geom="point", shape=7, size=4)
+```
+
+## Omnibus Result
+
+
+```{r}
+#| echo: true
+a1 <- aov(average_bond ~ condition, dat)
+anova(a1)
+```
+
+
+
+## Bonferroni and Holm Corrections in R
+
+::: {style="font-size: 0.8em;"}
+
+```{r}
+#| echo: true
+library(emmeans)
+em1 <- emmeans(a1, specs = "condition") 
+pairs(em1, adjust = "bonferroni")
+pairs(em1, adjust = "holm")
+```
+
+:::
+
+## Tukey's HSD I
+
+
+::: {style="font-size: 0.85em;"}
+
+Tukey's Honestly Significant Difference (HSD) is a slightly different approach. Null and alternative hypotheses are the same as other pairwise comparisons.
+
+**Test statistic:**
+
+$$q(df, G) = \frac{\bar{x}_1 - \bar{x}_2}{s_{\bar{x}_1 - \bar{x}_2}}$$
+
+where
+
+$$s_{\bar{x}_1 - \bar{x}_2} = \sqrt{\frac{\left(\frac{MSW}{n_1} + \frac{MSW}{n_2}\right)}{2}}$$
+
+- $MSW$: mean of within-group effect (from ANOVA table)
+- $df = dfW$
+- $q$ follows a studentized range distribution (`ptukey` / `qtukey` in `R`)
+
+:::
+
+## Tukey's HSD II
+
+$(1 - \alpha)\%$ confidence intervals for $(\mu_1 - \mu_2)$:
+
+$$(\bar{x}_1 - \bar{x}_2) \pm q(df)_{\alpha_{\text{adj}}/2} \times s_{\bar{x}_1 - \bar{x}_2}$$
+
+- $df = dfW = N - G$
+- $s_{\bar{x}_1 - \bar{x}_2}$: standard error of $(\bar{x}_1 - \bar{x}_2)$
+- $\alpha_{\text{adj}}$: $\alpha$ adjusted with either Bonferroni or Holm
+- $q(df)_{\alpha_{\text{adj}}/2}$: $(\alpha_{\text{adj}}/2)^{\text{th}}$ quantile of the studentized range distribution with $df$ degrees of freedom
+
+Tukey's HSD is more powerful than Bonferroni.
+
+## Tukey in R
+
+Tukey's HSD is the default for `pairs()` in `emmeans`.
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+#| echo: true
+pairs(em1, adjust = "tukey") # can leave out adjust since tukey is default
+confint(pairs(em1))
+```
+
+:::
+
+## Games-Howell
+
+::: {style="font-size: 0.85em;"}
+
+Same $H_0$ and $H_1$ as Bonferroni/Holm/Tukey.
+
+**Test statistic:**
+
+$$q(df, G) = \frac{\bar{x}_1 - \bar{x}_2}{s_{\bar{x}_1 - \bar{x}_2}}$$
+
+where
+
+$$s_{\bar{x}_1 - \bar{x}_2} = \sqrt{\frac{\left(\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}\right)}{2}}$$
+
+- $s_1^2, s_2^2$: sample variances of groups 1 and 2
+- $n_1, n_2$: sample sizes of groups 1 and 2
+- $q$ follows the Tukey distribution with $df = dfW$ and $G$ groups
+
+:::
+
+## Games-Howell in R
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+#| echo: true
+library(rstatix)
+dat %>% 
+  ungroup() %>% # needed because we grouped the tibble earlier
+  games_howell_test(average_bond ~ condition)
+```
+
+:::
+
+## Dunnett C and Dunnett T3
+
+- Neither procedure assumes homogeneity of variance
+- Both procedures successfully correct the Type I error rate for multiple comparisons
+- **Comparisons among the 3 procedures:**
+  - Games-Howell performs better than Dunnett C and Dunnett T3
+  - Dunnett C has higher statistical power than Dunnett T3 when $dfW > 75$ (Tabachnick & Fidell, 2001)
+  
+  
+
+## Recommendations
+
+**Recommended post-hoc procedures:**
+
+- **Homogeneity of variance:** Tukey HSD
+- **Heterogeneity of variance:** Games-Howell
+- Work with the same assumptions for both the ANOVA itself and for post-hoc tests
+
+## A Priori Comparisons
+
+So far, we have learned about post-hoc tests (exploratory, look at all possible pairs).
+
+**A priori comparisons:**
+
+- Comparisons planned before data collection
+- Guided by theory
+- Only some group differences may truly be of interest
+- Usually fewer comparisons
+- More statistically powerful
+
+## Linear Contrasts I
+
+Example (4 groups): $H_1$: $\mu_1$ is different than the average of $\mu_2$, $\mu_3$, and $\mu_4$
+
+Rewrite $H_0$ and $H_1$:
+
+$$\begin{align*}
+H_0: & \quad 1\mu_1 + -\frac{1}{3}\mu_2 + -\frac{1}{3}\mu_3 + -\frac{1}{3}\mu_4 = 0 \\
+H_1: & \quad 1\mu_1 + -\frac{1}{3}\mu_2 + -\frac{1}{3}\mu_3 + -\frac{1}{3}\mu_4 \neq 0
+\end{align*}$$
+
+Based on these hypotheses, we can define a linear contrast ($\psi$):
+
+$$\psi = a_1 \bar{x}_1 + a_2 \bar{x}_2 + a_3 \bar{x}_3 + a_4 \bar{x}_4 = \sum a_g \bar{x}_g$$
+
+- Require $\sum a_g = 0$
+
+## Linear Contrasts II
+
+What would be a linear contrast to compare $\bar{x}_1$ to $\bar{x}_2$?
+
+$$\begin{align*}
+H_0: & \quad 1\mu_1 + -1\mu_2 + 0\mu_3 + 0\mu_4 = 0 \\
+H_1: & \quad 1\mu_1 + -1\mu_2 + 0\mu_3 + 0\mu_4 \neq 0
+\end{align*}$$
+
+## Linear Contrasts III
+
+**For hypothesis testing:**
+
+$$t(df) = \frac{\psi}{s_\psi}$$
+
+- $\psi$: linear contrast $= \sum a_g \bar{x}_g$
+- $s_\psi$: standard error of contrast
+- Test statistic follows a $t$ distribution with $dfW$ degrees of freedom
+- Assumes homogeneity of variance
+
+## Linear Contrasts IV
+
+**Confidence interval:**
+
+$$\psi + t(df)_{\alpha/2}\times s_\psi$$
+
+**Effect size of linear contrast:** Cohen's $d$
+
+$$d = \frac{\psi}{s}$$
+
+Options for $s$:
+
+- Sample SD of focal group of interest
+- $\sqrt{MSW}$ (square root of mean squares within)
+
+## Specifying Weights
+
+In our example, we use the following weights:
+
+$$a_1 = 1, \quad a_2 = -\frac{1}{3}, \quad a_3 = -\frac{1}{3}, \quad a_4 = -\frac{1}{3}$$
+
+The following weights will give the same results:
+
+$$a_1 = 3, \quad a_2 = -1, \quad a_3 = -1, \quad a_4 = -1$$
+
+**Interpretation of contrast weights:**
+
+- Group with positive weights will be compared to those with negative weights
+- Groups with zero weight are not considered in the contrast
+
+## Contrasts in R
+
+::: {style="font-size: 0.85em;"}
+
+$H_1$: "close" is different than "intermediate" and "distant"
+
+```{r}
+#| echo: true
+#| message: false
+contrast(em1, method = list(c(-2, 1, 1)))
+```
+
+$H_1$: "close" is different than "intermediate"
+
+```{r}
+#| echo: true
+#| message: false
+contrast(em1, method = list(c(1, -1, 0)))
+```
+
+:::
+
+## Effect Size Way 1 (by hand)
+
+Using $\sqrt{MSW}$ and $H_1$: "close" is different than "intermediate" and "distant"
+
+```{r}
+summary(a1)
+contrast(em1, method = list(c(1, -1, 0)))
+```
+
+$$d = \frac{\psi}{s} = \frac{0.129}{\sqrt{1.03}} = 0.13$$
+
+## Effect Size Way 2
+
+Using $\sqrt{MSW}$ and $H_1$: "close" is different than "intermediate" and "distant"
+
+We can use `eff_size()` from `emmeans` but need to specify `sigma = sqrt(MSW)` and `edf = dfW`.
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+summary(a1)
+```
+
+```{r}
+#| echo: true
+eff_size(em1, sigma = sqrt(1.03), edf = 122, 
+         method = list(c(1, -1, 0)))
+```
+
+:::
+
+## Orthogonal Contrasts
+
+Historically, researchers have conducted **orthogonal** contrasts:
+
+- $G-1$ linear contrasts
+- For each contrast, $\sum a_g = 0$
+- For all pairs of contrasts (weights $a_g$ and $b_g$), $\sum (a_g b_g) = 0$
+
+Modern practices generally don't require orthogonal contrasts:
+
+- Theory should drive comparisons
+- Orthogonality not required
+
+**Correct for multiple comparisons when specified a priori?**
+
+- Traditional/textbook: Bonferroni, Holm, or other correction of $\alpha$
+- Modern: Open debate about whether correction is necessary
+
+## Trend Analysis
+
+Special application of linear contrasts where groups are ordered (e.g., dosage levels 0ml, 5ml, 10ml, 15ml, 20ml).
+
+More interested in the form of the relationship:
+
+- **Linear relationship:** (-2, -1, 0, 1, 2)
+- **Quadratic relationship:** (-2, 1, 2, 1, -2)
+- **Cubic relationship:** (-1, 2, 0, -2, 1)
+
+
+## APA Writeup
+
+A one-way ANOVA of social cues on affect evaluation was conducted. The omnibus test of priming condition was not significant $F(2, 122) = 0.24$, $p = 0.79$, $\omega^2 < .001$. The contrast between the Close and Intermediate conditions was not significant, $t(122) = 0.59$, $p = .55$, $d = .13$.
+
+*Note: Multiple comparisons were not adjusted for here. If you adjust, state the method used!*
+
+
+## The Bayesian Perspective
+
+Do we need multiple comparisons adjustments when we use Bayesian methods? Why or why not?
+
+- [Multiple adjustments are about adjusting the probability we make an incorrect **decision** based on a prescribed cutoff]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [If we use Bayes factors with a cutoff we might need something similar]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Alternatively, we can just consider the posterior distribution]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [What range of effects are plausible based on posterior?]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Posterior Extraction
+
+- **Step 1:** Set up linear model $y_{ig} = \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\sum_{p=1}^{g-1}\beta_p x_{p}} + \color{#984EA3}{\epsilon_i}$
+- **Step 2:** Plug in for $x$'s to get $\hat{y}$ for first (reference) group
+  - If using dummy coding, this would be all $x_p = 0$
+- **Step 3:** plug in for $x$'s to get $\hat{y}$ for group 2
+  -  If using dummy coding, this would be all $x_1 = 1$ and all other $x_2 \dots x_p = 0$
+- Repeat for all groups
+- Do this across **all draws** from MCMC output
+- Calculate pairwise differences (or linear contrasts) for **every draw**
+
+
+
+## Example
+
+```{r}
+#| echo: true
+library(rstanarm)
+options(mc.cores = parallel::detectCores())
+
+
+stan1 <- stan_glm(average_bond ~ condition, dat, family = "gaussian",
+                  seed = 32590)
+summary(stan1)
+
+
+```
+
+
+
+
+
+## Draw Extraction I
+
+We can make predictions about $\hat{y}$ by creating a toy dataset that has the values of $x$ we want to make predictions about. In this example, that means a dataset where there are three rows: 
+
+- one for `condition = close` 
+- one for `condition = intermediate`
+- one for `condition = distant`
+
+
+
+
+I can then use `posterior_linpred()` to make predictions about each of these rows across the 4000 draws generated by `Stan`. This represents my posterior prediction about each group.
+
+## Draw Extraction II
+
+```{r}
+#| echo: true
+(toydata <- data.frame(condition = c("close","intermediate", "distant")))
+(post_pred <- posterior_linpred(stan1, newdata = toydata))
+
+
+```
+
+
+
+## Calculate Differences
+
+Calculating the differences between each column represents the posterior distribution of pairwise differences between each group!
+
+```{r}
+#| echo: true
+post_diffs <- data.frame(post_pred) |> 
+  mutate(close_intermediate = X1 - X2,
+         close_distant = X1 - X3,
+         intermediate_distant = X2 - X3)
+
+
+summary(post_diffs |> 
+          select(close_intermediate, close_distant, intermediate_distant))
+
+```
+
+
+
+## Credible Intervals
+
+We can use the `quantile()` function to get posterior medians and equal tailed credible intervals
+
+```{r}
+#| echo: true
+round(quantile(post_diffs$close_intermediate, probs = c(.025, .5, .975)), 2)
+round(quantile(post_diffs$close_distant, probs = c(.025, .5,  .975)), 2)
+round(quantile(post_diffs$intermediate_distant, probs = c(.025, .5,  .975)), 2)
+```
+
+
+## Using `emmeans()`
+
+Of course, `R` makes this easier for us with `emmeans`, which does all this work for us.  This will give us the highest posterior density interval (slightly different from equal tailed output on prior slide)
+
+```{r}
+#| echo: true
+em_stan1 <- emmeans(stan1, ~ condition)
+pairs(em_stan1)
+
+```
+
+And we can also include linear contrasts if we have a specific linear hypothesis
+
+```{r}
+#| echo: true
+contrast(em_stan1, method = list(c(-2, 1, 1)))
+```
+
+## Comparison To Frequentist Result
+
+```{r}
+#| echo: true
+pairs(em1)
+contrast(em1, method = list(c(-2, 1, 1)))
+```
+
+## Bayes APA Writeup
+
+A one-way Bayesian ANOVA of social cues on affect evaluation was conducted. Pairwise comparisons between all groups were estimated. The contrast between the Close and Intermediate had a posterior mean $= 0.13, 95\% \text{CI} = [-0.33, 0.56]$. The contrast between the Close and Distant groups had posterior mean $=0.14, 95\% CI = [-0.32, 0.58]$. The contrast between Intermediate and Distant Groups had posterior mean $=0.00, 95\% CI = [-0.49, 0.43]$. These results fail to support an effect of social cues on affect evaluation. 
