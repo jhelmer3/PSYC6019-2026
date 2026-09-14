@@ -1,8 +1,9 @@
 ---
-title: "Chi-Squared Tests and T-Tests"
+title: "Chi-Squared Tests"
 subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2025-09-18 | Lab 4"
 author: "Jess Helmer"
 footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
+lang: en
 format: 
   revealjs:
     code-link: true
@@ -19,7 +20,6 @@ execute:
 ## Outline
 
 - $\chi^2$ tests
-- t-tests
 
 ```{r setup}
 #| echo: false
@@ -28,7 +28,6 @@ library(tidyverse)
 library(gt)
 ```
 
-# Chi-Squared Tests
 
 ## Chi-Squared ($\chi^2$) Test
 
@@ -367,7 +366,7 @@ tibble(i = seq(1, 35, length.out = 1000)) |>
 ## $\chi^2$ Test of Goodness of Fit Example
 
 ::: {style="font-size:80%"}
-You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.
+You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 200 students and ask what major they chose.
 
 [First, what are your expected frequencies for each category?]{.fragment}
 :::
@@ -392,7 +391,7 @@ tibble(type = c("Expected", "Observed"),
 ## $\chi^2$ Test of Goodness of Fit Example
 
 ::: {style="font-size:80%"}
-You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.
+You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 200 students and ask what major they chose.
 
 First, what are your expected frequencies for each category?
 :::
@@ -400,11 +399,11 @@ First, what are your expected frequencies for each category?
 ```{r}
 #| echo: false
 tibble(type = c("Expected", "Observed"),
-       STEM = c(20, NA),
-       `Social Sciences` = c(20, NA),
-       Humanities = c(20, NA),
-       Arts = c(20, NA), 
-       Business = c(20, NA)) |>
+       STEM = c(40, NA),
+       `Social Sciences` = c(40, NA),
+       Humanities = c(40, NA),
+       Arts = c(40, NA), 
+       Business = c(40, NA)) |>
   gt(rowname_col = "type") |>
   cols_label(`Social Sciences` = "Social Sciences") |>
   tab_style(style = cell_text(weight = "bold"),
@@ -419,7 +418,7 @@ tibble(type = c("Expected", "Observed"),
 ## $\chi^2$ Test of Goodness of Fit Example
 
 ::: {style="font-size:80%"}
-You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.
+You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 200 students and ask what major they chose.
 
 [Next, what is your $\chi^2$ cutoff value?]{.fragment}
 :::
@@ -427,11 +426,11 @@ You are an education psychologist interested in college students' choice of majo
 ```{r}
 #| echo: false
 tibble(type = c("Expected", "Observed"),
-       STEM = c(20, NA),
-       `Social Sciences` = c(20, NA),
-       Humanities = c(20, NA),
-       Arts = c(20, NA), 
-       Business = c(20, NA)) |>
+       STEM = c(40, NA),
+       `Social Sciences` = c(40, NA),
+       Humanities = c(40, NA),
+       Arts = c(40, NA), 
+       Business = c(40, NA)) |>
   gt(rowname_col = "type") |>
   cols_label(`Social Sciences` = "Social Sciences") |>
   tab_style(style = cell_text(weight = "bold"),
@@ -459,19 +458,150 @@ chisq_crit
 ## $\chi^2$ Test of Goodness of Fit Example
 
 ::: {style="font-size:80%"}
-You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 100 students and ask what major they chose.
+You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 200 students and ask what major they chose.
+
+[Now, what are the observed values (after collecting data)?]{.fragment}
+:::
+
+```{r}
+#| echo: false
+tibble(type = c("Expected", "Observed"),
+       STEM = c(40, NA),
+       `Social Sciences` = c(40, NA),
+       Humanities = c(40, NA),
+       Arts = c(40, NA), 
+       Business = c(40, NA)) |>
+  gt(rowname_col = "type") |>
+  cols_label(`Social Sciences` = "Social Sciences") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = cells_column_labels()) |>
+  tab_style(style = cell_text(color = "steelblue3", style = "italic"),
+            locations = list(cells_body(rows = "Expected"))) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+
+
+## $\chi^2$-test in R
+
+Let's get some observed values!
+
+Most of the time, we'd get data that looks like this:
+
+```{r}
+major_data <- read_csv(here::here("lab", "data", "lab_04", "major_data.csv"),
+                       show_col_types = F)
+
+major_data |> head(10)
+```
+
+And does not show the frequencies yet
+
+
+## Count Data: `table()`
+
+Some ways to generate frequencies from categorical variables
+
+```{r}
+table(major_data$major)
+```
+
+```{r}
+table(major_data$major) |>
+  tibble()
+```
+
+
+## Count Data: `summarize()`
+
+Some ways to generate frequencies from categorical variables
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+major_data |>
+  summarize(.by = c(major),
+            n = n())
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+major_data |>
+  summarize(.by = c(major),
+            n = n()) |>
+  arrange(desc(n))
+```
+:::
+::::
+
+
+## Count Data: `count()`
+
+`count(df, grouping_var1, grouping_var2, etc.)`
+
+[○ `df` = dataframe]{.subpoint}
+
+<div class="subpoint">○ `grouping_vars` = variable names to group by</div>
+
+Basically shorthand for:
+
+```{r}
+#| eval: false
+df |>
+  summarise(.by = a,
+            n = n())
+```
+
+Also seems to `arrange` by default
+
+
+## Count Data: `count()`
+
+`count(df, grouping_var1, grouping_var2, etc.)`
+
+[○ `df` = dataframe]{.subpoint}
+
+<div class="subpoint">○ `grouping_vars` = variable names to group by</div>
+
+::: {.columns}
+::: {.column width="50%"}
+```{r}
+major_data |>
+  summarize(.by = major,
+            n = n())
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+major_data |>
+  count(major)
+```
+:::
+::::
+
+
+## $\chi^2$ Test of Goodness of Fit Example
+
+::: {style="font-size:80%"}
+You are an education psychologist interested in college students' choice of majors. You've grouped majors into five categories: STEM, Social Sciences, Humanities, Arts, and Business. You'd like to test whether there are differences in the population of students choosing those majors. You sample 200 students and ask what major they chose.
 
 Here are the observed values:
 :::
 
 ```{r}
 #| echo: false
+counted_major_dat <- major_data |>
+  count(major)
+
 tibble(type = c("Expected", "Observed"),
-       STEM = c(20, 65),
-       `Social Sciences` = c(20, 10),
-       Humanities = c(20, 5),
-       Arts = c(20, 5), 
-       Business = c(20, 15)) |>
+       STEM = c(40, counted_major_dat[counted_major_dat$major == "STEM", "n"][[1]]),
+       `Social Sciences` = c(40, counted_major_dat[counted_major_dat$major == "Social Sciences", "n"][[1]]),
+       Humanities = c(40, counted_major_dat[counted_major_dat$major == "Humanities", "n"][[1]]),
+       Arts = c(40, counted_major_dat[counted_major_dat$major == "Arts", "n"][[1]]), 
+       Business = c(40, counted_major_dat[counted_major_dat$major == "Business", "n"][[1]])) |>
   gt(rowname_col = "type") |>
   cols_label(`Social Sciences` = "Social Sciences") |>
   tab_style(style = cell_text(weight = "bold"),
@@ -489,11 +619,11 @@ $$ \chi^2 = \sum_{j=0}^{J} \frac{(O_j – N\pi_j)^2}{N\pi_j} = \sum_{j=0}^{J} \f
 
 ::: fragment
 ```{r}
-obs_chisq <- (65 - 20)^2 / 20 +
-  (10 - 20)^2 / 20 +
-  (5 - 20)^2 / 20 +
-  (5 - 20)^2 / 20 +
-  (15 - 20)^2 / 20
+obs_chisq <- (51 - 40)^2 / 200 +
+  (33 - 40)^2 / 200 +
+  (32 - 40)^2 / 200 +
+  (32 - 40)^2 / 200 +
+  (52 - 40)^2 / 200
 obs_chisq
 
 obs_chisq > chisq_crit
@@ -502,38 +632,68 @@ obs_chisq > chisq_crit
 
 [We can reject the null in favor of the alternative that the number of students is not the same across majors.]{.fragment}
 
+
 ## R Function
 
-::: fragment
-```{r}
-major_data <- tibble(
-  major = c("STEM", "Social Sciences", "Humanities", "Arts", "Business"),
-  observed = c(65, 10, 5, 5, 15)
-)
+R has a function for $\chi^2$-tests, `chisq.test(x)`. This function wants counted data, either a numeric vector of counts, or a `table` of the data.
 
-chisq <- major_data |>
-  select(observed) |>
-  chisq.test()
-chisq
+:::: {.columns}
+::: {.column .fragment width="33%"}
+```{r}
+counted_major_data <- major_data |>
+  count(major)
+counted_major_data
 ```
 :::
 
-<br>
+::: {.column .fragment width="66%"}
+```{r}
+tabled_major_data <- major_data |>
+  select(major) |>
+  table()
+tabled_major_data
+```
+:::
+::::
+
+:::: {.columns}
+::: {.column .fragment width="50%"}
+```{r}
+chisq <- counted_major_data |>
+  select(-major) |>
+  chisq.test()
+chisq
+```
+
+:::
+
+::: {.column .fragment width="50%"}
+```{r}
+chisq <- tabled_major_data |>
+  chisq.test()
+chisq
+```
+
+:::
+::::
+
+
+## R Function
 
 :::: {.columns .fragment }
-::: {.column width="33%"}
+::: {.column width="70%"}
 ```{r}
 chisq$expected
 ```
 :::
 
-::: {.column width="33%"}
+::: {.column width="15%"}
 ```{r}
 chisq$statistic
 ```
 :::
 
-::: {.column width="33%"}
+::: {.column width="15%"}
 ```{r}
 chisq$p.value
 ```
@@ -552,13 +712,12 @@ These are your new expected frequencies (60% STEM, evenly divided across the res
 ```{r}
 #| echo: false
 tibble(type = c("Expected", "Observed"),
-       STEM = c(60, 65),
-       `Social Sciences` = c(10, 10),
-       Humanities = c(10, 5),
-       Arts = c(10, 5), 
-       Business = c(10, 15)) |>
+       STEM = c(120, counted_major_dat[counted_major_dat$major == "STEM", "n"][[1]]),
+       `Social Sciences` = c(20, counted_major_dat[counted_major_dat$major == "Social Sciences", "n"][[1]]),
+       Humanities = c(20, counted_major_dat[counted_major_dat$major == "Humanities", "n"][[1]]),
+       Arts = c(20, counted_major_dat[counted_major_dat$major == "Arts", "n"][[1]]), 
+       Business = c(20, counted_major_dat[counted_major_dat$major == "Business", "n"][[1]])) |>
   gt(rowname_col = "type") |>
-  # cols_label(`Social Sciences` = "Social Sciences") |>
   tab_style(style = cell_text(weight = "bold"),
             locations = cells_column_labels()) |>
   tab_style(style = cell_text(color = "steelblue3", style = "italic"),
@@ -574,11 +733,11 @@ tibble(type = c("Expected", "Observed"),
 ::: {.column width="50%"}
 ```{r}
 #| code-line-numbers: false
-chisq.test(x = c(65, 10, 5, 5, 15),
-           p = c(60, 10, 10, 10, 10),
+chisq.test(x = c(51, 33, 32, 32, 52),
+           p = c(120, 20, 20, 20, 20),
            rescale.p = T)
 
-chisq.test(x = c(65, 10, 5, 5, 15),
+chisq.test(x = c(51, 33, 32, 32, 52),
            p = c(.60, .10, .10, .10, .10))
 ```
 :::
@@ -679,17 +838,20 @@ qchisq(.95, df)
 ## $\chi^2$ Test of Independence Example
 
 ::: {style="font-size:80%"}
-You are another educational psychologist, and you're interested in examining your department's student body makeup. You wonder whether there is an association between students' level (graduate vs. undergraduate) and whether they are an in-state student or not. You sample 50 students from your department, and these are the frequencies you observe. 
+Let's say that you were a educational psychologist interested in how students choose STEM or non-STEM schools based on whether or not they had a parent go to a STEM or non-STEM school. You sample 200 students, and these are the frequencies you observe.
 :::
 
 ```{r}
 #| echo: false
-tibble(type = c("Undergrad", "Graduate"),
-       in_state = c(25, 5),
-       out_of_state = c(10, 10)) |>
-  gt(rowname_col = "type") |>
-  cols_label(in_state = "In-State",
-             out_of_state = "Out-of-State") |>
+major_data_wide <- major_data |>
+  count(school_type, parent_in_stem) |>
+  pivot_wider(names_from = school_type, values_from = n)
+
+major_data_wide |>
+  gt(rowname_col = "parent_in_stem") |>
+  cols_label(`Non-STEM School` = "Non-Stem School",
+             `STEM School` = "STEM School",
+             parent_in_stem = "Parent in STEM") |>
   tab_style(style = cell_text(weight = "bold"),
             locations = list(cells_column_labels(), cells_stub())) |>
   sub_missing(missing_text = "") |>
@@ -707,22 +869,23 @@ First, get the marginal totals for each column
 
 ```{r}
 #| echo: false
-tibble(type = c("Undergrad", "Graduate", "Total"),
-       in_state = c(25, 5, NA),
-       out_of_state = c(10, 10, NA),
-       Total = c(NA, NA, NA)) |>
-  gt(rowname_col = "type") |>
-  cols_label(in_state = "In-State",
-             out_of_state = "Out-of-State") |>
+major_data_wide |>
+  mutate(Total = NA) |>
+  add_row(tibble(parent_in_stem = "Total", `Non-STEM School`= NA, `STEM School` = NA, Total = NA)) |>
+  gt(rowname_col = "parent_in_stem") |>
+  cols_label(`Non-STEM School` = "Non-Stem School",
+             `STEM School` = "STEM School") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = list(cells_column_labels(), cells_stub())) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26) |>
   tab_style(style = cell_text(weight = "bold"),
             locations = list(cells_column_labels(), cells_stub())) |>
   tab_style(style = cell_text(color = "steelblue3", style = "italic"),
             locations = list(cells_column_labels(columns = "Total"),
                              cells_body(columns = "Total"),
-                             cells_body(rows = in_state >= 30),
-                             cells_stub(rows = "Total"))) |>
-  sub_missing(missing_text = "") |>
-  tab_options(table.font.size = 26)
+                             # cells_body(rows = in_state >= 30),
+                             cells_stub(rows = "Total")))
 ```
 
 
@@ -732,22 +895,23 @@ First, get the marginal totals for each column
 
 ```{r}
 #| echo: false
-tibble(type = c("Undergrad", "Graduate", "Total"),
-       in_state = c(25, 5, 30),
-       out_of_state = c(10, 10, 20),
-       Total = c(35, 15, 50)) |>
-  gt(rowname_col = "type") |>
-  cols_label(in_state = "In-State",
-             out_of_state = "Out-of-State") |>
+major_data_wide |>
+  mutate(Total = `Non-STEM School` + `STEM School`) |>
+  add_row(tibble(parent_in_stem = "Total", `Non-STEM School`= 59+56, `STEM School` = 32+53, Total = 91+109)) |>
+  gt(rowname_col = "parent_in_stem") |>
+  cols_label(`Non-STEM School` = "Non-Stem School",
+             `STEM School` = "STEM School") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = list(cells_column_labels(), cells_stub())) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26) |>
   tab_style(style = cell_text(weight = "bold"),
             locations = list(cells_column_labels(), cells_stub())) |>
   tab_style(style = cell_text(color = "steelblue3", style = "italic"),
             locations = list(cells_column_labels(columns = "Total"),
                              cells_body(columns = "Total"),
-                             cells_body(rows = in_state >= 30),
-                             cells_stub(rows = "Total"))) |>
-  sub_missing(missing_text = "") |>
-  tab_options(table.font.size = 26)
+                             cells_body(rows = `Non-STEM School` >= 100),
+                             cells_stub(rows = "Total")))
 ```
 
 
@@ -757,56 +921,65 @@ tibble(type = c("Undergrad", "Graduate", "Total"),
 ::: {.column width="50%"}
 ```{r}
 #| echo: false
-tibble(type = c("Undergrad", "Graduate", "Total"),
-       in_state = c(25, 5, 30),
-       out_of_state = c(10, 10, 20),
-       Total = c(35, 15, 50)) |>
-  gt(rowname_col = "type") |>
-  cols_label(in_state = "In-State",
-             out_of_state = "Out-of-State") |>
+major_data_wide |>
+  mutate(Total = `Non-STEM School` + `STEM School`) |>
+  add_row(tibble(parent_in_stem = "Total", `Non-STEM School`= 59+56, `STEM School` = 32+53, Total = 91+109)) |>
+  gt(rowname_col = "parent_in_stem") |>
+  cols_label(`Non-STEM School` = "Non-Stem School",
+             `STEM School` = "STEM School") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = list(cells_column_labels(), cells_stub())) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26) |>
   tab_style(style = cell_text(weight = "bold"),
             locations = list(cells_column_labels(), cells_stub())) |>
   tab_style(style = cell_text(color = "steelblue3", style = "italic"),
             locations = list(cells_column_labels(columns = "Total"),
                              cells_body(columns = "Total"),
-                             cells_body(rows = in_state >= 30),
-                             cells_stub(rows = "Total"))) |>
-  sub_missing(missing_text = "") |>
-  tab_options(table.font.size = 26)
+                             cells_body(rows = `Non-STEM School` >= 100),
+                             cells_stub(rows = "Total")))
 ```
 :::
 
 ::: {.column .fragment width="50%"}
 ```{r}
 #| echo: false
-tibble(type = c("Undergrad", "Graduate", "Total"),
-       in_state = c(21, 9, 30),
-       out_of_state = c(14, 6, 20),
-       Total = c(35, 15, 50)) |>
-  gt(rowname_col = "type") |>
-  cols_label(in_state = "In-State",
-             out_of_state = "Out-of-State") |>
+tibble(parent_in_stem = c("No", "Yes", "Total"),
+       `Non-STEM School` = c(91*115/200, 91*85/200, 59+56) |> round(),
+       `STEM School` = c(109*115/200, 109*85/200, 109) |> round(),
+       Total = c(115, 85, 91+109)) |>
+  gt(rowname_col = "parent_in_stem") |>
+  cols_label(`Non-STEM School` = "Non-Stem School",
+             `STEM School` = "STEM School") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = list(cells_column_labels(), cells_stub())) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26) |>
   tab_style(style = cell_text(weight = "bold"),
             locations = list(cells_column_labels(), cells_stub())) |>
   tab_style(style = cell_text(color = "steelblue3", style = "italic"),
             locations = list(cells_column_labels(),
                              cells_body(),
-                             cells_stub())) |>
-  sub_missing(missing_text = "") |>
-  tab_options(table.font.size = 26)
+                             cells_stub())) 
 ```
 :::
 ::::
 
 Expected cell frequency = $E_j$ = $\frac{\text{column total} \times \text{row total}}{N}$
 
-[○ Undergrad & In-State = $\frac{35 \times 30}{50} = 21$]{.subpoint}
+:::: {.columns}
+::: {.column width="50%"}
+[○ Parent non-STEM & non-STEM school = $\frac{91 \times 115}{200} = 52.3$]{.subpoint-narrow}
 
-[○ Undergrad & Out-of-State = $\frac{35 \times 20}{50} = 14$]{.subpoint}
+[○ Parent STEM & non-STEM school = $\frac{109 \times 115}{200} = 62.7$]{.subpoint-narrow}
+:::
 
-[○ Graduate & In-State = $\frac{15 \times 30}{50} = 9$]{.subpoint}
+::: {.column width="50%"}
+[○ Parent non-STEM & STEM school = $\frac{91 \times 85}{200} = 38.7$]{.subpoint-narrow}
 
-[○ Graduate & Out-of-State = $\frac{15 \times 20}{50} = 6$]{.subpoint}
+[○ Parent STEM & STEM school = $\frac{109 \times 85}{200} = 46.3$]{.subpoint-narrow}
+:::
+::::
 
 
 ## $\chi^2$ Test of Independence Example
@@ -817,12 +990,20 @@ $$ \chi^2 = \sum_{j=0}^{J} \frac{(O_j – N\pi_j)^2}{N\pi_j} = \sum_{j=0}^{J} \f
 :::: {.columns}
 ::: {.column width="66%"}
 ```{r}
-#| code-line-numbers: false
-tibble(type = c("Undergrad", "Graduate", "Total"),
-       in_state = c(25, 5, 30),
-       out_of_state = c(10, 10, 20),
-       Total = c(35, 15, 50)) 
+#| echo: false
+major_data_wide |>
+  gt(rowname_col = "parent_in_stem") |>
+  cols_label(`Non-STEM School` = "Non-Stem School",
+             `STEM School` = "STEM School",
+             parent_in_stem = "Parent in STEM") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = list(cells_column_labels(), cells_stub())) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
 
+```{r}
+#| code-line-numbers: false
 chisq_crit <- qchisq(.95, df = (2 - 1) * (2 - 1))
 chisq_crit
 ```
@@ -831,10 +1012,10 @@ chisq_crit
 ::: {.column width="33%"}
 ```{r}
 #| code-line-numbers: false
-obs_chisq <- (25 - 21)^2 / 21 +
-  (10 - 14)^2 / 14 +
-  (5 - 9)^2 / 9 +
-  (10 - 6)^2 / 6
+obs_chisq <- (59 - 52)^2 / 21 +
+  (32 - 62)^2 / 14 +
+  (56 - 39)^2 / 9 +
+  (53 - 46)^2 / 6
 obs_chisq
 
 obs_chisq > chisq_crit
@@ -847,884 +1028,195 @@ obs_chisq > chisq_crit
 
 ## $\chi^2$ Test of Independence R Function
 
+When we have more than one variable, we need a dataframe of just the numeric variables.
+
+```{r}
+major_data |> head(10)
+```
+
+[Let's look at creating frequency data for two variables]{.fragment}
+
+
+## Count Data: `table()`
+
 :::: {.columns}
+::: {.column width="40%"}
+```{r}
+table(major_data$parent_in_stem, major_data$school_type)
+```
+:::
+
 ::: {.column width="60%"}
 ```{r}
-#| code-line-numbers: false
-studdat <- tibble(type = c("Undergrad", "Graduate"),
-                  in_state = c(25, 5),
-                  out_of_state = c(10, 10))
-studdat
-
-studdat |>
-  select(-type) |>
-  chisq.test(correct = F)
-```
-:::
-
-::: {.column width="40%"}
-[○ `correct` = [`T`/`F`], applies a "continuity correction" to the $\chi^2$ value. Default is `T`.]{.subpoint}
-:::
-::::
-
-[We can reject the null in favor of the alternative that students' level (graduate vs. undergraduate) and whether they are an in-state student or not are not independent.]{.fragment}
-
-
-
-# From *Z* to *T*: No longer normal
-
-
-## *Z*- vs. *T*-Distribution
-
-*T*-distribution has thicker tails
-
-As df increases, it looks more like a standard normal distribution
-
-With df = $\infty$, exactly follows a normal distribution (so approximates with large df)
-
-
-## *Z*- vs. *T*-Distribution
-
-```{r}
-#| echo: false
-#| fig-align: center
-data.frame(x = seq(-5, 5, length.out = 1000)) |>
-  mutate(normal = dnorm(x),
-         t1 = dt(x, 1),
-         t2 = dt(x, 2),
-         t5 = dt(x, 5),
-         t10 = dt(x, 10)) |>
-  ggplot(aes(x = x)) +
-  geomtextpath::geom_textline(aes(y = normal, label = "standard normal"),
-                              hjust = .1, size = 6, linewidth = 1.5, color = "gray60") +
-  coord_cartesian(clip = "off", xlim = c(-5, 5), expand = F) +
-  guides(y = "none") +
-  labs(x = NULL, y = NULL) +
-  theme_classic(base_size = 16) 
-```
-
-
-## *Z*- vs. *T*-Distribution
-
-```{r}
-#| echo: false
-#| fig-align: center
-data.frame(x = seq(-5, 5, length.out = 1000)) |>
-  mutate(normal = dnorm(x),
-         t1 = dt(x, 1),
-         t2 = dt(x, 2),
-         t5 = dt(x, 5),
-         t10 = dt(x, 10)) |>
-  ggplot(aes(x = x)) +
-  geomtextpath::geom_textline(aes(y = normal, label = "standard normal"),
-                              hjust = .1, size = 6, linewidth = 1.5, color = "gray60") +
-  geomtextpath::geom_textline(aes(y = t1, label = "t(df=1)"),
-                              hjust = .28, size = 6, linewidth = 1.5, color = "skyblue") +
-  coord_cartesian(clip = "off", xlim = c(-5, 5), expand = F) +
-  guides(y = "none") +
-  labs(x = NULL, y = NULL) +
-  theme_classic(base_size = 16) 
-```
-
-
-## *Z*- vs. *T*-Distribution
-
-```{r}
-#| echo: false
-#| fig-align: center
-data.frame(x = seq(-5, 5, length.out = 1000)) |>
-  mutate(normal = dnorm(x),
-         t1 = dt(x, 1),
-         t2 = dt(x, 2),
-         t5 = dt(x, 5),
-         t10 = dt(x, 10)) |>
-  ggplot(aes(x = x)) +
-  geomtextpath::geom_textline(aes(y = normal, label = "standard normal"),
-                              hjust = .1, size = 6, linewidth = 1.5, color = "gray60") +
-  geomtextpath::geom_textline(aes(y = t1, label = "t(df=1)"),
-                              hjust = .28, size = 6, linewidth = 1.5, color = "skyblue") +
-  geomtextpath::geom_textline(aes(y = t2, label = "t(df=2)"),
-                              hjust = .35, size = 6, linewidth = 1.5, color = "steelblue") +
-  coord_cartesian(clip = "off", xlim = c(-5, 5), expand = F) +
-  guides(y = "none") +
-  labs(x = NULL, y = NULL) +
-  theme_classic(base_size = 16) 
-```
-
-
-## *Z*- vs. *T*-Distribution
-
-```{r}
-#| echo: false
-#| fig-align: center
-data.frame(x = seq(-5, 5, length.out = 1000)) |>
-  mutate(normal = dnorm(x),
-         t1 = dt(x, 1),
-         t2 = dt(x, 2),
-         t5 = dt(x, 5),
-         t10 = dt(x, 10)) |>
-  ggplot(aes(x = x)) +
-  geomtextpath::geom_textline(aes(y = normal, label = "standard normal"),
-                              hjust = .1, size = 6, linewidth = 1.5, color = "gray60") +
-  geomtextpath::geom_textline(aes(y = t1, label = "t(df=1)"),
-                              hjust = .28, size = 6, linewidth = 1.5, color = "skyblue") +
-  geomtextpath::geom_textline(aes(y = t2, label = "t(df=2)"),
-                              hjust = .35, size = 6, linewidth = 1.5, color = "steelblue") +
-  geomtextpath::geom_textline(aes(y = t10, label = "t(df=10)"), 
-                            hjust = .4, size = 6, linewidth = 1.5, color = "steelblue4") +
-  coord_cartesian(clip = "off", xlim = c(-5, 5), expand = F) +
-  guides(y = "none") +
-  labs(x = NULL, y = NULL) +
-  theme_classic(base_size = 16) 
-```
-
-
-## *Z*- vs. *T*-Distribution
-
-```{r}
-#| echo: false
-#| fig-align: center
-data.frame(x = seq(-5, 5, length.out = 1000)) |>
-  mutate(normal = dnorm(x),
-         t1 = dt(x, 1),
-         t2 = dt(x, 2),
-         t5 = dt(x, 5),
-         t10 = dt(x, 10),
-         t100 = dt(x, 100)) |>
-  ggplot(aes(x = x)) +
-  geomtextpath::geom_textline(aes(y = normal, label = "standard normal"),
-                              hjust = .1, size = 6, linewidth = 1.5, color = "gray60") +
-  geomtextpath::geom_textline(aes(y = t1, label = "t(df=1)"),
-                              hjust = .28, size = 6, linewidth = 1.5, color = "skyblue") +
-  geomtextpath::geom_textline(aes(y = t2, label = "t(df=2)"),
-                              hjust = .35, size = 6, linewidth = 1.5, color = "steelblue") +
-  geomtextpath::geom_textline(aes(y = t10, label = "t(df=10)"), 
-                            hjust = .4, size = 6, linewidth = 1.5, color = "steelblue4") +
-  geomtextpath::geom_textline(aes(y = t100, label = "t(df=100)"), 
-                            hjust = .48, size = 6, linewidth = 1.5, color = "royalblue4") +
-  coord_cartesian(clip = "off", xlim = c(-5, 5), expand = F) +
-  guides(y = "none") +
-  labs(x = NULL, y = NULL) +
-  theme_classic(base_size = 16) 
-```
-
-
-
-## *T*-Test: How many tails?
-
-Need to consider whether to use a "one-tail" or "two-tail" *t*-test.
-
-:::: columns
-::: {.column}
-#### One-Tail (One-Sided)
-
-We want to test whether something is lower or higher than a value, but **not both**
-
-Only one limit
-:::
-
-::: {.column}
-#### Two-Tails (Two-Sided)
-
-We want to test whether something is either lower or higher than a value
-
-Two limits
-:::
-::::
-
-
-## Testing: How many tails?
-
-Need to consider whether to use a "one-tail" or "two-tail" *t*-test.
-
-:::: columns
-::: {.column}
-#### One-Tail (One-Sided)
-
-```{r}
-#| echo: false
-#| fig-width: 3.5
-#| fig-height: 3.5
-#| fig-align: center
-dat <- data.frame(x = seq(-5, 5, length.out = 1000)) |>
-                  mutate(y = dnorm(x, 0, 1))
-
-dat |>
-  ggplot(aes(x = x, y = y)) +
-  geom_area(data = dat |> filter(x < qnorm(.05)), aes(x = x, y = y), fill = 'salmon', alpha = .8) +
-  geom_line() +
-  geomtextpath::geom_textline(aes(label = "5%"),
-                              hjust = .12, vjust = 0, size = 8, color = "salmon", linewidth = NA) +
-  annotate("text", label = "Lower tail test", x = -5, y = .38, hjust = 0) +
-  coord_cartesian(expand = F, clip = "off") +
-  guides(y = "none") +
-  labs(y = NULL, x = NULL) +
-  theme_classic(base_size = 16)
-```
-:::
-
-::: {.column}
-#### Two-Tails (Two-Sided)
-
-```{r}
-#| echo: false
-#| fig-width: 3.5
-#| fig-height: 3.5
-#| fig-align: center
-dat <- data.frame(x = seq(-5, 5, length.out = 1000)) |>
-                  mutate(y = dnorm(x, 0, 1))
-
-dat |>
-  ggplot(aes(x = x, y = y)) +
-  geom_area(data = dat |> filter(x < qnorm(.025)), aes(x = x, y = y), fill = 'salmon', alpha = .8) +
-  geom_area(data = dat |> filter(x > qnorm(.975)), aes(x = x, y = y), fill = 'salmon', alpha = .8) +
-  geom_line() +
-  geomtextpath::geom_textline(aes(label = "2.5%"),
-                              hjust = .12, vjust = 0, size = 8, color = "salmon", linewidth = NA) +
-  geomtextpath::geom_textline(aes(label = "2.5%"),
-                              hjust = .88, vjust = 0, size = 8, color = "salmon", linewidth = NA) +
-  coord_cartesian(expand = F) +
-  guides(y = "none", clip = "off") +
-  labs(y = NULL, x = NULL) +
-  theme_classic(base_size = 16)
+table(major_data$parent_in_stem, major_data$school_type) |>
+  as.data.frame() |>
+  as_tibble() |>
+  set_names(c("parent_in_stem", "school_type", "n"))
 ```
 :::
 ::::
 
 
-## Testing: How many tails?
+## Count Data: `summarize()`
 
-Notice that two-tailed tests are harder to "beat."
-
-```{r}
-#| echo: false
-#| fig-width: 8.5
-#| fig-height: 3
-#| fig-align: center
-dat |>
-  ggplot(aes(x = x, y = y)) +
-  geom_area(data = dat |> filter(x < qnorm(.05)), aes(x = x, y = y), fill = 'salmon', alpha = .5) +
-  geom_area(data = dat |> filter(x < qnorm(.025)), aes(x = x, y = y), fill = 'skyblue3', alpha = .6) +
-  geom_area(data = dat |> filter(x > qnorm(.975)), aes(x = x, y = y), fill = 'skyblue3', alpha = .6) +
-  geom_line() +
-  geomtextpath::geom_textvline(aes(xintercept = qnorm(.025), label = "2.5% cutoff"),
-                              hjust = .15, size = 6, color = "skyblue3", linewidth = 1.5) +
-  geomtextpath::geom_textvline(aes(xintercept = qnorm(.05), label = "5% cutoff"),
-                              hjust = .85, size = 6, color = "salmon", linewidth = 1.5) +
-  scale_x_continuous(breaks = round(c(qnorm(.025), qnorm(.05), 0, qnorm(.975)), 2)) +
-  coord_cartesian(expand = F, clip = "off") +
-  guides(y = "none", x = NULL) +
-  labs(y = NULL) +
-  theme_classic(base_size = 10)
-```
-
-
-
-## One-Sample *T*-Test Generally
-
-Asks "is there a question between our sample and the population?"
-
-Derived with sample mean ($\bar{x}$), population mean ($\mu$), and standard error ($\frac{s}{\sqrt n}$)
-
-$$t = \frac{\bar{x} - \mu}{\frac{s}{\sqrt{n}}}$$
-
-With a *t*-test, we don't have a known population SD ($\sigma$), so we use the SD we observe in our sample $s$
-
-Get our *t*-statistic and compare it to a critical *t* cutoff value
-
-
-## *T*-Test Example
-
-Let's say a researcher claims the average highway miles per gallon across all cars is 30mpg. They collect a sample of 234 cars and would like you to test this. We do not know the population standard deviation.
-
-::: fragment
-One- or two-tailed?
-:::
-
-:::: {.columns style="font-size:80%"}
-::: {.column .fragment width="75%"}
-```{r}
-head(mpg$hwy)
-
-x_bar <- mean(mpg$hwy)
-x_sd <- sd(mpg$hwy)
-n <- length(mpg$hwy) # although remember to be thinking about missing data
-df <- n - 1
-
-t_cutoff <- qt(.975, df)
-
-hwy_t_stat <- (x_bar - 30) / (x_sd / sqrt(n))
-hwy_t_stat
-```
-:::
-
-::: {.column width="25%"}
-[Our observed *t*-statistic exceeds our cutoff *t*-statistic, so we reject the null.]{.fragment}
-:::
-::::
-
-
-## *T*-Test Function
-
-Alternatively, we can use `t.test(x)`
-
-<div class="subpoint">○ `x` = vector of numeric data </div>
-
-<div class="subpoint">○ `mu` = hypothesized population mean (default is 0) </div>
-
-<div class="subpoint">○ `alternative` = one of `"two.sided"`, `"less"`, `"greater"` (default is `"two.sided"`) </div>
-
-:::: {.columns style="font-size:80%"}
-::: {.column .fragment width="75%"}
-```{r}
-#| code-line-numbers: false
-t.test(mpg$hwy, mu = 30, alternative = "two.sided")
-```
-:::
-
-::: {.column width="25%"}
-[We see a significant difference between our observed sample mean and our hypothesized population mean.]{.fragment}
-:::
-::::
-
-
-## *T*-Test Example
-
-Let's say a different researcher claims the average **city** miles per gallon across all cars is 30mpg. They collect a sample of 234 cars You are confident they are wrong---you think it is certainly less than that. We do not know the population standard deviation.
-
-::: fragment
-One- or two-tailed?
-:::
-
-:::: {.columns style="font-size:80%"}
-::: {.column .fragment width="75%"}
-```{r}
-t.test(mpg$cty, mu = 30, alternative = "less")
-```
-:::
-::: {.column width="25%"}
-[We see a significant difference between our observed sample mean and our hypothesized population mean.]{.fragment}
-:::
-::::
-
-
-## *T*-Test Example Output
+Some ways to generate frequencies from categorical variables
 
 :::: {.columns}
-::: column
+::: {.column width="50%"}
 ```{r}
-hwy_ttest <- t.test(mpg$cty, mu = 30)
-hwy_ttest
-
-#?t.test
+major_data |>
+  summarize(.by = c(parent_in_stem, school_type),
+            n = n())
 ```
 :::
 
-::: column
+::: {.column width="50%"}
 ```{r}
-hwy_ttest$statistic
-hwy_ttest$p.value
+major_data |>
+  summarize(.by = c(parent_in_stem, school_type),
+            n = n()) |>
+  arrange(parent_in_stem, school_type)
 ```
-
-::: fragment
-```{r}
-hwy_ttest$conf.int
-```
-:::
-:::
-::::
-
-Can use these in Quarto documents with inline R chunks.
-
-
-## *T*-Statistic Cutoffs
-
-Say you want to find the cutoff *t* values: $t(\text{df}=3)$ and $t(\text{df}=37)$ for $\alpha = .05$, both upper one-tailed and two-tailed.
-
-::: fragment
-Which will have the larger magnitude cutoff values?
-:::
-
-:::: {.columns .fragment style="font-size:70%"}
-::: column
-**One-Tailed**
-
-All of our $\alpha = .05$ goes on the upper side
-
-Need a cutoff for $.95$
-```{r}
-qt(p = .95, df = 3)
-
-qt(p = .05, df = 37, lower.tail = F)
-```
-$t_{crit}(\text{df}=3) = 2.35$
-
-$t_{crit}(\text{df}=37) = 1.69$
-:::
-
-::: column
-**Two-Tailed**
-
-$\alpha = 1 - .95 = 5\%$ on both sides
-
-So $.05 / 2 = .025$ on each side
-
-Need value for $.025$ and $.95 + .025$ ($[.025, .975]$)
-```{r}
-qt(p = c(.025, .975), df = 3)
-
-qt(p = c(.025, .975), df = 37)
-```
-$t_{crit}(\text{df}=3) = [-3.18, 3.18]$
-
-$t_{crit}(\text{df}=37) = [-2.03, 2.03]$
 :::
 ::::
 
 
-<!-- ## *T*-Statistic Cutoffs: Table -->
+## Count Data: `count()`
 
-<!-- ![](https://www.tdistributiontable.com/wp-content/uploads/2020/08/t-table.png){fig-align="center"} -->
+`count(x, grouping_var1, grouping_var2, etc.)`
 
+[○ `x` = dataframe]{.subpoint}
 
-## Types of *T*-Tests
+<div class="subpoint">○ `grouping_vars` = variable names to group by</div>
 
-![](https://media.geeksforgeeks.org/wp-content/uploads/20250128171318605791/Types-of-t-test.webp)
-
-
-## Independent Sample *T*-Test
-
-Might want to compare two samples of observations
-
-[○ Post-graduation salaries of GT vs. UGA grads]{.subpoint}
-
-[○ Treatment vs. control group]{.subpoint}
-
-[○ Cats vs. dogs]{.subpoint}
-
-We can represent each group with their mean on some outcome and compare the means
-
-Consider whether the mean difference is significant but also have to account for different levels of variability within group
-
-
-## Independent Sample *T*-Test: Pooled SD
-
-Need to pool the sample SDs while noting different sample sizes
-
-$$ s_p^2 = \frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{(n_1 - 1) + (n_2 - 1)} = \frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{n_1 + n_2 - 2}$$
-
-
-## Independent Sample *T*-Test: Pooled SD
-
-Note that when sample size is equal (i.e., $n_1 = n_2 = n$),
-
-::: math
-\begin{array}{ll}
-s_p^2 \bigg|_{n_1 = n_2 = n} & = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1) + (n - 1)} = \frac{(n - 1) (s_1^2 + s_2^2)}{(n - 1) + (n - 1)} \\[0.6em]
-& = \frac{(n - 1) (s_1^2 + s_2^2)}{2(n - 1)} = \frac{s_1^2 + s_2^2}{2}
-\end{array}
+::: {.columns}
+::: {.column width="50%"}
+```{r}
+major_data |>
+  summarize(.by = c(parent_in_stem, school_type),
+            n = n())
+```
 :::
 
-::: fragment
-Square root to get back to standard deviation
+::: {.column width="50%"}
+```{r}
+major_data |>
+  count(parent_in_stem, school_type)
+```
+:::
+::::
 
-$$ s_p = \sqrt{s_p^2} = \sqrt{\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{(n_1 - 1) + (n_2 - 1)}} = \sqrt{\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{n_1 + n_2 - 2}} $$
+
+## R Function
+
+If going to put into the `chisq.test()` function, want to pivot **wider** and get rid of additional columns.
+
+Many ways to do this, but one example:
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+head(major_data, 3)
+
+chisqdat <- major_data |>
+  count(parent_in_stem, school_type) |>
+  pivot_wider(names_from = parent_in_stem,
+              values_from = n) |>
+  select(-school_type)
+
+chisqdat
+```
 :::
 
+::: {.column width="50%"}
+```{r}
+chisq.test(chisqdat)
+```
+[We can reject the null in favor of the alternative that students' school type (STEM vs. non-STEM) and whether they choose a STEM or non-STEM major are not independent.]{.fragment}
+:::
+::::
 
-## Independent Sample *T*-Test: Test statistic
-
-$$ t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}} = \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}$$
-
-[Compare against critical *t*-value with df = $(n_1 - 1) + (n_2 - 2)$]{.fragment}
 
 
-## Independent Sample *T*-Test: R Calculation
 
+
+## Visualizing Count Data: `geom_bar()`
+
+::: {.panel-tabset}
+### Plot
 ```{r}
 #| echo: false
-ice_cream_sales <- read.csv(here::here("lab", "data", "lab_04", "ice_cream_sales_data.csv"))
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+major_data |>
+  ggplot(aes(x = major)) +
+  geom_bar() +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 15, vjust = .7))
 ```
 
+### Code
 ```{r}
-summary(ice_cream_sales)
-
-vanilla <- ice_cream_sales |> filter(flavor == "vanilla") |> pluck("sales")
-cookie_dough <- ice_cream_sales |> filter(flavor == "cookie_dough") |> pluck("sales")
-```
-<br>
-```{r}
-vanilla
-cookie_dough
-```
-
-
-## Independent Sample *T*-Test: R Calculation
-
-::: fragment
-```{r}
-x_bar_vanilla <- mean(vanilla)
-sd_vanilla <- sd(vanilla)
-n_vanilla <- length(vanilla)
-
-x_bar_cookie_dough <- mean(cookie_dough)
-sd_cookie_dough <- sd(cookie_dough)
-n_cookie_dough <- length(cookie_dough)
-
-pooled_sd <- sqrt( ((n_vanilla - 1) * sd_vanilla^2 + (n_cookie_dough - 1) * sd_cookie_dough^2) /
-                     ((n_vanilla - 1) + (n_cookie_dough - 1)) )
-pooled_sd
+#| eval: false
+major_data |>
+  ggplot(aes(x = major)) +
+  geom_bar() +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 15, vjust = .7))
 ```
 :::
 
-## Independent Sample *T*-Test: R Calculation
+## Working With Count Data: `geom_bar()`
 
-::: fragment
-```{r}
-df <- (n_vanilla - 1) + (n_cookie_dough - 1)
-
-t_crit <- qt(c(.025, .975), df)
-t_crit
-```
-
-If our observed *t*-statistic exceeds the bounds of [-2.02, 2.02], we reject the null.
-:::
-
-::: fragment
-```{r}
-t_stat <- (x_bar_vanilla - x_bar_cookie_dough) / (pooled_sd * sqrt(1 / n_vanilla + 1 / n_cookie_dough))
-t_stat
-```
-:::
-
-[We reject the null! Can we tell which had a larger mean?]{.fragment}
-
-
-## Independent Sample *T*-Test: R Function
-
-`t.test(outcome ~ group_var, data, var.equal = T)`
-
-```{r}
-t.test(sales ~ flavor, ice_cream_sales, var.equal = T)
-```
-
-
-## Paired Sample *T*-Test
-
-Comparing the same subjects under two conditions (typically two timepoints)
-
-[○ Stress levels before vs. after a test]{.subpoint}
-
-[○ Reaction times before vs. after caffiene consumption]{.subpoint}
-
-[○ Anxiety levels before vs. after a mindfulness intervention]{.subpoint}
-
-We can still use the mean to represent the observations in each condition and make comparisons
-
-This time, focus on difference scores (individual differences in the observations between the two conditions)
-
-
-## Paired Sample *T*-Test
-
-Need difference score for each observation $d_i = x_2 - x_1$
-
-Then, get mean difference $\bar{d} = \frac{d_1+d_2+...+d_n}{n}$ and standard deviation of those difference scores $s_d = \sqrt{\frac{(d_1-\bar{d})^2 + (d_2-\bar{d})^2 + ... + (d_n-\bar{d})^2}{n - 1}}$
-
-$$ t = \frac{\bar{d} - \mu_{d_0}}{\frac{s_d}{\sqrt{n}}} = \text{(usually)} \frac{\bar{d} - 0}{\frac{s_d}{\sqrt{n}}} = \frac{\bar{d}}{\frac{s_d}{\sqrt{n}}}$$
-
-Compare against critical *t*-value with df = $n - 1$
-
-
-## Paired Sample *T*-Test: R Calculation
-
-::: fragment
+::: {.panel-tabset}
+### Plot
 ```{r}
 #| echo: false
-pumpkin <- read.csv(here::here("lab", "data", "lab_04", "pumpkin_data.csv"))
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+major_data |>
+  ggplot(aes(y = major)) +
+  geom_bar() +
+  theme_classic(base_size = 14)
 ```
 
+### Code
 ```{r}
-pumpkin <- pumpkin |>
-  mutate(diff = oct1 - oct31)
-
-mean_diff <- mean(pumpkin$diff)
-sd_diff <- sd(pumpkin$diff)
-df <- nrow(pumpkin) - 1
-
-qt(c(.025, .975), df)
-
-t_stat <- (mean_diff - 0) / (sd_diff / sqrt(nrow(pumpkin)))
-t_stat
+#| eval: false
+major_data |>
+  ggplot(aes(y = major)) +
+  geom_bar() +
+  theme_classic(base_size = 14)
 ```
 :::
 
-[We can reject the null in favor of the alternative that there is a difference in pumpkin weights between October 1st and October 31st in the population!]{.fragment}
 
+## Working With Count Data: `geom_bar()`
 
-## Paired Sample *T*-Test: R Function
-
-`t.test(y1_vector, y2_vector, paired = T, var.equal = T)`
-
+::: {.panel-tabset}
+### Plot
 ```{r}
-t.test(pumpkin$oct1, pumpkin$oct31, paired = T, var.equal = T)
+#| echo: false
+#| fig-width: 8
+#| fig-height: 4
+#| fig-align: center
+major_data |>
+  ggplot(aes(y = major, fill = factor(parent_in_stem))) +
+  geom_bar(position = "dodge") +
+  theme_classic(base_size = 14)
 ```
 
-
-<!-- ## Cohen's *D* Revisited -->
-
-<!-- Now that we have two groups, R functions for Cohen's *D* will be more helpful to us. The `cohens_d()` function from the `effectsize` package allows for many formats of inputs. -->
-
-<!-- :::: {.columns} -->
-<!-- ::: {.column width="50%"} -->
-<!-- ```{r} -->
-<!-- #| code-line-numbers: false -->
-<!-- (x_bar_vanilla - x_bar_cookie_dough) / pooled_sd -->
-
-<!-- effectsize::cohens_d(sales ~ candy, -->
-<!--                      data = candy) -->
-<!-- ``` -->
-<!-- ::: -->
-
-<!-- ::: {.column width="50%"} -->
-<!-- ```{r} -->
-<!-- #| code-line-numbers: false -->
-<!-- mean_diff / sd_diff -->
-
-<!-- effectsize::cohens_d(pumpkin$oct1, pumpkin$oct31, -->
-<!--                      paired = T) -->
-<!-- ``` -->
-<!-- ::: -->
-<!-- :::: -->
+### Code
+```{r}
+#| eval: false
+major_data |>
+  ggplot(aes(y = major, fill = factor(parent_in_stem))) +
+  geom_bar(position = "dodge") +
+  theme_classic(base_size = 14)
+```
+:::
 
 
-## *T*-Test: Interpretation and write-up
-
-An [independent samples / repeated measures] *t*-test analysis was conducted between [group 1] and [group 2]. We [[fail to reject]{.navy-color} / [reject]{.gold-color}] H0 [[in favor of H1]{.gold-color}], *t*([df]) = [____], *p* [[< 0.05]{.gold-color} / [p-value]{.navy-color}]. We [[did not]{.navy-color}] observe[[d]{.gold-color}] a significant difference between the mean [DV] of [group 1] and [group 2] in our sample.
-
-
-
-
-<!-- # Count Data -->
-
-
-<!-- ## Working With Count Data -->
-
-<!-- ```{r} -->
-<!-- #| echo: false -->
-<!-- untallied_admissions_data <- admissions_data |> -->
-<!--   select(-applied) |> -->
-<!--   uncount(accepted) |> -->
-<!--   mutate(student_id = row_number()) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- untallied_admissions_data |> head(12) -->
-<!-- ``` -->
-
-
-<!-- ## Working With Count Data: `table()` -->
-
-<!-- Some ways to generate frequencies from categorical variables -->
-
-<!-- ```{r} -->
-<!-- table(untallied_admissions_data$college) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- table(untallied_admissions_data$college) |> -->
-<!--   tibble() -->
-<!-- ``` -->
-
-
-<!-- ## Working With Count Data: `table()` -->
-
-<!-- :::: {.columns} -->
-<!-- ::: {.column width="50%"} -->
-<!-- ```{r} -->
-<!-- table(untallied_admissions_data$college, untallied_admissions_data$year) -->
-<!-- ``` -->
-<!-- ::: -->
-
-<!-- ::: {.column width="50%"} -->
-<!-- ```{r} -->
-<!-- table(untallied_admissions_data$college, untallied_admissions_data$year) |> -->
-<!--   tibble() -->
-<!-- ``` -->
-<!-- ::: -->
-<!-- :::: -->
-
-
-<!-- ## Working With Count Data: `summarize()` -->
-
-<!-- Some ways to generate frequencies from categorical variables -->
-
-<!-- :::: {.columns} -->
-<!-- ::: {.column width="50%"} -->
-<!-- ```{r} -->
-<!-- untallied_admissions_data |> -->
-<!--   summarize(.by = c(college, year), -->
-<!--             n = n()) -->
-<!-- ``` -->
-<!-- ::: -->
-
-<!-- ::: {.column width="50%"} -->
-<!-- ```{r} -->
-<!-- untallied_admissions_data |> -->
-<!--   summarize(.by = c(college, year), -->
-<!--             n = n()) |> -->
-<!--   arrange(college, year) -->
-<!-- ``` -->
-<!-- ::: -->
-<!-- :::: -->
-
-
-<!-- ## Working With Count Data: `count()` -->
-
-<!-- `count(x, grouping_var1, grouping_var2, etc.)` -->
-
-<!-- [○ `x` = dataframe]{.subpoint} -->
-
-<!-- <div class="subpoint">○ `grouping_vars` = variable names to group by</div> -->
-
-<!-- Basically shorthand for: -->
-
-<!-- ```{r} -->
-<!-- #| eval: false -->
-<!-- df |> -->
-<!--   summarise(.by = c(a, b), -->
-<!--             n = n()) -->
-<!-- ``` -->
-
-<!-- Also seems to `arrange` by default -->
-
-
-<!-- ## Working With Count Data: `count()` -->
-
-<!-- `count(x, grouping_var1, grouping_var2, etc.)` -->
-
-<!-- [○ `x` = dataframe]{.subpoint} -->
-
-<!-- <div class="subpoint">○ `grouping_vars` = variable names to group by</div> -->
-
-<!-- ::: {.columns} -->
-<!-- ::: {.column width="50%"} -->
-<!-- ```{r} -->
-<!-- untallied_admissions_data |> -->
-<!--   summarize(.by = c(college, year), -->
-<!--             n = n()) -->
-<!-- ``` -->
-<!-- ::: -->
-
-<!-- ::: {.column width="50%"} -->
-<!-- ```{r} -->
-<!-- untallied_admissions_data |> -->
-<!--   count(college, year) -->
-<!-- ``` -->
-<!-- ::: -->
-<!-- :::: -->
-
-
-<!-- ## Working With Count Data: `summarize()` -->
-
-<!-- If going to put into the `chisq.test()` function, want to pivot and get rid of additional columns. -->
-
-<!-- Many ways to do this, but one example: -->
-
-<!-- :::: {.columns} -->
-<!-- ::: {.column width="50%"} -->
-<!-- ```{r} -->
-<!-- chisqdat <- untallied_admissions_data |> -->
-<!--   count(college, year) |> -->
-<!--   pivot_wider(names_from = college, -->
-<!--               values_from = n) |> -->
-<!--   select(-year) -->
-<!-- chisqdat -->
-<!-- ``` -->
-<!-- ::: -->
-
-<!-- ::: {.column width="50%"} -->
-<!-- ```{r} -->
-<!-- chisq.test(chisqdat) -->
-<!-- chisq.test(chisqdat, correct = F) -->
-<!-- ``` -->
-<!-- ::: -->
-<!-- :::: -->
-
-
-<!-- ## Working With Count Data: `geom_bar()` -->
-
-<!-- ::: {.panel-tabset} -->
-<!-- ### Plot -->
-<!-- ```{r} -->
-<!-- #| echo: false -->
-<!-- #| fig-width: 6 -->
-<!-- #| fig-height: 4 -->
-<!-- #| fig-align: center -->
-<!-- untallied_admissions_data |> -->
-<!--   ggplot(aes(x = college)) + -->
-<!--   geom_bar() + -->
-<!--   theme_classic(base_size = 14) + -->
-<!--   theme(axis.text.x = element_text(angle = 15, vjust = .7)) -->
-<!-- ``` -->
-
-<!-- ### Code -->
-<!-- ```{r} -->
-<!-- #| eval: false -->
-<!-- untallied_admissions_data |> -->
-<!--   ggplot(aes(x = college)) + -->
-<!--   geom_bar() + -->
-<!--   theme_classic(base_size = 14) + -->
-<!--   theme(axis.text.x = element_text(angle = 15, vjust = .7)) -->
-<!-- ``` -->
-<!-- ::: -->
-
-<!-- ## Working With Count Data: `geom_bar()` -->
-
-<!-- ::: {.panel-tabset} -->
-<!-- ### Plot -->
-<!-- ```{r} -->
-<!-- #| echo: false -->
-<!-- #| fig-width: 6 -->
-<!-- #| fig-height: 4 -->
-<!-- #| fig-align: center -->
-<!-- untallied_admissions_data |> -->
-<!--   ggplot(aes(y = college)) + -->
-<!--   geom_bar() + -->
-<!--   theme_classic(base_size = 14) -->
-<!-- ``` -->
-
-<!-- ### Code -->
-<!-- ```{r} -->
-<!-- #| eval: false -->
-<!-- untallied_admissions_data |> -->
-<!--   ggplot(aes(y = college)) + -->
-<!--   geom_bar() + -->
-<!--   theme_classic(base_size = 14) -->
-<!-- ``` -->
-<!-- ::: -->
-
-
-<!-- ## Working With Count Data: `geom_bar()` -->
-
-<!-- ::: {.panel-tabset} -->
-<!-- ### Plot -->
-<!-- ```{r} -->
-<!-- #| echo: false -->
-<!-- #| fig-width: 8 -->
-<!-- #| fig-height: 4 -->
-<!-- #| fig-align: center -->
-<!-- untallied_admissions_data |> -->
-<!--   ggplot(aes(y = college, fill = factor(year))) + -->
-<!--   geom_bar(position = "dodge") + -->
-<!--   theme_classic(base_size = 14) -->
-<!-- ``` -->
-
-<!-- ### Code -->
-<!-- ```{r} -->
-<!-- #| eval: false -->
-<!-- untallied_admissions_data |> -->
-<!--   ggplot(aes(y = college, fill = factor(year))) + -->
-<!--   geom_bar(position = "dodge") + -->
-<!--   theme_classic(base_size = 14) -->
-<!-- ``` -->
-<!-- ::: -->
+## Lab 04 Activity

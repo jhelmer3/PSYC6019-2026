@@ -31,6 +31,10 @@ list(
   # tar_target(pumpkin_data_file, 
   #            write.csv(pumpkin_data, "lab/data/pumpkin_data.csv", row.names = F),
   #            format = "file"),
+  tar_target(major_data, make_major_data()),
+  tar_target(major_data_file, 
+             write.csv(major_data, "lab/data/lab_04/major_data.csv", row.names = F),
+             format = "file"),
   tar_target(ice_cream_sales_data, make_ice_cream_sales_data()),
   tar_target(ice_cream_sales_data_file, 
              write.csv(ice_cream_sales_data, "lab/data/lab_04/ice_cream_sales_data.csv", row.names = F),
@@ -43,6 +47,7 @@ list(
              "lab/slides/lab_04.qmd", 
              format = "file"),
   tar_target(lab_04_slides, {
+    major_data
     ice_cream_sales_data_file
     quarto::quarto_render(lab_04_slides_qmd)
     qmd_out(lab_04_slides_qmd)
