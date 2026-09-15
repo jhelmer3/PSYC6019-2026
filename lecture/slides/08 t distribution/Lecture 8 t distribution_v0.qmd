@@ -22,7 +22,7 @@ format:
         };
         </script>
 params:
-  v0: true 
+  v0: false 
 editor: source
 ---
 
@@ -79,7 +79,7 @@ In general....
 -   The standard deviation of this distribution will be the $\text{standard error }  (\sigma_{\bar{x}}) =\frac{\sigma}{\sqrt{N}}$
     -   But what if we don't know $\sigma$?
     -   The sample standard deviation $s$ is our best estimate of $\sigma$, so let's try that!
-    -   What would happen if we use $\text{standard error } (\sigma_{\bar{x}}) =\frac{s}{\sqrt{N}}$?
+    -   What would happen if we use $\text{standard error } (s_{\bar{x}}) =\frac{s}{\sqrt{N}}$?
 
 ## Simulating Samples
 
@@ -89,7 +89,7 @@ Let's imagine that I repeatedly sample basketball players from a population with
     - Small samples are often where things "break" so we're seeing what would happen in small samples
 -   In each sample, I will calculate my $Z$-statistic as $Z = \frac{\bar{x} - \mu}{\text{SE}}$
 -   In theory, the distribution of $Z$-statistics should follow a standard normal ($\mu = 0, \sigma = 1$) distribution.
--   But how would this distribution actually look if I calculate $\text{SE}  = \frac{s}{\sqrt{N}}$ instead of $\text{SE} = \frac{\sigma}{\sqrt{N}}$
+-   But how would this distribution actually look if I calculate $\text{SE } (s_{\bar{x}})  = \frac{s}{\sqrt{N}}$ instead of $\text{SE } (\sigma_{\bar{x}}) = \frac{\sigma}{\sqrt{N}}$
 
 ## Simulation Code
 
@@ -219,7 +219,7 @@ What's the practical implication of this result?
 
 -   [A larger proprtion of sample means would get "counted" as extreme values than we expect, meaning we would incorrectly reject the null hypothesis more than 5% of the time (assuming it were true)]{.answer .fragment .content-visible unless-meta="params.v0"}
 
--   [We are more likely to make a Type I error than we want]{.answer .fragment .content-visible unless-meta="params.v0"}
+-   [We are more likely to make a Type 1 error than we want]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 [**Type 1 Error:** Rejecting a true null hypothesis. $\alpha = .05$ means we are comfortable incorrectly rejecting a true null hypothesis 5% of the time.]{.answer .fragment .content-visible unless-meta="params.v0"}
 
@@ -865,6 +865,8 @@ And how are we going to use that info?
 
 ## Assessing Sample
 
+`Best_mean` is the variable representing the optimism score in this dataset.
+
 ```{r}
 #| echo: true
 dat <- read.csv("../../data/Armor_Replication_Lecture8.csv")
@@ -892,10 +894,12 @@ What is the correct interpretation of a standard error $s_{\bar{x}}$ again?
 `pt()` is `R`'s version of a $t$-table. It gives us the $p$-value for a $t$-statistic (which represents how many SEs the sample mean is from $\mu_0$)
 
 - If $t$ is positive, use `lower.tail = FALSE` to reference **upper tail** of $t$-distribution
+- If $t$ is negative, use `lower.taile = TRUE` to reference **lower taile**
+- Multiply by 2 for two-tailed test
 
 ```{r}
 #| echo: true
-pt(15.64, df = 175, lower.tail = FALSE)
+pt(15.64, df = 175, lower.tail = FALSE) * 2
 ```
 
 

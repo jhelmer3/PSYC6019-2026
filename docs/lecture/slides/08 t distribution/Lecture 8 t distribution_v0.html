@@ -237,7 +237,7 @@ Mark Himmelstein
 <ul>
 <li>But what if we don’t know <span class="math inline">\(\sigma\)</span>?</li>
 <li>The sample standard deviation <span class="math inline">\(s\)</span> is our best estimate of <span class="math inline">\(\sigma\)</span>, so let’s try that!</li>
-<li>What would happen if we use <span class="math inline">\(\text{standard error } (\sigma_{\bar{x}}) =\frac{s}{\sqrt{N}}\)</span>?</li>
+<li>What would happen if we use <span class="math inline">\(\text{standard error } (s_{\bar{x}}) =\frac{s}{\sqrt{N}}\)</span>?</li>
 </ul></li>
 </ul>
 </section>
@@ -251,7 +251,7 @@ Mark Himmelstein
 </ul></li>
 <li>In each sample, I will calculate my <span class="math inline">\(Z\)</span>-statistic as <span class="math inline">\(Z = \frac{\bar{x} - \mu}{\text{SE}}\)</span></li>
 <li>In theory, the distribution of <span class="math inline">\(Z\)</span>-statistics should follow a standard normal (<span class="math inline">\(\mu = 0, \sigma = 1\)</span>) distribution.</li>
-<li>But how would this distribution actually look if I calculate <span class="math inline">\(\text{SE}  = \frac{s}{\sqrt{N}}\)</span> instead of <span class="math inline">\(\text{SE} = \frac{\sigma}{\sqrt{N}}\)</span></li>
+<li>But how would this distribution actually look if I calculate <span class="math inline">\(\text{SE } (s_{\bar{x}})  = \frac{s}{\sqrt{N}}\)</span> instead of <span class="math inline">\(\text{SE } (\sigma_{\bar{x}}) = \frac{\sigma}{\sqrt{N}}\)</span></li>
 </ul>
 </section>
 <section id="simulation-code" class="slide level2">
@@ -1739,13 +1739,14 @@ Mark Himmelstein
 <section id="what-went-wrong" class="slide level2">
 <h2>What Went Wrong?</h2>
 <ul>
-<li></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">The distribution we got had “fatter tails” than the one we expected</span></li>
 </ul>
 <p>What’s the practical implication of this result?</p>
 <ul>
-<li></li>
-<li></li>
+<li><p><span class="answer fragment" data-unless-meta="params.v0">A larger proprtion of sample means would get “counted” as extreme values than we expect, meaning we would incorrectly reject the null hypothesis more than 5% of the time (assuming it were true)</span></p></li>
+<li><p><span class="answer fragment" data-unless-meta="params.v0">We are more likely to make a Type 1 error than we want</span></p></li>
 </ul>
+<p><span class="answer fragment" data-unless-meta="params.v0"><strong>Type 1 Error:</strong> Rejecting a true null hypothesis. <span class="math inline">\(\alpha = .05\)</span> means we are comfortable incorrectly rejecting a true null hypothesis 5% of the time.</span></p>
 </section>
 <section id="type-i-errors" class="slide level2">
 <h2>Type I Errors</h2>
@@ -2011,22 +2012,23 @@ Mark Himmelstein
 <h2>Gathering Info</h2>
 <p>What information do we need from our <em>sample</em> to calculate the <span class="math inline">\(t\)</span>-statistic from our sample?</p>
 <ul>
-<li></li>
-<li></li>
-<li></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">The sample mean <span class="math inline">\(\bar{x}\)</span></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">The sample standard deviation <span class="math inline">\(s\)</span></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">The sample size <span class="math inline">\(N\)</span></span></li>
 </ul>
 </section>
 <section id="using-info" class="slide level2">
 <h2>Using Info</h2>
 <p>And how are we going to use that info?</p>
 <ul>
-<li></li>
-<li></li>
-<li></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">We need <span class="math inline">\(s\)</span> and <span class="math inline">\(N\)</span> to calculate the standard error as <span class="math inline">\(s_{\bar{x}} = \frac{s}{\sqrt{N}}\)</span></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">The sample mean <span class="math inline">\(\bar{x}\)</span> to calculate the <span class="math inline">\(t\)</span>-statistic as <span class="math inline">\(t = \frac{\bar{x}-\mu_0}{s_{\bar{x}}}\)</span> (how many standard errors <span class="math inline">\(\bar{x}\)</span> is from <span class="math inline">\(\mu_0\)</span>)</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">The sample size <span class="math inline">\(N\)</span> to calculate degrees of freedom as <span class="math inline">\(df = N - 1\)</span></span></li>
 </ul>
 </section>
 <section id="assessing-sample" class="slide level2">
 <h2>Assessing Sample</h2>
+<p><code>Best_mean</code> is the variable representing the optimism score in this dataset.</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>dat <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../../data/Armor_Replication_Lecture8.csv"</span>)</span>
 <span id="cb7-2"><a></a></span>
@@ -2044,25 +2046,29 @@ Mark Himmelstein
 </div>
 </div>
 <ul>
-<li><span class="math inline">\(s_{\bar{x}} = \frac{s}{\sqrt{N}} =\)</span></li>
-<li><span class="math inline">\(t = \frac{\bar{x}-\mu_0}{\text{SE}} =\)</span></li>
-<li><span class="math inline">\(df = N - 1=\)</span></li>
+<li><span class="math inline">\(s_{\bar{x}} = \frac{s}{\sqrt{N}} =\)</span><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{1.09}{\sqrt{176}} = 0.08\)</span></span></li>
+<li><span class="math inline">\(t = \frac{\bar{x}-\mu_0}{\text{SE}} =\)</span><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\frac{1.28 - 0}{0.08} = 0.08 = 15.64\)</span></span></li>
+<li><span class="math inline">\(df = N - 1=\)</span><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(176 - 1 = 175\)</span></span></li>
 </ul>
 </section>
 <section id="interpretations" class="slide level2">
 <h2>Interpretations</h2>
 <p>What is the correct interpretation of a standard error <span class="math inline">\(s_{\bar{x}}\)</span> again?</p>
+<p><span class="answer fragment" data-unless-meta="params.v0">Standard deviation of the sampling distribution (standard deviation of the means in repeated samples of N = 176)</span></p>
+<p><span class="answer fragment" data-unless-meta="params.v0">Means our sample mean is <strong>15</strong> <span class="math inline">\(s_{\bar{x}}\)</span>’s away from the population mean based on the sampling distribution implied by our null hypothesis. That’s a lot of standard errors!</span></p>
 </section>
 <section id="finding-the-area" class="slide level2">
 <h2>Finding the Area</h2>
 <p><code>pt()</code> is <code>R</code>’s version of a <span class="math inline">\(t\)</span>-table. It gives us the <span class="math inline">\(p\)</span>-value for a <span class="math inline">\(t\)</span>-statistic (which represents how many SEs the sample mean is from <span class="math inline">\(\mu_0\)</span>)</p>
 <ul>
 <li>If <span class="math inline">\(t\)</span> is positive, use <code>lower.tail = FALSE</code> to reference <strong>upper tail</strong> of <span class="math inline">\(t\)</span>-distribution</li>
+<li>If <span class="math inline">\(t\)</span> is negative, use <code>lower.taile = TRUE</code> to reference <strong>lower taile</strong></li>
+<li>Multiply by 2 for two-tailed test</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">pt</span>(<span class="fl">15.64</span>, <span class="at">df =</span> <span class="dv">175</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">pt</span>(<span class="fl">15.64</span>, <span class="at">df =</span> <span class="dv">175</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>) <span class="sc">*</span> <span class="dv">2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a></a><span class="ex">[1]</span> 2.296539e-35</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a></a><span class="ex">[1]</span> 4.593077e-35</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
