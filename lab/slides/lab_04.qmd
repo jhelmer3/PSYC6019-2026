@@ -148,11 +148,11 @@ $\text{df} = J - 1$, where
 
 [$J$ = number of categories]{.subpoint}
 
-Use to identify critical $\chi^2$ value from $\chi^2$ table, R, etc.
+Use to identify critical $\chi^2$ value from R
 
 For $\chi^2$, as $\text{df}$ increases, so does the critical-$\chi^2$ value (at same $\alpha$)
 
-Only ever a one-tailed test! For the upper end of the distribution.
+<!-- Only ever a one-tailed test! For the upper end of the distribution. -->
 
 
 ## $\chi^2$ Distribution
@@ -507,34 +507,29 @@ Some ways to generate frequencies from categorical variables
 table(major_data$major)
 ```
 
-```{r}
-table(major_data$major) |>
-  tibble()
-```
 
+<!-- ## Count Data: `summarize()` -->
 
-## Count Data: `summarize()`
+<!-- Some ways to generate frequencies from categorical variables -->
 
-Some ways to generate frequencies from categorical variables
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- ```{r} -->
+<!-- major_data |> -->
+<!--   summarize(.by = c(major), -->
+<!--             n = n()) -->
+<!-- ``` -->
+<!-- ::: -->
 
-:::: {.columns}
-::: {.column width="50%"}
-```{r}
-major_data |>
-  summarize(.by = c(major),
-            n = n())
-```
-:::
-
-::: {.column width="50%"}
-```{r}
-major_data |>
-  summarize(.by = c(major),
-            n = n()) |>
-  arrange(desc(n))
-```
-:::
-::::
+<!-- ::: {.column width="50%"} -->
+<!-- ```{r} -->
+<!-- major_data |> -->
+<!--   summarize(.by = c(major), -->
+<!--             n = n()) |> -->
+<!--   arrange(desc(n)) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- :::: -->
 
 
 ## Count Data: `count()`
@@ -550,7 +545,7 @@ Basically shorthand for:
 ```{r}
 #| eval: false
 df |>
-  summarise(.by = a,
+  summarise(.by = grouping_var,
             n = n())
 ```
 
@@ -617,20 +612,48 @@ tibble(type = c("Expected", "Observed"),
 
 $$ \chi^2 = \sum_{j=0}^{J} \frac{(O_j – N\pi_j)^2}{N\pi_j} = \sum_{j=0}^{J} \frac{(O_j – E_j)^2}{E_j} $$
 
-::: fragment
+:::: {.columns style="font-size:80%"}
+::: {.column .fragment width="70%"}
 ```{r}
-obs_chisq <- (51 - 40)^2 / 200 +
-  (33 - 40)^2 / 200 +
-  (32 - 40)^2 / 200 +
-  (32 - 40)^2 / 200 +
-  (52 - 40)^2 / 200
+#| echo: false
+counted_major_dat <- major_data |>
+  count(major)
+
+tibble(type = c("Expected", "Observed"),
+       STEM = c(40, counted_major_dat[counted_major_dat$major == "STEM", "n"][[1]]),
+       `Social Sciences` = c(40, counted_major_dat[counted_major_dat$major == "Social Sciences", "n"][[1]]),
+       Humanities = c(40, counted_major_dat[counted_major_dat$major == "Humanities", "n"][[1]]),
+       Arts = c(40, counted_major_dat[counted_major_dat$major == "Arts", "n"][[1]]), 
+       Business = c(40, counted_major_dat[counted_major_dat$major == "Business", "n"][[1]])) |>
+  gt(rowname_col = "type") |>
+  cols_label(`Social Sciences` = "Social Sciences") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = cells_column_labels()) |>
+  tab_style(style = cell_text(color = "steelblue3", style = "italic"),
+            locations = list(cells_body(rows = "Expected"))) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+[We can reject the null in favor of the alternative that the number of students is not the same across majors.]{.fragment}
+:::
+
+::: {.column .fragment width="30%"}
+```{r}
+obs_chisq <- (51 - 40)^2 / 40 +
+  (33 - 40)^2 / 40 +
+  (32 - 40)^2 / 40 +
+  (32 - 40)^2 / 40 +
+  (52 - 40)^2 / 40
 obs_chisq
 
 obs_chisq > chisq_crit
+
+pchisq(obs_chisq, df = df)
+1 - pchisq(obs_chisq, df = df) # test p-value
 ```
 :::
-
-[We can reject the null in favor of the alternative that the number of students is not the same across majors.]{.fragment}
+::::
 
 
 ## R Function
@@ -701,6 +724,40 @@ chisq$p.value
 ::::
 
 
+:::: {.columns}
+::: {.column .fragment width="50%"}
+A pretend Quarto document like this:
+
+~~~~markdown
+---
+title: Chi-Squared Test
+author: Jess
+---
+
+```{{r}}
+chisq <- counted_major_data |>
+  select(-major) |>
+  chisq.test()
+chisq
+```
+
+The $\chi^2$ statistic was `{{r}} chisq$statistic` with 
+a p-value of `{{r}} round(chisq$p.value, 2)`.
+~~~~
+:::
+
+::: {.column .fragment width="50%"}
+Will render the text like this:
+
+
+The $\chi^2$ statistic was `{r} chisq$statistic` with a p-value of `{r} round(chisq$p.value, 2)`.
+
+[This is called "in-line code".]{.fragment}
+:::
+::::
+
+
+
 ## $\chi^2$ Test of Goodness of Fit Example
 
 ::: {style="font-size:80%"}
@@ -748,6 +805,15 @@ chisq.test(x = c(51, 33, 32, 32, 52),
 [○ `p` = expected probabilities]{.subpoint}
 
 [○ `rescale.p` = [`T`/`F`], will rescale `p` to probabilities if you prefer to input frequencies]{.subpoint}
+
+::: fragment
+We can verify that it calculated the expected frequencies correctly:
+
+```{r}
+chisq.test(x = c(51, 33, 32, 32, 52),
+           p = c(.60, .10, .10, .10, .10))$expected
+```
+:::
 :::
 ::::
 
@@ -826,13 +892,22 @@ $\text{df} = (n_{rows} - 1) \times (n_{cols} - 1)$
 
 <br>
 
-::: fragment
+:::: {.columns}
+::: {.column .fragment width="50%"}
 ```{r}
 df <- (3 - 1) * (2 - 1)
 df
 qchisq(.95, df)
 ```
 :::
+
+::: {.column .fragment width="50%"}
+```{r}
+pchisq(6, df)
+1 - pchisq(6, df)
+```
+:::
+::::
 
 
 ## $\chi^2$ Test of Independence Example
@@ -945,8 +1020,8 @@ major_data_wide |>
 ```{r}
 #| echo: false
 tibble(parent_in_stem = c("No", "Yes", "Total"),
-       `Non-STEM School` = c(91*115/200, 91*85/200, 59+56) |> round(),
-       `STEM School` = c(109*115/200, 109*85/200, 109) |> round(),
+       `Non-STEM School` = c(91*115/200, 109*115/200, 59+56) |> round(1),
+       `STEM School` = c(91*85/200, 109*85/200, 109) |> round(1),
        Total = c(115, 85, 91+109)) |>
   gt(rowname_col = "parent_in_stem") |>
   cols_label(`Non-STEM School` = "Non-Stem School",
@@ -986,9 +1061,9 @@ Expected cell frequency = $E_j$ = $\frac{\text{column total} \times \text{row to
 
 $$ \chi^2 = \sum_{j=0}^{J} \frac{(O_j – N\pi_j)^2}{N\pi_j} = \sum_{j=0}^{J} \frac{(O_j – E_j)^2}{E_j} $$
 
-::: fragment
 :::: {.columns}
 ::: {.column width="66%"}
+::: fragment
 ```{r}
 #| echo: false
 major_data_wide |>
@@ -1001,29 +1076,33 @@ major_data_wide |>
   sub_missing(missing_text = "") |>
   tab_options(table.font.size = 26)
 ```
+:::
 
+::: fragment
 ```{r}
 #| code-line-numbers: false
 chisq_crit <- qchisq(.95, df = (2 - 1) * (2 - 1))
 chisq_crit
 ```
 :::
+:::
 
-::: {.column width="33%"}
+::: {.column .fragment width="33%"}
 ```{r}
 #| code-line-numbers: false
-obs_chisq <- (59 - 52)^2 / 21 +
-  (32 - 62)^2 / 14 +
-  (56 - 39)^2 / 9 +
-  (53 - 46)^2 / 6
+obs_chisq <- (59 - 52.3)^2 / 52.3 +
+  (32 - 38.7)^2 / 38.7 +
+  (56 - 62.7)^2 / 62.7 +
+  (53 - 46.3)^2 / 46.3
 obs_chisq
 
 obs_chisq > chisq_crit
+1 - pchisq(obs_chisq, # test p-value
+          df = (2 - 1) * (2 - 1)) 
 ```
 :::
 ::::
 
-:::
 
 
 ## $\chi^2$ Test of Independence R Function
@@ -1039,53 +1118,41 @@ major_data |> head(10)
 
 ## Count Data: `table()`
 
-:::: {.columns}
-::: {.column width="40%"}
 ```{r}
 table(major_data$parent_in_stem, major_data$school_type)
 ```
-:::
-
-::: {.column width="60%"}
-```{r}
-table(major_data$parent_in_stem, major_data$school_type) |>
-  as.data.frame() |>
-  as_tibble() |>
-  set_names(c("parent_in_stem", "school_type", "n"))
-```
-:::
-::::
 
 
-## Count Data: `summarize()`
 
-Some ways to generate frequencies from categorical variables
+<!-- ## Count Data: `summarize()` -->
 
-:::: {.columns}
-::: {.column width="50%"}
-```{r}
-major_data |>
-  summarize(.by = c(parent_in_stem, school_type),
-            n = n())
-```
-:::
+<!-- Some ways to generate frequencies from categorical variables -->
 
-::: {.column width="50%"}
-```{r}
-major_data |>
-  summarize(.by = c(parent_in_stem, school_type),
-            n = n()) |>
-  arrange(parent_in_stem, school_type)
-```
-:::
-::::
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- ```{r} -->
+<!-- major_data |> -->
+<!--   summarize(.by = c(parent_in_stem, school_type), -->
+<!--             n = n()) -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+<!-- ```{r} -->
+<!-- major_data |> -->
+<!--   summarize(.by = c(parent_in_stem, school_type), -->
+<!--             n = n()) |> -->
+<!--   arrange(parent_in_stem, school_type) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- :::: -->
 
 
 ## Count Data: `count()`
 
-`count(x, grouping_var1, grouping_var2, etc.)`
+`count(df, grouping_var1, grouping_var2, etc.)`
 
-[○ `x` = dataframe]{.subpoint}
+[○ `df` = dataframe]{.subpoint}
 
 <div class="subpoint">○ `grouping_vars` = variable names to group by</div>
 
@@ -1113,10 +1180,10 @@ If going to put into the `chisq.test()` function, want to pivot **wider** and ge
 
 Many ways to do this, but one example:
 
-:::: {.columns}
+:::: {.columns style="font-size:90%"}
 ::: {.column width="50%"}
 ```{r}
-head(major_data, 3)
+head(major_data, 2)
 
 chisqdat <- major_data |>
   count(parent_in_stem, school_type) |>
@@ -1132,7 +1199,8 @@ chisqdat
 ```{r}
 chisq.test(chisqdat)
 ```
-[We can reject the null in favor of the alternative that students' school type (STEM vs. non-STEM) and whether they choose a STEM or non-STEM major are not independent.]{.fragment}
+
+[We retain the null hypothesis that students' school type (STEM vs. non-STEM) and whether they choose a STEM or non-STEM major are independent.]{.fragment}
 :::
 ::::
 
