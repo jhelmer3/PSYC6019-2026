@@ -479,18 +479,16 @@ Berry, C. J., Shanks, D. R., & Henson, R. N. A. (2008). A single-system account 
 Replication study link: <https://osf.io/cbwgj/>
 :::
 
-::: {style="font-size: 0.85em;"}
-**Study phase**:
+::: {style="font-size: 0.825em;"}
+**Study phase**: Subjects were shown a series of words, and were instructed to click the mouse as soon as they could identify the word correctly
 
-Subjects were shown a series of words, and were instructed to click the mouse as soon as they could identify the word correctly
+**Test phase**: Subjects were shown another series of words and were asked to judge whether the word was "new" (not in the study phase) or "old" (already presented in the study phase)
 
-**Test phase**:
-
-Subjects were shown another series of words and were asked to judge whether the word was "new" (not in the study phase) or "old" (already presented in the study phase)
+**Research Question:** Are response times to old items judged as new (misses) different from new items judged as new (correct rejections)
 
 $N = 32$ subjects, 32 pairs of observations
 
-$$H_0: \mu_{old} = \mu_{new}  \text{ or } \mu_{new} - \mu_{old} = 0$$ $$H_a: \mu_{old} \neq \mu_{new} \text{ or } \mu_{new} - \mu_{old} \neq 0$$
+$$H_0: \mu_{\text{old}} = \mu_{\text{new}}  \text{ or } \mu_{\text{new}} - \mu_{\text{old}} = 0$$ $$H_a: \mu_{\text{old}} \neq \mu_{\text{new}} \text{ or } \mu_{\text{new}} - \mu_{\text{old}} \neq 0$$
 :::
 
 ## The *Nil* Hypothesis
@@ -501,7 +499,7 @@ This is an example of the test of a *nil* hypothesis
 
 Setting the null hypothesis to a difference of zero is so common it has it's own term! But really null hypothesis *could* be anything
 
--   You could test $H_0: \mu_{new} - \mu_{old} = 5$ If you wanted!
+-   You could test $H_0: \mu_{\text{new}} - \mu_{\text{old}} = 5$ If you wanted!
 -   It is just unusual that a difference of 5 would have any special significance
 -   The nil hypothesis is a way to determine test for differences *in general*, which is often something we are interested in
 
@@ -608,7 +606,7 @@ pt(t_d, df = 31, lower.tail = FALSE) * 2
 
 ## 95% Confidence Interval
 
-Just like the one sample case, we can calculate a 95% confidence interval as
+Just like the one sample case, we calculate a 95% confidence interval as
 
 $$95\% \text{ CI} = \bar{D} \pm \text{Critical Value} \times S_{\bar{D}}$$
 
@@ -616,7 +614,7 @@ First we need to know our critical value ($t_{crit}$)
 
 ```{r}
 #| echo: true
-t_crit <- qt(p = .05/2, df = 31, lower.tail = FALSE)
+(t_crit <- qt(p = .05/2, df = 31, lower.tail = FALSE))
 ```
 
 Then we plug into our formula
@@ -667,7 +665,7 @@ In many cases, we may want to test whether two **independently sampled** groups 
 -   Differences in pre-existing groups
     -   Do people with PhDs in psychology have higher average career earnings than people with PhDs in anthropology?
 
-$$H_0: \mu_1 - \mu_2 = 0$$ $$H_a: \mu_1 - \mu_2 \neq 0$$
+$$H_0: \mu_1 = \mu_2 \text{ OR } \mu_1 - \mu_2 = 0$$ $$H_a: \mu_1 \neq \mu_2 \text{ OR } \mu_1 - \mu_2 \neq 0$$
 
 Now we must consider the sampling distribution of the means of two separate (unpaired) groups: $\bar{x_1} - \bar{x_2}$
 
@@ -804,11 +802,11 @@ Even though the groups have different means, $s_p$ is doing a better job of esti
 
 ::: {style="font-size: 0.8em;"}
 
-$$t_{\bar{x}_1 - \bar{x}_2} = \frac{\bar{x}_1 - \bar{x}_2 }{s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}$$
+$$t_{\bar{x}_1 - \bar{x}_2} = \frac{\bar{x}_1 - \bar{x}_2 }{s_{\bar{x}_2 - \bar{x}_2}}$$
 
 Where
 
-$$s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}} = \sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}$$
+$$s_{\bar{x}_2 - \bar{x}_2} = s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}} = \sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}$$
 
 Is our **pooled standard error**
 
@@ -935,7 +933,7 @@ $$s_{\bar{x}_1 - \bar{x}_2} = s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}} = \sqrt{\
 Calculate the $t_{\bar{x}_1 - \bar{x}_2}$ statistic as:
 
 
-$$t_{\bar{x}_1 - \bar{x}_2} = \frac{\bar{x}_1 - \bar{x}_2 }{s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}$$
+$$t_{\bar{x}_1 - \bar{x}_2} = \frac{\bar{x}_1 - \bar{x}_2 }{s_{\bar{x}_2 - \bar{x}_2}}$$
 
 ```{r}
 #| echo: true
@@ -1029,7 +1027,7 @@ $$s_{\bar{x}_1 - \bar{x}_2} = \sqrt{\frac{s^2_1}{n_1} + \frac{s^2_2}{n_2}}$$
 
 ## $df$ adjustment
 
-The actual adjustment happens on the **degrees of freedom**. The Welch-Satterthwaite correction adjusts the degrees of freedom so they become smaller than $(n1 + n2 - 2)$. 
+In addition to modifying the $t$ statistic via the standard error calculation, a key adjustment happens on the **degrees of freedom**. The Welch-Satterthwaite correction adjusts the degrees of freedom so they become smaller than $(n1 + n2 - 2)$. 
 
 $$df = \frac{\left(\frac{s^2_1}{n_1} + \frac{s^2_2}{n_2}\right)^2}{\left(\frac{s^2_1}{n_1}\right)^2 / (n_1 - 1) + \left(\frac{s^2_2}{n_2}\right)^2 / (n_2 - 1)}$$
 
