@@ -15,11 +15,20 @@ execute:
   echo: true
   dpi: 600
   freeze: auto
+knitr:
+  opts_chunk:
+    dev: svg
 ---
 
 ## Outline
 
 - $\chi^2$ tests
+
+  - $\chi^2$ Test of Goodness of Fit
+  
+  - $\chi^2$ Test of Independence
+  
+- Working with count data
 
 ```{r setup}
 #| echo: false
@@ -455,6 +464,93 @@ chisq_crit
 :::
 
 
+## $\chi^2$ Distribution
+
+```{r}
+#| echo: false
+#| fig-align: center
+tibble(i = seq(1, 35, length.out = 1000)) |>
+  mutate(chi1 = dchisq(i, 1),
+         chi2 = dchisq(i, 2),
+         chi4 = dchisq(i, 4),
+         chi8 = dchisq(i, 8),
+         chi16 = dchisq(i, 16)) |>
+  ggplot(aes(x = i)) +
+  geomtextpath::geom_textline(aes(y = chi1, label = "chi^{2}*'(df=1)'"), parse = T,
+                              hjust = .125, size = 6, linewidth = 1.5, color = "skyblue",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi2, label = "chi^{2}*'(df=2)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi4, label = "chi^{2}*'(df=4)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue4",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi8, label = "chi^{2}*'(df=8)'"), parse = T,
+                              hjust = .435, size = 6, linewidth = 1.5, color = "royalblue4",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi16, label = "chi^{2}*'(df=16)'"), parse = T,
+                              hjust = .65, size = 6, linewidth = 1.5, color = "navy",
+                              padding = unit(15, "points")) +
+  scale_x_continuous(breaks = c(1, 10, 20, 30, 35)) +
+  coord_cartesian(clip = "off", xlim = c(1, 35), ylim = c(0, 0.3), expand = F) +
+  guides(y = "none", x = guide_axis(cap = T)) +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_size = 16) 
+```
+
+
+##  $\chi^2(df \ = \ 4)$ Rejection Region
+
+```{r}
+#| echo: false
+#| fig-align: center
+## Claude-generated plot 
+## if you can't tell by all the comments
+
+chisq_crit <- qchisq(.95, 4)
+
+tibble(i = seq(1, 35, length.out = 1000)) |>
+  mutate(chi1 = dchisq(i, 1),
+         chi2 = dchisq(i, 2),
+         chi4 = dchisq(i, 4),
+         chi8 = dchisq(i, 8),
+         chi16 = dchisq(i, 16)) |>
+  ggplot(aes(x = i)) +
+  # shaded rejection region (under df=4 curve, right of critical value)
+  geom_area(data = ~ filter(.x, i >= chisq_crit),
+            aes(y = chi4), fill = "steelblue4", alpha = 0.3) +
+  # critical value line
+  geom_vline(xintercept = chisq_crit, linetype = "dashed",
+             color = "steelblue4", linewidth = 0.8) +
+  annotate("text", x = chisq_crit, y = 0.29,
+           label = paste0("chi[crit]^2 == ", round(chisq_crit, 2)),
+           parse = TRUE, hjust = -0.1, size = 5, color = "steelblue4") +
+  # faded background curves
+  geomtextpath::geom_textline(aes(y = chi1, label = "chi^{2}*'(df=1)'"), parse = T,
+                              hjust = .125, size = 6, linewidth = 1.5, color = alpha("grey80", .5),
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi2, label = "chi^{2}*'(df=2)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = alpha("grey80", .5),
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi8, label = "chi^{2}*'(df=8)'"), parse = T,
+                              hjust = .435, size = 6, linewidth = 1.5, color = alpha("grey80", .5),
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi16, label = "chi^{2}*'(df=16)'"), parse = T,
+                              hjust = .65, size = 6, linewidth = 1.5, color = alpha("grey80", .5),
+                              padding = unit(15, "points")) +
+  # the star of the show
+  geomtextpath::geom_textline(aes(y = chi4, label = "chi^{2}*'(df=4)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue4",
+                              padding = unit(15, "points")) +
+  scale_x_continuous(breaks = c(1, chisq_crit, 20, 30, 35),
+                     labels = c("1", "9.49", "20", "30", "35")) +
+  coord_cartesian(clip = "off", xlim = c(1, 35), ylim = c(0, 0.3), expand = F) +
+  guides(y = "none", x = guide_axis(cap = T)) +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_size = 16)
+```
+
+
 ## $\chi^2$ Test of Goodness of Fit Example
 
 ::: {style="font-size:80%"}
@@ -613,7 +709,7 @@ tibble(type = c("Expected", "Observed"),
 $$ \chi^2 = \sum_{j=0}^{J} \frac{(O_j – N\pi_j)^2}{N\pi_j} = \sum_{j=0}^{J} \frac{(O_j – E_j)^2}{E_j} $$
 
 :::: {.columns style="font-size:80%"}
-::: {.column .fragment width="70%"}
+::: {.column .fragment fragment-index=1 width="70%"}
 ```{r}
 #| echo: false
 counted_major_dat <- major_data |>
@@ -635,10 +731,10 @@ tibble(type = c("Expected", "Observed"),
   tab_options(table.font.size = 26)
 ```
 
-[We can reject the null in favor of the alternative that the number of students is not the same across majors.]{.fragment}
+[We can reject the null in favor of the alternative that the number of students is not the same across majors.]{.fragment fragment-index=3}
 :::
 
-::: {.column .fragment width="30%"}
+::: {.column .fragment fragment-index=2 width="30%"}
 ```{r}
 obs_chisq <- (51 - 40)^2 / 40 +
   (33 - 40)^2 / 40 +
@@ -680,7 +776,7 @@ tabled_major_data
 ::::
 
 :::: {.columns}
-::: {.column .fragment width="50%"}
+::: {.column .fragment width="40%"}
 ```{r}
 chisq <- counted_major_data |>
   select(-major) |>
@@ -690,7 +786,7 @@ chisq
 
 :::
 
-::: {.column .fragment width="50%"}
+::: {.column .fragment width="60%"}
 ```{r}
 chisq <- tabled_major_data |>
   chisq.test()
@@ -738,7 +834,6 @@ author: Jess
 chisq <- counted_major_data |>
   select(-major) |>
   chisq.test()
-chisq
 ```
 
 The $\chi^2$ statistic was `{{r}} chisq$statistic` with 
@@ -824,7 +919,7 @@ chisq.test(x = c(51, 33, 32, 32, 52),
 
 ## $\chi^2$ Test of Independence
 
-Do the observed frequencies of a categorical variable differ from what expected via properties of independence?
+Do the observed frequencies of a categorical variable differ from what is expected via properties of independence?
 
 [○ Now considering more than one type of category]{.subpoint}
 
@@ -913,6 +1008,201 @@ pchisq(6, df)
 ## $\chi^2$ Test of Independence Example
 
 ::: {style="font-size:80%"}
+Let's say that you were a educational psychologist interested in how students choose STEM or non-STEM schools based on whether or not they had a parent go to a STEM or non-STEM school. You sample 200 students.
+:::
+
+```{r}
+#| echo: false
+major_data_wide <- major_data |>
+  count(school_type, parent_in_stem) |>
+  pivot_wider(names_from = school_type, values_from = n)
+
+major_data_wide |>
+  gt(rowname_col = "parent_in_stem") |>
+  cols_label(`Non-STEM School` = "Non-Stem School",
+             `STEM School` = "STEM School",
+             parent_in_stem = "Parent in STEM") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = list(cells_column_labels(), cells_stub())) |>
+  sub_values(values = c(59, 56, 32, 53), replacement = " ") |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+:::: {.columns}
+::: {.column .fragment width="50%"}
+First, what is your critical $\chi^2$ value?
+
+:::
+
+::: {.column .fragment width="50%"}
+```{r}
+df <- (2 - 1) * (2 - 1)
+qchisq(0.95, df)
+```
+:::
+::::
+
+
+## $\chi^2$ Distribution
+
+```{r}
+#| echo: false
+#| fig-align: center
+tibble(i = seq(1, 35, length.out = 1000)) |>
+  mutate(chi1 = dchisq(i, 1),
+         chi2 = dchisq(i, 2),
+         chi4 = dchisq(i, 4),
+         chi8 = dchisq(i, 8),
+         chi16 = dchisq(i, 16)) |>
+  ggplot(aes(x = i)) +
+  geomtextpath::geom_textline(aes(y = chi1, label = "chi^{2}*'(df=1)'"), parse = T,
+                              hjust = .125, size = 6, linewidth = 1.5, color = "skyblue",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi2, label = "chi^{2}*'(df=2)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi4, label = "chi^{2}*'(df=4)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = "steelblue4",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi8, label = "chi^{2}*'(df=8)'"), parse = T,
+                              hjust = .435, size = 6, linewidth = 1.5, color = "royalblue4",
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi16, label = "chi^{2}*'(df=16)'"), parse = T,
+                              hjust = .65, size = 6, linewidth = 1.5, color = "navy",
+                              padding = unit(15, "points")) +
+  scale_x_continuous(breaks = c(1, 10, 20, 30, 35)) +
+  coord_cartesian(clip = "off", xlim = c(1, 35), ylim = c(0, 0.3), expand = F) +
+  guides(y = "none", x = guide_axis(cap = T)) +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_size = 16) 
+```
+
+
+##  $\chi^2(df \ = \ 1)$ Rejection Region
+
+```{r}
+#| echo: false
+#| fig-align: center
+## Claude-generated plot 
+## if you can't tell by all the comments
+
+chisq_crit <- qchisq(.95, 1)  # ~3.84
+
+tibble(i = seq(1, 35, length.out = 1000)) |>
+  mutate(chi1 = dchisq(i, 1),
+         chi2 = dchisq(i, 2),
+         chi4 = dchisq(i, 4),
+         chi8 = dchisq(i, 8),
+         chi16 = dchisq(i, 16)) |>
+  ggplot(aes(x = i)) +
+  # shaded rejection region (under df=1 curve, right of critical value)
+  geom_area(data = ~ filter(.x, i >= chisq_crit),
+            aes(y = chi1), fill = "skyblue", alpha = 0.3) +
+  # critical value line
+  geom_vline(xintercept = chisq_crit, linetype = "dashed",
+             color = "skyblue3", linewidth = 0.8) +
+  annotate("text", x = chisq_crit, y = 0.29,
+           label = paste0("chi[crit]^2 == ", round(chisq_crit, 2)),
+           parse = TRUE, hjust = -0.1, size = 5, color = "skyblue3") +
+  # faded background curves
+  geomtextpath::geom_textline(aes(y = chi2, label = "chi^{2}*'(df=2)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = alpha("grey80", .5),
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi4, label = "chi^{2}*'(df=4)'"), parse = T,
+                              hjust = .3, size = 6, linewidth = 1.5, color = alpha("grey80", .5),
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi8, label = "chi^{2}*'(df=8)'"), parse = T,
+                              hjust = .435, size = 6, linewidth = 1.5, color = alpha("grey80", .5),
+                              padding = unit(15, "points")) +
+  geomtextpath::geom_textline(aes(y = chi16, label = "chi^{2}*'(df=16)'"), parse = T,
+                              hjust = .65, size = 6, linewidth = 1.5, color = alpha("grey80", .5),
+                              padding = unit(15, "points")) +
+  # the star of the show
+  geomtextpath::geom_textline(aes(y = chi1, label = "chi^{2}*'(df=1)'"), parse = T,
+                              hjust = .125, size = 6, linewidth = 1.5, color = "skyblue3",
+                              padding = unit(15, "points")) +
+  scale_x_continuous(breaks = c(1, chisq_crit, 10, 20, 30, 35),
+                     labels = c("1", "3.84", "10", "20", "30", "35")) +
+  coord_cartesian(clip = "off", xlim = c(1, 35), ylim = c(0, 0.3), expand = F) +
+  guides(y = "none", x = guide_axis(cap = T)) +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_size = 16)
+```
+
+
+## $\chi^2$ Test of Independence Example
+
+::: {style="font-size:80%"}
+Let's say that you were a educational psychologist interested in how students choose STEM or non-STEM schools based on whether or not they had a parent go to a STEM or non-STEM school. You sample 200 students.
+:::
+
+```{r}
+#| echo: false
+major_data_wide <- major_data |>
+  count(school_type, parent_in_stem) |>
+  pivot_wider(names_from = school_type, values_from = n)
+
+major_data_wide |>
+  gt(rowname_col = "parent_in_stem") |>
+  cols_label(`Non-STEM School` = "Non-Stem School",
+             `STEM School` = "STEM School",
+             parent_in_stem = "Parent in STEM") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = list(cells_column_labels(), cells_stub())) |>
+  sub_values(values = c(59, 56, 32, 53), replacement = " ") |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26)
+```
+
+[Next, let's get our observed values!]{.fragment}
+
+
+## $\chi^2$ Test of Independence Observed Values
+
+Let's look at creating frequency data for more than one variable
+
+```{r}
+major_data |> head(10)
+```
+
+
+## Count Data: `table()`
+
+```{r}
+table(major_data$parent_in_stem, major_data$school_type)
+```
+
+
+## Count Data: `count()`
+
+`count(df, grouping_var1, grouping_var2, etc.)`
+
+[○ `df` = dataframe]{.subpoint}
+
+<div class="subpoint">○ `grouping_vars` = variable names to group by</div>
+
+::: {.columns}
+::: {.column width="50%"}
+```{r}
+major_data |>
+  summarize(.by = c(parent_in_stem, school_type),
+            n = n())
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+major_data |>
+  count(parent_in_stem, school_type)
+```
+:::
+::::
+
+
+## $\chi^2$ Test of Independence Example
+
+::: {style="font-size:80%"}
 Let's say that you were a educational psychologist interested in how students choose STEM or non-STEM schools based on whether or not they had a parent go to a STEM or non-STEM school. You sample 200 students, and these are the frequencies you observe.
 :::
 
@@ -963,6 +1253,22 @@ major_data_wide |>
                              cells_stub(rows = "Total")))
 ```
 
+:::: {.columns}
+::: {.column .fragment width="50%"}
+```{r}
+major_data |> 
+  count(parent_in_stem)
+```
+:::
+
+::: {.column .fragment width="50%"}
+```{r}
+major_data |> 
+  count(school_type)
+```
+:::
+::::
+
 
 ## Calculating Expected Frequencies
 
@@ -988,6 +1294,7 @@ major_data_wide |>
                              cells_body(rows = `Non-STEM School` >= 100),
                              cells_stub(rows = "Total")))
 ```
+
 
 
 ## Calculating Expected Frequencies
@@ -1057,12 +1364,12 @@ Expected cell frequency = $E_j$ = $\frac{\text{column total} \times \text{row to
 ::::
 
 
-## $\chi^2$ Test of Independence Example
+## $\chi^2$ Test of Independence
 
 $$ \chi^2 = \sum_{j=0}^{J} \frac{(O_j – N\pi_j)^2}{N\pi_j} = \sum_{j=0}^{J} \frac{(O_j – E_j)^2}{E_j} $$
 
 :::: {.columns}
-::: {.column width="66%"}
+::: {.column width="50%"}
 ::: fragment
 ```{r}
 #| echo: false
@@ -1080,14 +1387,28 @@ major_data_wide |>
 
 ::: fragment
 ```{r}
-#| code-line-numbers: false
-chisq_crit <- qchisq(.95, df = (2 - 1) * (2 - 1))
-chisq_crit
+#| echo: false
+tibble(parent_in_stem = c("No", "Yes"),
+       `Non-STEM School` = c(91*115/200, 109*115/200) |> round(1),
+       `STEM School` = c(91*85/200, 109*85/200) |> round(1)) |>
+  gt(rowname_col = "parent_in_stem") |>
+  cols_label(`Non-STEM School` = "Non-Stem School",
+             `STEM School` = "STEM School") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = list(cells_column_labels(), cells_stub())) |>
+  sub_missing(missing_text = "") |>
+  tab_options(table.font.size = 26) |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = list(cells_column_labels(), cells_stub())) |>
+  tab_style(style = cell_text(color = "steelblue3", style = "italic"),
+            locations = list(cells_column_labels(),
+                             cells_body(),
+                             cells_stub())) 
 ```
 :::
 :::
 
-::: {.column .fragment width="33%"}
+::: {.column .fragment width="50%"}
 ```{r}
 #| code-line-numbers: false
 obs_chisq <- (59 - 52.3)^2 / 52.3 +
@@ -1102,26 +1423,6 @@ obs_chisq > chisq_crit
 ```
 :::
 ::::
-
-
-
-## $\chi^2$ Test of Independence R Function
-
-When we have more than one variable, we need a dataframe of just the numeric variables.
-
-```{r}
-major_data |> head(10)
-```
-
-[Let's look at creating frequency data for two variables]{.fragment}
-
-
-## Count Data: `table()`
-
-```{r}
-table(major_data$parent_in_stem, major_data$school_type)
-```
-
 
 
 <!-- ## Count Data: `summarize()` -->
@@ -1148,32 +1449,6 @@ table(major_data$parent_in_stem, major_data$school_type)
 <!-- :::: -->
 
 
-## Count Data: `count()`
-
-`count(df, grouping_var1, grouping_var2, etc.)`
-
-[○ `df` = dataframe]{.subpoint}
-
-<div class="subpoint">○ `grouping_vars` = variable names to group by</div>
-
-::: {.columns}
-::: {.column width="50%"}
-```{r}
-major_data |>
-  summarize(.by = c(parent_in_stem, school_type),
-            n = n())
-```
-:::
-
-::: {.column width="50%"}
-```{r}
-major_data |>
-  count(parent_in_stem, school_type)
-```
-:::
-::::
-
-
 ## R Function
 
 If going to put into the `chisq.test()` function, want to pivot **wider** and get rid of additional columns.
@@ -1181,7 +1456,7 @@ If going to put into the `chisq.test()` function, want to pivot **wider** and ge
 Many ways to do this, but one example:
 
 :::: {.columns style="font-size:90%"}
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
 head(major_data, 2)
 
@@ -1195,15 +1470,16 @@ chisqdat
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
-chisq.test(chisqdat)
+chisq_test <- chisq.test(chisqdat)
+chisq_test$expected
+chisq_test
 ```
 
 [We retain the null hypothesis that students' school type (STEM vs. non-STEM) and whether they choose a STEM or non-STEM major are independent.]{.fragment}
 :::
 ::::
-
 
 
 
