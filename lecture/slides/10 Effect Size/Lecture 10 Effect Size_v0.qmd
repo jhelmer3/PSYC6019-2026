@@ -256,7 +256,7 @@ McCrea, S. M. (2008). Self-handicapping, excuse making, and counterfactual think
 
 ## Example
 
-As a reminder, our means $\bar{x}_1$ and $\bar{x}_2$ were:
+As a reminder, our means $\bar{x}_1$ and $\bar{x}_2$ were (`R` objects were saved from previous slides):
 
 ```{r}
 #| echo: true
@@ -293,7 +293,21 @@ $$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$$
 
 ## Confidence Interval for $d$
 
-Cohen's $d$ changes our original units to $z$ score units, meaning we can just plug in $s_p = 1$ and calculate a confidence interval around $d$ as
+Cohen's $d$ changes our original units to $Z$-score units.
+
+What is the standard deviation for $Z$-scores?
+
+- [1]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+So if we plug in $s_p =$ [1]{.answer .fragment .content-visible unless-meta="params.v0"} what would our confidence interval look like?
+
+::::: {.content-visible unless-meta="params.v0"}
+::::{ .fragment}
+:::{.answer}
+
+$s_{\bar{x}_1 - \bar{x}_2} = s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}$
+
+So if we plug in $s_p = 1$
 
 $\text{statistic} \pm \text{critical value} \times \text{standard error} = d \pm t_{crit} \times \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}$
 
@@ -303,6 +317,10 @@ d - t_crit * sqrt(1/n1 + 1/n2)
 d + t_crit * sqrt(1/n1 + 1/n2)
 
 ```
+
+:::
+::::
+:::::
 
 ## Benchmarks
 
@@ -326,6 +344,8 @@ A two-tailed Welch-Satterthwaite $t$-test with $\alpha = .05$ indicated a signif
 
 ## In `R`
 
+The `effectsize` package has lots of handy functions for calculating effect sizes, including a `cohens_d()` function that uses syntax just like the `t.test()` function.
+
 ```{r}
 #| echo: true
 library(effectsize)
@@ -339,10 +359,10 @@ Two classes of students, each $N = 21$, were assigned a different math curriculu
 
 
 
-[$s_p = \frac{(n_1 -1)s^2_1 + n_2 -1)s^2_2}{n_1 + n_2 -2} = \frac{(21 -1)8^2 + 21-1)5^2}{21 + 21 -2} = 6.67$]{.answer .fragment .content-visible unless-meta="params.v0"}
+[$s_p = \sqrt{\frac{(n_1 -1)s^2_1 + n_2 -1)s^2_2}{n_1 + n_2 -2}} = \sqrt{\frac{(21 -1)8^2 + 21-1)5^2}{21 + 21 -2}} = 6.67$]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 
-[$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}$ = 0.45]{.answer .fragment .content-visible unless-meta="params.v0"}
+[$d = \frac{\bar{x}_1 - \bar{x}_2}{s_p} = \frac{80-77}{6.67} = 0.45$]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ## Risk and Odds
 
@@ -496,7 +516,7 @@ What is the **risk ratio** of getting rejected for a student who did no research
 What is the **odds ratio** of getting rejected for a student who did no research versus one who did?
 
 
-[$\text{Odds ratio}  = \frac{\text{Odds (rejected | no research)}}{\text{Odds (rejected | research)}}$$ $$= \left(\frac{91}{22}\right) \bigg/ \left(\frac{50}{85}\right) = 7.03$]{.answer .fragment .content-visible unless-meta="params.v0"}
+[$\text{Odds ratio}  = \frac{\text{Odds (rejected | no research)}}{\text{Odds (rejected | research)}}= \left(\frac{91}{22}\right) \bigg/ \left(\frac{50}{85}\right) = 7.03$]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ::: 
 
