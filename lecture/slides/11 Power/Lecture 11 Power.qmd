@@ -23,7 +23,7 @@ format:
         </script>
 params:
   v0: false 
-editor: visual
+editor: source
 ---
 
 ```{r}
@@ -58,19 +58,61 @@ my_yellow2 <- "#FFFFCC"
 
 ```
 
-## Review: Null Sampling Distribution
+## Decisions, Decisions
 
-onsider a one-sample $z$-test: $$H_0:  \mu \leq 0$$ $$H_a & \mu > 0$$
+When doing a null hypothesis test, what are the possible decisions we can make?
 
--   $\mu$: Actual population mean
+- [Reject $H_0$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Retain $H_0$]{.answer .fragment .content-visible unless-meta="params.v0"}
 
--   $\mu_0$: Population mean proposed by null hypothesis (null mean)
+What are the possible true states of the world?
 
-If $\mu - \mu_0$, we already know the **null sampling distribution** of $(\bar{x})$
+- [$H_0$ is true]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [$H_0$ is false (alternative hypothesis $H_a$ is true)]{.answer .fragment .content-visible unless-meta="params.v0"}
 
--   If $\mu_0 = 0$, then sampling distribution of $\bar{x}$ is symmetric about 0
+## Signal Detection
 
--   $z_{\text{obs}} = \bar{x} / \sigma_{\bar{x}} \sim N(0, 1)$
+Power analysis is a **signal detection framework**. Signal detection theory arranges true states of the world and our ability to detect them into contingency tables:
+
+
+
+|   | Positive Decision | Negative Decision |
+|:-----------------------|:----------------------:|:----------------------:|
+| Signal Present | [**True Positive**]{style="background-color: #377EB8; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [**False Negative**]{style="background-color: #E41A1C; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
+| Signal Absent | [**False Positive**]{style="background-color: #4DAF4A; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [**True Negative**]{style="background-color: #984EA3; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
+
+
+Translated to NHST:
+
+
+|   | Retain $H_0$ | Reject $H_0$ |
+|:-----------------------|:----------------------:|:----------------------:|
+| $H_0$ True | [**Correct retention**]{style="background-color: #377EB8; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [**Type I error**]{style="background-color: #E41A1C; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
+| $H_0$ False | [**Type II error**]{style="background-color: #4DAF4A; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [**Correct rejection**]{style="background-color: #984EA3; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
+
+
+
+
+## Review
+
+Consider an upper tailed, one-sample $z$-test: 
+
+$$H_0:  \mu \leq 0$$ 
+
+$$H_a: \mu > 0$$
+
+- $\mu$: Actual population mean
+
+- $\mu_0$: Population mean proposed by null hypothesis (null mean)
+
+## What We Know
+
+If $\mu = \mu_0$, we already know the **null sampling distribution** of $(\bar{x})$
+
+- If $\mu_0 = 0$, then sampling distribution of $\bar{x}$ is symmetric about 0
+
+- $z_{\text{obs}} = \bar{x} / \sigma_{\bar{x}} \sim N(0, 1)$
+  - Where $z_{\text{obs}}$ is the test statistic
 
 If we use our standard $\alpha = .05$ then....
 
@@ -89,29 +131,36 @@ ggplot(x, aes(x)) + stat_function(fun = dnorm) +
         axis.text.y = element_blank()) + 
   geom_vline(aes(xintercept = qnorm(.95), size = I(3)), col = my_orange) + 
   geom_text(aes(label = "Critical Value", x = 2.8, y = .4), size = 5, color = my_orange) + 
-  geom_text(aes(label = "Retention Region\n(Correct Decision)", x = -2.9, y = .2), size = 5, color = my_blue) + 
-  geom_text(aes(label = "Rejection Region\n(Incorrect Decision)", x = 3, y = .2), size = 5, color = my_red)
+  geom_text(aes(label = "Retention Region\n(Correct Retention)", x = -2.9, y = .2), size = 5, color = my_blue) + 
+  geom_text(aes(label = "Rejection Region\n(Type I Error)", x = 3, y = .2), size = 5, color = my_red)
 ```
 
-## A Thought Experiment
+## God's Eye View
 
 Let's now do a thought experiment. In this thought experiment, we are omnipotent, and can take a "God's eye view" of the situation.
 
-![](godseye.jpg){width="25%"}
+![](../../figs/godseye.jpg){width="25%"}
+
+## Thought Experiment
+
+::: {style="font-size: 0.95em;"}
 
 Let's imagine a world where we know the **true** parameter $\mu = 1$ and $\sigma = 10$.
 
--   Put another way, we know the *true effect size* is $d = \frac{\mu - \mu_0}{\sigma} = \frac{1-0}{10} = 0.1$
+- Put another way, we know the *true effect size* is $d = \frac{\mu - \mu_0}{\sigma} = \frac{1-0}{10} = 0.1$
 
 It also means:
 
--   The sampling distribution of $\bar{x}$ is symmetric about 1
+- The sampling distribution of $\bar{x}$ is symmetric about 1
 
--   If we collected repeated samples of size 100, that means $\sigma_{\bar{x}} = \frac{10}{\sqrt{100}} = 1$ and $\bar{x} \sim N(\mu_{\bar{x}} = 1, \sigma_{\bar{x}}=1)$
+- If we collected repeated samples of size 100, what is $\sigma_{\bar{x}}$? 
+    - [$\sigma_{\bar{x}} = \frac{10}{\sqrt{100}} = 1$ and $\bar{x} \sim N(\mu_{\bar{x}} = 1, \sigma_{\bar{x}}=1)$]{.answer .fragment .content-visible unless-meta="params.v0"}
 
--   We can plot the sampling distribution for the true case as well, and see how often we would reject $H_0: \mu = 0$ when we actually know that $\mu = 1$
+- We can plot the sampling distribution for the this hypothetical case as well, and see how often we would reject $H_0: \mu = 0$ when we assume that $\mu = 1$
 
-## Repeated: Probabilities Under the Null Hypothesis
+:::
+
+## Under the Null
 
 ```{r}
 x <- data.frame(x = c(-4, 4))
@@ -126,11 +175,11 @@ ggplot(x, aes(x)) + stat_function(fun = dnorm) +
         axis.text.y = element_blank()) + 
   geom_vline(aes(xintercept = qnorm(.95), size = I(3)), col = my_orange) + 
   geom_text(aes(label = "Critical Value", x = 2.8, y = .4), size = 5, color = my_orange) + 
-  geom_text(aes(label = "Retention Region\n(Correct Decision)", x = -2.9, y = .2), size = 5, color = my_blue) + 
-  geom_text(aes(label = "Rejection Region\n(Incorrect Decision)", x = 3, y = .2), size = 5, color = my_red)
+  geom_text(aes(label = "Retention Region\n(Correct Retention)", x = -2.9, y = .2), size = 5, color = my_blue) + 
+  geom_text(aes(label = "Rejection Region\n(Type I Error)", x = 3, y = .2), size = 5, color = my_red)
 ```
 
-## Probabilities Under the "Truth"
+## Under $\mu = 1$
 
 ```{r}
 x <- data.frame(x = c(-4, 4))
@@ -145,8 +194,8 @@ ggplot(x, aes(x)) + stat_function(fun = dnorm, args = list(mean = 1)) +
         axis.text.y = element_blank()) + 
   geom_vline(aes(xintercept = qnorm(.95), size = I(3)), col = my_orange) + 
   geom_text(aes(label = "Critical Value", x = 2.8, y = .4), size = 6, color = my_orange) + 
-  geom_text(aes(label = "Retention Region\n(Incorrect Decision)", x = -2.9, y = .2), size = 6, color = my_green) + 
-  geom_text(aes(label = "Rejection Region\n(Correct Decision)\nPOWER", x = 3.1, y = .3), size = 5.5, color = my_purple)
+  geom_text(aes(label = "Retention Region\n(Type II Error)", x = -2.9, y = .2), size = 6, color = my_green) + 
+  geom_text(aes(label = "Rejection Region\n(Correct Rejection)\nPOWER", x = 3.1, y = .3), size = 5.5, color = my_purple)
 ```
 
 ## Directly Comparing
@@ -180,50 +229,105 @@ ggplot(x, aes(x), color = c(my_green, my_red)[ind]) +
 **Possible Outcomes**
 
 |   | Retain $H_0$ | Reject $H_0$ |
-|:---|:--:|:--:|
-| $H_0$ True | [**Correct decision**]{style="background-color: #377EB8; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [**Type I error**]{style="background-color: #E41A1C; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
-| $H_0$ False | [**Type II error**]{style="background-color: #4DAF4A; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [**Correct decision**]{style="background-color: #984EA3; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
+|:-----------------------|:----------------------:|:----------------------:|
+| $H_0$ True | [**Correct retention**]{style="background-color: #377EB8; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [**Type I error**]{style="background-color: #E41A1C; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
+| $H_0$ False | [**Type II error**]{style="background-color: #4DAF4A; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [**Correct rejection**]{style="background-color: #984EA3; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
 
 <br>
 
 **Associated Probabilities/Proportions**
 
 |   | Retain $H_0$ | Reject $H_0$ |
-|:---|:--:|:--:|
+|:-----------------------|:----------------------:|:----------------------:|
 | $H_0$ True | [$1-\alpha$]{style="background-color: #377EB8; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [$\alpha$]{style="background-color: #E41A1C; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
 | $H_0$ False | [$\beta$]{style="background-color: #4DAF4A; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [$1-\beta$ (Power)]{style="background-color: #984EA3; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
 
-## Technical Definition of Statistical Power
+## Power Definition
 
-**Power Analysis:** Assume that there is some true value for $\mu \neq 0$ ($H_{true}$). How likely it is you would **correctly** reject the null hypothesis if this was the case?
+::: {style="font-size: 0.9em;"}
 
 Keep in mind the frequentist idea of conducting multiple hypothetical experiments
 
--   Imagine many experiments for which $H_{true}$ is true
+- Imagine many experiments for which $H_0$ is true
 
--   Conduct the hypothesis test (against $H_0$) a large number of times
+- Conduct the hypothesis test (against $H_0$) a large number of times
 
--   What proportion of these hypothesis tests are rejected?
+- What proportion of these hypothesis tests are rejected?
+    - Should be $\alpha$ if we set things up right
 
-Power is the proportion of repeated experiments that correctly reject $H_0$
+**Power:** the proportion of repeated experiments that correctly reject $H_0$ when **something else is true**
 
-The probability is associated with with the procedure of repeated experiments, **not a particular data set**
+- "Something else" is $H_a$
+
+- $\beta$ is probability of incorrectly retaining $H_0$ when $H_a$ is true
+    - **Power:** $1 - \beta$ (probability of correct rejection)
+
+- This probability is **also** associated with with the procedure of repeated experiments, **not a particular data set**
+
+:::
+
+## Power Analysis
+
+In power analysis, we make a **second, different** assumption about what $\mu$ might be besides $\mu_0$
+
+- How likely it is you would **correctly** reject $H_0: \mu = \mu_0$ in this alternative case?
+
+- Slightly different from the "traditional" way we teach alternative hypotheses as inequalities
+
+- We assume a **different equality** than the null
+    - E.g., we assumed $\mu = 1$ in our thought experiment before
+    - Allows us to generate a specific alternative sampling distribution
+    - Examine rejection rate if this is the true distribution, but test is based on the null distribution
+
+
+## Alternative Under Null
+
+```{r}
+xseq <- seq(-4, 4, by = .2)
+x <- data.frame(x = xseq, y0 = 0, 
+                y1 = dnorm(xseq, mean = 1),
+                ind = ifelse(xseq < qnorm(.95), 1, 2))
+x$y1[xseq > qnorm(.95)] <- dnorm(xseq[xseq > qnorm(.95)])
+
+ggplot(x, aes(x), color = c(my_green, my_red)[ind]) + 
+  stat_function(fun = dnorm) +
+  stat_function(fun = dnorm, args = list(mean = 1)) +
+  stat_function(fun = dnorm, args = list(mean = 1), xlim = c(qnorm(.95), 4), geom = "area", fill = my_purple) + 
+  stat_function(fun = dnorm, args = list(mean = 1), xlim = c(-4, qnorm(.95)), geom = "area", fill = my_green) + 
+  stat_function(fun = dnorm, xlim  = c(-4, qnorm(.95)), geom = "area", fill = my_blue) +
+  geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 1), size = 2, color = my_green) +
+  geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 2), size = 2, color = my_red) +
+  geom_vline(aes(xintercept = qnorm(.95), size = I(3)), col = my_orange) +
+  theme_bw() + 
+  labs(x = "Test Statistic", y = "", 
+       title = "Sampling Distribution under Null and Alternative Hypothesis") +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank())  
+```
+
 
 ## Power Simulation Setup
 
+::: {style="font-size: 0.925em;"}
+
+One way to do power analysis is simulation! Most of the methods we will cover in this class don't require simulation, but simulation can help understand what power analysis is doing, and there are some methods that require simulation for power analysis.
+
 I will use the following to simulate power:
 
--   $N = 16$ (in repeated experiments)
--   $\mu_0 = 0$
--   $\mu_1 = 1$ (true $\mu$)
--   $\sigma = 4$
-    -   $\sigma_{\bar{x}} = \frac{\sigma}{\sqrt(N)} = \frac{4}{\sqrt(16)} = 1$
+- $N = 16$ (in repeated experiments)
+- $\mu_0 = 0$
+- $\mu_1 = 1$ 
+- $\sigma = 4$
+  - $\sigma_{\bar{x}} = \frac{\sigma}{\sqrt{N}} = \frac{4}{\sqrt{16}} = 1$
+  
+:::
 
 ```{r}
 #| echo: true
 N <- 16 # sample size
 mu0 <- 0 # null mean
-mu1 <- 1 # true population mean
+mu1 <- 1 # Alternative population mean
 sigma <- 4 # so that sigma / sqrt(N) = 1
 ```
 
@@ -247,7 +351,15 @@ What proportion of my $p$-values are $< .05$ (correct rejections)
 mean(pvals < .05)
 ```
 
-## Distribution of $p$
+Meaning that if:
+
+- The true mean is $\mu = 1$
+- My test is based on $H_0 = 0$ with $\alpha = .05$
+- $\sigma = 4$ and $N = 16$
+
+I can expect to correctly reject $H_0$ around 26% of the time. 
+
+## Distribution of $p$-values
 
 ```{r}
 # Compute density estimation
@@ -288,22 +400,50 @@ ggplot(df_dens, aes(x = x, y = y)) +
   theme_minimal()
 ```
 
+## Power Analysis Inputs
+
+Power analysis has four main inputs
+
+- Sample size ($N$)
+- Effect size (_)
+- Type I error rate ($\alpha$)
+- Type II error rate ($\beta$)
+    - Alternatively, power ($1 - \beta$) 
+    
+## Population Effect Size
+
+When we discussed effect size last time, we were talking about estimating an effect size from a sample, which we called $d$
+
+In power analysis, we assume an effect at the **population level**. What do you think we would call an equivalent population effect size (Hint: not an English letter!)
+
+- [$\delta$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+In the previous example, what was [$\delta$]{.answer .fragment .content-visible unless-meta="params.v0"}
+?
+
+- [For estimating $d$ from a sample $d = \frac{\bar{x} - \mu_0}{\sigma}$. In the population, we would have $\delta = \frac{\mu - \mu_0}{\sigma} = \frac{1 - 0}{4} = .25$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
 ## Increasing Power
 
-Our statistical power here was .26
+::: {style="font-size: 0.85em;"}
 
--   We only correctly reject the null hypothesis 26% of the time, not great!
+In our previous example, our statistical power here was .26
+
+- We only correctly reject the null hypothesis 26% of the time, not great!
 
 How might we increase it?
 
--   [Increase $N$]{.answer .fragment .content-visible unless-meta="params.v0"}
--   [Increase effect size]{.answer .fragment .content-visible unless-meta="params.v0"}
--   [Decrease $\alpha$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Increase $N$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Increase effect size]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Decrease $\alpha$]{.answer .fragment .content-visible unless-meta="params.v0"}
 
-We can tweak any of these in our simulation, which are in our control as the experimenter?
+We can tweak any of these in our simulation. But which would be in our control as an experimenter?
 
--   [If we have the resources, we can increase $N$]{.answer .fragment .content-visible unless-meta="params.v0"}
--   [If we are willing to accept a higher chance of a Type I error, we can decrease $\alpha$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [If we have the resources, we can increase $N$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [If we are willing to accept a higher chance of a Type I error, we can decrease $\alpha$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [We can't control the "true" effect size, that's a fixed property of the world!]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+:::
 
 ## Increasing Sample Size Increases Power
 
@@ -317,16 +457,17 @@ Increasing $N$ will shrink the standard error, increasing the distance between t
 
 ## Increasing $N$
 
+
 ```{r}
-mu0 <- 21
-mu1 <- 23
-sd <- 6
-N <- 36
+mu0 <- 0
+mu1 <- 1
+sd <- 4
+N <- 16
 alpha <- .05
 
 
 
-xseq <- seq(18, 26, by = .1)
+xseq <- seq(-4, 4, by = .2)
 x <- data.frame(x = xseq, y0 = 0, 
                 y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
                 ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
@@ -340,22 +481,22 @@ plot1 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) +
   stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N)), xlim  = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_blue) +
   geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 1), size = .5, color = my_green) +
   geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 2), size = .5, color = my_red) +
-  geom_vline(aes(xintercept = 22.64485), size = I(2), col = my_orange) +
+  geom_vline(aes(xintercept =  1.644854, size = I(2)), col = my_orange) +
   theme_bw() + 
   labs(x = expression(bar(x)), y = "Density", 
-       title = expression(paste(alpha, "= .05, N = 36, d = .33, Power = 0.64")))  +
+       title = expression(paste(alpha, "= .05, N = 16, d = .25, Power = 0.26")))  +
   theme(plot.title = element_text(hjust = 0.5, size = 15),
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank())  
 
 ##
-mu0 <- 21
-mu1 <- 23
-sd <- 6
-N <- 81
+mu0 <- 0
+mu1 <- 1
+sd <- 4
+N <- 64
 alpha <- .05
 
-xseq <- seq(18, 26, by = .1)
+xseq <- seq(-4, 4, by = .2)
 x <- data.frame(x = xseq, y0 = 0, 
                 y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
                 ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
@@ -372,12 +513,90 @@ plot2 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) +
   geom_vline(aes(xintercept = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), size = I(2)), col = my_orange) +
   theme_bw() + 
   labs(x = expression(bar(x)), y = "Density", 
-       title = expression(paste(alpha, "= .05, N = 36, d = .33, Power = 0.64")))  +
+       title = expression(paste(alpha, "= .05, N = 64, d = .25, Power = 0.64")))  +
   theme(plot.title = element_text(hjust = 0.5, size = 15),
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank())  
 
 gridExtra::grid.arrange(plot1, plot2, nrow = 2)
+
+
+
+
+
+
+```
+
+
+## Decreasing $N$
+
+
+```{r}
+mu0 <- 0
+mu1 <- 1
+sd <- 4
+N <- 16
+alpha <- .05
+
+
+
+xseq <- seq(-4, 4, by = .2)
+x <- data.frame(x = xseq, y0 = 0, 
+                y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
+                ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
+x$y1[xseq > qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))] <- dnorm(xseq[xseq > qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))], mean = mu0, sd = sd / sqrt(N))
+
+plot1 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) + 
+  stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N))) +
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N))) +
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N)), xlim = c(qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), max(xseq)), geom = "area", fill = my_purple) + 
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N)), xlim = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_green) + 
+  stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N)), xlim  = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_blue) +
+  geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 1), size = .5, color = my_green) +
+  geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 2), size = .5, color = my_red) +
+  geom_vline(aes(xintercept =  1.644854, size = I(2)), col = my_orange) +
+  theme_bw() + 
+  labs(x = expression(bar(x)), y = "Density", 
+       title = expression(paste(alpha, "= .05, N = 16, d = .25, Power = 0.26")))  +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank())  
+
+##
+mu0 <- 0
+mu1 <- 1
+sd <- 4
+N <- 4
+alpha <- .05
+
+xseq <- seq(-4, 4, by = .2)
+x <- data.frame(x = xseq, y0 = 0, 
+                y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
+                ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
+x$y1[xseq > qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))] <- dnorm(xseq[xseq > qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))], mean = mu0, sd = sd / sqrt(N))
+
+plot2 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) + 
+  stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N))) +
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N))) +
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N)), xlim = c(qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), max(xseq)), geom = "area", fill = my_purple) + 
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N)), xlim = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_green) + 
+  stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N)), xlim  = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_blue) +
+  geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 1), size = .5, color = my_green) +
+  geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 2), size = .5, color = my_red) +
+  geom_vline(aes(xintercept = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), size = I(2)), col = my_orange) +
+  theme_bw() + 
+  labs(x = expression(bar(x)), y = "Density", 
+       title = expression(paste(alpha, "= .05, N = 4, d = .25, Power = 0.12")))  +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank())  
+
+gridExtra::grid.arrange(plot1, plot2, nrow = 2)
+
+
+
+
+
 ```
 
 ## Increasing $N$ Simulated
@@ -445,28 +664,35 @@ ggplot(df_dens, aes(x = x, y = y)) +
 
 ## Decreasing $\alpha$ Decreases Power
 
-The Type I error rate $\alpha$ determines the cutoff between the acceptance and rejection regions
+::: {style="font-size: 0.85em;"}
 
-Increasing $\alpha$ means you are likely to reject $H_0$ for both the null and alternative hypothesis
+The Type I error rate $\alpha$ determines the cutoff between the retention and rejection regions. Increasing $\alpha$ means you are likely to reject $H_0$ for both the null and alternative hypothesis
+
+- In theory, you could start with $\beta$ (or power) to determine your $\alpha$, but we usually start with $\alpha$
 
 Tradeoff between minimizing Type I error rate and maximizing power
 
--   Decreasing one decreases the other
+- Decreasing one decreases the other
 
--   Increasing one increases the other
+- Increasing one increases the other
 
--   This is why neither allowing more liberal (larger) or requiring stricter (smaller) $\alpha$ will lead to more reliable results or more correct decisions. It will just adjust your tolerance for different types of errors
+- Neither allowing more liberal (larger) or requiring stricter (smaller) $\alpha$ will lead to more reliable results or more correct decisions. It will just adjust your tolerance for different types of errors
+
+:::
 
 ## Decreasing $\alpha$
 
 ```{r}
-mu0 <- 21
-mu1 <- 23
-sd <- 6
-N <- 36
+
+mu0 <- 0
+mu1 <- 1
+sd <- 4
+N <- 16
 alpha <- .05
 
-xseq <- seq(18, 26, by = .1)
+
+
+xseq <- seq(-4, 4, by = .2)
 x <- data.frame(x = xseq, y0 = 0, 
                 y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
                 ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
@@ -480,24 +706,22 @@ plot1 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) +
   stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N)), xlim  = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_blue) +
   geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 1), size = .5, color = my_green) +
   geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 2), size = .5, color = my_red) +
-  geom_vline(aes(xintercept = 22.64485), size = I(2), col = my_orange) +
+  geom_vline(aes(xintercept =  1.644854, size = I(2)), col = my_orange) +
   theme_bw() + 
   labs(x = expression(bar(x)), y = "Density", 
-       title = expression(paste(alpha, "= .05, N = 36, d = .33, Power = 0.64")))  +
+       title = expression(paste(alpha, "= .05, N = 16, d = .25, Power = 0.26")))  +
   theme(plot.title = element_text(hjust = 0.5, size = 15),
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank())  
 
-# pnorm(q = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), mean = mu1, sd = sd / sqrt(N), lower.tail = FALSE)
-
 ##
-mu0 <- 21
-mu1 <- 23
-sd <- 6
-N <- 36
+mu0 <- 0
+mu1 <- 1
+sd <- 4
+N <- 16
 alpha <- .01
 
-xseq <- seq(18, 26, by = .1)
+xseq <- seq(-4, 4, by = .2)
 x <- data.frame(x = xseq, y0 = 0, 
                 y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
                 ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
@@ -514,10 +738,14 @@ plot2 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) +
   geom_vline(aes(xintercept = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), size = I(2)), col = my_orange) +
   theme_bw() + 
   labs(x = expression(bar(x)), y = "Density", 
-       title = expression(paste(alpha, "= .01, N = 36, d = .33, Power = 0.64")))  +
+       title = expression(paste(alpha, "= .01, N = 16, d = .25, Power = 0.09")))  +
   theme(plot.title = element_text(hjust = 0.5, size = 15),
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank())  
+
+gridExtra::grid.arrange(plot1, plot2, nrow = 2)
+
+
 
 # pnorm(q = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), mean = mu1, sd = sd / sqrt(N), lower.tail = FALSE)
 
@@ -527,13 +755,16 @@ gridExtra::grid.arrange(plot1, plot2, nrow = 2)
 ## Increasing $\alpha$
 
 ```{r}
-mu0 <- 21
-mu1 <- 23
-sd <- 6
-N <- 36
+
+mu0 <- 0
+mu1 <- 1
+sd <- 4
+N <- 16
 alpha <- .05
 
-xseq <- seq(18, 26, by = .1)
+
+
+xseq <- seq(-4, 4, by = .2)
 x <- data.frame(x = xseq, y0 = 0, 
                 y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
                 ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
@@ -547,24 +778,22 @@ plot1 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) +
   stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N)), xlim  = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_blue) +
   geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 1), size = .5, color = my_green) +
   geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 2), size = .5, color = my_red) +
-  geom_vline(aes(xintercept = 22.64485), size = I(2), col = my_orange) +
+  geom_vline(aes(xintercept =  1.644854, size = I(2)), col = my_orange) +
   theme_bw() + 
   labs(x = expression(bar(x)), y = "Density", 
-       title = expression(paste(alpha, "= .05, N = 36, d = .33, Power = 0.64")))  +
+       title = expression(paste(alpha, "= .05, N = 16, d = .25, Power = 0.26")))  +
   theme(plot.title = element_text(hjust = 0.5, size = 15),
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank())  
 
-# pnorm(q = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), mean = mu1, sd = sd / sqrt(N), lower.tail = FALSE)
-
 ##
-mu0 <- 21
-mu1 <- 23
-sd <- 6
-N <- 36
+mu0 <- 0
+mu1 <- 1
+sd <- 4
+N <- 16
 alpha <- .10
 
-xseq <- seq(18, 26, by = .1)
+xseq <- seq(-4, 4, by = .2)
 x <- data.frame(x = xseq, y0 = 0, 
                 y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
                 ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
@@ -581,10 +810,14 @@ plot2 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) +
   geom_vline(aes(xintercept = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), size = I(2)), col = my_orange) +
   theme_bw() + 
   labs(x = expression(bar(x)), y = "Density", 
-       title = expression(paste(alpha, "= .10, N = 36, d = .33, Power = 0.64")))  +
+       title = expression(paste(alpha, "= .10, N = 16, d = .25, Power = 0.39")))  +
   theme(plot.title = element_text(hjust = 0.5, size = 15),
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank())  
+
+gridExtra::grid.arrange(plot1, plot2, nrow = 2)
+
+
 
 # pnorm(q = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), mean = mu1, sd = sd / sqrt(N), lower.tail = FALSE)
 
@@ -601,19 +834,22 @@ $$\bar{x} \sim N\left(\mu_0, \frac{\sigma}{\sqrt{N}}\right)$$
 
 $$\bar{x} \sim N\left(\mu_1, \frac{\sigma}{\sqrt{N}}\right)$$
 
--   Larger differences between $\mu_1$ and $\mu_0$ will create larger separation between the distributions
--   Larger effects $\rightarrow$ more power
+- Larger differences between $\mu_1$ and $\mu_0$ will create larger separation between the distributions
+- Larger effects $\rightarrow$ more power
 
 ## Larger $d$
 
 ```{r}
-mu0 <- 21
-mu1 <- 23
-sd <- 6
-N <- 36
+
+mu0 <- 0
+mu1 <- 1
+sd <- 4
+N <- 16
 alpha <- .05
 
-xseq <- seq(18, 26, by = .1)
+
+
+xseq <- seq(-4, 4, by = .2)
 x <- data.frame(x = xseq, y0 = 0, 
                 y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
                 ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
@@ -627,24 +863,22 @@ plot1 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) +
   stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N)), xlim  = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_blue) +
   geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 1), size = .5, color = my_green) +
   geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 2), size = .5, color = my_red) +
-  geom_vline(aes(xintercept = 22.64485), size = I(2), col = my_orange) +
+  geom_vline(aes(xintercept =  1.644854, size = I(2)), col = my_orange) +
   theme_bw() + 
   labs(x = expression(bar(x)), y = "Density", 
-       title = expression(paste(alpha, "= .10, N = 36, d = .33, Power = 0.64")))  +
+       title = expression(paste(alpha, "= .05, N = 16, d = .25, Power = 0.26")))  +
   theme(plot.title = element_text(hjust = 0.5, size = 15),
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank())  
 
-# pnorm(q = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), mean = mu1, sd = sd / sqrt(N), lower.tail = FALSE)
-
 ##
-mu0 <- 21
-mu1 <- 24
-sd <- 6
-N <- 36
+mu0 <- 0
+mu1 <- 2
+sd <- 4
+N <- 16
 alpha <- .05
 
-xseq <- seq(18, 26, by = .1)
+xseq <- seq(-4, 4, by = .2)
 x <- data.frame(x = xseq, y0 = 0, 
                 y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
                 ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
@@ -661,10 +895,88 @@ plot2 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) +
   geom_vline(aes(xintercept = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), size = I(2)), col = my_orange) +
   theme_bw() + 
   labs(x = expression(bar(x)), y = "Density", 
-       title = expression(paste(alpha, "= .10, N = 36, d = .50, Power = 0.64")))  +
+       title = expression(paste(alpha, "= .01, N = 16, d = .5, Power = 0.64")))  +
   theme(plot.title = element_text(hjust = 0.5, size = 15),
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank())  
+
+gridExtra::grid.arrange(plot1, plot2, nrow = 2)
+
+
+
+# pnorm(q = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), mean = mu1, sd = sd / sqrt(N), lower.tail = FALSE)
+
+gridExtra::grid.arrange(plot1, plot2, nrow = 2)
+```
+
+
+## Smaller $d$
+
+```{r}
+
+mu0 <- 0
+mu1 <- 1
+sd <- 4
+N <- 16
+alpha <- .05
+
+
+
+xseq <- seq(-4, 4, by = .2)
+x <- data.frame(x = xseq, y0 = 0, 
+                y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
+                ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
+x$y1[xseq > qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))] <- dnorm(xseq[xseq > qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))], mean = mu0, sd = sd / sqrt(N))
+
+plot1 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) + 
+  stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N))) +
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N))) +
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N)), xlim = c(qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), max(xseq)), geom = "area", fill = my_purple) + 
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N)), xlim = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_green) + 
+  stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N)), xlim  = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_blue) +
+  geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 1), size = .5, color = my_green) +
+  geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 2), size = .5, color = my_red) +
+  geom_vline(aes(xintercept =  1.644854, size = I(2)), col = my_orange) +
+  theme_bw() + 
+  labs(x = expression(bar(x)), y = "Density", 
+       title = expression(paste(alpha, "= .05, N = 16, d = .25, Power = 0.26")))  +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank())  
+
+##
+mu0 <- 0
+mu1 <- .5
+sd <- 4
+N <- 16
+alpha <- .05
+
+xseq <- seq(-4, 4, by = .2)
+x <- data.frame(x = xseq, y0 = 0, 
+                y1 = dnorm(xseq, mean = mu1, sd = sd / sqrt(N)),
+                ind = ifelse(xseq < qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), 1, 2))
+x$y1[xseq > qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))] <- dnorm(xseq[xseq > qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))], mean = mu0, sd = sd / sqrt(N))
+
+plot2 <- ggplot(x, aes(x), color = c(my_green, my_red)[ind]) + 
+  stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N))) +
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N))) +
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N)), xlim = c(qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), max(xseq)), geom = "area", fill = my_purple) + 
+  stat_function(fun = dnorm, args = list(mean = mu1, sd = sd / sqrt(N)), xlim = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_green) + 
+  stat_function(fun = dnorm, args = list(mean = mu0, sd = sd / sqrt(N)), xlim  = c(min(xseq), qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N))), geom = "area", fill = my_blue) +
+  geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 1), size = .5, color = my_green) +
+  geom_segment(aes(x = x, xend = x, y = y0, yend = y1), subset(x, ind == 2), size = .5, color = my_red) +
+  geom_vline(aes(xintercept = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), size = I(2)), col = my_orange) +
+  theme_bw() + 
+  labs(x = expression(bar(x)), y = "Density", 
+       title = expression(paste(alpha, "= .01, N = 16, d = .125, Power = 0.13")))  +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank())  
+
+gridExtra::grid.arrange(plot1, plot2, nrow = 2)
+
+
+
 
 # pnorm(q = qnorm(1 - alpha, mean = mu0, sd = sd / sqrt(N)), mean = mu1, sd = sd / sqrt(N), lower.tail = FALSE)
 
@@ -679,13 +991,13 @@ What changes?
 
 [The form of the sampling distribution. Instead of normal, we might use]{.answer .fragment .content-visible unless-meta="params.v0"}
 
--   [A $t$-distribution]{.answer .fragment .content-visible unless-meta="params.v0"}
--   [A $\chi^2$-distribution]{.answer .fragment .content-visible unless-meta="params.v0"}
--   [An $f$-distribution (more soon)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [A $t$-distribution]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [A $\chi^2$-distribution]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [An $f$-distribution (more soon)]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ## Power Analysis
 
-Power analysis has four components. Our demo used a \$z
+Power analysis has four components.
 
 1.  Statistical power ($1 - \beta$)
 
@@ -723,7 +1035,7 @@ ggplot(res, aes(N, power, group = d, col = d)) + geom_path(na.rm = TRUE, size = 
 
 ::: {style="font-size: 0.8em;"}
 | Type of Power Analysis | Input | Output |
-|:---|:---|:---|
+|:-----------------------|:-----------------------|:-----------------------|
 | **a priori** | $\alpha$<br>Statistical Power<br>Effect Size | Sample Size |
 | **Retrospective** | $\alpha$<br>Sample Size<br>Effect Size | Statistical Power |
 | **Sensitivity** | $\alpha$<br>Statistical Power<br>Sample Size | Effect Size |
@@ -733,37 +1045,39 @@ ggplot(res, aes(N, power, group = d, col = d)) + geom_path(na.rm = TRUE, size = 
 
 ## *a priori* Power Analysis
 
--   Intended be done **before** data collection
--   Meant to assist in deciding what sample size is needed
--   Requires you to make an assumption about anticipated effect size
-    -   Pilot study?
-    -   Prior knowledge?
-    -   Cohen's benchmarks?
+- Intended be done **before** data collection
+- Meant to assist in deciding what sample size is needed
+- Requires you to make an assumption about anticipated effect size
+  - Pilot study?
+  - Prior knowledge?
+  - Cohen's benchmarks?
+  - Smallest Effect Size of Interest (SESOI)?
 
 ## Sensitivity Power Analysis
 
--   Can be done either before or after data are collected
--   Typically assumes a fixed sample size
--   Analyze what effect sizes can be detected at different fixed power levels. E.g.
--   E.g., What is the smallest effect size you could detect with...
-    -   ...80% power?
-    -   ...95% power?
+- Can be done either before or after data are collected
+- Typically assumes a fixed sample size
+- Analyze what effect sizes can be detected at different fixed power levels. E.g.
+- E.g., What is the smallest effect size you could detect with...
+  - ...80% power?
+  - ...95% power?
 
 ## Retrospective Power Analysis
 
--   Often (but does not have to be) done after data are collected
--   Typically assumes a fixed sample size
--   Analyze how much power you have to detect different fixed effect sizes
--   E.g., What is your statistical power if the true population effect is...
-    -   ...$d = .2$?
-    -   ...$d = .5$?
+- Often (but does not have to be) done after data are collected
+- Typically assumes a fixed sample size
+- Analyze how much power you have to detect different fixed effect sizes
+- E.g., What is your statistical power if the true population effect is...
+  - ...$d = .2$?
+  - ...$d = .5$?
+  - SESOI?
 
 ## Observed Power Analysis
 
--   A type of retrospective power analysis
--   Always after data are collected
--   Calculate observed effect size from sample
--   Calculate power based on observed effect size and actual sample size
+- A type of retrospective power analysis
+- Always after data are collected
+- Calculate observed effect size from sample
+- Calculate power based on observed effect size and actual sample size
 
 ## STOP
 
@@ -773,11 +1087,18 @@ ggplot(res, aes(N, power, group = d, col = d)) + geom_path(na.rm = TRUE, size = 
 
 Power is about detecting a **population** effect.
 
-An observed effect size will almost never be exactly a population effect. It will also have sampling error
+An observed effect size will almost never be exactly a population effect. 
 
-Imagine what would happen if we do an analysis, but **only** report results when our observed effect size implies at least 80% power, we're going risk making way more Type I error's than our actual $\alpha = .05$
+- It will also have sampling error
+
+Imagine what would happen if we do an analysis, but **only** report results when our observed effect size implies at least 80% power. We're going risk 
+
+- Making way more Type I error's than our actual $\alpha = .05$
+- Way overestimating our true effect size
 
 ## Simulated Example
+
+::: {style="font-size: 0.8em;"}
 
 In this example, I'm simulating a case where the null hypothesis is true, which means we should only reject it 5% of the time.
 
@@ -808,6 +1129,9 @@ sum(res)/iter
 
 So far so good
 
+
+:::
+
 ## File Drawer
 
 Now let's see what happens if I ONLY keep the times where my **observed** power based on each individual sample is at least 80%. All the other times, I "file drawer" my results, and no one ever sees them but me
@@ -835,7 +1159,7 @@ for (i in 1:iter){
   res[i] <- tt$p.value < .05
   }
   
-  ## Ohterwise file it away for none to see!
+  ## Otherwise file it away for none to see!
   else{
     res[i] <- "file drawered"
   }
@@ -851,13 +1175,16 @@ How often did we reject, retain, or file drawer the null?
 table(res)
 ```
 
--   I **never** correctly retained the null hypothesis
--   I incorrectly rejected it 82 times
--   And the remaining 9,918 times I decided I didn't have enough power and stuck my result in the file drawer
+- I **never** correctly retained the null hypothesis
+- I incorrectly rejected it 82 times
+- And the remaining 9,918 times I decided I didn't have enough power and stuck my result in the file drawer
 
 ## A Real Effect
 
-Now let's try an example where there *is* a true effect, but it's not very big, $D = .1$. How often we detect the effect will be our power.
+Now let's try an example where there *is* a true effect, but it's not very big, $\delta = .1$ 
+
+- How often we correctly reject $H_0: \mu - \mu_0 = 0$ ($\delta = 0$) will be our power
+- We can also look at our distribution of $d$ and how well that estimates the true $\delta$
 
 ```{r}
 #| echo: true
@@ -879,7 +1206,7 @@ for (i in 1:iter){
 
 Let's look at:
 
--   How often did we reject?
+- How often did we reject?
 
 ```{r}
 #| echo: true
@@ -889,7 +1216,7 @@ table(res)
 
 ```
 
--   What was our power?
+- What was our power?
 
 ```{r}
 #| echo: true
@@ -900,7 +1227,7 @@ sum(res)/iter
 
 ```
 
--   What was the mean $d$ across samples?
+- What was the mean $d$ across samples?
 
 ```{r}
 #| echo: true
@@ -951,18 +1278,72 @@ This time I just left the file drawered results as missing (`NA`)
 Let's look at our average $d$ in the cases where we didn't file drawer
 
 ```{r}
+#| echo: true
 mean(ds, na.rm = TRUE)
 ```
 
-Our average 4.5x as large as the true population value! We're way overestimating it.
+Our average 4.5x as large as the true population $\delta$! We're way overestimating it.
 
 ## Making Retrospective Power Analysis OK
 
+::: {style="font-size: 0.8em;"}
+
 The **best** way to do a retrospective power analysis, and report a power level with any meaning, is to do it **after** you have collected data (or assuming you have a given $N$) but **before** you analyze your results.
 
-So if you know you have $N = 50$ and want to see if you have enough power to detect an effect size of at least $d = .2$, you can do that, but **DO NOT CHECK THE SAMPLE** $d$ FIRST
+- Example: if you know you have $N = 50$ and want to see if you have enough power to detect a population effect size of at least $\delta = .2$, you can do that, but **DO NOT CHECK THE SAMPLE** $d$ FIRST
 
 If you do use the observed effect size, you'd better not be basing any of your reporting or publication decisions on the results of your power analysis! Otherwise you're going to wind up with either or both:
 
--   Inflated Type I error rates
--   Overestimates of the true effect size
+- Inflated Type I error rates
+- Overestimates of the true effect size
+
+:::
+
+## Other Power Problems
+
+Remember, power is all about our signal detection matrix: 
+
+
+|   | Retain $H_0$ | Reject $H_0$ |
+|:-----------------------|:----------------------:|:----------------------:|
+| $H_0$ True | [**Correct retention**]{style="background-color: #377EB8; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [**Type I error**]{style="background-color: #E41A1C; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
+| $H_0$ False | [**Type II error**]{style="background-color: #4DAF4A; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} | [**Correct rejection**]{style="background-color: #984EA3; color: white; padding: 6px 12px; display: block; border-radius: 4px;"} |
+
+
+- Making NHST decisions is a simple recipe that's easy to teach people who don't want to think more carefully
+- I am not a teacher that teaches easy recipes, and you are not students who don't want to think more carefully
+- There is more to inference than making an NHST decision
+
+## Power Positives
+
+The **general idea** of considering hypothetical alternative scenarios and analyzing how sensitive statistical methods are under varying assumptions is **great**
+
+- Many statistical methods do similar things
+- They don't have to exclusively rely on power analysis
+- Power is just one possible way to make a judgment about sample size sufficiency, but more $N$ is always better
+
+## Alternative Perspectives
+
+We have already seen another method that can help us make a judgment about the sufficiency of our sample size. What is it....?
+
+- [It is a method for judging the **precision** of a statistical estimate]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [It tells us a **range** of values we **cannot** reject]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+[**Confidence intervals** provide very similar information to any (retrospective) power analysis]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Next Time
+
+We will wrap up the first phase of the semester with a slight shift in perspective
+
+- The vast majority of statistical methods can be restructured to be special cases of a more general form
+- The **General(ized) linear model**
+- This approach will also help set the stage for giving you a little taste of Bayesian approaches to statistical estimation and inference
+
+## Last Chance for Review!
+
+Next Tuesday will be our review session
+
+- If you want to see any material reviewed, post on Ed Discussion ASAP
+- All material covered through this Thursday is fair game for exam
+- Exam will be next Thursday at regular class time

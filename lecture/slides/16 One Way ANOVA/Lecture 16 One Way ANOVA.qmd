@@ -686,6 +686,148 @@ $$\omega^2 = \frac{SSB - (G - 1)\times MSW}{SST + MSW}$$
 
 **Interpretation:** Same interpretation as $\eta^2$ (proportion of variation accounted for by group differences).
 
+
+## ANOVA Assumptions
+
+Assumptions of one-way ANOVA (same as independent samples $t$-test):
+
+1. **Normally distributed outcome in each group**
+   - Equivalently, normally distributed residuals within each group
+2. **No outliers in any group**
+3. **Homogeneity of variance**
+   - Population variance is equal in every group
+4. **Independence of observations**
+   - All groups are independent of each other
+   - If not independent, **repeated measures ANOVA** may be a more appropriate procedure
+
+## Normality
+
+Outcome variable is normally distributed in each group.
+
+One-way ANOVA is robust to violation of this assumption:
+
+- Violating this assumption has little effect on Type I or II error rates
+
+Methods to examine this assumption:
+
+- Skewness and kurtosis of each group
+  - Suggested guidelines: skew $< 2$; kurtosis $< 7$ (Curran, West, & Finch, 1996)
+- Histogram of each group with normal curve imposed
+- Kernel density plot of each group with normal curve imposed
+- Q-Q plot of each group
+
+## No Outliers
+
+No group has substantial outliers.
+
+Methods to examine the assumption:
+
+- Boxplots
+
+As before, outliers are to be taken seriously!
+
+- If there are major outliers, double-check that the data were entered correctly
+- Consider (nonlinearly) transforming the dependent variable (for all groups)
+- Remove the data point rarely and only with strong external justification
+- Outliers affect mean and variance $\rightarrow$ can bias these inputs
+
+## Homogeneity of Variance
+
+**Homogeneity of Variance:** Population variance of dependent variable is equal across all groups.
+
+**Consequences of violating** (Glass, Peckham, & Sanders, 1972):
+
+- Affects the relationship between $\alpha$ and the actual Type I error rate
+- Three situations:
+  1. **All groups are the same size:** ANOVA is robust to violations
+  2. **Smaller groups have higher variance:** True Type I error rate is greater than $\alpha$ (more likely to incorrectly reject true $H_0$)
+  3. **Larger groups have higher variance:** True Type I error rate is less than $\alpha$ (lower statistical power)
+
+## More Homogeneity
+
+**Methods to examine this assumption:**
+
+- Inspect the size and sample variance of each group
+- Levene's test
+
+**Solutions:**
+
+- Welch's test
+- White's adjustment
+- Weighted least squares estimation
+- Box's test (*NOT recommended* - low statistical power)
+- Transformation of the outcome variable (*occasionally recommended*)
+
+## Welch's Test
+
+::: {style="font-size: 0.8em;"}
+
+Same $H_0$ and $H_1$ as original ANOVA; new $F$ statistic and $dfW$.
+
+$$F(dfB, dfW) = \frac{\frac{\sum_gw_g(\bar{y}_g - \bar{y}^\prime)^2}{G-1}}{1 + \frac{2(G-2)}{G^2 - 1}\times \sum_g\left[\left(\frac{1}{n_g - 1}\right)\left(1 - \frac{w_g}{\sum_gw_g}\right)^2\right]}$$
+
+:::: {.columns}
+
+::: {.column width="50%"}
+- $\bar{y}_g$: group $g$'s mean
+- $s^2_g$: group $g$'s variance
+- $G$: number of groups
+- $n_g$: group $g$'s sample size
+- $dfB = G - 1$
+:::
+
+::: {.column width="50%"}
+$$w_g = \frac{n_g}{s^2_g}$$
+
+$$\bar{y}^\prime = \frac{\sum_g (w_g \times \bar{y}_g)}{\sum_gw_g}$$
+
+$$dfW = \frac{G^2 - 1}{3\times \sum_g\left[\left(\frac{1}{n_g - 1}\right)\left(1 - \frac{w_g}{\sum_gw_g}\right)^2\right]}$$
+:::
+
+::::
+
+:::
+
+## White's Adjustment
+
+White's adjustment uses a different formula to find a $MSW$ estimate that is robust to heteroscedasticity:
+
+- Same $dfB$, $dfW$
+- Different $MSW$, $F$, $p$
+- Many options possible
+- Recommended to try several adjustment methods (they should agree)
+
+
+## Weighted Least Squares
+
+Original ANOVA uses **ordinary least squares (OLS)** estimation to calculate results:
+
+- Goal: minimize $SSW$
+- Each participant is equally weighted in the calculation
+
+Weighted least squares (WLS) can be useful to address problems with the heterogeneity of variance between groups:
+
+- Procedure: assign each participant a weight of $(1 / s^2_g)$
+- Members of the same group have the same weight ($s^2_g$: variance of group $g$'s outcome)
+- **Interpretation:** Participants in the group with larger variance are downweighted; participants in smaller variance groups are upweighted.
+
+
+
+## Heterogeneity Suggestions
+
+**"Traditional" procedure:**
+
+- Conduct hypothesis tests of whether all population variances are equal (e.g., Levene's test)
+- If $H_0$ rejected, use corrected procedures
+- If $H_0$ retained, use the original ANOVA test
+
+**Suggested procedures:**
+
+- Always conduct more than one of Welch, White, and WLS estimation
+- Results will usually agree; report any set of results when they agree
+- When results disagree, report all sets and explain
+- [**More work needs to be done in comparing these procedures**]{style="color: red;"}
+
 ## The Story So Far
 
 - This is known as the "omnibus" test
@@ -758,14 +900,13 @@ Remember, priors are probability distributions, not point hypotheses
 Robert, C. P. (2014). On the Jeffreys-Lindley paradox. Philosophy of Science, 81(2), 216-232. [https://doi.org/10.1086/675729](https://doi.org/10.1086/675729)
 :::
 
-## Posterior Predictive
+## Posterior Predictions
 
 Philosophically Bayesian inference is more about using probability to represent belief.
 
-- The **posterior predictive distribution** is a probability distribution representing our belief about possible values $y$ values might take on conditional on given $x$ values
-    - E.g., a probability distribution representing plausible values for a random member from a specific group
-    - If posterior predictive distribution for all groups are very similar, it means we believe differences between groups are small
-    - If posterior predictive distributions for some groups are very different, it means we believe differences between groups are large
+- The **posterior distribution** is a probability distribution representing our belief about mean values $y$ values might take on conditional on given $x$ values
+    - If posterior distribution for all groups are very similar, it means we believe differences between groups are small
+    - If posterior distributions for some groups are very different, it means we believe differences between groups are large
     
 ## Bayesian $R^2$
 
@@ -920,6 +1061,67 @@ $$\omega^2 = \frac{SSB - (G - 1)\times MSW}{SST + MSW} = \frac{0.49 - (2)\times 
 omega_squared(a1)
 ```
 
+
+
+## Welch's Test in R
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+#| echo: true
+#| message: false
+library(rstatix)
+welch_anova_test(dat, average_bond ~ condition)
+```
+
+:::
+
+
+## White's Adjustment in R
+
+::: {style="font-size: 0.85em;"}
+
+**Way 1:**
+
+```{r}
+#| echo: true
+#| eval: false
+ezANOVA(data = dat, dv = average_bond, wid = SUBJ,
+      between = condition, white.adjust = TRUE)
+```
+
+```{r}
+#| message: false
+#| warning: false
+ezANOVA(data = dat, dv = average_bond, wid = SUBJ,
+      between = condition, white.adjust = TRUE)$ANOVA
+```
+
+**Way 2:**
+
+```{r}
+#| echo: true
+#| message: false
+car::Anova(a1, white.adjust = TRUE)
+```
+
+:::
+
+## Weighted Least Squares in R
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+#| echo: true
+dat <- dat %>% group_by(condition) %>% 
+  mutate(weight = 1 / var(average_bond))
+
+a1_wt <- aov(average_bond ~ condition, dat, weights = weight)
+summary(a1_wt) 
+```
+
+:::
+
 ## Bayesian Version
 
 By default, most `R` packages use dummy coding. What is the reference group in this output? ["Close", since the coefficients represent "intermediate" and "distant" (differences with "close")]{.answer .fragment .content-visible unless-meta="params.v0"}
@@ -940,9 +1142,9 @@ stan_lm1 <- stan_glm(average_bond ~ condition, dat, family = "gaussian",
 summary(stan_lm1)
 ```
 
-## Posterior Predictive Example
+## Posterior Example
 
-For one way ANOVA, we can use the `emmeans::emmeans()` function to get posterior predictive distributions with 95% HPD credible intervals
+For one way ANOVA, we can use the `emmeans::emmeans()` function to get posterior distributions with 95% HPD credible intervals
 
 ```{r}
 #| echo: true
@@ -977,6 +1179,7 @@ stan_lm2 <- stan_glm(average_bond ~ 1, dat, family = "gaussian",
 
 
 ```
+
 ## Jeffreys Lindley Paradox
 
 Let's see what happens if I use a stronger prior that the $\beta$'s are 0 (more likely that there are no group differences)

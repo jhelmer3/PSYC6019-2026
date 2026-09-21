@@ -6,8 +6,8 @@
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.42">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
 
   <meta name="author" content="Mark Himmelstein">
   <title>PSYC 6019 – Lecture 16: One Way ANOVA</title>
@@ -17,10 +17,16 @@
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
   <style>
-    code{white-space: pre-wrap;}
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
     ul.task-list li input[type="checkbox"] {
@@ -29,8 +35,9 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -41,7 +48,7 @@
     }
     @media print {
     pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
     }
     pre.numberSource code
       { counter-reset: source-line 0; }
@@ -94,7 +101,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-5aced4f1f84d9a2545a5ea1e8a9610b9.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-15d324c2aafc27a03d2c3a1c4b493f27.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -207,7 +214,7 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Mark Himmelstein 
+Mark Himmelstein
 </div>
 </div>
 </div>
@@ -251,16 +258,16 @@ Mark Himmelstein
 </ul>
 <div style="font-size: 0.85em;">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">data</span>(<span class="st">"PlantGrowth"</span>, <span class="at">package =</span> <span class="st">"datasets"</span>)</span>
-<span id="cb1-2"><a></a><span class="fu">summary</span>(PlantGrowth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-label="1"></a><span class="fu">data</span>(<span class="st">"PlantGrowth"</span>, <span class="at">package =</span> <span class="st">"datasets"</span>)</span>
+<span id="cb1-2"><a aria-label="2"></a><span class="fu">summary</span>(PlantGrowth)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a></a>     <span class="ex">weight</span>       group   </span>
-<span id="cb2-2"><a></a> <span class="ex">Min.</span>   :3.590   ctrl:10  </span>
-<span id="cb2-3"><a></a> <span class="ex">1st</span> Qu.:4.550   trt1:10  </span>
-<span id="cb2-4"><a></a> <span class="ex">Median</span> :5.155   trt2:10  </span>
-<span id="cb2-5"><a></a> <span class="ex">Mean</span>   :5.073            </span>
-<span id="cb2-6"><a></a> <span class="ex">3rd</span> Qu.:5.530            </span>
-<span id="cb2-7"><a></a> <span class="ex">Max.</span>   :6.310            </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-label="1"></a>     <span class="ex">weight</span>       group   </span>
+<span id="cb2-2"><a aria-label="2"></a> <span class="ex">Min.</span>   :3.590   ctrl:10  </span>
+<span id="cb2-3"><a aria-label="3"></a> <span class="ex">1st</span> Qu.:4.550   trt1:10  </span>
+<span id="cb2-4"><a aria-label="4"></a> <span class="ex">Median</span> :5.155   trt2:10  </span>
+<span id="cb2-5"><a aria-label="5"></a> <span class="ex">Mean</span>   :5.073            </span>
+<span id="cb2-6"><a aria-label="6"></a> <span class="ex">3rd</span> Qu.:5.530            </span>
+<span id="cb2-7"><a aria-label="7"></a> <span class="ex">Max.</span>   :6.310            </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -916,6 +923,150 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 </ul>
 <p><strong>Interpretation:</strong> Same interpretation as <span class="math inline">\(\eta^2\)</span> (proportion of variation accounted for by group differences).</p>
 </section>
+<section id="anova-assumptions" class="slide level2">
+<h2>ANOVA Assumptions</h2>
+<p>Assumptions of one-way ANOVA (same as independent samples <span class="math inline">\(t\)</span>-test):</p>
+<ol type="1">
+<li><strong>Normally distributed outcome in each group</strong>
+<ul>
+<li>Equivalently, normally distributed residuals within each group</li>
+</ul></li>
+<li><strong>No outliers in any group</strong></li>
+<li><strong>Homogeneity of variance</strong>
+<ul>
+<li>Population variance is equal in every group</li>
+</ul></li>
+<li><strong>Independence of observations</strong>
+<ul>
+<li>All groups are independent of each other</li>
+<li>If not independent, <strong>repeated measures ANOVA</strong> may be a more appropriate procedure</li>
+</ul></li>
+</ol>
+</section>
+<section id="normality" class="slide level2">
+<h2>Normality</h2>
+<p>Outcome variable is normally distributed in each group.</p>
+<p>One-way ANOVA is robust to violation of this assumption:</p>
+<ul>
+<li>Violating this assumption has little effect on Type I or II error rates</li>
+</ul>
+<p>Methods to examine this assumption:</p>
+<ul>
+<li>Skewness and kurtosis of each group
+<ul>
+<li>Suggested guidelines: skew <span class="math inline">\(&lt; 2\)</span>; kurtosis <span class="math inline">\(&lt; 7\)</span> (Curran, West, &amp; Finch, 1996)</li>
+</ul></li>
+<li>Histogram of each group with normal curve imposed</li>
+<li>Kernel density plot of each group with normal curve imposed</li>
+<li>Q-Q plot of each group</li>
+</ul>
+</section>
+<section id="no-outliers" class="slide level2">
+<h2>No Outliers</h2>
+<p>No group has substantial outliers.</p>
+<p>Methods to examine the assumption:</p>
+<ul>
+<li>Boxplots</li>
+</ul>
+<p>As before, outliers are to be taken seriously!</p>
+<ul>
+<li>If there are major outliers, double-check that the data were entered correctly</li>
+<li>Consider (nonlinearly) transforming the dependent variable (for all groups)</li>
+<li>Remove the data point rarely and only with strong external justification</li>
+<li>Outliers affect mean and variance <span class="math inline">\(\rightarrow\)</span> can bias these inputs</li>
+</ul>
+</section>
+<section id="homogeneity-of-variance" class="slide level2">
+<h2>Homogeneity of Variance</h2>
+<p><strong>Homogeneity of Variance:</strong> Population variance of dependent variable is equal across all groups.</p>
+<p><strong>Consequences of violating</strong> (Glass, Peckham, &amp; Sanders, 1972):</p>
+<ul>
+<li>Affects the relationship between <span class="math inline">\(\alpha\)</span> and the actual Type I error rate</li>
+<li>Three situations:
+<ol type="1">
+<li><strong>All groups are the same size:</strong> ANOVA is robust to violations</li>
+<li><strong>Smaller groups have higher variance:</strong> True Type I error rate is greater than <span class="math inline">\(\alpha\)</span> (more likely to incorrectly reject true <span class="math inline">\(H_0\)</span>)</li>
+<li><strong>Larger groups have higher variance:</strong> True Type I error rate is less than <span class="math inline">\(\alpha\)</span> (lower statistical power)</li>
+</ol></li>
+</ul>
+</section>
+<section id="more-homogeneity" class="slide level2">
+<h2>More Homogeneity</h2>
+<p><strong>Methods to examine this assumption:</strong></p>
+<ul>
+<li>Inspect the size and sample variance of each group</li>
+<li>Levene’s test</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<ul>
+<li>Welch’s test</li>
+<li>White’s adjustment</li>
+<li>Weighted least squares estimation</li>
+<li>Box’s test (<em>NOT recommended</em> - low statistical power)</li>
+<li>Transformation of the outcome variable (<em>occasionally recommended</em>)</li>
+</ul>
+</section>
+<section id="welchs-test" class="slide level2">
+<h2>Welch’s Test</h2>
+<div style="font-size: 0.8em;">
+<p>Same <span class="math inline">\(H_0\)</span> and <span class="math inline">\(H_1\)</span> as original ANOVA; new <span class="math inline">\(F\)</span> statistic and <span class="math inline">\(dfW\)</span>.</p>
+<p><span class="math display">\[F(dfB, dfW) = \frac{\frac{\sum_gw_g(\bar{y}_g - \bar{y}^\prime)^2}{G-1}}{1 + \frac{2(G-2)}{G^2 - 1}\times \sum_g\left[\left(\frac{1}{n_g - 1}\right)\left(1 - \frac{w_g}{\sum_gw_g}\right)^2\right]}\]</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li><span class="math inline">\(\bar{y}_g\)</span>: group <span class="math inline">\(g\)</span>’s mean</li>
+<li><span class="math inline">\(s^2_g\)</span>: group <span class="math inline">\(g\)</span>’s variance</li>
+<li><span class="math inline">\(G\)</span>: number of groups</li>
+<li><span class="math inline">\(n_g\)</span>: group <span class="math inline">\(g\)</span>’s sample size</li>
+<li><span class="math inline">\(dfB = G - 1\)</span></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><span class="math display">\[w_g = \frac{n_g}{s^2_g}\]</span></p>
+<p><span class="math display">\[\bar{y}^\prime = \frac{\sum_g (w_g \times \bar{y}_g)}{\sum_gw_g}\]</span></p>
+<p><span class="math display">\[dfW = \frac{G^2 - 1}{3\times \sum_g\left[\left(\frac{1}{n_g - 1}\right)\left(1 - \frac{w_g}{\sum_gw_g}\right)^2\right]}\]</span></p>
+</div></div>
+</div>
+</section>
+<section id="whites-adjustment" class="slide level2">
+<h2>White’s Adjustment</h2>
+<p>White’s adjustment uses a different formula to find a <span class="math inline">\(MSW\)</span> estimate that is robust to heteroscedasticity:</p>
+<ul>
+<li>Same <span class="math inline">\(dfB\)</span>, <span class="math inline">\(dfW\)</span></li>
+<li>Different <span class="math inline">\(MSW\)</span>, <span class="math inline">\(F\)</span>, <span class="math inline">\(p\)</span></li>
+<li>Many options possible</li>
+<li>Recommended to try several adjustment methods (they should agree)</li>
+</ul>
+</section>
+<section id="weighted-least-squares" class="slide level2">
+<h2>Weighted Least Squares</h2>
+<p>Original ANOVA uses <strong>ordinary least squares (OLS)</strong> estimation to calculate results:</p>
+<ul>
+<li>Goal: minimize <span class="math inline">\(SSW\)</span></li>
+<li>Each participant is equally weighted in the calculation</li>
+</ul>
+<p>Weighted least squares (WLS) can be useful to address problems with the heterogeneity of variance between groups:</p>
+<ul>
+<li>Procedure: assign each participant a weight of <span class="math inline">\((1 / s^2_g)\)</span></li>
+<li>Members of the same group have the same weight (<span class="math inline">\(s^2_g\)</span>: variance of group <span class="math inline">\(g\)</span>’s outcome)</li>
+<li><strong>Interpretation:</strong> Participants in the group with larger variance are downweighted; participants in smaller variance groups are upweighted.</li>
+</ul>
+</section>
+<section id="heterogeneity-suggestions" class="slide level2">
+<h2>Heterogeneity Suggestions</h2>
+<p><strong>“Traditional” procedure:</strong></p>
+<ul>
+<li>Conduct hypothesis tests of whether all population variances are equal (e.g., Levene’s test)</li>
+<li>If <span class="math inline">\(H_0\)</span> rejected, use corrected procedures</li>
+<li>If <span class="math inline">\(H_0\)</span> retained, use the original ANOVA test</li>
+</ul>
+<p><strong>Suggested procedures:</strong></p>
+<ul>
+<li>Always conduct more than one of Welch, White, and WLS estimation</li>
+<li>Results will usually agree; report any set of results when they agree</li>
+<li>When results disagree, report all sets and explain</li>
+<li><span style="color: red;"><strong>More work needs to be done in comparing these procedures</strong></span></li>
+</ul>
+</section>
 <section id="the-story-so-far" class="slide level2">
 <h2>The Story So Far</h2>
 <ul>
@@ -995,15 +1146,14 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <p>Robert, C. P. (2014). On the Jeffreys-Lindley paradox. Philosophy of Science, 81(2), 216-232. <a href="https://doi.org/10.1086/675729">https://doi.org/10.1086/675729</a></p>
 </div>
 </section>
-<section id="posterior-predictive" class="slide level2">
-<h2>Posterior Predictive</h2>
+<section id="posterior-predictions" class="slide level2">
+<h2>Posterior Predictions</h2>
 <p>Philosophically Bayesian inference is more about using probability to represent belief.</p>
 <ul>
-<li>The <strong>posterior predictive distribution</strong> is a probability distribution representing our belief about possible values <span class="math inline">\(y\)</span> values might take on conditional on given <span class="math inline">\(x\)</span> values
+<li>The <strong>posterior distribution</strong> is a probability distribution representing our belief about mean values <span class="math inline">\(y\)</span> values might take on conditional on given <span class="math inline">\(x\)</span> values
 <ul>
-<li>E.g., a probability distribution representing plausible values for a random member from a specific group</li>
-<li>If posterior predictive distribution for all groups are very similar, it means we believe differences between groups are small</li>
-<li>If posterior predictive distributions for some groups are very different, it means we believe differences between groups are large</li>
+<li>If posterior distribution for all groups are very similar, it means we believe differences between groups are small</li>
+<li>If posterior distributions for some groups are very different, it means we believe differences between groups are large</li>
 </ul></li>
 </ul>
 </section>
@@ -1070,12 +1220,12 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <p>The default <code>R</code> way to estimate an ANOVA model is with the <code>aov()</code> function using formula syntax.</p>
 <p>We can then get the <span class="math inline">\(F\)</span>-test with the <code>summary()</code> function.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>a1 <span class="ot">&lt;-</span> <span class="fu">aov</span>(average_bond <span class="sc">~</span> condition, dat)</span>
-<span id="cb3-2"><a></a><span class="fu">summary</span>(a1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-label="1"></a>a1 <span class="ot">&lt;-</span> <span class="fu">aov</span>(average_bond <span class="sc">~</span> condition, dat)</span>
+<span id="cb3-2"><a aria-label="2"></a><span class="fu">summary</span>(a1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a></a>             <span class="ex">Df</span> Sum Sq Mean Sq F value Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span></span>
-<span id="cb4-2"><a></a><span class="ex">condition</span>     2   0.49  0.2438   0.236   0.79</span>
-<span id="cb4-3"><a></a><span class="ex">Residuals</span>   122 125.90  1.0320               </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-label="1"></a>             <span class="ex">Df</span> Sum Sq Mean Sq F value Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span></span>
+<span id="cb4-2"><a aria-label="2"></a><span class="ex">condition</span>     2   0.49  0.2438   0.236   0.79</span>
+<span id="cb4-3"><a aria-label="3"></a><span class="ex">Residuals</span>   122 125.90  1.0320               </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -1083,13 +1233,13 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <h2>ANOVA in R: Way 2</h2>
 <p>Between subjects one-way ANOVA in R is easy. Later it gets confusing when we have within subjects designs. The <code>ez</code> package and <code>ezANOVA()</code> function can do both easily, though you have to make sure to specify a subject ID as <code>wid = ID</code> even for between subjects analysis.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">library</span>(ez)</span>
-<span id="cb5-2"><a></a>ez1 <span class="ot">&lt;-</span> <span class="fu">ezANOVA</span>(<span class="at">data =</span> dat, <span class="at">dv =</span> average_bond, <span class="at">wid =</span> SUBJ, </span>
-<span id="cb5-3"><a></a>               <span class="at">between =</span> condition)</span>
-<span id="cb5-4"><a></a>ez1<span class="sc">$</span>ANOVA</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-label="1"></a><span class="fu">library</span>(ez)</span>
+<span id="cb5-2"><a aria-label="2"></a>ez1 <span class="ot">&lt;-</span> <span class="fu">ezANOVA</span>(<span class="at">data =</span> dat, <span class="at">dv =</span> average_bond, <span class="at">wid =</span> SUBJ, </span>
+<span id="cb5-3"><a aria-label="3"></a>               <span class="at">between =</span> condition)</span>
+<span id="cb5-4"><a aria-label="4"></a>ez1<span class="sc">$</span>ANOVA</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a></a>     <span class="ex">Effect</span> DFn DFd         F        p p<span class="op">&lt;</span>.05        ges</span>
-<span id="cb6-2"><a></a><span class="ex">1</span> condition   2 122 0.2362636 0.789933       0.00385823</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-label="1"></a>     <span class="ex">Effect</span> DFn DFd         F        p p<span class="op">&lt;</span>.05        ges</span>
+<span id="cb6-2"><a aria-label="2"></a><span class="ex">1</span> condition   2 122 0.2362636 0.789933       0.00385823</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>What do you think <code>ges</code> might be?</p>
@@ -1099,23 +1249,23 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <h2><span class="math inline">\(\eta^2\)</span> Example</h2>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a></a>             <span class="ex">Df</span> Sum Sq Mean Sq F value Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span></span>
-<span id="cb7-2"><a></a><span class="ex">condition</span>     2   0.49  0.2438   0.236   0.79</span>
-<span id="cb7-3"><a></a><span class="ex">Residuals</span>   122 125.90  1.0320               </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-label="1"></a>             <span class="ex">Df</span> Sum Sq Mean Sq F value Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span></span>
+<span id="cb7-2"><a aria-label="2"></a><span class="ex">condition</span>     2   0.49  0.2438   0.236   0.79</span>
+<span id="cb7-3"><a aria-label="3"></a><span class="ex">Residuals</span>   122 125.90  1.0320               </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><span class="math display">\[\eta^2 = \frac{SSB}{SSB + SSW} = \frac{0.49}{0.49 + 125.9} = .004\]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">library</span>(effectsize)</span>
-<span id="cb8-2"><a></a><span class="fu">eta_squared</span>(a1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-label="1"></a><span class="fu">library</span>(effectsize)</span>
+<span id="cb8-2"><a aria-label="2"></a><span class="fu">eta_squared</span>(a1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a></a><span class="co"># Effect Size for ANOVA</span></span>
-<span id="cb9-2"><a></a></span>
-<span id="cb9-3"><a></a><span class="ex">Parameter</span> <span class="kw">|</span>     <span class="ex">Eta2</span> <span class="kw">|</span>       <span class="ex">95%</span> CI</span>
-<span id="cb9-4"><a></a><span class="ex">-----------------------------------</span></span>
-<span id="cb9-5"><a></a><span class="ex">condition</span> <span class="kw">|</span> <span class="ex">3.86e-03</span> <span class="kw">|</span> <span class="ex">[0.00,</span> 1.00]</span>
-<span id="cb9-6"><a></a></span>
-<span id="cb9-7"><a></a><span class="ex">-</span> One-sided CIs: upper bound fixed at <span class="pp">[</span><span class="ss">1.00</span><span class="pp">]</span>.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-label="1"></a><span class="co"># Effect Size for ANOVA</span></span>
+<span id="cb9-2"><a aria-label="2"></a></span>
+<span id="cb9-3"><a aria-label="3"></a><span class="ex">Parameter</span> <span class="kw">|</span>     <span class="ex">Eta2</span> <span class="kw">|</span>       <span class="ex">95%</span> CI</span>
+<span id="cb9-4"><a aria-label="4"></a><span class="ex">-----------------------------------</span></span>
+<span id="cb9-5"><a aria-label="5"></a><span class="ex">condition</span> <span class="kw">|</span> <span class="ex">3.86e-03</span> <span class="kw">|</span> <span class="ex">[0.00,</span> 1.00]</span>
+<span id="cb9-6"><a aria-label="6"></a></span>
+<span id="cb9-7"><a aria-label="7"></a><span class="ex">-</span> One-sided CIs: upper bound fixed at <span class="pp">[</span><span class="ss">1.00</span><span class="pp">]</span>.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -1123,23 +1273,83 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <h2><span class="math inline">\(\omega^2\)</span> Example</h2>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a></a>             <span class="ex">Df</span> Sum Sq Mean Sq F value Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span></span>
-<span id="cb10-2"><a></a><span class="ex">condition</span>     2   0.49  0.2438   0.236   0.79</span>
-<span id="cb10-3"><a></a><span class="ex">Residuals</span>   122 125.90  1.0320               </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-label="1"></a>             <span class="ex">Df</span> Sum Sq Mean Sq F value Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span></span>
+<span id="cb10-2"><a aria-label="2"></a><span class="ex">condition</span>     2   0.49  0.2438   0.236   0.79</span>
+<span id="cb10-3"><a aria-label="3"></a><span class="ex">Residuals</span>   122 125.90  1.0320               </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><span class="math display">\[\omega^2 = \frac{SSB - (G - 1)\times MSW}{SST + MSW} = \frac{0.49 - (2)\times 1.03}{0.49 + 125.9 + 1.03} = -0.01\]</span></p>
 <p><em>(Yes, <span class="math inline">\(\omega^2\)</span> can be negative, but we generally just interpret that as <span class="math inline">\(\omega^2 = 0\)</span>, or more precisely, <span class="math inline">\(\omega^2 &lt; .001\)</span>)</em></p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">omega_squared</span>(a1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-label="1"></a><span class="fu">omega_squared</span>(a1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a></a><span class="co"># Effect Size for ANOVA</span></span>
-<span id="cb12-2"><a></a></span>
-<span id="cb12-3"><a></a><span class="ex">Parameter</span> <span class="kw">|</span> <span class="ex">Omega2</span> <span class="kw">|</span>       <span class="ex">95%</span> CI</span>
-<span id="cb12-4"><a></a><span class="ex">---------------------------------</span></span>
-<span id="cb12-5"><a></a><span class="ex">condition</span> <span class="kw">|</span>      <span class="ex">0</span> <span class="kw">|</span> <span class="ex">[0.00,</span> 1.00]</span>
-<span id="cb12-6"><a></a></span>
-<span id="cb12-7"><a></a><span class="ex">-</span> One-sided CIs: upper bound fixed at <span class="pp">[</span><span class="ss">1.00</span><span class="pp">]</span>.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a aria-label="1"></a><span class="co"># Effect Size for ANOVA</span></span>
+<span id="cb12-2"><a aria-label="2"></a></span>
+<span id="cb12-3"><a aria-label="3"></a><span class="ex">Parameter</span> <span class="kw">|</span> <span class="ex">Omega2</span> <span class="kw">|</span>       <span class="ex">95%</span> CI</span>
+<span id="cb12-4"><a aria-label="4"></a><span class="ex">---------------------------------</span></span>
+<span id="cb12-5"><a aria-label="5"></a><span class="ex">condition</span> <span class="kw">|</span>      <span class="ex">0</span> <span class="kw">|</span> <span class="ex">[0.00,</span> 1.00]</span>
+<span id="cb12-6"><a aria-label="6"></a></span>
+<span id="cb12-7"><a aria-label="7"></a><span class="ex">-</span> One-sided CIs: upper bound fixed at <span class="pp">[</span><span class="ss">1.00</span><span class="pp">]</span>.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="welchs-test-in-r" class="slide level2">
+<h2>Welch’s Test in R</h2>
+<div style="font-size: 0.85em;">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-label="1"></a><span class="fu">library</span>(rstatix)</span>
+<span id="cb13-2"><a aria-label="2"></a><span class="fu">welch_anova_test</span>(dat, average_bond <span class="sc">~</span> condition)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a aria-label="1"></a><span class="co"># A tibble: 1 × 7</span></span>
+<span id="cb14-2"><a aria-label="2"></a>  <span class="ex">.y.</span>              n statistic   DFn   DFd     p method     </span>
+<span id="cb14-3"><a aria-label="3"></a><span class="ex">*</span> <span class="op">&lt;</span>chr<span class="op">&gt;</span>        <span class="op">&lt;</span>int<span class="op">&gt;</span>     <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>chr<span class="op">&gt;</span>      </span>
+<span id="cb14-4"><a aria-label="4"></a><span class="ex">1</span> average_bond   125      0.28     2  77.4  0.76 Welch ANOVA</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</section>
+<section id="whites-adjustment-in-r" class="slide level2">
+<h2>White’s Adjustment in R</h2>
+<div style="font-size: 0.85em;">
+<p><strong>Way 1:</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a aria-label="1"></a><span class="fu">ezANOVA</span>(<span class="at">data =</span> dat, <span class="at">dv =</span> average_bond, <span class="at">wid =</span> SUBJ,</span>
+<span id="cb15-2"><a aria-label="2"></a>      <span class="at">between =</span> condition, <span class="at">white.adjust =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a aria-label="1"></a>     <span class="ex">Effect</span> DFn DFd         F         p p<span class="op">&lt;</span>.05</span>
+<span id="cb16-2"><a aria-label="2"></a><span class="ex">1</span> condition   2 122 0.2717799 0.7624821      </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p><strong>Way 2:</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-label="1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(a1, <span class="at">white.adjust =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a aria-label="1"></a><span class="ex">Analysis</span> of Deviance Table <span class="er">(</span><span class="ex">Type</span> II tests<span class="kw">)</span></span>
+<span id="cb18-2"><a aria-label="2"></a></span>
+<span id="cb18-3"><a aria-label="3"></a><span class="ex">Response:</span> average_bond</span>
+<span id="cb18-4"><a aria-label="4"></a>           <span class="ex">Df</span>      F Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span></span>
+<span id="cb18-5"><a aria-label="5"></a><span class="ex">condition</span>   2 0.2718 0.7625</span>
+<span id="cb18-6"><a aria-label="6"></a><span class="ex">Residuals</span> 122              </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</section>
+<section id="weighted-least-squares-in-r" class="slide level2">
+<h2>Weighted Least Squares in R</h2>
+<div style="font-size: 0.85em;">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-label="1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(condition) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a aria-label="2"></a>  <span class="fu">mutate</span>(<span class="at">weight =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">var</span>(average_bond))</span>
+<span id="cb19-3"><a aria-label="3"></a></span>
+<span id="cb19-4"><a aria-label="4"></a>a1_wt <span class="ot">&lt;-</span> <span class="fu">aov</span>(average_bond <span class="sc">~</span> condition, dat, <span class="at">weights =</span> weight)</span>
+<span id="cb19-5"><a aria-label="5"></a><span class="fu">summary</span>(a1_wt) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-label="1"></a>             <span class="ex">Df</span> Sum Sq Mean Sq F value Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span></span>
+<span id="cb20-2"><a aria-label="2"></a><span class="ex">condition</span>     2   0.56  0.2784   0.278  0.757</span>
+<span id="cb20-3"><a aria-label="3"></a><span class="ex">Residuals</span>   122 122.00  1.0000               </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </div>
 </div>
 </section>
@@ -1147,98 +1357,98 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <h2>Bayesian Version</h2>
 <p>By default, most <code>R</code> packages use dummy coding. What is the reference group in this output? <span class="answer fragment" data-unless-meta="params.v0">“Close”, since the coefficients represent “intermediate” and “distant” (differences with “close”)</span></p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">library</span>(rstanarm)</span>
-<span id="cb13-2"><a></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-label="1"></a><span class="fu">library</span>(rstanarm)</span>
+<span id="cb21-2"><a aria-label="2"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>stan_lm1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(average_bond <span class="sc">~</span> condition, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
-<span id="cb14-2"><a></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df1.csv"</span>)</span>
-<span id="cb14-3"><a></a></span>
-<span id="cb14-4"><a></a><span class="fu">summary</span>(stan_lm1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a aria-label="1"></a>stan_lm1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(average_bond <span class="sc">~</span> condition, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb22-2"><a aria-label="2"></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df1.csv"</span>)</span>
+<span id="cb22-3"><a aria-label="3"></a></span>
+<span id="cb22-4"><a aria-label="4"></a><span class="fu">summary</span>(stan_lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a></a></span>
-<span id="cb15-2"><a></a><span class="ex">Model</span> Info:</span>
-<span id="cb15-3"><a></a> <span class="ex">function:</span>     stan_glm</span>
-<span id="cb15-4"><a></a> <span class="ex">family:</span>       gaussian <span class="pp">[</span><span class="ss">identity</span><span class="pp">]</span></span>
-<span id="cb15-5"><a></a> <span class="ex">formula:</span>      average_bond ~ condition</span>
-<span id="cb15-6"><a></a> <span class="ex">algorithm:</span>    sampling</span>
-<span id="cb15-7"><a></a> <span class="ex">sample:</span>       4000 <span class="er">(</span><span class="ex">posterior</span> sample size<span class="kw">)</span></span>
-<span id="cb15-8"><a></a> <span class="ex">priors:</span>       see help<span class="er">(</span><span class="st">'prior_summary'</span><span class="kw">)</span></span>
-<span id="cb15-9"><a></a> <span class="ex">observations:</span> 125</span>
-<span id="cb15-10"><a></a> <span class="ex">predictors:</span>   3</span>
-<span id="cb15-11"><a></a></span>
-<span id="cb15-12"><a></a><span class="ex">Estimates:</span></span>
-<span id="cb15-13"><a></a>                        <span class="ex">mean</span>   sd   10%   50%   90%</span>
-<span id="cb15-14"><a></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>            <span class="ex">5.4</span>    0.2  5.2   5.4   5.6 </span>
-<span id="cb15-15"><a></a><span class="ex">conditionintermediate</span> <span class="at">-0.1</span>    0.2 <span class="at">-0.4</span>  <span class="at">-0.1</span>   0.2 </span>
-<span id="cb15-16"><a></a><span class="ex">conditiondistant</span>      <span class="at">-0.1</span>    0.2 <span class="at">-0.4</span>  <span class="at">-0.1</span>   0.2 </span>
-<span id="cb15-17"><a></a><span class="ex">sigma</span>                  1.0    0.1  0.9   1.0   1.1 </span>
-<span id="cb15-18"><a></a></span>
-<span id="cb15-19"><a></a><span class="ex">Fit</span> Diagnostics:</span>
-<span id="cb15-20"><a></a>           <span class="ex">mean</span>   sd   10%   50%   90%</span>
-<span id="cb15-21"><a></a><span class="ex">mean_PPD</span> 5.4    0.1  5.2   5.4   5.5  </span>
-<span id="cb15-22"><a></a></span>
-<span id="cb15-23"><a></a><span class="ex">The</span> mean_ppd is the sample average posterior predictive distribution of the outcome variable <span class="er">(</span><span class="cf">for</span> details <span class="ex">see</span> help<span class="er">(</span><span class="st">'summary.stanreg'</span><span class="kw">))</span><span class="bu">.</span></span>
-<span id="cb15-24"><a></a></span>
-<span id="cb15-25"><a></a><span class="ex">MCMC</span> diagnostics</span>
-<span id="cb15-26"><a></a>                      <span class="ex">mcse</span> Rhat n_eff</span>
-<span id="cb15-27"><a></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>           <span class="ex">0.0</span>  1.0  3274 </span>
-<span id="cb15-28"><a></a><span class="ex">conditionintermediate</span> 0.0  1.0  3033 </span>
-<span id="cb15-29"><a></a><span class="ex">conditiondistant</span>      0.0  1.0  3299 </span>
-<span id="cb15-30"><a></a><span class="ex">sigma</span>                 0.0  1.0  3959 </span>
-<span id="cb15-31"><a></a><span class="ex">mean_PPD</span>              0.0  1.0  4342 </span>
-<span id="cb15-32"><a></a><span class="ex">log-posterior</span>         0.0  1.0  1681 </span>
-<span id="cb15-33"><a></a></span>
-<span id="cb15-34"><a></a><span class="ex">For</span> each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains <span class="er">(</span><span class="ex">at</span> convergence Rhat=1<span class="kw">)</span><span class="bu">.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a aria-label="1"></a></span>
+<span id="cb23-2"><a aria-label="2"></a><span class="ex">Model</span> Info:</span>
+<span id="cb23-3"><a aria-label="3"></a> <span class="ex">function:</span>     stan_glm</span>
+<span id="cb23-4"><a aria-label="4"></a> <span class="ex">family:</span>       gaussian <span class="pp">[</span><span class="ss">identity</span><span class="pp">]</span></span>
+<span id="cb23-5"><a aria-label="5"></a> <span class="ex">formula:</span>      average_bond ~ condition</span>
+<span id="cb23-6"><a aria-label="6"></a> <span class="ex">algorithm:</span>    sampling</span>
+<span id="cb23-7"><a aria-label="7"></a> <span class="ex">sample:</span>       4000 <span class="er">(</span><span class="ex">posterior</span> sample size<span class="kw">)</span></span>
+<span id="cb23-8"><a aria-label="8"></a> <span class="ex">priors:</span>       see help<span class="er">(</span><span class="st">'prior_summary'</span><span class="kw">)</span></span>
+<span id="cb23-9"><a aria-label="9"></a> <span class="ex">observations:</span> 125</span>
+<span id="cb23-10"><a aria-label="10"></a> <span class="ex">predictors:</span>   3</span>
+<span id="cb23-11"><a aria-label="11"></a></span>
+<span id="cb23-12"><a aria-label="12"></a><span class="ex">Estimates:</span></span>
+<span id="cb23-13"><a aria-label="13"></a>                        <span class="ex">mean</span>   sd   10%   50%   90%</span>
+<span id="cb23-14"><a aria-label="14"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>            <span class="ex">5.4</span>    0.2  5.3   5.4   5.6 </span>
+<span id="cb23-15"><a aria-label="15"></a><span class="ex">conditionintermediate</span> <span class="at">-0.1</span>    0.2 <span class="at">-0.4</span>  <span class="at">-0.1</span>   0.1 </span>
+<span id="cb23-16"><a aria-label="16"></a><span class="ex">conditiondistant</span>      <span class="at">-0.1</span>    0.2 <span class="at">-0.4</span>  <span class="at">-0.1</span>   0.2 </span>
+<span id="cb23-17"><a aria-label="17"></a><span class="ex">sigma</span>                  1.0    0.1  0.9   1.0   1.1 </span>
+<span id="cb23-18"><a aria-label="18"></a></span>
+<span id="cb23-19"><a aria-label="19"></a><span class="ex">Fit</span> Diagnostics:</span>
+<span id="cb23-20"><a aria-label="20"></a>           <span class="ex">mean</span>   sd   10%   50%   90%</span>
+<span id="cb23-21"><a aria-label="21"></a><span class="ex">mean_PPD</span> 5.4    0.1  5.2   5.4   5.5  </span>
+<span id="cb23-22"><a aria-label="22"></a></span>
+<span id="cb23-23"><a aria-label="23"></a><span class="ex">The</span> mean_ppd is the sample average posterior predictive distribution of the outcome variable <span class="er">(</span><span class="cf">for</span> details <span class="ex">see</span> help<span class="er">(</span><span class="st">'summary.stanreg'</span><span class="kw">))</span><span class="bu">.</span></span>
+<span id="cb23-24"><a aria-label="24"></a></span>
+<span id="cb23-25"><a aria-label="25"></a><span class="ex">MCMC</span> diagnostics</span>
+<span id="cb23-26"><a aria-label="26"></a>                      <span class="ex">mcse</span> Rhat n_eff</span>
+<span id="cb23-27"><a aria-label="27"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>           <span class="ex">0.0</span>  1.0  3469 </span>
+<span id="cb23-28"><a aria-label="28"></a><span class="ex">conditionintermediate</span> 0.0  1.0  3300 </span>
+<span id="cb23-29"><a aria-label="29"></a><span class="ex">conditiondistant</span>      0.0  1.0  3343 </span>
+<span id="cb23-30"><a aria-label="30"></a><span class="ex">sigma</span>                 0.0  1.0  3098 </span>
+<span id="cb23-31"><a aria-label="31"></a><span class="ex">mean_PPD</span>              0.0  1.0  4295 </span>
+<span id="cb23-32"><a aria-label="32"></a><span class="ex">log-posterior</span>         0.0  1.0  1619 </span>
+<span id="cb23-33"><a aria-label="33"></a></span>
+<span id="cb23-34"><a aria-label="34"></a><span class="ex">For</span> each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains <span class="er">(</span><span class="ex">at</span> convergence Rhat=1<span class="kw">)</span><span class="bu">.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
-<section id="posterior-predictive-example" class="slide level2">
-<h2>Posterior Predictive Example</h2>
-<p>For one way ANOVA, we can use the <code>emmeans::emmeans()</code> function to get posterior predictive distributions with 95% HPD credible intervals</p>
+<section id="posterior-example" class="slide level2">
+<h2>Posterior Example</h2>
+<p>For one way ANOVA, we can use the <code>emmeans::emmeans()</code> function to get posterior distributions with 95% HPD credible intervals</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">library</span>(emmeans)</span>
-<span id="cb16-2"><a></a>em1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(stan_lm1, <span class="sc">~</span> condition)</span>
-<span id="cb16-3"><a></a><span class="fu">summary</span>(em1, <span class="at">point.est =</span> <span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a aria-label="1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb24-2"><a aria-label="2"></a>em1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(stan_lm1, <span class="sc">~</span> condition)</span>
+<span id="cb24-3"><a aria-label="3"></a><span class="fu">summary</span>(em1, <span class="at">point.est =</span> <span class="st">"mean"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a></a> <span class="ex">condition</span>    emmean lower.HPD upper.HPD</span>
-<span id="cb17-2"><a></a> <span class="ex">close</span>          5.44      5.13      5.75</span>
-<span id="cb17-3"><a></a> <span class="ex">intermediate</span>   5.31      5.03      5.62</span>
-<span id="cb17-4"><a></a> <span class="ex">distant</span>        5.31      5.00      5.63</span>
-<span id="cb17-5"><a></a></span>
-<span id="cb17-6"><a></a><span class="ex">Point</span> estimate displayed: mean </span>
-<span id="cb17-7"><a></a><span class="ex">HPD</span> interval probability: 0.95 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a aria-label="1"></a> <span class="ex">condition</span>    emmean lower.HPD upper.HPD</span>
+<span id="cb25-2"><a aria-label="2"></a> <span class="ex">close</span>          5.44      5.15      5.75</span>
+<span id="cb25-3"><a aria-label="3"></a> <span class="ex">intermediate</span>   5.31      4.99      5.61</span>
+<span id="cb25-4"><a aria-label="4"></a> <span class="ex">distant</span>        5.31      4.98      5.65</span>
+<span id="cb25-5"><a aria-label="5"></a></span>
+<span id="cb25-6"><a aria-label="6"></a><span class="ex">Point</span> estimate displayed: mean </span>
+<span id="cb25-7"><a aria-label="7"></a><span class="ex">HPD</span> interval probability: 0.95 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="bayesian-r2-1" class="slide level2">
 <h2>Bayesian <span class="math inline">\(R^2\)</span></h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">library</span>(performance)</span>
-<span id="cb18-2"><a></a><span class="fu">r2_bayes</span>(stan_lm1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a aria-label="1"></a><span class="fu">library</span>(performance)</span>
+<span id="cb26-2"><a aria-label="2"></a><span class="fu">r2_bayes</span>(stan_lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a></a><span class="co"># Bayesian R2 with Compatibility Interval</span></span>
-<span id="cb19-2"><a></a></span>
-<span id="cb19-3"><a></a>  <span class="ex">Conditional</span> R2: 0.014 <span class="er">(</span><span class="ex">95%</span> CI [2.489e-06, 0.056]<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a aria-label="1"></a><span class="co"># Bayesian R2 with Compatibility Interval</span></span>
+<span id="cb27-2"><a aria-label="2"></a></span>
+<span id="cb27-3"><a aria-label="3"></a>  <span class="ex">Conditional</span> R2: 0.014 <span class="er">(</span><span class="ex">95%</span> CI [1.185e-05, 0.057]<span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="bayes-factors" class="slide level2">
 <h2>Bayes Factors</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">library</span>(bayestestR)</span>
-<span id="cb20-2"><a></a>stan_lm2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(average_bond <span class="sc">~</span> <span class="dv">1</span>, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
-<span id="cb20-3"><a></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df2.csv"</span>)</span>
-<span id="cb20-4"><a></a></span>
-<span id="cb20-5"><a></a>(bfs1 <span class="ot">&lt;-</span> <span class="fu">bayesfactor_models</span>(stan_lm2, stan_lm1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a aria-label="1"></a><span class="fu">library</span>(bayestestR)</span>
+<span id="cb28-2"><a aria-label="2"></a>stan_lm2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(average_bond <span class="sc">~</span> <span class="dv">1</span>, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb28-3"><a aria-label="3"></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df2.csv"</span>)</span>
+<span id="cb28-4"><a aria-label="4"></a></span>
+<span id="cb28-5"><a aria-label="5"></a>(bfs1 <span class="ot">&lt;-</span> <span class="fu">bayesfactor_models</span>(stan_lm2, stan_lm1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a></a><span class="ex">Bayes</span> Factors for Model Comparison</span>
-<span id="cb21-2"><a></a></span>
-<span id="cb21-3"><a></a>    <span class="ex">Model</span>        BF</span>
-<span id="cb21-4"><a></a><span class="ex">[2]</span> condition 0.002</span>
-<span id="cb21-5"><a></a></span>
-<span id="cb21-6"><a></a><span class="ex">*</span> Against Denominator: <span class="pp">[</span><span class="ss">1</span><span class="pp">]</span> <span class="er">(</span><span class="ex">Intercept</span> only<span class="kw">)</span></span>
-<span id="cb21-7"><a></a><span class="ex">*</span>   Bayes Factor Type: marginal likelihoods <span class="er">(</span><span class="ex">bridgesampling</span><span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a aria-label="1"></a><span class="ex">Bayes</span> Factors for Model Comparison</span>
+<span id="cb29-2"><a aria-label="2"></a></span>
+<span id="cb29-3"><a aria-label="3"></a>    <span class="ex">Model</span>        BF</span>
+<span id="cb29-4"><a aria-label="4"></a><span class="ex">[2]</span> condition 0.002</span>
+<span id="cb29-5"><a aria-label="5"></a></span>
+<span id="cb29-6"><a aria-label="6"></a><span class="ex">*</span> Against Denominator: <span class="pp">[</span><span class="ss">1</span><span class="pp">]</span> <span class="er">(</span><span class="ex">Intercept</span> only<span class="kw">)</span></span>
+<span id="cb29-7"><a aria-label="7"></a><span class="ex">*</span>   Bayes Factor Type: marginal likelihoods <span class="er">(</span><span class="ex">bridgesampling</span><span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -1246,19 +1456,19 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <h2>Jeffreys Lindley Paradox</h2>
 <p>Let’s see what happens if I use a stronger prior that the <span class="math inline">\(\beta\)</span>’s are 0 (more likely that there are no group differences)</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>stan_lm1a <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(average_bond <span class="sc">~</span> condition, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
-<span id="cb22-2"><a></a>                      <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, .<span class="dv">1</span>),</span>
-<span id="cb22-3"><a></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df1a.csv"</span>)</span>
-<span id="cb22-4"><a></a></span>
-<span id="cb22-5"><a></a>(bfs1 <span class="ot">&lt;-</span> <span class="fu">bayesfactor_models</span>(stan_lm2, stan_lm1a))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a aria-label="1"></a>stan_lm1a <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(average_bond <span class="sc">~</span> condition, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb30-2"><a aria-label="2"></a>                      <span class="at">prior =</span> <span class="fu">normal</span>(<span class="dv">0</span>, .<span class="dv">1</span>),</span>
+<span id="cb30-3"><a aria-label="3"></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df1a.csv"</span>)</span>
+<span id="cb30-4"><a aria-label="4"></a></span>
+<span id="cb30-5"><a aria-label="5"></a>(bfs1 <span class="ot">&lt;-</span> <span class="fu">bayesfactor_models</span>(stan_lm2, stan_lm1a))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a></a><span class="ex">Bayes</span> Factors for Model Comparison</span>
-<span id="cb23-2"><a></a></span>
-<span id="cb23-3"><a></a>    <span class="ex">Model</span>        BF</span>
-<span id="cb23-4"><a></a><span class="ex">[2]</span> condition 0.818</span>
-<span id="cb23-5"><a></a></span>
-<span id="cb23-6"><a></a><span class="ex">*</span> Against Denominator: <span class="pp">[</span><span class="ss">1</span><span class="pp">]</span> <span class="er">(</span><span class="ex">Intercept</span> only<span class="kw">)</span></span>
-<span id="cb23-7"><a></a><span class="ex">*</span>   Bayes Factor Type: marginal likelihoods <span class="er">(</span><span class="ex">bridgesampling</span><span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a aria-label="1"></a><span class="ex">Bayes</span> Factors for Model Comparison</span>
+<span id="cb31-2"><a aria-label="2"></a></span>
+<span id="cb31-3"><a aria-label="3"></a>    <span class="ex">Model</span>        BF</span>
+<span id="cb31-4"><a aria-label="4"></a><span class="ex">[2]</span> condition 0.816</span>
+<span id="cb31-5"><a aria-label="5"></a></span>
+<span id="cb31-6"><a aria-label="6"></a><span class="ex">*</span> Against Denominator: <span class="pp">[</span><span class="ss">1</span><span class="pp">]</span> <span class="er">(</span><span class="ex">Intercept</span> only<span class="kw">)</span></span>
+<span id="cb31-7"><a aria-label="7"></a><span class="ex">*</span>   Bayes Factor Type: marginal likelihoods <span class="er">(</span><span class="ex">bridgesampling</span><span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>Bayes factor now says the full model is about as likely than the null model!</p>
@@ -1454,7 +1664,7 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -1557,190 +1767,173 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
     
 
     <script id="quarto-html-after-body" type="application/javascript">
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-      const toggleBodyColorMode = (bsSheetEl) => {
-        const mode = bsSheetEl.getAttribute("data-mode");
-        const bodyEl = window.document.querySelector("body");
-        if (mode === "dark") {
-          bodyEl.classList.add("quarto-dark");
-          bodyEl.classList.remove("quarto-light");
-        } else {
-          bodyEl.classList.add("quarto-light");
-          bodyEl.classList.remove("quarto-dark");
-        }
-      }
-      const toggleBodyColorPrimary = () => {
-        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-        if (bsSheetEl) {
-          toggleBodyColorMode(bsSheetEl);
-        }
-      }
-      toggleBodyColorPrimary();  
-      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
-      tabsets.forEach(function(tabset) {
-        const tabby = new Tabby('#' + tabset.id);
-      });
-      const isCodeAnnotation = (el) => {
-        for (const clz of el.classList) {
-          if (clz.startsWith('code-annotation-')) {                     
-            return true;
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
           }
+          return false;
         }
-        return false;
-      }
-      const onCopySuccess = function(e) {
-        // button target
-        const button = e.trigger;
-        // don't keep focus
-        button.blur();
-        // flash "checked"
-        button.classList.add('code-copy-button-checked');
-        var currentTitle = button.getAttribute("title");
-        button.setAttribute("title", "Copied!");
-        let tooltip;
-        if (window.bootstrap) {
-          button.setAttribute("data-bs-toggle", "tooltip");
-          button.setAttribute("data-bs-placement", "left");
-          button.setAttribute("data-bs-title", "Copied!");
-          tooltip = new bootstrap.Tooltip(button, 
-            { trigger: "manual", 
-              customClass: "code-copy-button-tooltip",
-              offset: [0, -8]});
-          tooltip.show();    
-        }
-        setTimeout(function() {
-          if (tooltip) {
-            tooltip.hide();
-            button.removeAttribute("data-bs-title");
-            button.removeAttribute("data-bs-toggle");
-            button.removeAttribute("data-bs-placement");
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
           }
-          button.setAttribute("title", currentTitle);
-          button.classList.remove('code-copy-button-checked');
-        }, 1000);
-        // clear code selection
-        e.clearSelection();
-      }
-      const getTextToCopy = function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
           for (const childEl of codeEl.children) {
             if (isCodeAnnotation(childEl)) {
               childEl.remove();
             }
           }
           return codeEl.innerText;
-      }
-      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-        text: getTextToCopy
-      });
-      clipboard.on('success', onCopySuccess);
-      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-          text: getTextToCopy,
-          container: window.document.getElementById('quarto-embedded-source-code-modal')
-        });
-        clipboardModal.on('success', onCopySuccess);
-      }
-        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-        var mailtoRegex = new RegExp(/^mailto:/);
-          var filterRegex = new RegExp("https:\/\/jhelmer3\.github\.io\/PSYC6019-2026\/");
-        var isInternal = (href) => {
-            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
         }
-        // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-        for (var i=0; i<links.length; i++) {
-          const link = links[i];
-          if (!isInternal(link.href)) {
-            // undo the damage that might have been done by quarto-nav.js in the case of
-            // links that we want to consider external
-            if (link.dataset.originalHref !== undefined) {
-              link.href = link.dataset.originalHref;
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jhelmer3\.github\.io\/PSYC6019-2026\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
             }
           }
-        }
-      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-        const config = {
-          allowHTML: true,
-          maxWidth: 500,
-          delay: 100,
-          arrow: false,
-          appendTo: function(el) {
-              return el.closest('section.slide') || el.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'light-border',
-          placement: 'bottom-start',
-        };
-        if (contentFn) {
-          config.content = contentFn;
-        }
-        if (onTriggerFn) {
-          config.onTrigger = onTriggerFn;
-        }
-        if (onUntriggerFn) {
-          config.onUntrigger = onUntriggerFn;
-        }
-          config['offset'] = [0,0];
-          config['maxWidth'] = 700;
-        window.tippy(el, config); 
-      }
-      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-      for (var i=0; i<noterefs.length; i++) {
-        const ref = noterefs[i];
-        tippyHover(ref, function() {
-          // use id or data attribute instead here
-          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-          try { href = new URL(href).hash; } catch {}
-          const id = href.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note) {
-            return note.innerHTML;
-          } else {
-            return "";
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
           }
-        });
-      }
-      const findCites = (el) => {
-        const parentEl = el.parentElement;
-        if (parentEl) {
-          const cites = parentEl.dataset.cites;
-          if (cites) {
-            return {
-              el,
-              cites: cites.split(' ')
-            };
-          } else {
-            return findCites(el.parentElement)
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
           }
-        } else {
-          return undefined;
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
         }
-      };
-      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-      for (var i=0; i<bibliorefs.length; i++) {
-        const ref = bibliorefs[i];
-        const citeInfo = findCites(ref);
-        if (citeInfo) {
-          tippyHover(citeInfo.el, function() {
-            var popup = window.document.createElement('div');
-            citeInfo.cites.forEach(function(cite) {
-              var citeDiv = window.document.createElement('div');
-              citeDiv.classList.add('hanging-indent');
-              citeDiv.classList.add('csl-entry');
-              var biblioDiv = window.document.getElementById('ref-' + cite);
-              if (biblioDiv) {
-                citeDiv.innerHTML = biblioDiv.innerHTML;
-              }
-              popup.appendChild(citeDiv);
-            });
-            return popup.innerHTML;
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
           });
         }
-      }
-    });
-    </script>
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
     
 
 </body></html>

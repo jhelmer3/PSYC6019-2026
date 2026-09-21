@@ -132,13 +132,17 @@ Models are simplified representations of complex objects
 
 ## Statistical Model
 
-A statistical model is a simplified representation of a data generating (probabalistic) process.
+A statistical model is a simplified representation of a data generating process (DGP)
+
+- DGPs are **probabilistic** in nature
 
 Statistical models in their simplest form have the structure
 
 $$\text{data} = \text{model} + \text{error}$$
 
--   **Goal:** Minimize error
+- **Model:** Way to represent predictable part of data
+- **Error:** Leftover unpredictable part of data
+-   **Goal:** Minimize error (maximize predictability of data via model)
     -   Sometimes called a *loss function*
     -   How much information is lost between $\text{model}$ and $\text{data}$
 
@@ -148,17 +152,17 @@ There are three common uses of statistical models
 
 1.  **Describe:** A statistical model can help us understand data by summarizing variables or mapping relationships between different variables
 
-2.  **Predict:** A statistical model can help us anticipate how we expect **new** observations not in our initial to arise
+2.  **Predict:** A statistical model can help us anticipate how we expect **new** observations, which were not in our initial sample that we used to estimate the model, to look
 
-3.  **Decide:** A statistical model can inform how we choose to behave by informing our beliefs and our expectations for the outcomes of our chosen behaviors
+3.  **Decide:** A statistical model can guide how we choose to behave by helping us understand the likelihood of different consequences of our choices 
 
 Though each of these use cases is slightly distinct, they are highly overlapping, and philosophy of science openly debates their relative importance.
 
 ## Describing Data
 
-We've already discussed ways to describe data quite a bit. Continuous variable, what is **one single number** that we might use to best describe the variable, if we had to choose
+We've already discussed ways to describe data quite a bit. For a continuous variable, what is **one single number** that we might use to best describe the variable, if we had to choose
 
-[**The mean**]{.fragment}
+[**The sample mean**]{.fragment}
 
 -   [The sum of all errors around the mean is always **zero**]{.fragment}
     -   [Because of this, summing errors isn't very helpful]{.fragment}
@@ -171,9 +175,14 @@ The most common **loss function** in statistics is minimization of **squared err
 
 -   Minimized by the **mean**
 
-We might minimized the *sum* of squared errors
+We might minimize the *sum* of squared errors
 
 $$\text{Sum of Squared Errors (SSE)} = \sum (x - \bar{x})^2$$
+
+## A Familiar Form
+
+::: {style="font-size: 0.85em;"}
+
 
 Where have we seen this term before though?
 
@@ -183,9 +192,13 @@ Another term for variance: **Mean squared error (MSE)**
 
 -   SSE is sensitive to sample size: larger $N \rightarrow$ larger sum of squared errors
 -   MSE is insensitive to sample size
-    -   Doesn't matter if you use $N$ or $N - 1$ as constant in denominator **unless** you are trying to estimate population variance from sample of data
+    -   For estimating **population** variance from **sample** variance, we divide by $N - 1$ in calculating MSE. But for other purposes, it doesn't matter which we use
+    - $N$ or $N - 1$ is just a constant to scale for sample size. 
 -   Root mean squared error (RMSE) $=\sqrt{MSE}$
     -   Like $SD$, in original units (not squared units)
+    -   Comparing RMSE of different models is a common way of evaluating their performance
+
+:::
 
 ## Proof {.scrollable}
 
@@ -195,7 +208,7 @@ $$f(a) = \sum_{i = 1}^n (x_i - a)^2$$
 
 1.  Expand:
 
-$$\sum_{i = 1}^n(x_i - a)^2 = \sum_{i = 1}^n x_i^2 - 2a \sum_{i = 1}^n x_i + na^2$$
+$$\sum_{i = 1}^n(x_i - a)^2 = \sum_{i = 1}^n(x_i - a)(x_i - a) = \\ \sum_{i = 1}^n x_i^2 - 2a \sum_{i = 1}^n x_i + na^2$$
 
 2.  Take derivative with respect to $a$:
 
@@ -223,7 +236,11 @@ $$\text{Mean Absolute Error (MAE)} = \frac{\sum |x - \bar{x}|}{N}$$
 
 ## Mean as Model
 
-We can write a model using the mean to summarize our data as
+We can use the mean to represent a statistical model of the form
+
+$$\text{data} = \text{model} + \text{error}$$
+
+as:
 
 $$x_i = \mu + \epsilon_i$$
 
@@ -237,7 +254,7 @@ Another way to write this model is in terms of **predictions**.
 
 $$\hat{x}_i = \mu$$
 
--   $\hat{x}_i$ is the **predicted value** of $x$\_i
+-   $\hat{x}_i$ is the **predicted value** of $x_i$
 
 Combining the two formulations, we can also say
 
@@ -321,11 +338,19 @@ $$y_i = \beta_0 + \sum_{p=1}^P \beta_p x_{ip} + \epsilon_i$$
 
 Where $P$ is the number of *predictor variables* in our model.
 
+- $\beta_0$ is the "intercept"
+- $\beta_p$ is/are "slope(s)"
+- $\epsilon_i$ is residual error
+
+## Variable Types
+
 -   **Predictor variables** are sometimes referred to as **independent variables**
     -   In our example `Cond` can be thought of as a predictor variable and $P = 1$
 -   We can refer to $y$ in this model as our **outcome** or **dependent** variable
     -   Math scores are the outcome variable in our example
 -   Some debate around the appropriate semantics, but terms are interchangeable in many settings
+    - **Independent** = **Predictor** variables
+    - **Dependent** = **Outcome** variables
 
 The parameters of a general linear model are $\beta_0 \dots \beta_P$ AND $\sigma^2_{\epsilon}$ (variance of the residuals)
 
@@ -354,6 +379,8 @@ This was the $t$-test we saw previously (without the Welch-Satterthwaite adjustm
 
 ## Linear Model
 
+::: {style="font-size: 0.9em;"}
+
 We can write a general linear model in `R` using the `lm()` function and formula syntax and examine the output with `summary()`. The `Coefficients` table will show us information about $\beta_0$ and $\beta_1$. Let's compare the output to the $t$-test we have already seen
 
 ```{r}
@@ -362,6 +389,8 @@ lm1 <- lm(percent ~ Cond, dat)
 summary(lm1)
 
 ```
+
+:::
 
 ## Similarities
 
@@ -382,19 +411,23 @@ $$\text{percent}_i = 0.583 - .117(\text{Cond}) + \epsilon_i$$
 
 Or
 
-$$\hat{\text{percent}}_i = 0.583 - .117(\text{Cond})$$
+$$\hat{\text{percent}} = 0.583 - .117(\text{Cond})$$
 
 We will start with the predicted values from our dataset
 
 ## Predicted Values
 
-I can manually recode `Cond` to the numeric values that match what I want and then plug in
+I can manually recode `Cond` to the numeric values that match what I want.
+
+I can then plug in for $\beta_0$, $\beta_1$, and $x$ (cond) to make predictions about $y$ (percent)
 
 ```{r}
 #| echo: true
 dat$Cond_numeric <- ifelse(dat$Cond == "control", 0, 1)
 (y_hat <- 0.583 - .117 * dat$Cond_numeric)
 ```
+
+## Auto-predicted Values
 
 Or I can used the `predict()` function to do it for me
 
@@ -407,13 +440,13 @@ Or I can used the `predict()` function to do it for me
 
 $$\text{mean squared error (MSE)} = \frac{\sum (y - \hat{y}_i)^2}{N}$$
 
-$$\text{root mean squared error (RMSE)} = \sqrt(MSE)$$
+$$\text{root mean squared error (RMSE)} = \sqrt{MSE}$$
 
 ```{r}
 #| echo: true
-(mse <- mean((y_hat - dat$percent)^2))
+(mse_full <- mean((y_hat - dat$percent)^2))
 
-(rmse <- sqrt(mse))
+(rmse_full <- sqrt(mse_full))
 ```
 
 What can we do with these?
@@ -470,8 +503,9 @@ summary(lm_unconditional)
 Compared to our original model, these values are higher, meaning there is **more error**
 
 ```{r}
-mse
-rmse
+#| echo: true
+mse_full
+rmse_full
 ```
 
 So the original model is better, right?
@@ -480,7 +514,7 @@ So the original model is better, right?
 
 In this example, we used the same data to **fit** or **estimate** the model as well we did to make predictions and evaluate error.
 
--   Any time you add a predictor to a linear model you estimate, you will reduce error in the predictions
+-   Any time you add a predictor to a linear model you estimate with a sample of data, you will reduce error in the predictions within the same sample
 -   This is known as "overfit"
 -   Bias in which a model captures random variation and treats it as informative signal
 -   In prediction, what we really care about is how well the model will predict **new data**
@@ -503,15 +537,17 @@ If we want to validate our model on new data, instead of the same data we used t
 
 1.  Specify a **training** dataset
 
--   Used to estimate model(s)
+    -   Used to estimate model(s)
 
 2.  Specify a **testing** data
 
--   Used to validate model(s)
+    -   Used to validate model(s)
 
 3.  Estimate model on training data
 4.  Make predictions about testing data using model(s) estimated on training data
-5.  Calculate MSE/RMSE
+5.  Calculate MSE/RMSE 
+      - **From model** estimated on training data
+      - **In predictions** about testing data
 6.  Select model with lowest MSE/RMSE
 
 ## Example: Step 1 and 2
@@ -521,6 +557,13 @@ Our data groups subjects by IDs indicated by the variable `Subject`
 I'm going to use the `sample()` function to select half of the subjects and put them in a training set, and leave the rest for a testing set.
 
 ```{r}
+dat <- dat |> group_by(Subject) |>
+  mutate(sec_subj = 1:n() - 1,
+         Subject = Subject + sec_subj)
+dat$sec_subj <- NULL
+```
+
+```{r}
 #| echo: true
 subject_ids <- dat$Subject
 
@@ -528,11 +571,29 @@ set.seed(5211)
 
 ids <- sample(subject_ids, size = length(subject_ids)/2)
 
-dat1 <- dat %>% filter(Subject %in% ids) # Training data
-dat2 <- dat %>% filter(!(Subject %in% ids)) # Testing data
+dat1 <- dat |> filter(Subject %in% ids) # Training data
+dat2 <- dat |> filter(!(Subject %in% ids)) # Testing data
+```
+
+## Training data
+
+```{r}
+#| echo: true
+
+dat1
+```
+
+## Testing data
+
+```{r}
+#| echo: true
+
+dat2
 ```
 
 ## Example: Step 3-6
+
+::: {style="font-size: 0.9em;"}
 
 Next I will estimate my "full" model that separates participants by `Cond` and my "reduced" (unconditional) model
 
@@ -559,7 +620,9 @@ sqrt(mean((predict_reduced - dat2$percent)^2))
 
 ```
 
-The full model made better predictions (lower error) even in new data
+The reduced model made better predictions (lower error), which might be evidence against treating the groups as having meaningfully different means
+
+:::
 
 ## Reverse
 
@@ -577,9 +640,14 @@ sqrt(mean((predict_full - dat1$percent)^2))
 sqrt(mean((predict_reduced - dat1$percent)^2))
 ```
 
-Once again, the full model made better predictions (lower error)
+In this case, the full model made better predictions (lower error)
+
+- We don't have super clear evidence one way or the other about whether the full or reduced model makes better predictions
+- Partly a function of the cost associated with splitting the sample in half
 
 ## Alternative Procedures
+
+::: {style="font-size: 0.9em;"}
 
 Splitting the data in half is costly because of how much your sample size is reduced. Other options that keep the dataset (more) intact are
 
@@ -587,10 +655,14 @@ Splitting the data in half is costly because of how much your sample size is red
     -   Split the data into $k$ different "folds" or subsets of equal size
     -   For each fold, train the model on the remaining $k - 1$ folds, then test it on the held out $k$th fold
     -   Repeat for each fold
+    -   Calculate the average RMSE across folds
 -   Leave one out (LOO) cross validation:
     -   For each of the $N$ datapoints in a dataset:
         -   Train model on the remaining $N - 1$ datapoints
         -   Make prediction about the single held out datapoint
+        -   Calculate average RMSE for each held out datapoint 
+
+::: 
 
 ## Decide
 
@@ -624,7 +696,7 @@ Jerzy Neyman (1895-1980)
 ## Inference vs. Behavior
 
 ::::: {.columns .v-center-container}
-::: {.column width="50%"}
+::: {.column width="40%"}
 **Fisher:**
 
 -   We build statistical models to test theories about the world
@@ -632,11 +704,12 @@ Jerzy Neyman (1895-1980)
 -   Science is about **inference**
 :::
 
-::: {.column width="50%"}
+::: {.column width="60%"}
 **Neyman:**
 
 -   We do inference to decide how to behave
 -   **Inductive Behavior:** Based on what I learned from data, should I behave as if self-handicapping is harmful or not?
+-   Should I consider interventions to prevent self-handicapping, or allow people to self handicap?
     -   I can't know for sure, but experiments and models help minimize my errors (costs)
 :::
 :::::
@@ -650,3 +723,12 @@ Jerzy Neyman (1895-1980)
     -   Psychology
     -   Business and operations
 -   Covered in *The Science of Decision Making* (Offered Spring '27)
+
+
+## Last Chance for Review!
+
+Our next class will be our review session
+
+- If you want to see any material reviewed, post on Ed Discussion ASAP
+- All material covered through today is fair game for exam
+- Exam will be next Thursday at regular class time

@@ -1,0 +1,805 @@
+---
+title: "Lecture 18: Factorial ANOVA"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(gganimate)
+library(gifski)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+
+
+```
+
+
+
+## Review
+
+- Independent Sample $t$-tests compares the means of two different groups
+  - E.g. One control group vs one experimental treatment
+
+- One-Way ANOVA compares the means of more than two different groups from a single factor
+  - E.g. One control group vs **more than** one different experimental treatments
+
+- Factorial ANOVA (Two-Way, Three-Way, etc.) compares the means of different groups based on **combinations** of different factors
+  - E.g. Three different drug types at two different dosage levels.
+
+## Preview
+
+In a **Two-Way ANOVA**, there are two types of effects:
+
+1. Interaction Effect 
+    - The effect of factor $A$ on the outcome depends on factor $B$
+    - The effect of factor $B$ on the outcome depends on factor $A$
+
+2. Main Effects (also sometimes *marginal* effects)
+    - The effect of factor $A$ on the outcome, combining levels of factor $B$
+    - The effect of factor $B$ on the outcome, combining levels of factor $A$
+
+## Fake Wine Data
+
+This is data I made up! 
+
+Suppose I'm a winemaker. My vineyard is located on a hill. I have developed two new grape growing techniques and I want to see how they affect my wine. 
+
+Because my vineyard is on a hill, there is another factor I have to consider: whether my grapes get sunlight in the morning or in the evening.
+
+::: {.columns}
+
+::: {.column width="50%"}
+**Factor/IV 1**: Side of the Hill
+
+* East side of hill (gets sunlight in morning)
+* West side of hill (gets sunlight in evening)
+:::
+
+::: {.column width="50%"}
+**Factor/IV 2**: Growing Method 
+
+* Control (traditional method)
+* Condition A (one new method I'm trying)
+* Condition B (another new method I'm trying)
+:::
+
+:::
+
+**DV:** ratings of blind tasted bottles from a wine expert
+
+We call this a $2$ (hill side) $\times 3$ (growing method) design
+
+## Chateau Himmelstein
+
+![](vineyard.jpg)
+
+## Graphical Representation: Interaction Plots
+
+- $y$-axis: outcome (DV)
+- $x$-axis: factor #1 (IV1)
+- Separate lines for separate levels of factor #2 (IV2)
+- Points represent the mean of the outcome for each combination of the factors
+- Lines connect points
+- When interaction effect is present, lines are not (all) parallel
+- When interaction effect is absent, lines are (all) parallel
+
+## Graphical Representation: Interaction Plots
+
+```{r}
+#| include: false
+
+dat <- read.csv("../../data/wine east west.csv")
+dat$condition <- factor(dat$condition, levels = c("control","a","b"))
+dat$method <- dat$condition
+dat$condition <- NULL
+```
+
+```{r}
+#| message: false
+
+ggplot(dat %>% group_by(method, hill) %>% summarize(rating = mean(rating)), aes(hill, rating, col = method, linetype = method, shape = method, group = method)) + geom_path(size = 2) + 
+  geom_point(size = 5) + 
+  scale_color_manual(values = c(my_blue, my_orange, my_green)) + 
+  theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Method", shape = "Method",linetype = "Method", x = "Hill Side", y = "Rating")  + ylim(70, 100)
+```
+
+## Graphical Representation: Interaction Plots
+
+Interaction effect? 
+
+- Slopes of Method A appears to be different from the other two (B and Control)
+
+Main effect of Hill Side?
+
+- Overall, ratings seem better on the East that West side (though maybe not for Method B!)
+
+Main effect of Method?
+
+- Overall, both of my new grape growing methods seem to produce better ratings than the control.
+
+## Graphical Representation: Points with Confidence Intervals
+
+An alternative to the familiar interaction line plots
+
+- Line plots could inadvertently imply an order across factor levels
+- Leaving them out makes it more difficult to see interaction effects
+- Confidence Intervals make it easier to see meaningful differences
+
+## Graphical Representation: Points and SEs Way 1
+
+```{r}
+d2 <- Rmisc::summarySE(dat, "rating", c("method","hill"))
+
+ggplot(d2, aes(hill, rating, col = method, shape = method, group = method)) +  geom_point(size = 2, position = position_dodge(.25)) +
+  geom_errorbar(aes(ymin = rating - ci, ymax = rating + ci, width = .25), position = position_dodge(.25)) + 
+  scale_color_manual(values = c(my_blue, my_orange, my_green)) + 
+  theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Method", shape = "Method",linetype = "Method", x = "Hill Side", y = "Rating") + ylim(70, 100)
+```
+
+## Graphical Representation: Points and SEs Way 2
+
+```{r}
+ggplot(d2, aes(method, rating, col = hill, shape = hill, group = hill)) +  geom_point(size = 2, position = position_dodge(.25)) +
+  geom_errorbar(aes(ymin = rating - ci, ymax = rating + ci, width = .25), position = position_dodge(.25)) + 
+  scale_color_manual(values = c(my_purple, my_red)) + 
+  theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Hill Side", shape = "Hill Side",linetype = "Hill Side", x = "Method", y = "Rating") + ylim(70, 100)
+```
+
+## The Structural (Population) Model
+
+For the two-way ANOVA, there are two categorical IVs (factors)
+
+Factor $A$ has levels $j = 1, \ldots, J$ and Factor $B$ has levels $k = 1, \ldots, K$
+
+Population model:
+
+\[
+  y_{ijk} = \mu_G + \alpha_j + \beta_k + (\alpha\beta)_{jk} + \epsilon_{ijk}
+\]
+
+- $y_{ijk}$: Observed score of person $i$ belonging to level $j$ of factor $A$ and level $k$ of factor $B$
+- $\mu_{G}$: Population grand mean (disregarding group membership) 
+- $\alpha_j = \mu_{A_j} - \mu_G$: effect of factor $A_j$
+- $\beta_k = \mu_{B_k} - \mu_G$: effect of factor $B_k$
+- $(\alpha\beta)_{jk} = \mu_{AB_{jk}} - \mu_{A_j} - \mu_{B_k} + \mu_G$: interaction of factor $A_j$ and factor $B_k$
+- $\epsilon_{ijk}$: deviation of person $i$ from the mean of everyone in both group $A_j$ and group $B_k$
+
+## Parsing Variance
+
+Population model (from the previous slide):
+
+\[
+  y_{ijk} = \mu_G + \alpha_j + \beta_k + (\alpha\beta)_{jk} + \epsilon_{ijk}
+\]
+
+We can write:
+
+\[
+  \text{var}(y) = \text{var}(\alpha) + \text{var}({\beta}) + \text{var}(\alpha\beta) + \text{var}(\epsilon)
+\]
+
+- Total score variance can be attributed to these 4 sources
+- Important: variance can only be parsed in this manner if all combinations of groups have **equal** numbers of observations (more on this later)
+
+## ANOVA Calculations
+
+Score $y_{ijk}$: individual $i$ in group $j$ of factor $A$ and group $k$ of factor $B$
+
+- $\bar{y}_{jk}$: **cell mean** for combination of $j$ (fct $A$) and $k$ (fct $B$)
+- $\bar{y}_{j\bullet}$: **marginal mean** of group $j$ (fct A), across levels of fct B
+
+\[
+  \bar{y}_{j\bullet} = \frac{\sum_k\sum_iy_{ijk}}{\sum_kn_{jk}} = \frac{\sum_k\bar{y}_{jk}}{\sum_kn_{jk}}
+\]
+
+- $\bar{y}_{\bullet k}$: **marginal mean** of group $k$ (fct B), across levels of fct A
+
+\[
+  \bar{y}_{\bullet k} = \frac{\sum_j\sum_iy_{ijk}}{\sum_jn_{jk}} = \frac{\sum_j\bar{y}_{jk}}{\sum_jn_{jk}}
+\]
+
+- $\bar{y}$: **overall mean** across participants and groups (sample grand mean)
+
+\[
+  \bar{y} = \frac{\sum_k\sum_j\sum_iy_{ijk}}{N}
+\]
+
+\begin{tikzpicture}[remember picture,overlay,every node/.style={anchor=center}]
+  \draw[my_blue, thick] (8.00, 5.4) ellipse [x radius = 0.35, y radius = 0.35] node[align=left, anchor=west, xshift=.5cm, yshift = .1cm] {\textbf{\# observations} \\ \textbf{in cell} $\bm{jk}$};
+\end{tikzpicture}
+
+## ANOVA Calculations
+
+$2\times 3$ design:
+
+\begin{center}
+\begin{spacing}{1.5}
+\begin{tabular}{ccccc}
+\hline 
+\multirow{2}{*}{Factor $B$} & \multicolumn{3}{c}{Factor $A$} & Marginal Mean\tabularnewline
+\cline{2-4} \cline{3-4} \cline{4-4} 
+\multirow{-2}{*}{Factor $B$} & $j=1$ & $j=2$ & $j=3$ & for Factor $B$\tabularnewline
+\hline 
+& & & & \tabularnewline
+$k=1$ & $\bar{y}_{11}$ & $\bar{y}_{21}$ & $\bar{y}_{31}$ & $\bar{y}_{1\bullet}=\frac{\sum_{j}\bar{y}_{j1}}{\sum_{j}n_{jk}}$\tabularnewline
+& & & & \tabularnewline
+$k=2$ & $\bar{y}_{12}$ & $\bar{y}_{22}$ & $\bar{y}_{32}$ & $\bar{y}_{2\bullet}=\frac{\sum_{j}\bar{y}_{j2}}{\sum_{j}n_{jk}}$\tabularnewline
+& & & & \tabularnewline
+\hline 
+ Marginal Mean & \multirow{2}{*}{$\bar{y}_{\bullet1}=\frac{\sum_{k}\bar{y}_{1k}}{\sum_{k}n_{jk}}$} & \multirow{2}{*}{$\bar{y}_{\bullet2}=\frac{\sum_{k}\bar{y}_{2k}}{\sum_{k}n_{jk}}$} & \multirow{2}{*}{$\bar{y}_{\bullet3}=\frac{\sum_{k}\bar{y}_{3k}}{\sum_{k}n_{jk}}$} & Overall Mean\tabularnewline
+for Factor $A$ &  \multirow{-2.35}{*}{$\bar{y}_{\bullet1}=\frac{\sum_{k}\bar{y}_{1k}}{\sum_{k}n_{jk}}$} & \multirow{-2.35}{*}{$\bar{y}_{\bullet2}=\frac{\sum_{k}\bar{y}_{2k}}{\sum_{k}n_{jk}}$} & \multirow{-2.35}{*}{$\bar{y}_{\bullet3}=\frac{\sum_{k}\bar{y}_{3k}}{\sum_{k}n_{jk}}$} & $\bar{y}=\frac{\sum_{j}\sum_{k}\bar{y}_{jk}}{N}$\tabularnewline
+\hline
+\end{tabular}
+\end{spacing}
+\end{center}
+
+## ANOVA Calculations Example
+
+$2\times 3$ design:
+
+\begin{center}
+\begin{spacing}{1.5}
+\begin{tabular}{ccccc}
+\hline 
+\multirow{2}{*}{method} & \multicolumn{3}{c}{Hill Side} & Marginal Mean\tabularnewline
+\cline{2-4} \cline{3-4} \cline{4-4} 
+\multirow{-2}{*}{method} & $cond=control$ & $cond=a$ & $cond=b$ & for method\tabularnewline
+\hline 
+& & & & \tabularnewline
+$hill=east$ & $\bar{y}_{11}=85.4$ & $\bar{y}_{12}=91.1$ & $\bar{y}_{13}=89.5$ & $\bar{y}_{1\bullet}=88.7$\tabularnewline
+& & & & \tabularnewline
+$hill=west$ & $\bar{y}_{21}=81.8$ & $\bar{y}_{22}=88.0$ & $\bar{y}_{23}=90.0$ & $\bar{y}_{2\bullet}=86.6$\tabularnewline
+& & & & \tabularnewline
+\hline 
+ Marginal Mean & \multirow{2}{*}{$\bar{y}_{\bullet1} = 83.6$} & \multirow{2}{*}{$\bar{y}_{\bullet2}= 89.6$} & \multirow{2}{*}{$\bar{y}_{\bullet3} = 89.8$} & Overall Mean\tabularnewline
+for Hill Side &  \multirow{-2}{*}{$\bar{y}_{\bullet1} = 83.6$} & \multirow{-2}{*}{$\bar{y}_{\bullet2}= 89.6$} & \multirow{-2}{*}{$\bar{y}_{\bullet3} = 89.8$} & $\bar{y}=87.6$\tabularnewline
+\hline
+\end{tabular}
+\end{spacing}
+\end{center}
+
+We denote our **estimated** effects based on our **sample** statistics with a *hat*, e.g. $\hat{\alpha}$ or $\hat{\alpha\beta}$
+
+## ANOVA Calculations Example
+
+$2\times 3$ design:
+
+$$\hat{\alpha}_{east} = \bar{y}_{1\bullet}- \bar{y} =87.6-88.7= -1.1$$
+
+## ANOVA Calculations Example
+
+$2\times 3$ design:
+
+$$\hat{\beta}_{control} = \bar{y}_{\bullet1}-\bar{y} =83.6-88.7= -5.1$$
+
+## ANOVA Calculations Example
+
+$2\times 3$ design:
+
+$$\hat{\alpha\beta}_{east,control} = \bar{y}_{11} - \bar{y}_{1\bullet} - \bar{y}_{\bullet1} + \bar{y}=85.4 - 83.6 - 88.7 + 87.6 = 0.7$$
+
+## ANOVA Calculations
+
+Similar to the one-way ANOVA, we can decompose the sample variation of $y$ into within-group effects ($W$) and between-group ($G$) effects
+
+\[SS_T = SS_G + SS_W\]
+
+::: {.columns}
+
+::: {.column width="50%"}
+::: {.callout-note title="$SS_T$: overall variation of scores"}
+\[SS_T = \sum_k\sum_j\sum_i(y_{ijk} - \bar{y})^2\]
+:::
+
+::: {.callout-tip title="$SS_G$: variation between groups"}
+(between group effect)
+
+\[SS_G = \sum_k\sum_j[n_{jk}(\bar{y}_{jk} - \bar{y})^2]\]
+
+- systematic variation
+- extent to which factors predict the DV scores
+:::
+:::
+
+::: {.column width="50%"}
+::: {.callout-important title="$SS_W$: variation within groups"}
+(within-group effect)
+
+\[SS_W = SS_T - SS_G\]
+
+- residual (leftover) variation
+- extent to which DV scores cannot be predicted
+:::
+:::
+
+:::
+
+## ANOVA Calculations
+
+Sums of squares of the between-group effect ($SS_G$) can be decomposed into:
+
+- Main effect $A$
+- Main effect $B$
+- Interaction effect $AB$
+
+\[SS_G = SS_A + SS_B + SS_{AB}\]
+
+::: {.columns}
+
+::: {.column width="33%"}
+::: {.callout-warning title="$SS_A$"}
+sum of squares for factor $A$
+
+\[SS_A = nK\sum_j(\bar{y}_j - \bar{y})^2\]
+
+= systematic variation in outcome associated with factor $A$, across levels of factor $B$
+:::
+:::
+
+::: {.column width="33%"}
+::: {.callout-tip title="$SS_B$"}
+sum of squares for factor $B$
+
+\[SS_B = nJ\sum_k(\bar{y}_k - \bar{y})^2\]
+
+= systematic variation in outcome associated with factor $B$, across levels of factor $A$
+:::
+:::
+
+::: {.column width="33%"}
+::: {.callout-note title="$SS_{AB}$"}
+sum of squares for interaction effect
+
+\[SS_{AB} = SS_G - SS_A - SS_B\]
+:::
+:::
+
+:::
+
+These calculations assume that every group has $n = n_{jk}$ subjects
+
+- $J$: number of groups in factor $A$; $K$: number of groups in factor $B$
+
+## ANOVA Calculations
+
+\begin{center}
+\begin{spacing}{1.5}
+\begin{tabular}{cccc}
+\hline 
+ & \textbf{Sums of Squares} & \textbf{Degrees of Freedom} & \textbf{Mean Squares} \tabularnewline
+\cline{2-4} \cline{3-4} \cline{4-4} 
+Between-Gp & \multirow{2}{*}{$SS_{G}=\sum_{k}\sum_{j}[n_{jk}(\bar{y}_{jk}-\bar{y})^{2}]$} & \multirow{2}{*}{$df_{G}=(J\times K-1)$} & \multirow{2}{*}{$MS_{G}=\frac{SS_{G}}{df_{G}}$}\tabularnewline
+Effect & \multirow{-2}{*}{$SS_{G}=\sum_{k}\sum_{j}[n_{jk}(\bar{y}_{jk}-\bar{y})^{2}]$} & \multirow{-2}{*}{$df_{G}=(J\times K-1)$} & \multirow{-2}{*}{$MS_{G}=\frac{SS_{G}}{df_{G}}$}\tabularnewline
+\hline 
+Main & \multirow{2}{*}{$SS_{A}=nK\sum_{j}(\bar{y}_{j}-\bar{y})^{2}$} & \multirow{2}{*}{$df_{A}=J-1$} & \multirow{2}{*}{$MS_{A}=\frac{SS_{A}}{df_{A}}$}\tabularnewline
+Effect $A$ &  &  & \tabularnewline
+\hline
+Main & \multirow{2}{*}{$SS_{B}=nJ\sum_{k}(\bar{y}_{k}-\bar{y})^{2}$} & \multirow{2}{*}{$df_{B}=K-1$} & \multirow{2}{*}{$MS_{B}=\frac{SS_{B}}{df_{B}}$}\tabularnewline
+Effect $B$ & \multirow{-2}{*}{$SS_{B}=nJ\sum_{k}(\bar{y}_{k}-\bar{y})^{2}$} & \multirow{-2}{*}{$df_{B}=K-1$} & \multirow{-2}{*}{$MS_{B}=\frac{SS_{B}}{df_{B}}$}\tabularnewline
+\hline
+Interaction & \multirow{2}{*}{$SS_{AB}=SS_{G}-SS_{A}-SS_{B}$} & \multirow{2}{*}{$df_{AB}=(J-1)(K-1)$} & \multirow{2}{*}{$MS_{AB}=\frac{SS_{AB}}{df_{AB}}$}\tabularnewline
+Effect &  &  & \tabularnewline
+\hline
+Within-Gp & \multirow{2}{*}{$SS_{W}=SS_{T}-SS_{G}$} & \multirow{2}{*}{$df_{W}=df_{T}-df_{G}$} & \multirow{2}{*}{$MS_{W}=\frac{SS_{W}}{df_{W}}$}\tabularnewline
+Effect & \multirow{-2}{*}{$SS_{W}=SS_{T}-SS_{G}$} & \multirow{-2}{*}{$df_{W}=df_{T}-df_{G}$} & \multirow{-2}{*}{$MS_{W}=\frac{SS_{W}}{df_{W}}$}\tabularnewline
+\hline
+Total & \multirow{2}{*}{$SS_{T}=\sum_{k}\sum_{j}\sum_{i}(y_{ijk}-\bar{y})^{2}$} & \multirow{2}{*}{$df_{T}=N-1$} & \multirow{2}{*}{$MS_{T}=\frac{SS_{T}}{df_{T}}$}\tabularnewline
+Effect &  &  & \tabularnewline
+\hline 
+\end{tabular}
+\end{spacing}
+\end{center}
+
+## Hypothesis Testing
+
+We begin by testing the **interaction effect**
+
+Why?
+
+## Hypothesis Testing
+
+Is the effect of our grape growing method the same, or different for different sides of the hill?
+
+```{r}
+#| message: false
+#| out.width: "75%"
+
+ggplot(dat %>% group_by(method, hill) %>% summarize(rating = mean(rating)), aes(hill, rating, col = method, linetype = method, shape = method, group = method)) + geom_path(size = 2) + 
+  geom_point(size = 5) + 
+  scale_color_manual(values = c(my_blue, my_orange, my_green)) + 
+  theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Method", shape = "Method",linetype = "Method", x = "Hill Side", y = "Rating")  + ylim(70, 100)
+```
+
+## Hypothesis Testing
+
+We begin by testing the **interaction effect** because an interaction means the effect of one IV **depends** on the other IV. Testing the main (overall) effect of that IV may not make sense if that effect varies based on another factor. 
+
+- $H_0$: there is no interaction effect in the population
+- $H_1$: there is an interaction effect in the population
+
+Test statistic: $F$-statistic
+
+\[F_{df_{AB}, df_W} = \frac{MS_{AB}}{MS_W}\]
+
+When $H_0$ is true, $F$ follows an $F$-distribution with $df_{AB}$ numerator and $df_W$ denominator degrees of freedom
+
+- If the interaction $H_0$ is rejected, probe the interaction effect (later)
+- If the interaction $H_0$ is not rejected, look at hypothesis tests for main effects
+
+## Hypothesis Testing
+
+Testing Main Effect of Factor $A$:
+
+- $H_0$: all $\mu_j$ equal (no main effect of Factor $A$)
+- $H_1$: at least one $\mu_j$ is different (main effect of Factor $A$)
+
+\[F(df_A, df_W) = \frac{MS_A}{MS_W}\]
+
+When $H_0$ is true, $F$ follows an $F$-distribution with $df_A$ numerator and $df_W$ denominator degrees of freedom
+
+---
+
+Testing Main Effect of Factor $B$:
+
+- $H_0$: all $\mu_k$ equal (no main effect of Factor $B$)
+- $H_1$: at least one $\mu_k$ is different (main effect of Factor $B$)
+
+\[F(df_B, df_W) = \frac{MS_B}{MS_W}\]
+
+When $H_0$ is true, $F$ follows an $F$-distribution with $df_B$ numerator and $df_W$ denominator degrees of freedom
+
+## Two-Way ANOVA in R
+
+**Way 1**: Using built-in `R` commands
+
+```{r}
+#| echo: true
+
+dat %>% glimpse
+a1 <- aov(rating ~ hill * method, dat)
+summary(a1)
+```
+
+## Two-Way ANOVA in R
+
+**Way 2**: Using the `ez` package
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+library(ez)
+dat$ID <- 1:nrow(dat) # make ID variable for ezANOVA
+ez1 <- ezANOVA(dat, dv = rating, wid = ID, 
+        between = c(hill, method))
+
+ez1$ANOVA
+```
+
+## Interpreting Results
+
+The Wine example had a significant interaction effect, $F(2, 294) = 8.89, p < .001$
+
+- We might continue investigating **simple effects** (later)
+
+Given a **significant interaction effect**, it is not very meaningful to investigate the main effects of factor $A$ or factor $B$
+    
+If the interaction effect is **not significant**, we can look at the hypothesis tests for main effects  
+
+- There is a significant main effect of hill, $F(1, 294) = 24.04, p < .001$
+- There is a significant main effect of task type, $F(2, 294) = 88.31, p < .001$
+- Post-hoc tests can then be used to understand significant main effects
+
+## ANOVA Assumptions
+
+Same assumptions as one-way ANOVA
+
+1. Normally distributed outcome **in each group** (in each combination of factor levels)
+2. No outliers **in each group** (in each combination of factor levels)
+3. Homogeneity of variance
+    - Population variance is equal in every group (in every combination of factor levels)
+4. Independence of observations
+    - All groups are independent of each other
+    - If not independent, **repeated measures ANOVA** or **multilevel modeling** may be more appropriate (later in this course)
+
+Same methods as one-way ANOVA can be used to investigate assumptions
+
+## ANOVA Assumptions
+
+When homogeneity of variance is violated:
+
+- Welch's adjustment is unavailable for two-way ANOVA
+- White's adjustment is available
+- Weighted least squares (WLS) estimation is available
+    - Each participant has weight $(1 / s^2_{jk})$
+    - $s^2_{jk}$: sample variance for level $j$ of factor $A$ and level $k$ of factor $B$
+    
+- Recommendation: Use White and/or WLS for ALL the analyses
+    - Hypothesis tests and effect sizes for interaction effect & main effects
+    - Hypothesis tests and effect sizes for simple main effects
+    - Post-hoc comparisons
+        - Tukey HSD (recommended), Bonferroni, Holm are available
+        - Games-Howell, Dunnett not available for factorial ANVOA
+    - A priori comparisons
+    
+- All calculations follow the standard procedures, except that we now use WLS estimation or White's adjustment
+
+## White's Adjustment in R
+
+White's adjustment is available using `ezANOVA`...
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+ez1_white <- ezANOVA(dat, dv = rating, wid = ID, 
+                     between = c(hill, method), white.adjust = TRUE)
+ez1_white$ANOVA
+```
+
+...or by using `car::Anova` with `aov` output
+
+```{r}
+#| echo: true
+#| message: false
+
+car::Anova(a1, white.adjust = TRUE)
+```
+
+## Weighted Least Squares in R
+
+Need to manually calculate weights:
+
+```{r}
+#| echo: true
+
+dat <- dat %>% group_by(hill, method) %>% 
+  mutate(weights = 1 / var(rating))
+```
+
+Weighted least squares estimation is available using `aov`, but not `ezANOVA`
+
+```{r}
+#| echo: true
+
+a1_wt <- aov(rating ~ hill * method, dat, weights = weights)
+summary(a1_wt)
+```
+
+## APA Style Writeup
+
+We conducted a two-way ANOVA to investigate the effects of hill side and growing method on wine ratings. At $\alpha = .05$ and using White's correction, the interaction effect was statistically significant ($F(2, 294) = 9.17, p < .001$).
+
+To inspect the interaction effect, we calculated simple main effects...
+
+
+
+## Effect Sizes
+
+$r$-family measures (standardized association):
+
+1. $\eta^2$ and partial $\eta^2$
+2. $\omega^2$ and partial $\omega^2$
+3. $f$ (function of partial $\eta^2$)
+
+$d$-family measures:
+
+1. Cohen's $d$ for pairwise comparisons
+2. Appropriate for post-hoc tests of main effects or simple main effects
+
+## Partial Eta-Squared (Partial $\eta^2$)
+
+Interpretation of partial $\eta^2$:
+
+* Proportion of variation in outcome accounted for by the specified effect, ignoring other effects
+
+::: {.columns}
+
+::: {.column width="33%"}
+::: {.callout-note title="Partial $\eta^2$ for main effect of factor $A$"}
+\[\frac{SS_A}{SS_A + SS_W}\]
+:::
+:::
+
+::: {.column width="33%"}
+::: {.callout-tip title="Partial $\eta^2$ for main effect of factor $B$"}
+\[\frac{SS_B}{SS_B + SS_W}\]
+:::
+:::
+
+::: {.column width="33%"}
+::: {.callout-important title="Partial $\eta^2$ for interaction effect"}
+\[\frac{SS_{AB}}{SS_{AB} + SS_W}\]
+:::
+:::
+
+:::
+
+$SS_T = SS_G + SS_W$
+
+$SS_T = (SS_A + SS_B + SS_{AB}) + SS_W$
+
+Note that the denominator of $\eta^2$ only includes $SS_W$ and specified effect
+
+## Eta-Squared ($\eta^2$)
+
+Interpretation of $\eta^2$:
+
+* Proportion of total variation in the outcome accounted for by the specified effect
+
+::: {.columns}
+
+::: {.column width="33%"}
+::: {.callout-note title="$\eta^2$ for main effect of factor $A$"}
+\[\frac{SS_A}{SS_T}\]
+:::
+:::
+
+::: {.column width="33%"}
+::: {.callout-tip title="$\eta^2$ for main effect of factor $B$"}
+\[\frac{SS_B}{SS_T}\]
+:::
+:::
+
+::: {.column width="33%"}
+::: {.callout-important title="$\eta^2$ for interaction effect"}
+\[\frac{SS_{AB}}{SS_T}\]
+:::
+:::
+
+:::
+
+Comparisons between partial $\eta^2$ and $\eta^2$
+
+* We might prefer $\eta^2$ because it uses the same denominator for the main effects and interaction. The three $\eta^2$s are directly comparable
+* We might prefer partial $\eta^2$ because the denominator ignores other effects
+* $\eta^2$ always smaller than partial $\eta^2$
+
+## $\omega^2$ (Omega-Squared) and Partial $\omega^2$
+
+Both $\eta^2$ and partial $\eta^2$ are positively biased estimates of the population effect size
+
+$\omega^2$ and partial $\omega^2$ are less biased:
+
+::: {.columns}
+
+::: {.column width="33%"}
+::: {.callout-note title="$\omega^2$ for main effect $A$"}
+\[\frac{df_A(MS_A - MS_W)}{SS_T + MS_W}\]
+:::
+:::
+
+::: {.column width="33%"}
+::: {.callout-tip title="$\omega^2$ for main effect $B$"}
+\[\frac{df_B(MS_B - MS_W)}{SS_T + MS_W}\]
+:::
+:::
+
+::: {.column width="33%"}
+::: {.callout-important title="$\omega^2$ for interaction"}
+\[\frac{df_{AB}(MS_{AB} - MS_W)}{SS_T + MS_W}\]
+:::
+:::
+
+:::
+
+::: {.columns}
+
+::: {.column width="33%"}
+::: {.callout-note title="Partial $\omega^2$ for main effect $A$"}
+\[\frac{df_A(MS_A - MS_W)}{SS_A + (N - df_A)MS_W}\]
+:::
+:::
+
+::: {.column width="33%"}
+::: {.callout-tip title="Partial $\omega^2$ for main effect $B$"}
+\[\frac{df_B(MS_B - MS_W)}{SS_B + (N - df_B)MS_W}\]
+:::
+:::
+
+::: {.column width="33%"}
+::: {.callout-important title="Partial $\omega^2$ for interaction"}
+\[\frac{df_{AB}(MS_{AB} - MS_W)}{SS_T + (N - df_{AB})MS_W}\]
+:::
+:::
+
+:::
+
+## $\omega^2$ (Omega-Squared) and Partial $\omega^2$
+
+* It is possible for partial $\omega^2$ and $\omega^2$ to be negative
+* This occurs when $MS_{\text{effect}} < MS_W$ (numerator)
+* This affects interpretation. Suggestions:
+    + Do not report the negative value
+    + Correct the value to zero when it is slightly negative
+
+## Effect Size: $f$
+
+Used for power calculations
+
+Function of partial $\eta^2$ (not $\eta^2$)
+
+Definition:
+
+\[f = \sqrt{\frac{\eta^2}{1 - \eta^2}}\]
+
+Cohen's (1988, 1992) suggestions:
+
+* 0.10: small effect ($\eta^2 = 0.010$)
+* 0.25: medium effect ($\eta^2 = 0.059$)
+* 0.40: large effect ($\eta^2 = 0.138$)
+
+## Effect Sizes in R
+
+You can use the `effectsize` functions we saw last week, or you can also use `sjstats` to get all of $\eta^2$, partial $\eta^2$, $\omega^2$, partial $\omega^2$, and $f$ in one output
+
+```{r}
+#| echo: true
+#| eval: false
+
+library(sjstats)
+anova_stats(a1)
+```
+
+```{r}
+#| message: false
+
+opts_chunk$set(out.width = '1\\linewidth', options(width=70))
+library(sjstats)
+tmp <- capture.output(anova_stats(a1))
+cat(sapply(tmp, substr, start = 0, stop = 68), sep = "\n")
+cat(sapply(tmp, substr, start = 69, stop = 140), sep = "\n")
+opts_chunk$set(out.width = '1\\linewidth', options(width=60))
+```
+
+\begin{tikzpicture}[remember picture,overlay,every node/.style={anchor=center}]
+  \draw[my_orange, thick] (10.2, 3.5) rectangle (11.7, 6);
+  \draw[my_orange, thick] (0.4, 0.8) rectangle (11.4, 3.1);
+\end{tikzpicture}  
