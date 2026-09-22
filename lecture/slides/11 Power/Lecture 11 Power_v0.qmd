@@ -139,22 +139,23 @@ ggplot(x, aes(x)) + stat_function(fun = dnorm) +
 
 Let's now do a thought experiment. In this thought experiment, we are omnipotent, and can take a "God's eye view" of the situation.
 
-![](../../figs/godseye.jpg){width="25%"}
+![](../../Figs/godseye.jpg){width="25%"}
 
 ## Thought Experiment
 
 ::: {style="font-size: 0.95em;"}
 
-Let's imagine a world where we know the **true** parameter $\mu = 1$ and $\sigma = 10$.
+Let's imagine a world where we know the **true** parameter $\mu = 1$ and $\sigma = 4$.
 
-- Put another way, we know the *true effect size* is $d = \frac{\mu - \mu_0}{\sigma} = \frac{1-0}{10} = 0.1$
+- Put another way, we know the *true effect size* is $\delta = \frac{\mu - \mu_0}{\sigma} = \frac{1-0}{4} = 0.25$
+    - Why did I use $\delta$ instead of $d$? [Because this is in the **population** (Greek letter) not sample (English letter)]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 It also means:
 
 - The sampling distribution of $\bar{x}$ is symmetric about 1
 
-- If we collected repeated samples of size 100, what is $\sigma_{\bar{x}}$? 
-    - [$\sigma_{\bar{x}} = \frac{10}{\sqrt{100}} = 1$ and $\bar{x} \sim N(\mu_{\bar{x}} = 1, \sigma_{\bar{x}}=1)$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- If we collected repeated samples of size 16, what is $\sigma_{\bar{x}}$? 
+    - [$\sigma_{\bar{x}} = \frac{4}{\sqrt{16}} = 1$ and $\bar{x} \sim N(\mu_{\bar{x}} = 1, \sigma_{\bar{x}}=1)$]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 - We can plot the sampling distribution for the this hypothetical case as well, and see how often we would reject $H_0: \mu = 0$ when we assume that $\mu = 1$
 
@@ -333,12 +334,15 @@ sigma <- 4 # so that sigma / sqrt(N) = 1
 
 ## Power Simulation
 
+::: {style="font-size: 0.9em;"}
+
 ```{r}
 #| echo: true
-set.seed(123) # set a seed to reproduce this example
-pvals <- numeric(5000) # empty numeric vector with 5000 slots
+iter <- 5000
+pvals <- numeric(iter) # empty numeric vector with 5000 slots
 
-for(i in 1:5000){ # 5000 repeated experiments
+set.seed(123) # set a seed to reproduce this example
+for(i in 1:iter){ # 5000 repeated experiments
   x <- rnorm(n = N, mean = mu1, sd = sigma) # generate data from H1
   zobs <- (mean(x) - mu0) / (sigma / sqrt(N)) # calculate test statistic
   pvals[i] <- pnorm(zobs, lower.tail = FALSE) # calculate p-value 
@@ -348,6 +352,7 @@ for(i in 1:5000){ # 5000 repeated experiments
 What proportion of my $p$-values are $< .05$ (correct rejections)
 
 ```{r}
+#| echo: true
 mean(pvals < .05)
 ```
 
@@ -358,6 +363,8 @@ Meaning that if:
 - $\sigma = 4$ and $N = 16$
 
 I can expect to correctly reject $H_0$ around 26% of the time. 
+
+:::
 
 ## Distribution of $p$-values
 
@@ -414,7 +421,7 @@ Power analysis has four main inputs
 
 When we discussed effect size last time, we were talking about estimating an effect size from a sample, which we called $d$
 
-In power analysis, we assume an effect at the **population level**. What do you think we would call an equivalent population effect size (Hint: not an English letter!)
+In power analysis, we assume an effect at the **population level**. What did I call an equivalent population effect size earlier? (Hint: not an English letter!)
 
 - [$\delta$]{.answer .fragment .content-visible unless-meta="params.v0"}
 
@@ -449,7 +456,7 @@ We can tweak any of these in our simulation. But which would be in our control a
 
 Null sampling distribution:
 
-$$\bar{x} \sim N\left(\mu_0, \frac{\sigma}{\sqrt{N}}\right)$$ "True" sampling distribution:
+$$\bar{x} \sim N\left(\mu_0, \frac{\sigma}{\sqrt{N}}\right)$$ Alternative sampling distribution:
 
 $$\bar{x} \sim N\left(\mu_1, \frac{\sigma}{\sqrt{N}}\right)$$
 
@@ -666,7 +673,7 @@ ggplot(df_dens, aes(x = x, y = y)) +
 
 ::: {style="font-size: 0.85em;"}
 
-The Type I error rate $\alpha$ determines the cutoff between the retention and rejection regions. Increasing $\alpha$ means you are likely to reject $H_0$ for both the null and alternative hypothesis
+The Type I error rate $\alpha$ determines the cutoff between the retention and rejection regions. Increasing $\alpha$ means you are more likely to reject $H_0$ for both the null and alternative hypothesis
 
 - In theory, you could start with $\beta$ (or power) to determine your $\alpha$, but we usually start with $\alpha$
 
@@ -830,7 +837,7 @@ Null sampling distribution:
 
 $$\bar{x} \sim N\left(\mu_0, \frac{\sigma}{\sqrt{N}}\right)$$
 
-"True" sampling distribution:
+Alternative sampling distribution:
 
 $$\bar{x} \sim N\left(\mu_1, \frac{\sigma}{\sqrt{N}}\right)$$
 
@@ -1052,6 +1059,8 @@ ggplot(res, aes(N, power, group = d, col = d)) + geom_path(na.rm = TRUE, size = 
   - Prior knowledge?
   - Cohen's benchmarks?
   - Smallest Effect Size of Interest (SESOI)?
+- Held constant: $\alpha$, power, effect size
+- Used to determine: minimum $N$
 
 ## Sensitivity Power Analysis
 
@@ -1061,6 +1070,8 @@ ggplot(res, aes(N, power, group = d, col = d)) + geom_path(na.rm = TRUE, size = 
 - E.g., What is the smallest effect size you could detect with...
   - ...80% power?
   - ...95% power?
+- Held constant: $\alpha$, $N$, power
+- Used to determine: minimum effect size
 
 ## Retrospective Power Analysis
 
@@ -1071,6 +1082,8 @@ ggplot(res, aes(N, power, group = d, col = d)) + geom_path(na.rm = TRUE, size = 
   - ...$d = .2$?
   - ...$d = .5$?
   - SESOI?
+- Held constant: $\alpha$, $N$, effect size
+- Used to determine: power
 
 ## Observed Power Analysis
 
@@ -1093,7 +1106,7 @@ An observed effect size will almost never be exactly a population effect.
 
 Imagine what would happen if we do an analysis, but **only** report results when our observed effect size implies at least 80% power. We're going risk 
 
-- Making way more Type I error's than our actual $\alpha = .05$
+- Making way more Type I errors than our actual $\alpha = .05$
 - Way overestimating our true effect size
 
 ## Simulated Example

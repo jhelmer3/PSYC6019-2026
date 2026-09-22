@@ -317,20 +317,23 @@ Mark Himmelstein
 <h2>God’s Eye View</h2>
 <p>Let’s now do a thought experiment. In this thought experiment, we are omnipotent, and can take a “God’s eye view” of the situation.</p>
 
-<img data-src="../../figs/godseye.jpg" style="width:25.0%" class="r-stretch"></section>
+<img data-src="../../Figs/godseye.jpg" style="width:25.0%" class="r-stretch"></section>
 <section id="thought-experiment" class="slide level2">
 <h2>Thought Experiment</h2>
 <div style="font-size: 0.95em;">
-<p>Let’s imagine a world where we know the <strong>true</strong> parameter <span class="math inline">\(\mu = 1\)</span> and <span class="math inline">\(\sigma = 10\)</span>.</p>
+<p>Let’s imagine a world where we know the <strong>true</strong> parameter <span class="math inline">\(\mu = 1\)</span> and <span class="math inline">\(\sigma = 4\)</span>.</p>
 <ul>
-<li>Put another way, we know the <em>true effect size</em> is <span class="math inline">\(d = \frac{\mu - \mu_0}{\sigma} = \frac{1-0}{10} = 0.1\)</span></li>
+<li>Put another way, we know the <em>true effect size</em> is <span class="math inline">\(\delta = \frac{\mu - \mu_0}{\sigma} = \frac{1-0}{4} = 0.25\)</span>
+<ul>
+<li>Why did I use <span class="math inline">\(\delta\)</span> instead of <span class="math inline">\(d\)</span>? <span class="answer fragment" data-unless-meta="params.v0">Because this is in the <strong>population</strong> (Greek letter) not sample (English letter)</span></li>
+</ul></li>
 </ul>
 <p>It also means:</p>
 <ul>
 <li><p>The sampling distribution of <span class="math inline">\(\bar{x}\)</span> is symmetric about 1</p></li>
-<li><p>If we collected repeated samples of size 100, what is <span class="math inline">\(\sigma_{\bar{x}}\)</span>?</p>
+<li><p>If we collected repeated samples of size 16, what is <span class="math inline">\(\sigma_{\bar{x}}\)</span>?</p>
 <ul>
-<li><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\sigma_{\bar{x}} = \frac{10}{\sqrt{100}} = 1\)</span> and <span class="math inline">\(\bar{x} \sim N(\mu_{\bar{x}} = 1, \sigma_{\bar{x}}=1)\)</span></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\sigma_{\bar{x}} = \frac{4}{\sqrt{16}} = 1\)</span> and <span class="math inline">\(\bar{x} \sim N(\mu_{\bar{x}} = 1, \sigma_{\bar{x}}=1)\)</span></span></li>
 </ul></li>
 <li><p>We can plot the sampling distribution for the this hypothetical case as well, and see how often we would reject <span class="math inline">\(H_0: \mu = 0\)</span> when we assume that <span class="math inline">\(\mu = 1\)</span></p></li>
 </ul>
@@ -471,20 +474,23 @@ Mark Himmelstein
 </section>
 <section id="power-simulation" class="slide level2">
 <h2>Power Simulation</h2>
+<div style="font-size: 0.9em;">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># set a seed to reproduce this example</span></span>
-<span id="cb2-2"><a></a>pvals <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">5000</span>) <span class="co"># empty numeric vector with 5000 slots</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>iter <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
+<span id="cb2-2"><a></a>pvals <span class="ot">&lt;-</span> <span class="fu">numeric</span>(iter) <span class="co"># empty numeric vector with 5000 slots</span></span>
 <span id="cb2-3"><a></a></span>
-<span id="cb2-4"><a></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5000</span>){ <span class="co"># 5000 repeated experiments</span></span>
-<span id="cb2-5"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> N, <span class="at">mean =</span> mu1, <span class="at">sd =</span> sigma) <span class="co"># generate data from H1</span></span>
-<span id="cb2-6"><a></a>  zobs <span class="ot">&lt;-</span> (<span class="fu">mean</span>(x) <span class="sc">-</span> mu0) <span class="sc">/</span> (sigma <span class="sc">/</span> <span class="fu">sqrt</span>(N)) <span class="co"># calculate test statistic</span></span>
-<span id="cb2-7"><a></a>  pvals[i] <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(zobs, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>) <span class="co"># calculate p-value </span></span>
-<span id="cb2-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-4"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># set a seed to reproduce this example</span></span>
+<span id="cb2-5"><a></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>iter){ <span class="co"># 5000 repeated experiments</span></span>
+<span id="cb2-6"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> N, <span class="at">mean =</span> mu1, <span class="at">sd =</span> sigma) <span class="co"># generate data from H1</span></span>
+<span id="cb2-7"><a></a>  zobs <span class="ot">&lt;-</span> (<span class="fu">mean</span>(x) <span class="sc">-</span> mu0) <span class="sc">/</span> (sigma <span class="sc">/</span> <span class="fu">sqrt</span>(N)) <span class="co"># calculate test statistic</span></span>
+<span id="cb2-8"><a></a>  pvals[i] <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(zobs, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>) <span class="co"># calculate p-value </span></span>
+<span id="cb2-9"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>What proportion of my <span class="math inline">\(p\)</span>-values are <span class="math inline">\(&lt; .05\)</span> (correct rejections)</p>
 <div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">mean</span>(pvals <span class="sc">&lt;</span> .<span class="dv">05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a></a><span class="ex">[1]</span> 0.2614</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a></a><span class="ex">[1]</span> 0.2614</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>Meaning that if:</p>
@@ -494,6 +500,7 @@ Mark Himmelstein
 <li><span class="math inline">\(\sigma = 4\)</span> and <span class="math inline">\(N = 16\)</span></li>
 </ul>
 <p>I can expect to correctly reject <span class="math inline">\(H_0\)</span> around 26% of the time.</p>
+</div>
 </section>
 <section id="distribution-of-p-values" class="slide level2">
 <h2>Distribution of <span class="math inline">\(p\)</span>-values</h2>
@@ -515,7 +522,7 @@ Mark Himmelstein
 <section id="population-effect-size" class="slide level2">
 <h2>Population Effect Size</h2>
 <p>When we discussed effect size last time, we were talking about estimating an effect size from a sample, which we called <span class="math inline">\(d\)</span></p>
-<p>In power analysis, we assume an effect at the <strong>population level</strong>. What do you think we would call an equivalent population effect size (Hint: not an English letter!)</p>
+<p>In power analysis, we assume an effect at the <strong>population level</strong>. What did I call an equivalent population effect size earlier? (Hint: not an English letter!)</p>
 <ul>
 <li><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(\delta\)</span></span></li>
 </ul>
@@ -548,7 +555,7 @@ Mark Himmelstein
 <section id="increasing-sample-size-increases-power" class="slide level2">
 <h2>Increasing Sample Size Increases Power</h2>
 <p>Null sampling distribution:</p>
-<p><span class="math display">\[\bar{x} \sim N\left(\mu_0, \frac{\sigma}{\sqrt{N}}\right)\]</span> “True” sampling distribution:</p>
+<p><span class="math display">\[\bar{x} \sim N\left(\mu_0, \frac{\sigma}{\sqrt{N}}\right)\]</span> Alternative sampling distribution:</p>
 <p><span class="math display">\[\bar{x} \sim N\left(\mu_1, \frac{\sigma}{\sqrt{N}}\right)\]</span></p>
 <p>Increasing <span class="math inline">\(N\)</span> will shrink the standard error, increasing the distance between the two distributions</p>
 </section>
@@ -563,23 +570,23 @@ Mark Himmelstein
 <section id="increasing-n-simulated" class="slide level2">
 <h2>Increasing <span class="math inline">\(N\)</span> Simulated</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>N <span class="ot">&lt;-</span> <span class="dv">64</span> <span class="co"># instead of 16</span></span>
-<span id="cb4-2"><a></a>mu0 <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># null mean</span></span>
-<span id="cb4-3"><a></a>mu1 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># true population mean</span></span>
-<span id="cb4-4"><a></a>sigma <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># so that sigma / sqrt(N) = 1</span></span>
-<span id="cb4-5"><a></a></span>
-<span id="cb4-6"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># set a seed to reproduce this example</span></span>
-<span id="cb4-7"><a></a>pvals <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">5000</span>) <span class="co"># empty numeric vector with 5000 slots</span></span>
-<span id="cb4-8"><a></a></span>
-<span id="cb4-9"><a></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5000</span>){ <span class="co"># 5000 repeated experiments</span></span>
-<span id="cb4-10"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> N, <span class="at">mean =</span> mu1, <span class="at">sd =</span> sigma) <span class="co"># generate data from H1</span></span>
-<span id="cb4-11"><a></a>  zobs <span class="ot">&lt;-</span> (<span class="fu">mean</span>(x) <span class="sc">-</span> mu0) <span class="sc">/</span> (sigma <span class="sc">/</span> <span class="fu">sqrt</span>(N)) <span class="co"># calculate test statistic</span></span>
-<span id="cb4-12"><a></a>  pvals[i] <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(zobs, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>) <span class="co"># calculate p-value </span></span>
-<span id="cb4-13"><a></a>}</span>
-<span id="cb4-14"><a></a></span>
-<span id="cb4-15"><a></a><span class="fu">mean</span>(pvals <span class="sc">&lt;</span> .<span class="dv">05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>N <span class="ot">&lt;-</span> <span class="dv">64</span> <span class="co"># instead of 16</span></span>
+<span id="cb5-2"><a></a>mu0 <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># null mean</span></span>
+<span id="cb5-3"><a></a>mu1 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># true population mean</span></span>
+<span id="cb5-4"><a></a>sigma <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># so that sigma / sqrt(N) = 1</span></span>
+<span id="cb5-5"><a></a></span>
+<span id="cb5-6"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># set a seed to reproduce this example</span></span>
+<span id="cb5-7"><a></a>pvals <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">5000</span>) <span class="co"># empty numeric vector with 5000 slots</span></span>
+<span id="cb5-8"><a></a></span>
+<span id="cb5-9"><a></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5000</span>){ <span class="co"># 5000 repeated experiments</span></span>
+<span id="cb5-10"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> N, <span class="at">mean =</span> mu1, <span class="at">sd =</span> sigma) <span class="co"># generate data from H1</span></span>
+<span id="cb5-11"><a></a>  zobs <span class="ot">&lt;-</span> (<span class="fu">mean</span>(x) <span class="sc">-</span> mu0) <span class="sc">/</span> (sigma <span class="sc">/</span> <span class="fu">sqrt</span>(N)) <span class="co"># calculate test statistic</span></span>
+<span id="cb5-12"><a></a>  pvals[i] <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(zobs, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>) <span class="co"># calculate p-value </span></span>
+<span id="cb5-13"><a></a>}</span>
+<span id="cb5-14"><a></a></span>
+<span id="cb5-15"><a></a><span class="fu">mean</span>(pvals <span class="sc">&lt;</span> .<span class="dv">05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a></a><span class="ex">[1]</span> 0.643</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a></a><span class="ex">[1]</span> 0.643</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -590,7 +597,7 @@ Mark Himmelstein
 <section id="decreasing-alpha-decreases-power" class="slide level2">
 <h2>Decreasing <span class="math inline">\(\alpha\)</span> Decreases Power</h2>
 <div style="font-size: 0.85em;">
-<p>The Type I error rate <span class="math inline">\(\alpha\)</span> determines the cutoff between the retention and rejection regions. Increasing <span class="math inline">\(\alpha\)</span> means you are likely to reject <span class="math inline">\(H_0\)</span> for both the null and alternative hypothesis</p>
+<p>The Type I error rate <span class="math inline">\(\alpha\)</span> determines the cutoff between the retention and rejection regions. Increasing <span class="math inline">\(\alpha\)</span> means you are more likely to reject <span class="math inline">\(H_0\)</span> for both the null and alternative hypothesis</p>
 <ul>
 <li>In theory, you could start with <span class="math inline">\(\beta\)</span> (or power) to determine your <span class="math inline">\(\alpha\)</span>, but we usually start with <span class="math inline">\(\alpha\)</span></li>
 </ul>
@@ -644,7 +651,7 @@ Mark Himmelstein
 <h2>Larger Effects</h2>
 <p>Null sampling distribution:</p>
 <p><span class="math display">\[\bar{x} \sim N\left(\mu_0, \frac{\sigma}{\sqrt{N}}\right)\]</span></p>
-<p>“True” sampling distribution:</p>
+<p>Alternative sampling distribution:</p>
 <p><span class="math display">\[\bar{x} \sim N\left(\mu_1, \frac{\sigma}{\sqrt{N}}\right)\]</span></p>
 <ul>
 <li>Larger differences between <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(\mu_0\)</span> will create larger separation between the distributions</li>
@@ -774,6 +781,8 @@ Mark Himmelstein
 <li>Cohen’s benchmarks?</li>
 <li>Smallest Effect Size of Interest (SESOI)?</li>
 </ul></li>
+<li>Held constant: <span class="math inline">\(\alpha\)</span>, power, effect size</li>
+<li>Used to determine: minimum <span class="math inline">\(N\)</span></li>
 </ul>
 </section>
 <section id="sensitivity-power-analysis" class="slide level2">
@@ -787,6 +796,8 @@ Mark Himmelstein
 <li>…80% power?</li>
 <li>…95% power?</li>
 </ul></li>
+<li>Held constant: <span class="math inline">\(\alpha\)</span>, <span class="math inline">\(N\)</span>, power</li>
+<li>Used to determine: minimum effect size</li>
 </ul>
 </section>
 <section id="retrospective-power-analysis" class="slide level2">
@@ -801,6 +812,8 @@ Mark Himmelstein
 <li>…<span class="math inline">\(d = .5\)</span>?</li>
 <li>SESOI?</li>
 </ul></li>
+<li>Held constant: <span class="math inline">\(\alpha\)</span>, <span class="math inline">\(N\)</span>, effect size</li>
+<li>Used to determine: power</li>
 </ul>
 </section>
 <section id="observed-power-analysis" class="slide level2">
@@ -825,7 +838,7 @@ Mark Himmelstein
 </ul>
 <p>Imagine what would happen if we do an analysis, but <strong>only</strong> report results when our observed effect size implies at least 80% power. We’re going risk</p>
 <ul>
-<li>Making way more Type I error’s than our actual <span class="math inline">\(\alpha = .05\)</span></li>
+<li>Making way more Type I errors than our actual <span class="math inline">\(\alpha = .05\)</span></li>
 <li>Way overestimating our true effect size</li>
 </ul>
 </section>
@@ -834,29 +847,29 @@ Mark Himmelstein
 <div style="font-size: 0.8em;">
 <p>In this example, I’m simulating a case where the null hypothesis is true, which means we should only reject it 5% of the time.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>iter <span class="ot">&lt;-</span> <span class="dv">10000</span> <span class="do">## number of iterations</span></span>
-<span id="cb6-2"><a></a>N <span class="ot">&lt;-</span> <span class="dv">50</span> <span class="do">## sample size</span></span>
-<span id="cb6-3"><a></a>mu <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="do">## population mean</span></span>
-<span id="cb6-4"><a></a>sigma <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="do">## population SD</span></span>
-<span id="cb6-5"><a></a>res <span class="ot">&lt;-</span> <span class="fu">logical</span>(iter) <span class="do">## Container for results</span></span>
-<span id="cb6-6"><a></a><span class="fu">set.seed</span>(<span class="dv">1005</span>)</span>
-<span id="cb6-7"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>iter){</span>
-<span id="cb6-8"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, mu, sigma) </span>
-<span id="cb6-9"><a></a>  tt <span class="ot">&lt;-</span> <span class="fu">t.test</span>(x, <span class="at">mu =</span> <span class="dv">0</span>) <span class="do">## conduct t-test, H_0: mu = 0</span></span>
-<span id="cb6-10"><a></a>  res[i] <span class="ot">&lt;-</span> tt<span class="sc">$</span>p.value <span class="sc">&lt;</span> .<span class="dv">05</span> <span class="do">## Check whether we reject null at alpha = .05</span></span>
-<span id="cb6-11"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>iter <span class="ot">&lt;-</span> <span class="dv">10000</span> <span class="do">## number of iterations</span></span>
+<span id="cb7-2"><a></a>N <span class="ot">&lt;-</span> <span class="dv">50</span> <span class="do">## sample size</span></span>
+<span id="cb7-3"><a></a>mu <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="do">## population mean</span></span>
+<span id="cb7-4"><a></a>sigma <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="do">## population SD</span></span>
+<span id="cb7-5"><a></a>res <span class="ot">&lt;-</span> <span class="fu">logical</span>(iter) <span class="do">## Container for results</span></span>
+<span id="cb7-6"><a></a><span class="fu">set.seed</span>(<span class="dv">1005</span>)</span>
+<span id="cb7-7"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>iter){</span>
+<span id="cb7-8"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, mu, sigma) </span>
+<span id="cb7-9"><a></a>  tt <span class="ot">&lt;-</span> <span class="fu">t.test</span>(x, <span class="at">mu =</span> <span class="dv">0</span>) <span class="do">## conduct t-test, H_0: mu = 0</span></span>
+<span id="cb7-10"><a></a>  res[i] <span class="ot">&lt;-</span> tt<span class="sc">$</span>p.value <span class="sc">&lt;</span> .<span class="dv">05</span> <span class="do">## Check whether we reject null at alpha = .05</span></span>
+<span id="cb7-11"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Let’s see how often we (correctly) reject the null</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">table</span>(res) <span class="co"># did we reject the null?</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">table</span>(res) <span class="co"># did we reject the null?</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a></a><span class="ex">res</span></span>
-<span id="cb8-2"><a></a><span class="ex">FALSE</span>  TRUE </span>
-<span id="cb8-3"><a></a> <span class="ex">9479</span>   521 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a></a><span class="ex">res</span></span>
+<span id="cb9-2"><a></a><span class="ex">FALSE</span>  TRUE </span>
+<span id="cb9-3"><a></a> <span class="ex">9479</span>   521 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">sum</span>(res)<span class="sc">/</span>iter</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">sum</span>(res)<span class="sc">/</span>iter</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a></a><span class="ex">[1]</span> 0.0521</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a></a><span class="ex">[1]</span> 0.0521</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>So far so good</p>
@@ -866,42 +879,42 @@ Mark Himmelstein
 <h2>File Drawer</h2>
 <p>Now let’s see what happens if I ONLY keep the times where my <strong>observed</strong> power based on each individual sample is at least 80%. All the other times, I “file drawer” my results, and no one ever sees them but me</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>iter <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb11-2"><a></a>res <span class="ot">&lt;-</span> <span class="fu">character</span>(iter) <span class="co"># Empty container</span></span>
-<span id="cb11-3"><a></a><span class="fu">set.seed</span>(<span class="dv">4501</span>)</span>
-<span id="cb11-4"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>iter){</span>
-<span id="cb11-5"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, mu, sigma)</span>
-<span id="cb11-6"><a></a>  d <span class="ot">&lt;-</span> effectsize<span class="sc">::</span><span class="fu">cohens_d</span>(x) <span class="do">## observed cohen's d</span></span>
-<span id="cb11-7"><a></a>  </span>
-<span id="cb11-8"><a></a>  <span class="do">## do power analysis with observed cohen's d:</span></span>
-<span id="cb11-9"><a></a>  pwr_res <span class="ot">&lt;-</span> <span class="fu">pwr.t.test</span>(<span class="at">n =</span> <span class="dv">50</span>,</span>
-<span id="cb11-10"><a></a>                        <span class="at">d =</span> d<span class="sc">$</span>Cohens_d,</span>
-<span id="cb11-11"><a></a>                        <span class="at">sig.level =</span> .<span class="dv">05</span>,</span>
-<span id="cb11-12"><a></a>                        <span class="at">power =</span> <span class="cn">NULL</span>,</span>
-<span id="cb11-13"><a></a>                        <span class="at">type =</span> <span class="st">"one.sample"</span>)</span>
-<span id="cb11-14"><a></a>  </span>
-<span id="cb11-15"><a></a>  <span class="do">## Save my result if it had enough power</span></span>
-<span id="cb11-16"><a></a>  <span class="cf">if</span> (pwr_res<span class="sc">$</span>power <span class="sc">&gt;</span> .<span class="dv">8</span>){</span>
-<span id="cb11-17"><a></a>  tt <span class="ot">&lt;-</span> <span class="fu">t.test</span>(x)</span>
-<span id="cb11-18"><a></a>  res[i] <span class="ot">&lt;-</span> tt<span class="sc">$</span>p.value <span class="sc">&lt;</span> .<span class="dv">05</span></span>
-<span id="cb11-19"><a></a>  }</span>
-<span id="cb11-20"><a></a>  </span>
-<span id="cb11-21"><a></a>  <span class="do">## Otherwise file it away for none to see!</span></span>
-<span id="cb11-22"><a></a>  <span class="cf">else</span>{</span>
-<span id="cb11-23"><a></a>    res[i] <span class="ot">&lt;-</span> <span class="st">"file drawered"</span></span>
-<span id="cb11-24"><a></a>  }</span>
-<span id="cb11-25"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>iter <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb12-2"><a></a>res <span class="ot">&lt;-</span> <span class="fu">character</span>(iter) <span class="co"># Empty container</span></span>
+<span id="cb12-3"><a></a><span class="fu">set.seed</span>(<span class="dv">4501</span>)</span>
+<span id="cb12-4"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>iter){</span>
+<span id="cb12-5"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, mu, sigma)</span>
+<span id="cb12-6"><a></a>  d <span class="ot">&lt;-</span> effectsize<span class="sc">::</span><span class="fu">cohens_d</span>(x) <span class="do">## observed cohen's d</span></span>
+<span id="cb12-7"><a></a>  </span>
+<span id="cb12-8"><a></a>  <span class="do">## do power analysis with observed cohen's d:</span></span>
+<span id="cb12-9"><a></a>  pwr_res <span class="ot">&lt;-</span> <span class="fu">pwr.t.test</span>(<span class="at">n =</span> <span class="dv">50</span>,</span>
+<span id="cb12-10"><a></a>                        <span class="at">d =</span> d<span class="sc">$</span>Cohens_d,</span>
+<span id="cb12-11"><a></a>                        <span class="at">sig.level =</span> .<span class="dv">05</span>,</span>
+<span id="cb12-12"><a></a>                        <span class="at">power =</span> <span class="cn">NULL</span>,</span>
+<span id="cb12-13"><a></a>                        <span class="at">type =</span> <span class="st">"one.sample"</span>)</span>
+<span id="cb12-14"><a></a>  </span>
+<span id="cb12-15"><a></a>  <span class="do">## Save my result if it had enough power</span></span>
+<span id="cb12-16"><a></a>  <span class="cf">if</span> (pwr_res<span class="sc">$</span>power <span class="sc">&gt;</span> .<span class="dv">8</span>){</span>
+<span id="cb12-17"><a></a>  tt <span class="ot">&lt;-</span> <span class="fu">t.test</span>(x)</span>
+<span id="cb12-18"><a></a>  res[i] <span class="ot">&lt;-</span> tt<span class="sc">$</span>p.value <span class="sc">&lt;</span> .<span class="dv">05</span></span>
+<span id="cb12-19"><a></a>  }</span>
+<span id="cb12-20"><a></a>  </span>
+<span id="cb12-21"><a></a>  <span class="do">## Otherwise file it away for none to see!</span></span>
+<span id="cb12-22"><a></a>  <span class="cf">else</span>{</span>
+<span id="cb12-23"><a></a>    res[i] <span class="ot">&lt;-</span> <span class="st">"file drawered"</span></span>
+<span id="cb12-24"><a></a>  }</span>
+<span id="cb12-25"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="results" class="slide level2">
 <h2>Results</h2>
 <p>How often did we reject, retain, or file drawer the null?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">table</span>(res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">table</span>(res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a></a><span class="ex">res</span></span>
-<span id="cb13-2"><a></a><span class="fu">file</span> drawered          TRUE </span>
-<span id="cb13-3"><a></a>         <span class="ex">9918</span>            82 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a></a><span class="ex">res</span></span>
+<span id="cb14-2"><a></a><span class="fu">file</span> drawered          TRUE </span>
+<span id="cb14-3"><a></a>         <span class="ex">9918</span>            82 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <ul>
@@ -918,16 +931,16 @@ Mark Himmelstein
 <li>We can also look at our distribution of <span class="math inline">\(d\)</span> and how well that estimates the true <span class="math inline">\(\delta\)</span></li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>mu <span class="ot">&lt;-</span> .<span class="dv">1</span> <span class="co"># now there is an actual effect</span></span>
-<span id="cb14-2"><a></a>res <span class="ot">&lt;-</span> <span class="fu">numeric</span>(iter)</span>
-<span id="cb14-3"><a></a>ds <span class="ot">&lt;-</span>  <span class="fu">numeric</span>(iter)</span>
-<span id="cb14-4"><a></a><span class="fu">set.seed</span>(<span class="dv">521</span>)</span>
-<span id="cb14-5"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>iter){</span>
-<span id="cb14-6"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, mu, sigma)</span>
-<span id="cb14-7"><a></a>  tt <span class="ot">&lt;-</span> <span class="fu">t.test</span>(x, <span class="at">mu =</span> <span class="dv">0</span>)</span>
-<span id="cb14-8"><a></a>  res[i] <span class="ot">&lt;-</span> tt<span class="sc">$</span>p.value <span class="sc">&lt;</span> .<span class="dv">05</span></span>
-<span id="cb14-9"><a></a>  ds[i] <span class="ot">&lt;-</span> effectsize<span class="sc">::</span><span class="fu">cohens_d</span>(x)<span class="sc">$</span>Cohens_d</span>
-<span id="cb14-10"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>mu <span class="ot">&lt;-</span> .<span class="dv">1</span> <span class="co"># now there is an actual effect</span></span>
+<span id="cb15-2"><a></a>res <span class="ot">&lt;-</span> <span class="fu">numeric</span>(iter)</span>
+<span id="cb15-3"><a></a>ds <span class="ot">&lt;-</span>  <span class="fu">numeric</span>(iter)</span>
+<span id="cb15-4"><a></a><span class="fu">set.seed</span>(<span class="dv">521</span>)</span>
+<span id="cb15-5"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>iter){</span>
+<span id="cb15-6"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, mu, sigma)</span>
+<span id="cb15-7"><a></a>  tt <span class="ot">&lt;-</span> <span class="fu">t.test</span>(x, <span class="at">mu =</span> <span class="dv">0</span>)</span>
+<span id="cb15-8"><a></a>  res[i] <span class="ot">&lt;-</span> tt<span class="sc">$</span>p.value <span class="sc">&lt;</span> .<span class="dv">05</span></span>
+<span id="cb15-9"><a></a>  ds[i] <span class="ot">&lt;-</span> effectsize<span class="sc">::</span><span class="fu">cohens_d</span>(x)<span class="sc">$</span>Cohens_d</span>
+<span id="cb15-10"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="real-results" class="slide level2">
@@ -937,29 +950,29 @@ Mark Himmelstein
 <li>How often did we reject?</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">table</span>(res) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">table</span>(res) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a></a><span class="ex">res</span></span>
-<span id="cb16-2"><a></a>   <span class="ex">0</span>    1 </span>
-<span id="cb16-3"><a></a><span class="ex">8943</span> 1057 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a></a><span class="ex">res</span></span>
+<span id="cb17-2"><a></a>   <span class="ex">0</span>    1 </span>
+<span id="cb17-3"><a></a><span class="ex">8943</span> 1057 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <ul>
 <li>What was our power?</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="fu">sum</span>(res)<span class="sc">/</span>iter </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">sum</span>(res)<span class="sc">/</span>iter </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a></a><span class="ex">[1]</span> 0.1057</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a></a><span class="ex">[1]</span> 0.1057</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <ul>
 <li>What was the mean <span class="math inline">\(d\)</span> across samples?</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">mean</span>(ds) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">mean</span>(ds) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a></a><span class="ex">[1]</span> 0.09853073</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a></a><span class="ex">[1]</span> 0.09853073</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>So far so good</p>
@@ -968,30 +981,30 @@ Mark Himmelstein
 <h2>Effect Inflation</h2>
 <p>Now let’s see what would happen if file drawer results where our observed effect indicated insufficient power again</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>iter <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb21-2"><a></a>ds <span class="ot">&lt;-</span> <span class="fu">numeric</span>(iter) <span class="co"># Empty container</span></span>
-<span id="cb21-3"><a></a><span class="fu">set.seed</span>(<span class="dv">4501</span>)</span>
-<span id="cb21-4"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>iter){</span>
-<span id="cb21-5"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, mu, sigma)</span>
-<span id="cb21-6"><a></a>  d <span class="ot">&lt;-</span> effectsize<span class="sc">::</span><span class="fu">cohens_d</span>(x) <span class="do">## observed cohen's d</span></span>
-<span id="cb21-7"><a></a>  </span>
-<span id="cb21-8"><a></a>  <span class="do">## do power analysis with observed cohen's d:</span></span>
-<span id="cb21-9"><a></a>  pwr_res <span class="ot">&lt;-</span> <span class="fu">pwr.t.test</span>(<span class="at">n =</span> <span class="dv">50</span>,</span>
-<span id="cb21-10"><a></a>                        <span class="at">d =</span> d<span class="sc">$</span>Cohens_d,</span>
-<span id="cb21-11"><a></a>                        <span class="at">sig.level =</span> .<span class="dv">05</span>,</span>
-<span id="cb21-12"><a></a>                        <span class="at">power =</span> <span class="cn">NULL</span>,</span>
-<span id="cb21-13"><a></a>                        <span class="at">type =</span> <span class="st">"one.sample"</span>)</span>
-<span id="cb21-14"><a></a>  </span>
-<span id="cb21-15"><a></a>  <span class="do">## Save my result if it had enough power</span></span>
-<span id="cb21-16"><a></a>  <span class="cf">if</span> (pwr_res<span class="sc">$</span>power <span class="sc">&gt;</span> .<span class="dv">8</span>){</span>
-<span id="cb21-17"><a></a>  ds[i] <span class="ot">&lt;-</span> d<span class="sc">$</span>Cohens_d</span>
-<span id="cb21-18"><a></a>  }</span>
-<span id="cb21-19"><a></a>  </span>
-<span id="cb21-20"><a></a>  <span class="do">## Otherwise file it away for none to see! (just leave it missing)</span></span>
-<span id="cb21-21"><a></a>  <span class="cf">else</span>{</span>
-<span id="cb21-22"><a></a>    ds[i] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb21-23"><a></a>  }</span>
-<span id="cb21-24"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>iter <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb22-2"><a></a>ds <span class="ot">&lt;-</span> <span class="fu">numeric</span>(iter) <span class="co"># Empty container</span></span>
+<span id="cb22-3"><a></a><span class="fu">set.seed</span>(<span class="dv">4501</span>)</span>
+<span id="cb22-4"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>iter){</span>
+<span id="cb22-5"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N, mu, sigma)</span>
+<span id="cb22-6"><a></a>  d <span class="ot">&lt;-</span> effectsize<span class="sc">::</span><span class="fu">cohens_d</span>(x) <span class="do">## observed cohen's d</span></span>
+<span id="cb22-7"><a></a>  </span>
+<span id="cb22-8"><a></a>  <span class="do">## do power analysis with observed cohen's d:</span></span>
+<span id="cb22-9"><a></a>  pwr_res <span class="ot">&lt;-</span> <span class="fu">pwr.t.test</span>(<span class="at">n =</span> <span class="dv">50</span>,</span>
+<span id="cb22-10"><a></a>                        <span class="at">d =</span> d<span class="sc">$</span>Cohens_d,</span>
+<span id="cb22-11"><a></a>                        <span class="at">sig.level =</span> .<span class="dv">05</span>,</span>
+<span id="cb22-12"><a></a>                        <span class="at">power =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-13"><a></a>                        <span class="at">type =</span> <span class="st">"one.sample"</span>)</span>
+<span id="cb22-14"><a></a>  </span>
+<span id="cb22-15"><a></a>  <span class="do">## Save my result if it had enough power</span></span>
+<span id="cb22-16"><a></a>  <span class="cf">if</span> (pwr_res<span class="sc">$</span>power <span class="sc">&gt;</span> .<span class="dv">8</span>){</span>
+<span id="cb22-17"><a></a>  ds[i] <span class="ot">&lt;-</span> d<span class="sc">$</span>Cohens_d</span>
+<span id="cb22-18"><a></a>  }</span>
+<span id="cb22-19"><a></a>  </span>
+<span id="cb22-20"><a></a>  <span class="do">## Otherwise file it away for none to see! (just leave it missing)</span></span>
+<span id="cb22-21"><a></a>  <span class="cf">else</span>{</span>
+<span id="cb22-22"><a></a>    ds[i] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb22-23"><a></a>  }</span>
+<span id="cb22-24"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="inflation-result" class="slide level2">
@@ -999,9 +1012,9 @@ Mark Himmelstein
 <p>This time I just left the file drawered results as missing (<code>NA</code>)</p>
 <p>Let’s look at our average <span class="math inline">\(d\)</span> in the cases where we didn’t file drawer</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">mean</span>(ds, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="fu">mean</span>(ds, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a></a><span class="ex">[1]</span> 0.4421423</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a></a><span class="ex">[1]</span> 0.4421423</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>Our average 4.5x as large as the true population <span class="math inline">\(\delta\)</span>! We’re way overestimating it.</p>
