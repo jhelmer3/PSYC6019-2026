@@ -14,6 +14,9 @@ execute:
   echo: true
   dpi: 600
   freeze: auto
+knitr:
+  opts_chunk:
+    dev: svg
 ---
 
 ## Outline
@@ -38,7 +41,7 @@ library(gt)
 
 ## *Z*- vs. *T*-Distribution
 
-*T*-distribution has thicker tails
+*t*-distribution has thicker tails than a normal distribution
 
 As df increases, it looks more like a standard normal distribution
 
@@ -171,6 +174,25 @@ data.frame(x = seq(-5, 5, length.out = 1000)) |>
 ```
 
 
+## *T*-Distribution Explorer
+
+[Probability Playground: *t*-distribution](https://probabilityplayground.com/t.html){target="blank" preview-link="true"}
+
+
+:::: {.columns}
+::: {.column width="10%"}
+
+:::
+
+::: {.column width="80%"}
+<iframe src="https://probabilityplayground.com/t.html" width="960px" height="500px" style="border: 1px solid lightgray"></iframe>
+:::
+
+::: {.column width="10%"}
+
+:::
+::::
+
 
 ## *T*-Test: How many tails?
 
@@ -180,7 +202,7 @@ Need to consider whether to use a "one-tail" or "two-tail" *t*-test.
 ::: {.column}
 #### One-Tail (One-Sided)
 
-We want to test whether something is lower or higher than a value, but **not both**
+We want to test whether something is lower **or** higher than a value, but **not both**
 
 Only one limit
 :::
@@ -301,7 +323,7 @@ $$t = \frac{\bar{x} - \mu}{SE} = \frac{\bar{x} - \mu}{\frac{s}{\sqrt{n}}}$$
 With a *t*-test, we don't have a known population SD ($\sigma$), so we use the SD we observe in our sample $s$.
 
 :::: {.columns}
-::: {.column .fragment width="50%"}
+::: {.column .fragment width="47.5%"}
 Often, we compare our sample mean to a hypothesized mean of zero
 
 $H_0$: $\mu = 0$
@@ -309,7 +331,11 @@ $H_0$: $\mu = 0$
 $H_1$: $\mu \neq 0$
 :::
 
-::: {.column .fragment width="50%"}
+::: {.column width="5%"}
+
+:::
+
+::: {.column .fragment width="47.5%"}
 If that's the case, our *t*-statistic calculation reduces to 
 
 $t \bigg|_{\mu = 0} = \frac{\bar{x} - 0}{\frac{s}{\sqrt{n}}} = \frac{\bar{x}}{\frac{s}{\sqrt{n}}}$
@@ -319,11 +345,9 @@ $t \bigg|_{\mu = 0} = \frac{\bar{x} - 0}{\frac{s}{\sqrt{n}}} = \frac{\bar{x}}{\f
 
 ## *T*-Test Example
 
-Let's say a researcher claims the average city miles per gallon across all cars is 30mpg. They collect a sample of 234 cars and would like you to test this. We do not know the population standard deviation.
+Let's you work for a car manufacturer, and a researcher claims the average city miles per gallon across all cars is 30mpg. They collect data on a sample of 234 cars and would like you to test this. We do not know the population standard deviation.
 
-::: fragment
-One- or two-tailed?
-:::
+[One- or two-tailed?]{.fragment} [Two!]{.fragment}
 
 :::: {.columns style="font-size:80%"}
 ::: {.column .fragment width="75%"}
@@ -344,15 +368,15 @@ cty_t_stat
 ```
 :::
 
-::: {.column width="25%"}
-[Our observed *t*-statistic exceeds our cutoff *t*-statistic, so we reject the null.]{.fragment}
+::: {.column .fragment width="25%"}
+Our observed *t*-statistic exceeds our cutoff *t*-statistic, so we reject the null.
 :::
 ::::
 
 
 ## *T*-Test Function
 
-Alternatively, we can use `t.test(x)`
+Alternatively, we can use `t.test(x, mu = 0, alternative = "two.sided")`
 
 <div class="subpoint">○ `x` = vector of numeric data </div>
 
@@ -368,8 +392,8 @@ t.test(mpg$cty, mu = 30, alternative = "two.sided")
 ```
 :::
 
-::: {.column width="25%"}
-[We see a significant difference between our observed sample mean and our hypothesized population mean.]{.fragment}
+::: {.column .fragment width="25%"}
+We see a significant difference between our observed sample mean and our hypothesized population mean.
 :::
 ::::
 
@@ -379,38 +403,12 @@ t.test(mpg$cty, mu = 30, alternative = "two.sided")
 ::: {style="font-size:80%"}
 We can create QQ plots with `ggplot`
 
-`geom_qq()` adds the points, `geom_qq_line()` adds the expected line.
+**New `geom`s**: geom_qq()` adds the points, `geom_qq_line()` adds the expected line.
 
 The `aes()` we need to specify is `sample`
 
-:::: {.columns}
-::: {.column width="50%"}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-mpg |>
-  ggplot(aes(x = cty)) +
-  geom_histogram(aes(y = after_stat(density)), binwidth = 3) +
-  geom_density() 
-```
-
-### Code
-```{r}
-#| eval: false
-mpg |>
-  ggplot(aes(x = cty)) +
-  geom_histogram(aes(y = after_stat(density)), binwidth = 3) +
-  geom_density() 
-```
-:::
-
-:::
-
-::: {.column width="50%"}
+::::: {.columns}
+:::: {.column .fragment width="50%"}
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -432,10 +430,34 @@ mpg |>
   geom_qq() +
   geom_qq_line()
 ```
-:::
-
 :::
 ::::
+
+:::: {.column .fragment width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+mpg |>
+  ggplot(aes(x = cty)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 3) +
+  geom_density() 
+```
+
+### Code
+```{r}
+#| eval: false
+mpg |>
+  ggplot(aes(x = cty)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 3) +
+  geom_density() 
+```
+:::
+::::
+:::::
 
 :::
 
@@ -445,7 +467,7 @@ mpg |>
 :::: {.columns}
 ::: column
 ```{r}
-cty_ttest <- t.test(mpg$cty)
+cty_ttest <- t.test(mpg$cty, mu = 30, alternative = "two.sided")
 cty_ttest
 
 #?t.test
@@ -514,20 +536,22 @@ c(ci_lower, ci_upper)
 
 ## *T*-Test Example
 
-Let's say a different researcher claims the average city miles per gallon across all cars is 30mpg. They collect a sample of 234 cars You are confident they are wrong---you think it is certainly less than that. We do not know the population standard deviation.
+Let's say a different researcher claims the average city miles per gallon across all cars is 50mpg. They collect a sample of 234 cars. You are confident they are wrong---you think it is certainly less than that. We do not know the population standard deviation.
 
-::: fragment
-One- or two-tailed?
-:::
+[One- or two-tailed?]{.fragment} [One!]{.fragment}
 
 :::: {.columns style="font-size:80%"}
 ::: {.column .fragment width="75%"}
 ```{r}
-t.test(mpg$cty, mu = 30, alternative = "less")
+t.test(mpg$cty, mu = 50, alternative = "less")
+
+
+
+
 ```
 :::
-::: {.column width="25%"}
-[We see a significant difference between our observed sample mean and our hypothesized population mean.]{.fragment}
+::: {.column .fragment width="25%"}
+We see a significant difference between our observed sample mean and our hypothesized population mean of 50 city MPG.
 :::
 ::::
 
@@ -540,8 +564,8 @@ Say you want to find the cutoff *t* values: $t(\text{df}=3)$ and $t(\text{df}=37
 Which will have the larger magnitude cutoff values?
 :::
 
-:::: {.columns .fragment style="font-size:70%"}
-::: column
+:::: {.columns style="font-size:70%"}
+::: {.column .fragment}
 **One-Tailed**
 
 All of our $\alpha = .05$ goes on the upper side
@@ -558,7 +582,7 @@ $t_{crit}(\text{df}=3) = 2.35$
 $t_{crit}(\text{df}=37) = 1.69$
 :::
 
-::: column
+::: {.column .fragment}
 **Two-Tailed**
 
 $\alpha = 1 - .95 = 5\%$ on both sides
@@ -659,10 +683,18 @@ head(four_cyl); head(eight_cyl)
 
 ## Independent Samples *T*-Test: R Calculation
 
+:::: {.columns .fragment}
+::: {.column width="50%"}
 $$ t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}} = \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} $$
+:::
+
+::: {.column width="50%"}
+$$ s_p^2 = \frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{(n_1 - 1) + (n_2 - 1)} $$
+:::
+::::
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
 x_bar_four <- mean(four_cyl)
 sd_four <- sd(four_cyl)
@@ -676,7 +708,7 @@ x_bar_four; x_bar_eight
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
 pooled_sd <- sqrt(
   ((n_four - 1) * sd_four^2 + (n_eight - 1) * sd_eight^2) /
@@ -737,6 +769,10 @@ x_bar_difference + t_crits * se
 
 `t.test(outcome ~ group_var, data, var.equal = T)`
 
+<div class="subpoint">○ `var.equal = T`: tells `R` *not* to use the Welch-Satterthwaite correction  </div>
+
+<div class="subsubpoint">○ for demonstration. Generally, we can leave it to its default (if you don't specify `var.equal = T`, it will default to `var.equal = F`! </div>
+
 ```{r}
 t.test(hwy ~ cyl, filtered_mpg, var.equal = T)
 ```
@@ -759,6 +795,7 @@ Look for normality and *homogeneity of variance*: both groups have the same vari
 #| fig-height: 3
 #| fig-align: center
 filtered_mpg |>
+  mutate(cyl = factor(cyl)) |>
   ggplot(aes(x = hwy, color = cyl, fill = cyl, group = cyl)) +
   geom_histogram(aes(y = after_stat(density)), binwidth = 3, alpha = 0.4, color = NA) +
   geom_density(alpha = 0.6) +
@@ -769,13 +806,13 @@ filtered_mpg |>
 ```{r}
 #| eval: false
 filtered_mpg |>
+  mutate(cyl = factor(cyl)) |>
   ggplot(aes(x = hwy, color = cyl, fill = cyl, group = cyl)) +
   geom_histogram(aes(y = after_stat(density)), binwidth = 3, alpha = 0.4, color = NA) +
   geom_density(alpha = 0.6) +
   theme_classic()
 ```
 :::
-
 :::
 
 ::: {.column width="50%"}
@@ -787,6 +824,7 @@ filtered_mpg |>
 #| fig-height: 3
 #| fig-align: center
 filtered_mpg |>
+  mutate(cyl = factor(cyl)) |>
   ggplot(aes(sample = hwy, color = cyl, group = cyl)) +
   geom_qq() +
   geom_qq_line() +
@@ -797,6 +835,7 @@ filtered_mpg |>
 ```{r}
 #| eval: false
 filtered_mpg |>
+  mutate(cyl = factor(cyl)) |>
   ggplot(aes(sample = hwy, color = cyl, group = cyl)) +
   geom_qq() +
   geom_qq_line() +
@@ -908,7 +947,7 @@ This time, focus on difference scores (individual differences in the observation
 
 ## Paired Samples *T*-Test
 
-Need difference score for each observation $d_i = x_2 - x_1$
+Need difference score for each observation $d_i = x_{2_i} - x_{1_i}$
 
 Then, get mean difference $\bar{d} = \frac{d_1 \ + \ d_2 \ + \ ... \ + \ d_n}{n}$ and standard deviation of those difference scores $s_d = \sqrt{\frac{(d_1-\bar{d})^2 \ + \ (d_2-\bar{d})^2 \ + \ ... \ + \ (d_n-\bar{d})^2}{n - 1}}$
 
@@ -919,10 +958,10 @@ Compare against critical *t*-value with df = $n - 1$
 
 ## Paired Samples *T*-Test: R Example
 
-You own an ice cream shop, and you want to decide which flavor of ice cream (vanilla or cookie dough) you want to run a promotion for! The promotion would be for the ice cream flavor that has been selling less. For 20 days, you track the sales of each ice cream flavor.
+You own an ice cream shop, and you want to decide which flavor of ice cream (vanilla or cookie dough) you want to run a promotion for! The promotion would be for the ice cream flavor that has been selling *less*. For 20 days, you track the sales of each ice cream flavor.
 
 ```{r}
-ice_cream_sales <- read.csv(here::here("lab", "data", "lab_04", "ice_cream_sales_data.csv"))
+ice_cream_sales <- read.csv(here::here("lab", "data", "lab_05", "ice_cream_sales_data.csv"))
 
 glimpse(ice_cream_sales)
 ```
@@ -1002,7 +1041,7 @@ CI: [`r ci |> round(2) |> paste(collapse = ", ")`]
 `t.test(y1_vector, y2_vector, paired = T)`
 
 ```{r}
-t.test(ice_cream_cleaned$vanilla, ice_cream_cleaned$cookie_dough, paired = T)$stderr
+t.test(ice_cream_cleaned$vanilla, ice_cream_cleaned$cookie_dough, paired = T)
 ```
 
 
@@ -1069,7 +1108,7 @@ ice_cream_cleaned |>
 
 :::
 
-Not many data points, but seems OK!
+Not many data points... QQ-plot at least seems OK!
 
 <!-- ```{r} -->
 <!-- ice_cream_sales |> -->
@@ -1092,6 +1131,9 @@ Not many data points, but seems OK!
 ## *T*-Test: Interpretation and write-up
 
 An [independent samples / paired samples] *t*-test analysis was conducted between [group 1] and [group 2]. We [[fail to reject]{.navy-color} / [reject]{.gold-color}] $H_0$ [[in favor of $H_1$]{.gold-color}], *t*([df]) = [____], *p* [[< 0.05]{.gold-color} / [p-value]{.navy-color}]. We [[did not]{.navy-color}] observe[[d]{.gold-color}] a significant difference between the mean [outcome] of [group 1] and [group 2] in our sample.
+
+
+## Lab 05 Assignment
 
 
 <!-- ## Cohen's *D* Revisited -->
