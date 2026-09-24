@@ -415,14 +415,95 @@ Mark Himmelstein
 <p><span class="math display">\[\text{percent}_i = \beta_0 + \beta_1 \text{Cond} + \epsilon_i\]</span></p>
 </div>
 </section>
+<section id="linear-model-form" class="slide level2">
+<h2>Linear Model Form</h2>
+<p>You might notice that this model has a familiar form</p>
+<ul>
+<li><strong>Linear equation:</strong> <span class="math inline">\(y = mx + b\)</span></li>
+<li><strong>Linear model equation:</strong> <span class="math inline">\(y_i = \beta_0 + \beta_1 x + \epsilon_i\)</span></li>
+</ul>
+<p>Where the “linear” component of the model is:</p>
+<ul>
+<li><span class="math inline">\(\beta_0\)</span> = intercept</li>
+<li><span class="math inline">\(\beta_1\)</span> = slope</li>
+</ul>
+<p>And then there is also</p>
+<ul>
+<li><span class="math inline">\(\epsilon_i\)</span>: residual error
+<ul>
+<li>How <span class="math inline">\(y_i\)</span> deviates from predictions</li>
+</ul></li>
+</ul>
+</section>
+<section id="linear-predictions-one-mean" class="slide level2">
+<h2>Linear Predictions (One Mean)</h2>
+<p>If we just use the <strong>overall</strong> mean</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">mean</span>(dat<span class="sc">$</span>percent)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a></a><span class="ex">[1]</span> 0.5219378</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>How does this map onto our linear equation?</p>
+</section>
+<section id="base-plot" class="slide level2">
+<h2>Base Plot</h2>
+
+<img data-src="Lecture-12-The-Model-Based-Perspective_v0_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="adding-control" class="slide level2">
+<h2>Adding Control</h2>
+
+<img data-src="Lecture-12-The-Model-Based-Perspective_v0_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="adding-self-handicap" class="slide level2">
+<h2>Adding Self-Handicap</h2>
+
+<img data-src="Lecture-12-The-Model-Based-Perspective_v0_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="adding-slope" class="slide level2">
+<h2>Adding Slope</h2>
+
+<img data-src="Lecture-12-The-Model-Based-Perspective_v0_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="linear-predictions-group-means" class="slide level2">
+<h2>Linear Predictions (Group Means)</h2>
+<p>If we use the <strong>group</strong> means</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>dat <span class="sc">|&gt;</span> <span class="fu">group_by</span>(Cond) <span class="sc">|&gt;</span> <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(percent))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a></a><span class="co"># A tibble: 2 × 2</span></span>
+<span id="cb4-2"><a></a>  <span class="ex">Cond</span>           mean</span>
+<span id="cb4-3"><a></a>  <span class="op">&lt;</span>fct<span class="op">&gt;</span>         <span class="op">&lt;</span>dbl<span class="op">&gt;</span></span>
+<span id="cb4-4"><a></a><span class="ex">1</span> control       0.583</span>
+<span id="cb4-5"><a></a><span class="ex">2</span> self-handicap 0.466</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>How does this map onto our linear equation?</p>
+</section>
+<section id="base-plot-1" class="slide level2">
+<h2>Base Plot</h2>
+
+<img data-src="Lecture-12-The-Model-Based-Perspective_v0_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="adding-control-1" class="slide level2">
+<h2>Adding Control</h2>
+
+<img data-src="Lecture-12-The-Model-Based-Perspective_v0_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="adding-self-handicap-1" class="slide level2">
+<h2>Adding Self-Handicap</h2>
+
+<img data-src="Lecture-12-The-Model-Based-Perspective_v0_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="adding-slope-1" class="slide level2">
+<h2>Adding Slope</h2>
+
+<img data-src="Lecture-12-The-Model-Based-Perspective_v0_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="the-general-linear-model" class="slide level2">
 <h2>The General Linear Model</h2>
 <p>On of the most common forms a statistical model can take is called the <strong>general linear model</strong>, which has the form</p>
 <p><span class="math display">\[y_i = \beta_0 + \sum_{p=1}^P \beta_p x_{ip} + \epsilon_i\]</span></p>
 <p>Where <span class="math inline">\(P\)</span> is the number of <em>predictor variables</em> in our model.</p>
 <ul>
-<li><span class="math inline">\(\beta_0\)</span> is the “intercept”</li>
-<li><span class="math inline">\(\beta_p\)</span> is/are “slope(s)”</li>
+<li><span class="math inline">\(\beta_0\)</span> is the intercept</li>
+<li><span class="math inline">\(\beta_p\)</span> is/are slope(s)
+<ul>
+<li>More on how we deal with slopes (plural) later!</li>
+</ul></li>
 <li><span class="math inline">\(\epsilon_i\)</span> is residual error</li>
 </ul>
 </section>
@@ -431,7 +512,7 @@ Mark Himmelstein
 <ul>
 <li><strong>Predictor variables</strong> are sometimes referred to as <strong>independent variables</strong>
 <ul>
-<li>In our example <code>Cond</code> can be thought of as a predictor variable and <span class="math inline">\(P = 1\)</span></li>
+<li>In our example <code>Cond</code> can be thought of as a predictor variable and <span class="math inline">\(P = 1\)</span> (just one predictor)</li>
 </ul></li>
 <li>We can refer to <span class="math inline">\(y\)</span> in this model as our <strong>outcome</strong> or <strong>dependent</strong> variable
 <ul>
@@ -443,8 +524,12 @@ Mark Himmelstein
 <li><strong>Dependent</strong> = <strong>Outcome</strong> variables</li>
 </ul></li>
 </ul>
-<p>The parameters of a general linear model are <span class="math inline">\(\beta_0 \dots \beta_P\)</span> AND <span class="math inline">\(\sigma^2_{\epsilon}\)</span> (variance of the residuals)</p>
+<p>The parameters of a general linear model are <span class="math inline">\(\beta_0 \dots \beta_P\)</span> AND <span class="math inline">\(\sigma^2_{\epsilon}\)</span> (variance of the residuals, aka pooled variance)</p>
 </section>
+<section id="with-shared-sigma" class="slide level2">
+<h2>With Shared <span class="math inline">\(\sigma\)</span></h2>
+
+<img data-src="Lecture-12-The-Model-Based-Perspective_v0_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="linear-algebra-form" class="slide level2">
 <h2>Linear Algebra Form</h2>
 <p>Or we can use linear algebra to write our model more compactly as</p>
@@ -454,7 +539,7 @@ Mark Himmelstein
 <li><span class="math inline">\(\boldsymbol{y}\)</span> is a vector of length <span class="math inline">\(N\)</span> representing our outcome variable</li>
 <li><span class="math inline">\(\boldsymbol{X}\)</span> is an <span class="math inline">\(N \times P + 1\)</span> matrix of predictors
 <ul>
-<li>The first column is just a column vector of ones (to account for the intercept)</li>
+<li>The first column is just a column of ones (to account for the intercept)</li>
 </ul></li>
 <li><span class="math inline">\(\boldsymbol{\beta}\)</span> is a vector of length <span class="math inline">\(P + 1\)</span> of coefficients, including intercept</li>
 <li><span class="math inline">\(\boldsymbol{\epsilon}\)</span> is a vector of length <span class="math inline">\(N\)</span> of residuals</li>
@@ -463,19 +548,19 @@ Mark Himmelstein
 <section id="original-t-test" class="slide level2">
 <h2>Original <span class="math inline">\(t\)</span>-test</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">t.test</span>(percent <span class="sc">~</span> Cond, dat, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">t.test</span>(percent <span class="sc">~</span> Cond, dat, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a></a></span>
-<span id="cb2-2"><a></a>    <span class="ex">Two</span> Sample t-test</span>
-<span id="cb2-3"><a></a></span>
-<span id="cb2-4"><a></a><span class="ex">data:</span>  percent by Cond</span>
-<span id="cb2-5"><a></a><span class="ex">t</span> = 2.3255, df = 59, p-value = 0.02351</span>
-<span id="cb2-6"><a></a><span class="ex">alternative</span> hypothesis: true difference in means between group control and group self-handicap is not equal to 0</span>
-<span id="cb2-7"><a></a><span class="ex">95</span> percent confidence interval:</span>
-<span id="cb2-8"><a></a> <span class="ex">0.01636472</span> 0.21820793</span>
-<span id="cb2-9"><a></a><span class="ex">sample</span> estimates:</span>
-<span id="cb2-10"><a></a>      <span class="ex">mean</span> in group control mean in group self-handicap </span>
-<span id="cb2-11"><a></a>                  <span class="ex">0.5834651</span>                   0.4661788 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a></a></span>
+<span id="cb6-2"><a></a>    <span class="ex">Two</span> Sample t-test</span>
+<span id="cb6-3"><a></a></span>
+<span id="cb6-4"><a></a><span class="ex">data:</span>  percent by Cond</span>
+<span id="cb6-5"><a></a><span class="ex">t</span> = 2.3255, df = 59, p-value = 0.02351</span>
+<span id="cb6-6"><a></a><span class="ex">alternative</span> hypothesis: true difference in means between group control and group self-handicap is not equal to 0</span>
+<span id="cb6-7"><a></a><span class="ex">95</span> percent confidence interval:</span>
+<span id="cb6-8"><a></a> <span class="ex">0.01636472</span> 0.21820793</span>
+<span id="cb6-9"><a></a><span class="ex">sample</span> estimates:</span>
+<span id="cb6-10"><a></a>      <span class="ex">mean</span> in group control mean in group self-handicap </span>
+<span id="cb6-11"><a></a>                  <span class="ex">0.5834651</span>                   0.4661788 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>This was the <span class="math inline">\(t\)</span>-test we saw previously (without the Welch-Satterthwaite adjustment)</p>
@@ -485,28 +570,28 @@ Mark Himmelstein
 <div style="font-size: 0.9em;">
 <p>We can write a general linear model in <code>R</code> using the <code>lm()</code> function and formula syntax and examine the output with <code>summary()</code>. The <code>Coefficients</code> table will show us information about <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>. Let’s compare the output to the <span class="math inline">\(t\)</span>-test we have already seen</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> Cond, dat)</span>
-<span id="cb3-2"><a></a><span class="fu">summary</span>(lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> Cond, dat)</span>
+<span id="cb7-2"><a></a><span class="fu">summary</span>(lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a></a></span>
-<span id="cb4-2"><a></a><span class="ex">Call:</span></span>
-<span id="cb4-3"><a></a><span class="ex">lm</span><span class="er">(</span><span class="ex">formula</span> = percent ~ Cond, data = dat<span class="kw">)</span></span>
-<span id="cb4-4"><a></a></span>
-<span id="cb4-5"><a></a><span class="ex">Residuals:</span></span>
-<span id="cb4-6"><a></a>     <span class="ex">Min</span>       1Q   Median       3Q      Max </span>
-<span id="cb4-7"><a></a><span class="ex">-0.38347</span> <span class="at">-0.18347</span>  0.03382  0.13382  0.41653 </span>
-<span id="cb4-8"><a></a></span>
-<span id="cb4-9"><a></a><span class="ex">Coefficients:</span></span>
-<span id="cb4-10"><a></a>                  <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span>    </span>
-<span id="cb4-11"><a></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>        <span class="ex">0.58347</span>    0.03653  15.972   <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
-<span id="cb4-12"><a></a><span class="ex">Condself-handicap</span> <span class="at">-0.11729</span>    0.05044  <span class="at">-2.325</span>   0.0235 <span class="pp">*</span>  </span>
-<span id="cb4-13"><a></a><span class="ex">---</span></span>
-<span id="cb4-14"><a></a><span class="ex">Signif.</span> codes:  </span>
-<span id="cb4-15"><a></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span>
-<span id="cb4-16"><a></a></span>
-<span id="cb4-17"><a></a><span class="ex">Residual</span> standard error: 0.1967 on 59 degrees of freedom</span>
-<span id="cb4-18"><a></a><span class="ex">Multiple</span> R-squared:  0.08396,   Adjusted R-squared:  0.06844 </span>
-<span id="cb4-19"><a></a><span class="ex">F-statistic:</span> 5.408 on 1 and 59 DF,  p-value: 0.02351</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a></a></span>
+<span id="cb8-2"><a></a><span class="ex">Call:</span></span>
+<span id="cb8-3"><a></a><span class="ex">lm</span><span class="er">(</span><span class="ex">formula</span> = percent ~ Cond, data = dat<span class="kw">)</span></span>
+<span id="cb8-4"><a></a></span>
+<span id="cb8-5"><a></a><span class="ex">Residuals:</span></span>
+<span id="cb8-6"><a></a>     <span class="ex">Min</span>       1Q   Median       3Q      Max </span>
+<span id="cb8-7"><a></a><span class="ex">-0.38347</span> <span class="at">-0.18347</span>  0.03382  0.13382  0.41653 </span>
+<span id="cb8-8"><a></a></span>
+<span id="cb8-9"><a></a><span class="ex">Coefficients:</span></span>
+<span id="cb8-10"><a></a>                  <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span>    </span>
+<span id="cb8-11"><a></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>        <span class="ex">0.58347</span>    0.03653  15.972   <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
+<span id="cb8-12"><a></a><span class="ex">Condself-handicap</span> <span class="at">-0.11729</span>    0.05044  <span class="at">-2.325</span>   0.0235 <span class="pp">*</span>  </span>
+<span id="cb8-13"><a></a><span class="ex">---</span></span>
+<span id="cb8-14"><a></a><span class="ex">Signif.</span> codes:  </span>
+<span id="cb8-15"><a></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span>
+<span id="cb8-16"><a></a></span>
+<span id="cb8-17"><a></a><span class="ex">Residual</span> standard error: 0.1967 on 59 degrees of freedom</span>
+<span id="cb8-18"><a></a><span class="ex">Multiple</span> R-squared:  0.08396,   Adjusted R-squared:  0.06844 </span>
+<span id="cb8-19"><a></a><span class="ex">F-statistic:</span> 5.408 on 1 and 59 DF,  p-value: 0.02351</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -535,16 +620,16 @@ Mark Himmelstein
 <p>I can manually recode <code>Cond</code> to the numeric values that match what I want.</p>
 <p>I can then plug in for <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(x\)</span> (cond) to make predictions about <span class="math inline">\(y\)</span> (percent)</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>dat<span class="sc">$</span>Cond_numeric <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(dat<span class="sc">$</span>Cond <span class="sc">==</span> <span class="st">"control"</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
-<span id="cb5-2"><a></a>(y_hat <span class="ot">&lt;-</span> <span class="fl">0.583</span> <span class="sc">-</span> .<span class="dv">117</span> <span class="sc">*</span> dat<span class="sc">$</span>Cond_numeric)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>dat<span class="sc">$</span>Cond_numeric <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(dat<span class="sc">$</span>Cond <span class="sc">==</span> <span class="st">"control"</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb9-2"><a></a>(y_hat <span class="ot">&lt;-</span> <span class="fl">0.583</span> <span class="sc">-</span> .<span class="dv">117</span> <span class="sc">*</span> dat<span class="sc">$</span>Cond_numeric)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a></a> <span class="ex">[1]</span> 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466</span>
-<span id="cb6-2"><a></a><span class="ex">[10]</span> 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466</span>
-<span id="cb6-3"><a></a><span class="ex">[19]</span> 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466</span>
-<span id="cb6-4"><a></a><span class="ex">[28]</span> 0.466 0.466 0.466 0.466 0.466 0.583 0.583 0.583 0.583</span>
-<span id="cb6-5"><a></a><span class="ex">[37]</span> 0.583 0.583 0.583 0.583 0.583 0.583 0.583 0.583 0.583</span>
-<span id="cb6-6"><a></a><span class="ex">[46]</span> 0.583 0.583 0.583 0.583 0.583 0.583 0.583 0.583 0.583</span>
-<span id="cb6-7"><a></a><span class="ex">[55]</span> 0.583 0.583 0.583 0.583 0.583 0.583 0.583</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a></a> <span class="ex">[1]</span> 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466</span>
+<span id="cb10-2"><a></a><span class="ex">[10]</span> 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466</span>
+<span id="cb10-3"><a></a><span class="ex">[19]</span> 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466 0.466</span>
+<span id="cb10-4"><a></a><span class="ex">[28]</span> 0.466 0.466 0.466 0.466 0.466 0.583 0.583 0.583 0.583</span>
+<span id="cb10-5"><a></a><span class="ex">[37]</span> 0.583 0.583 0.583 0.583 0.583 0.583 0.583 0.583 0.583</span>
+<span id="cb10-6"><a></a><span class="ex">[46]</span> 0.583 0.583 0.583 0.583 0.583 0.583 0.583 0.583 0.583</span>
+<span id="cb10-7"><a></a><span class="ex">[55]</span> 0.583 0.583 0.583 0.583 0.583 0.583 0.583</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -552,30 +637,30 @@ Mark Himmelstein
 <h2>Auto-predicted Values</h2>
 <p>Or I can used the <code>predict()</code> function to do it for me</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>(y_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>(y_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a></a>        <span class="ex">1</span>         2         3         4         5         6 </span>
-<span id="cb8-2"><a></a><span class="ex">0.4661788</span> 0.4661788 0.4661788 0.4661788 0.4661788 0.4661788 </span>
-<span id="cb8-3"><a></a>        <span class="ex">7</span>         8         9        10        11        12 </span>
-<span id="cb8-4"><a></a><span class="ex">0.4661788</span> 0.4661788 0.4661788 0.4661788 0.4661788 0.4661788 </span>
-<span id="cb8-5"><a></a>       <span class="ex">13</span>        14        15        16        17        18 </span>
-<span id="cb8-6"><a></a><span class="ex">0.4661788</span> 0.4661788 0.4661788 0.4661788 0.4661788 0.4661788 </span>
-<span id="cb8-7"><a></a>       <span class="ex">19</span>        20        21        22        23        24 </span>
-<span id="cb8-8"><a></a><span class="ex">0.4661788</span> 0.4661788 0.4661788 0.4661788 0.4661788 0.4661788 </span>
-<span id="cb8-9"><a></a>       <span class="ex">25</span>        26        27        28        29        30 </span>
-<span id="cb8-10"><a></a><span class="ex">0.4661788</span> 0.4661788 0.4661788 0.4661788 0.4661788 0.4661788 </span>
-<span id="cb8-11"><a></a>       <span class="ex">31</span>        32        33        34        35        36 </span>
-<span id="cb8-12"><a></a><span class="ex">0.4661788</span> 0.4661788 0.5834651 0.5834651 0.5834651 0.5834651 </span>
-<span id="cb8-13"><a></a>       <span class="ex">37</span>        38        39        40        41        42 </span>
-<span id="cb8-14"><a></a><span class="ex">0.5834651</span> 0.5834651 0.5834651 0.5834651 0.5834651 0.5834651 </span>
-<span id="cb8-15"><a></a>       <span class="ex">43</span>        44        45        46        47        48 </span>
-<span id="cb8-16"><a></a><span class="ex">0.5834651</span> 0.5834651 0.5834651 0.5834651 0.5834651 0.5834651 </span>
-<span id="cb8-17"><a></a>       <span class="ex">49</span>        50        51        52        53        54 </span>
-<span id="cb8-18"><a></a><span class="ex">0.5834651</span> 0.5834651 0.5834651 0.5834651 0.5834651 0.5834651 </span>
-<span id="cb8-19"><a></a>       <span class="ex">55</span>        56        57        58        59        60 </span>
-<span id="cb8-20"><a></a><span class="ex">0.5834651</span> 0.5834651 0.5834651 0.5834651 0.5834651 0.5834651 </span>
-<span id="cb8-21"><a></a>       <span class="ex">61</span> </span>
-<span id="cb8-22"><a></a><span class="ex">0.5834651</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a></a>        <span class="ex">1</span>         2         3         4         5         6 </span>
+<span id="cb12-2"><a></a><span class="ex">0.4661788</span> 0.4661788 0.4661788 0.4661788 0.4661788 0.4661788 </span>
+<span id="cb12-3"><a></a>        <span class="ex">7</span>         8         9        10        11        12 </span>
+<span id="cb12-4"><a></a><span class="ex">0.4661788</span> 0.4661788 0.4661788 0.4661788 0.4661788 0.4661788 </span>
+<span id="cb12-5"><a></a>       <span class="ex">13</span>        14        15        16        17        18 </span>
+<span id="cb12-6"><a></a><span class="ex">0.4661788</span> 0.4661788 0.4661788 0.4661788 0.4661788 0.4661788 </span>
+<span id="cb12-7"><a></a>       <span class="ex">19</span>        20        21        22        23        24 </span>
+<span id="cb12-8"><a></a><span class="ex">0.4661788</span> 0.4661788 0.4661788 0.4661788 0.4661788 0.4661788 </span>
+<span id="cb12-9"><a></a>       <span class="ex">25</span>        26        27        28        29        30 </span>
+<span id="cb12-10"><a></a><span class="ex">0.4661788</span> 0.4661788 0.4661788 0.4661788 0.4661788 0.4661788 </span>
+<span id="cb12-11"><a></a>       <span class="ex">31</span>        32        33        34        35        36 </span>
+<span id="cb12-12"><a></a><span class="ex">0.4661788</span> 0.4661788 0.5834651 0.5834651 0.5834651 0.5834651 </span>
+<span id="cb12-13"><a></a>       <span class="ex">37</span>        38        39        40        41        42 </span>
+<span id="cb12-14"><a></a><span class="ex">0.5834651</span> 0.5834651 0.5834651 0.5834651 0.5834651 0.5834651 </span>
+<span id="cb12-15"><a></a>       <span class="ex">43</span>        44        45        46        47        48 </span>
+<span id="cb12-16"><a></a><span class="ex">0.5834651</span> 0.5834651 0.5834651 0.5834651 0.5834651 0.5834651 </span>
+<span id="cb12-17"><a></a>       <span class="ex">49</span>        50        51        52        53        54 </span>
+<span id="cb12-18"><a></a><span class="ex">0.5834651</span> 0.5834651 0.5834651 0.5834651 0.5834651 0.5834651 </span>
+<span id="cb12-19"><a></a>       <span class="ex">55</span>        56        57        58        59        60 </span>
+<span id="cb12-20"><a></a><span class="ex">0.5834651</span> 0.5834651 0.5834651 0.5834651 0.5834651 0.5834651 </span>
+<span id="cb12-21"><a></a>       <span class="ex">61</span> </span>
+<span id="cb12-22"><a></a><span class="ex">0.5834651</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -584,13 +669,13 @@ Mark Himmelstein
 <p><span class="math display">\[\text{mean squared error (MSE)} = \frac{\sum (y - \hat{y}_i)^2}{N}\]</span></p>
 <p><span class="math display">\[\text{root mean squared error (RMSE)} = \sqrt{MSE}\]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>(mse_full <span class="ot">&lt;-</span> <span class="fu">mean</span>((y_hat <span class="sc">-</span> dat<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>(mse_full <span class="ot">&lt;-</span> <span class="fu">mean</span>((y_hat <span class="sc">-</span> dat<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a></a><span class="ex">[1]</span> 0.03742971</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a></a><span class="ex">[1]</span> 0.03742971</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>(rmse_full <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(mse_full))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>(rmse_full <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(mse_full))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a></a><span class="ex">[1]</span> 0.1934676</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a></a><span class="ex">[1]</span> 0.1934676</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>What can we do with these?</p>
@@ -600,7 +685,7 @@ Mark Himmelstein
 <p>One thing we might consider is whether this model, which assumes each group has a separate mean, makes better predictions than a simpler model</p>
 <ul>
 <li><strong>Better predictions</strong> <span class="math inline">\(\rightarrow\)</span> <strong>less error</strong></li>
-<li><strong>simpler model</strong> <span class="math inline">\(\rightarrow\)</span> <strong>fewer parameters</strong></li>
+<li><strong>Simpler model</strong> <span class="math inline">\(\rightarrow\)</span> <strong>fewer parameters</strong></li>
 </ul>
 <p>What’s a model we might consider that has fewer parameters?</p>
 <ul>
@@ -612,63 +697,65 @@ Mark Himmelstein
 <p>We already saw an example of the “mean as model” earlier, sometimes called an “unconditional model” or “intercept only” model.</p>
 <p>In our running example, we would write it as</p>
 <p><span class="math display">\[\text{percent}_i = \beta_0 + \epsilon_i\]</span></p>
+<p><strong>Alternatively:</strong> We are implicitly fixing <span class="math inline">\(\beta_1 = 0\)</span> and estimating <span class="math inline">\(\beta_0\)</span></p>
+<p><span class="math display">\[\text{percent}_i = \beta_0 + 0(\text{Cond}) + \epsilon_i\]</span></p>
 <ul>
-<li>In this model, <span class="math inline">\(\beta_0 = \mu\)</span></li>
+<li>In this model, <span class="math inline">\(\beta_0 = \mu\)</span>, which we estimate with <span class="math inline">\(\bar{x}\)</span></li>
 </ul>
 <p>In <code>R</code> we write an unconditional model by putting a <code>1</code> on the right hand side of our formula</p>
 </section>
 <section id="unconditional-model" class="slide level2">
 <h2>Unconditional model</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>lm_unconditional <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> <span class="dv">1</span>, dat)</span>
-<span id="cb13-2"><a></a><span class="fu">summary</span>(lm_unconditional)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>lm_unconditional <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> <span class="dv">1</span>, dat)</span>
+<span id="cb17-2"><a></a><span class="fu">summary</span>(lm_unconditional)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a></a></span>
-<span id="cb14-2"><a></a><span class="ex">Call:</span></span>
-<span id="cb14-3"><a></a><span class="ex">lm</span><span class="er">(</span><span class="ex">formula</span> = percent ~ 1, data = dat<span class="kw">)</span></span>
-<span id="cb14-4"><a></a></span>
-<span id="cb14-5"><a></a><span class="ex">Residuals:</span></span>
-<span id="cb14-6"><a></a>     <span class="ex">Min</span>       1Q   Median       3Q      Max </span>
-<span id="cb14-7"><a></a><span class="ex">-0.40194</span> <span class="at">-0.12194</span> <span class="at">-0.02194</span>  0.14473  0.47806 </span>
-<span id="cb14-8"><a></a></span>
-<span id="cb14-9"><a></a><span class="ex">Coefficients:</span></span>
-<span id="cb14-10"><a></a>            <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span>    </span>
-<span id="cb14-11"><a></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>   <span class="ex">0.5219</span>     0.0261      20   <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
-<span id="cb14-12"><a></a><span class="ex">---</span></span>
-<span id="cb14-13"><a></a><span class="ex">Signif.</span> codes:  </span>
-<span id="cb14-14"><a></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span>
-<span id="cb14-15"><a></a></span>
-<span id="cb14-16"><a></a><span class="ex">Residual</span> standard error: 0.2038 on 60 degrees of freedom</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a></a></span>
+<span id="cb18-2"><a></a><span class="ex">Call:</span></span>
+<span id="cb18-3"><a></a><span class="ex">lm</span><span class="er">(</span><span class="ex">formula</span> = percent ~ 1, data = dat<span class="kw">)</span></span>
+<span id="cb18-4"><a></a></span>
+<span id="cb18-5"><a></a><span class="ex">Residuals:</span></span>
+<span id="cb18-6"><a></a>     <span class="ex">Min</span>       1Q   Median       3Q      Max </span>
+<span id="cb18-7"><a></a><span class="ex">-0.40194</span> <span class="at">-0.12194</span> <span class="at">-0.02194</span>  0.14473  0.47806 </span>
+<span id="cb18-8"><a></a></span>
+<span id="cb18-9"><a></a><span class="ex">Coefficients:</span></span>
+<span id="cb18-10"><a></a>            <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span>    </span>
+<span id="cb18-11"><a></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>   <span class="ex">0.5219</span>     0.0261      20   <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
+<span id="cb18-12"><a></a><span class="ex">---</span></span>
+<span id="cb18-13"><a></a><span class="ex">Signif.</span> codes:  </span>
+<span id="cb18-14"><a></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span>
+<span id="cb18-15"><a></a></span>
+<span id="cb18-16"><a></a><span class="ex">Residual</span> standard error: 0.2038 on 60 degrees of freedom</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="predicted-values-1" class="slide level2">
 <h2>Predicted Values</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>(y_hat_unconditional <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_unconditional))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>(y_hat_unconditional <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_unconditional))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a></a>        <span class="ex">1</span>         2         3         4         5         6 </span>
-<span id="cb16-2"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
-<span id="cb16-3"><a></a>        <span class="ex">7</span>         8         9        10        11        12 </span>
-<span id="cb16-4"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
-<span id="cb16-5"><a></a>       <span class="ex">13</span>        14        15        16        17        18 </span>
-<span id="cb16-6"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
-<span id="cb16-7"><a></a>       <span class="ex">19</span>        20        21        22        23        24 </span>
-<span id="cb16-8"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
-<span id="cb16-9"><a></a>       <span class="ex">25</span>        26        27        28        29        30 </span>
-<span id="cb16-10"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
-<span id="cb16-11"><a></a>       <span class="ex">31</span>        32        33        34        35        36 </span>
-<span id="cb16-12"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
-<span id="cb16-13"><a></a>       <span class="ex">37</span>        38        39        40        41        42 </span>
-<span id="cb16-14"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
-<span id="cb16-15"><a></a>       <span class="ex">43</span>        44        45        46        47        48 </span>
-<span id="cb16-16"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
-<span id="cb16-17"><a></a>       <span class="ex">49</span>        50        51        52        53        54 </span>
-<span id="cb16-18"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
-<span id="cb16-19"><a></a>       <span class="ex">55</span>        56        57        58        59        60 </span>
-<span id="cb16-20"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
-<span id="cb16-21"><a></a>       <span class="ex">61</span> </span>
-<span id="cb16-22"><a></a><span class="ex">0.5219378</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a></a>        <span class="ex">1</span>         2         3         4         5         6 </span>
+<span id="cb20-2"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
+<span id="cb20-3"><a></a>        <span class="ex">7</span>         8         9        10        11        12 </span>
+<span id="cb20-4"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
+<span id="cb20-5"><a></a>       <span class="ex">13</span>        14        15        16        17        18 </span>
+<span id="cb20-6"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
+<span id="cb20-7"><a></a>       <span class="ex">19</span>        20        21        22        23        24 </span>
+<span id="cb20-8"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
+<span id="cb20-9"><a></a>       <span class="ex">25</span>        26        27        28        29        30 </span>
+<span id="cb20-10"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
+<span id="cb20-11"><a></a>       <span class="ex">31</span>        32        33        34        35        36 </span>
+<span id="cb20-12"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
+<span id="cb20-13"><a></a>       <span class="ex">37</span>        38        39        40        41        42 </span>
+<span id="cb20-14"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
+<span id="cb20-15"><a></a>       <span class="ex">43</span>        44        45        46        47        48 </span>
+<span id="cb20-16"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
+<span id="cb20-17"><a></a>       <span class="ex">49</span>        50        51        52        53        54 </span>
+<span id="cb20-18"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
+<span id="cb20-19"><a></a>       <span class="ex">55</span>        56        57        58        59        60 </span>
+<span id="cb20-20"><a></a><span class="ex">0.5219378</span> 0.5219378 0.5219378 0.5219378 0.5219378 0.5219378 </span>
+<span id="cb20-21"><a></a>       <span class="ex">61</span> </span>
+<span id="cb20-22"><a></a><span class="ex">0.5219378</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><strong>Notice:</strong> Every single value is predicted to be <span class="math inline">\(\bar{x}\)</span>!</p>
@@ -676,27 +763,27 @@ Mark Himmelstein
 <section id="mse-and-rmse-1" class="slide level2">
 <h2>MSE and RMSE</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>(mse_unconditional <span class="ot">&lt;-</span> <span class="fu">mean</span>((y_hat_unconditional <span class="sc">-</span> dat<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>(mse_unconditional <span class="ot">&lt;-</span> <span class="fu">mean</span>((y_hat_unconditional <span class="sc">-</span> dat<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a></a><span class="ex">[1]</span> 0.04086041</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a></a><span class="ex">[1]</span> 0.04086041</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>(rmse_unconditional <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(mse_unconditional))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>(rmse_unconditional <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(mse_unconditional))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a></a><span class="ex">[1]</span> 0.2021396</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a></a><span class="ex">[1]</span> 0.2021396</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<p>Compared to our original model, these values are higher, meaning there is <strong>more error</strong></p>
+<p>Compared to our original “full” model (separate group means), these values are higher, meaning there is <strong>more error</strong></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>mse_full</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>mse_full</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a></a><span class="ex">[1]</span> 0.03742971</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a></a><span class="ex">[1]</span> 0.03742971</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>rmse_full</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>rmse_full</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a></a><span class="ex">[1]</span> 0.1934676</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a></a><span class="ex">[1]</span> 0.1934676</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<p>So the original model is better, right?</p>
+<p>So the full model is better, right?</p>
 </section>
 <section id="overfit" class="slide level2">
 <h2>Overfit</h2>
@@ -705,7 +792,7 @@ Mark Himmelstein
 <li>Any time you add a predictor to a linear model you estimate with a sample of data, you will reduce error in the predictions within the same sample</li>
 <li>This is known as “overfit”</li>
 <li>Bias in which a model captures random variation and treats it as informative signal</li>
-<li>In prediction, what we really care about is how well the model will predict <strong>new data</strong></li>
+<li>In prediction, what we really care about is how well the model will predict (generalize to) <strong>new data</strong></li>
 </ul>
 </section>
 <section id="overfit-visualized" class="slide level2">
@@ -753,129 +840,403 @@ Mark Himmelstein
 <p>Our data groups subjects by IDs indicated by the variable <code>Subject</code></p>
 <p>I’m going to use the <code>sample()</code> function to select half of the subjects and put them in a training set, and leave the rest for a testing set.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>subject_ids <span class="ot">&lt;-</span> dat<span class="sc">$</span>Subject</span>
-<span id="cb25-2"><a></a></span>
-<span id="cb25-3"><a></a><span class="fu">set.seed</span>(<span class="dv">5211</span>)</span>
-<span id="cb25-4"><a></a></span>
-<span id="cb25-5"><a></a>ids <span class="ot">&lt;-</span> <span class="fu">sample</span>(subject_ids, <span class="at">size =</span> <span class="fu">length</span>(subject_ids)<span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb25-6"><a></a></span>
-<span id="cb25-7"><a></a>dat1 <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">filter</span>(Subject <span class="sc">%in%</span> ids) <span class="co"># Training data</span></span>
-<span id="cb25-8"><a></a>dat2 <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span>(Subject <span class="sc">%in%</span> ids)) <span class="co"># Testing data</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>subject_ids <span class="ot">&lt;-</span> dat<span class="sc">$</span>Subject</span>
+<span id="cb29-2"><a></a></span>
+<span id="cb29-3"><a></a><span class="fu">set.seed</span>(<span class="dv">124</span>)</span>
+<span id="cb29-4"><a></a></span>
+<span id="cb29-5"><a></a>half_ids <span class="ot">&lt;-</span> <span class="fu">sample</span>(subject_ids, <span class="at">size =</span> <span class="fu">length</span>(subject_ids)<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb29-6"><a></a></span>
+<span id="cb29-7"><a></a>training_data <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">filter</span>(Subject <span class="sc">%in%</span> half_ids) <span class="co"># Training data</span></span>
+<span id="cb29-8"><a></a>testing_data <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span>(Subject <span class="sc">%in%</span> half_ids)) <span class="co"># Testing data</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<p>The code <code>filter(Subject %in% half_ids)</code> is saying only keep the subjects sampled in <code>half_ids</code>, and the <code>!</code> symbol is saying keep all the subjects NOT sampled in <code>half_ids</code></p>
 </section>
 <section id="training-data" class="slide level2">
 <h2>Training data</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>dat1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>training_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a></a><span class="co"># A tibble: 32 × 33</span></span>
-<span id="cb27-2"><a></a><span class="co"># Groups:   Subject [29]</span></span>
-<span id="cb27-3"><a></a>   <span class="ex">Subject</span> Cond  Attempted Correct percent Date  Time  SMT1 </span>
-<span id="cb27-4"><a></a>     <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>fct<span class="op">&gt;</span>     <span class="op">&lt;</span>int<span class="op">&gt;</span>   <span class="op">&lt;</span>int<span class="op">&gt;</span>   <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>chr<span class="op">&gt;</span> <span class="op">&lt;</span>chr<span class="op">&gt;</span> <span class="op">&lt;</span>chr<span class="op">&gt;</span></span>
-<span id="cb27-5"><a></a> <span class="ex">1</span>      12 self…        25       7   0.28  11/1… 18:2… c    </span>
-<span id="cb27-6"><a></a> <span class="ex">2</span>       9 self…        25       3   0.12  11/1… 12:1… c    </span>
-<span id="cb27-7"><a></a> <span class="ex">3</span>       6 self…         7       4   0.571 11/5… 19:3… c    </span>
-<span id="cb27-8"><a></a> <span class="ex">4</span>       2 self…        21       9   0.429 11/1… 19:4… c    </span>
-<span id="cb27-9"><a></a> <span class="ex">5</span>      24 self…        22       6   0.273 11/1… 16:5… c    </span>
-<span id="cb27-10"><a></a> <span class="ex">6</span>      29 self…        21      12   0.571 11/1… 12:2… c    </span>
-<span id="cb27-11"><a></a> <span class="ex">7</span>      38 self…         8       4   0.5   11/1… 15:3… c    </span>
-<span id="cb27-12"><a></a> <span class="ex">8</span>      42 self…         5       2   0.4   11/1… 20:3… c    </span>
-<span id="cb27-13"><a></a> <span class="ex">9</span>      44 self…         5       3   0.6   11/1… 14:2… c    </span>
-<span id="cb27-14"><a></a><span class="ex">10</span>      46 self…         7       3   0.429 11/1… 17:4… c    </span>
-<span id="cb27-15"><a></a><span class="co"># ℹ 22 more rows</span></span>
-<span id="cb27-16"><a></a><span class="co"># ℹ 25 more variables: SMT2 &lt;chr&gt;, SMT3 &lt;chr&gt;, SMT4 &lt;chr&gt;,</span></span>
-<span id="cb27-17"><a></a><span class="co">#   SMT5 &lt;chr&gt;, SMT6 &lt;chr&gt;, SMT7 &lt;chr&gt;, SMT8 &lt;chr&gt;,</span></span>
-<span id="cb27-18"><a></a><span class="co">#   SMT9 &lt;chr&gt;, SMT10 &lt;chr&gt;, SMT11 &lt;chr&gt;, SMT12 &lt;chr&gt;,</span></span>
-<span id="cb27-19"><a></a><span class="co">#   SMT13 &lt;chr&gt;, SMT14 &lt;int&gt;, SMT15 &lt;chr&gt;, SMT16 &lt;chr&gt;,</span></span>
-<span id="cb27-20"><a></a><span class="co">#   SMT17 &lt;chr&gt;, SMT18 &lt;chr&gt;, SMT19 &lt;int&gt;, SMT20 &lt;chr&gt;,</span></span>
-<span id="cb27-21"><a></a><span class="co">#   SMT21 &lt;chr&gt;, SMT22 &lt;chr&gt;, SMT23 &lt;chr&gt;, SMT24 &lt;chr&gt;, …</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a></a>   <span class="ex">Subject</span>          Cond Attempted Correct   percent</span>
+<span id="cb31-2"><a></a><span class="ex">1</span>        1 self-handicap        25       7 0.2800000</span>
+<span id="cb31-3"><a></a><span class="ex">2</span>        2 self-handicap        25       3 0.1200000</span>
+<span id="cb31-4"><a></a><span class="ex">3</span>        5 self-handicap         7       4 0.5714286</span>
+<span id="cb31-5"><a></a><span class="ex">4</span>        6 self-handicap        15       4 0.2666667</span>
+<span id="cb31-6"><a></a><span class="ex">5</span>        7 self-handicap        21       9 0.4285714</span>
+<span id="cb31-7"><a></a><span class="ex">6</span>        8 self-handicap         5       1 0.2000000</span>
+<span id="cb31-8"><a></a><span class="ex">7</span>       10 self-handicap        10       5 0.5000000</span>
+<span id="cb31-9"><a></a><span class="ex">8</span>       12 self-handicap        22       6 0.2727273</span>
+<span id="cb31-10"><a></a><span class="ex">9</span>       15 self-handicap        10       6 0.6000000</span>
+<span id="cb31-11"><a></a><span class="ex">10</span>      17 self-handicap        17       8 0.4705882</span>
+<span id="cb31-12"><a></a><span class="ex">11</span>      20 self-handicap         5       2 0.4000000</span>
+<span id="cb31-13"><a></a><span class="ex">12</span>      22 self-handicap        10       6 0.6000000</span>
+<span id="cb31-14"><a></a><span class="ex">13</span>      24 self-handicap         6       4 0.6666667</span>
+<span id="cb31-15"><a></a><span class="ex">14</span>      26 self-handicap        16       8 0.5000000</span>
+<span id="cb31-16"><a></a><span class="ex">15</span>      27 self-handicap         8       5 0.6250000</span>
+<span id="cb31-17"><a></a><span class="ex">16</span>      30 self-handicap        10       8 0.8000000</span>
+<span id="cb31-18"><a></a><span class="ex">17</span>      33       control        25       6 0.2400000</span>
+<span id="cb31-19"><a></a><span class="ex">18</span>      34       control         3       1 0.3333333</span>
+<span id="cb31-20"><a></a><span class="ex">19</span>      38       control        11       3 0.2727273</span>
+<span id="cb31-21"><a></a><span class="ex">20</span>      39       control        10       4 0.4000000</span>
+<span id="cb31-22"><a></a><span class="ex">21</span>      42       control        17      13 0.7647059</span>
+<span id="cb31-23"><a></a><span class="ex">22</span>      45       control        15      10 0.6666667</span>
+<span id="cb31-24"><a></a><span class="ex">23</span>      46       control         7       5 0.7142857</span>
+<span id="cb31-25"><a></a><span class="ex">24</span>      47       control        19       8 0.4210526</span>
+<span id="cb31-26"><a></a><span class="ex">25</span>      49       control         5       5 1.0000000</span>
+<span id="cb31-27"><a></a><span class="ex">26</span>      50       control        11       7 0.6363636</span>
+<span id="cb31-28"><a></a><span class="ex">27</span>      55       control        10       9 0.9000000</span>
+<span id="cb31-29"><a></a><span class="ex">28</span>      57       control        11       9 0.8181818</span>
+<span id="cb31-30"><a></a><span class="ex">29</span>      58       control        16      15 0.9375000</span>
+<span id="cb31-31"><a></a><span class="ex">30</span>      59       control         8       4 0.5000000</span>
+<span id="cb31-32"><a></a>         <span class="ex">Date</span>     Time SMT1 SMT2 SMT3 SMT4 SMT5 SMT6 SMT7</span>
+<span id="cb31-33"><a></a><span class="ex">1</span>  11/10/2014 18:20:58    c    x   ok   ok   ok    c   ok</span>
+<span id="cb31-34"><a></a><span class="ex">2</span>  11/10/2014 12:17:23    c    x   ok   ok   ok   ok   ok</span>
+<span id="cb31-35"><a></a><span class="ex">3</span>   11/5/2014 19:37:14    c    x    c    c    c   ok   ok</span>
+<span id="cb31-36"><a></a><span class="ex">4</span>  11/10/2014 13:51:47    c    x   ok   ok   ok   ok   ok</span>
+<span id="cb31-37"><a></a><span class="ex">5</span>  11/10/2014 19:49:58    c    x   ok   ok    c   ok   ok</span>
+<span id="cb31-38"><a></a><span class="ex">6</span>  11/12/2014  9:34:14    c    x   ok   ok   ok   99   99</span>
+<span id="cb31-39"><a></a><span class="ex">7</span>  11/12/2014 18:57:24    c    x   ok   ok    c    c   ok</span>
+<span id="cb31-40"><a></a><span class="ex">8</span>  11/13/2014 16:54:39    c    x   ok   ok   ok   ok   ok</span>
+<span id="cb31-41"><a></a><span class="ex">9</span>  11/17/2014  9:29:45    c    x   ok   ok   ok    c    c</span>
+<span id="cb31-42"><a></a><span class="ex">10</span> 11/17/2014 13:36:56    c    x   ok   ok   ok    c    c</span>
+<span id="cb31-43"><a></a><span class="ex">11</span> 11/17/2014 20:37:20    c    x   ok   ok    c   99   99</span>
+<span id="cb31-44"><a></a><span class="ex">12</span> 11/18/2014 16:56:59    c    x   ok   ok    c    c    c</span>
+<span id="cb31-45"><a></a><span class="ex">13</span> 11/18/2014 19:36:46    c    c   ok   ok    c    c   99</span>
+<span id="cb31-46"><a></a><span class="ex">14</span> 11/19/2014 14:45:49    c    x   ok   ok   ok   ok   ok</span>
+<span id="cb31-47"><a></a><span class="ex">15</span> 11/19/2014 16:10:47    c    x   ok   ok    c    c    c</span>
+<span id="cb31-48"><a></a><span class="ex">16</span> 11/21/2014 13:49:01    c    c   ok   ok    c    c    c</span>
+<span id="cb31-49"><a></a><span class="ex">17</span> 11/17/2014 14:21:52    c    x   ok   ok   ok   ok   ok</span>
+<span id="cb31-50"><a></a><span class="ex">18</span> 10/29/2014 14:19:46    c    x   ok   99   99   99   99</span>
+<span id="cb31-51"><a></a><span class="ex">19</span> 11/10/2014 19:07:59    c    x   ok   ok   ok   ok   ok</span>
+<span id="cb31-52"><a></a><span class="ex">20</span> 11/10/2014 20:45:57    c    x   ok   ok   ok    c   ok</span>
+<span id="cb31-53"><a></a><span class="ex">21</span> 11/12/2014 20:50:47    c    x    c   ok    c    c    c</span>
+<span id="cb31-54"><a></a><span class="ex">22</span> 11/14/2014 13:05:45    c    x   ok    c    c    c    c</span>
+<span id="cb31-55"><a></a><span class="ex">23</span> 11/17/2014 10:49:28    c    c   ok   ok    c    c    c</span>
+<span id="cb31-56"><a></a><span class="ex">24</span> 11/17/2014 12:59:13    c    x   ok   ok   ok    c   ok</span>
+<span id="cb31-57"><a></a><span class="ex">25</span> 11/17/2014 19:07:42    c    c    c    c    c   99   99</span>
+<span id="cb31-58"><a></a><span class="ex">26</span> 11/18/2014 13:28:33    c    c   ok   ok    c    c   ok</span>
+<span id="cb31-59"><a></a><span class="ex">27</span> 11/19/2014 16:42:53    c    c    c    c    c    c    c</span>
+<span id="cb31-60"><a></a><span class="ex">28</span> 11/20/2014 13:26:13    c    c    c   ok    c    c   ok</span>
+<span id="cb31-61"><a></a><span class="ex">29</span> 11/20/2014 14:45:59    c    c    c    c    c    c    c</span>
+<span id="cb31-62"><a></a><span class="ex">30</span> 11/25/2014  9:25:18    c    x   ok   ok    c    c    c</span>
+<span id="cb31-63"><a></a>   <span class="ex">SMT8</span> SMT9 SMT10 SMT11 SMT12 SMT13 SMT14 SMT15 SMT16</span>
+<span id="cb31-64"><a></a><span class="ex">1</span>     c    4     3     1     3     3     2     c     c</span>
+<span id="cb31-65"><a></a><span class="ex">2</span>     3    1     3     4     2     2     4     3     1</span>
+<span id="cb31-66"><a></a><span class="ex">3</span>    99   99    99    99    99    99    99    99    99</span>
+<span id="cb31-67"><a></a><span class="ex">4</span>     3    c     c     1     3     3     1     c    99</span>
+<span id="cb31-68"><a></a><span class="ex">5</span>     c    c     3     c     2     2     3     c     c</span>
+<span id="cb31-69"><a></a><span class="ex">6</span>    99   99    99    99    99    99    99    99    99</span>
+<span id="cb31-70"><a></a><span class="ex">7</span>     3    c     c    99    99    99    99    99    99</span>
+<span id="cb31-71"><a></a><span class="ex">8</span>     c    c     2     c     2     c     4     4     c</span>
+<span id="cb31-72"><a></a><span class="ex">9</span>     c    c     c    99    99    99    99    99    99</span>
+<span id="cb31-73"><a></a><span class="ex">10</span>    c    c     2     c     4     c     3     2     c</span>
+<span id="cb31-74"><a></a><span class="ex">11</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb31-75"><a></a><span class="ex">12</span>    c    c     2    99    99    99    99    99    99</span>
+<span id="cb31-76"><a></a><span class="ex">13</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb31-77"><a></a><span class="ex">14</span>    c    c     c     c     3     c     2     c     c</span>
+<span id="cb31-78"><a></a><span class="ex">15</span>    c   99    99    99    99    99    99    99    99</span>
+<span id="cb31-79"><a></a><span class="ex">16</span>    c    c     c    99    99    99    99    99    99</span>
+<span id="cb31-80"><a></a><span class="ex">17</span>    2    c     1     c     3     c     2     c     c</span>
+<span id="cb31-81"><a></a><span class="ex">18</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb31-82"><a></a><span class="ex">19</span>    2    c     3     c    99    99    99    99    99</span>
+<span id="cb31-83"><a></a><span class="ex">20</span>    c    c     2    99    99    99    99    99    99</span>
+<span id="cb31-84"><a></a><span class="ex">21</span>    c    c     c     c     c     c     3     c     c</span>
+<span id="cb31-85"><a></a><span class="ex">22</span>    c    2     c     c     c     c     3     4    99</span>
+<span id="cb31-86"><a></a><span class="ex">23</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb31-87"><a></a><span class="ex">24</span>    c    c     3     c     3     3     2     c     c</span>
+<span id="cb31-88"><a></a><span class="ex">25</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb31-89"><a></a><span class="ex">26</span>    c    c     1     c    99    99    99    99    99</span>
+<span id="cb31-90"><a></a><span class="ex">27</span>    c    c     3    99    99    99    99    99    99</span>
+<span id="cb31-91"><a></a><span class="ex">28</span>    c    c     c     c    99    99    99    99    99</span>
+<span id="cb31-92"><a></a><span class="ex">29</span>    c    c     c     c     c     c     2     c     c</span>
+<span id="cb31-93"><a></a><span class="ex">30</span>    2   99    99    99    99    99    99    99    99</span>
+<span id="cb31-94"><a></a>   <span class="ex">SMT17</span> SMT18 SMT19 SMT20 SMT21 SMT22 SMT23 SMT24 SMT25</span>
+<span id="cb31-95"><a></a><span class="ex">1</span>     ok    ok     4     c    ok    ok    ok     c     1</span>
+<span id="cb31-96"><a></a><span class="ex">2</span>     ok    ok     2     4    ok    ok    ok     c     c</span>
+<span id="cb31-97"><a></a><span class="ex">3</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-98"><a></a><span class="ex">4</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-99"><a></a><span class="ex">5</span>     ok     c     1     c    ok    99    99    99    99</span>
+<span id="cb31-100"><a></a><span class="ex">6</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-101"><a></a><span class="ex">7</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-102"><a></a><span class="ex">8</span>     ok    ok     4     4    ok    ok    99    99    99</span>
+<span id="cb31-103"><a></a><span class="ex">9</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-104"><a></a><span class="ex">10</span>    ok    99    99    99    99    99    99    99    99</span>
+<span id="cb31-105"><a></a><span class="ex">11</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-106"><a></a><span class="ex">12</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-107"><a></a><span class="ex">13</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-108"><a></a><span class="ex">14</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-109"><a></a><span class="ex">15</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-110"><a></a><span class="ex">16</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-111"><a></a><span class="ex">17</span>    ok    ok     1     3    ok    ok    ok     2     2</span>
+<span id="cb31-112"><a></a><span class="ex">18</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-113"><a></a><span class="ex">19</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-114"><a></a><span class="ex">20</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-115"><a></a><span class="ex">21</span>    ok    99    99    99    99    99    99    99    99</span>
+<span id="cb31-116"><a></a><span class="ex">22</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-117"><a></a><span class="ex">23</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-118"><a></a><span class="ex">24</span>     c    ok     1    99    99    99    99    99    99</span>
+<span id="cb31-119"><a></a><span class="ex">25</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-120"><a></a><span class="ex">26</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-121"><a></a><span class="ex">27</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-122"><a></a><span class="ex">28</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-123"><a></a><span class="ex">29</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-124"><a></a><span class="ex">30</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb31-125"><a></a>   <span class="ex">Cond_numeric</span></span>
+<span id="cb31-126"><a></a><span class="ex">1</span>             1</span>
+<span id="cb31-127"><a></a><span class="ex">2</span>             1</span>
+<span id="cb31-128"><a></a><span class="ex">3</span>             1</span>
+<span id="cb31-129"><a></a><span class="ex">4</span>             1</span>
+<span id="cb31-130"><a></a><span class="ex">5</span>             1</span>
+<span id="cb31-131"><a></a><span class="ex">6</span>             1</span>
+<span id="cb31-132"><a></a><span class="ex">7</span>             1</span>
+<span id="cb31-133"><a></a><span class="ex">8</span>             1</span>
+<span id="cb31-134"><a></a><span class="ex">9</span>             1</span>
+<span id="cb31-135"><a></a><span class="ex">10</span>            1</span>
+<span id="cb31-136"><a></a><span class="ex">11</span>            1</span>
+<span id="cb31-137"><a></a><span class="ex">12</span>            1</span>
+<span id="cb31-138"><a></a><span class="ex">13</span>            1</span>
+<span id="cb31-139"><a></a><span class="ex">14</span>            1</span>
+<span id="cb31-140"><a></a><span class="ex">15</span>            1</span>
+<span id="cb31-141"><a></a><span class="ex">16</span>            1</span>
+<span id="cb31-142"><a></a><span class="ex">17</span>            0</span>
+<span id="cb31-143"><a></a><span class="ex">18</span>            0</span>
+<span id="cb31-144"><a></a><span class="ex">19</span>            0</span>
+<span id="cb31-145"><a></a><span class="ex">20</span>            0</span>
+<span id="cb31-146"><a></a><span class="ex">21</span>            0</span>
+<span id="cb31-147"><a></a><span class="ex">22</span>            0</span>
+<span id="cb31-148"><a></a><span class="ex">23</span>            0</span>
+<span id="cb31-149"><a></a><span class="ex">24</span>            0</span>
+<span id="cb31-150"><a></a><span class="ex">25</span>            0</span>
+<span id="cb31-151"><a></a><span class="ex">26</span>            0</span>
+<span id="cb31-152"><a></a><span class="ex">27</span>            0</span>
+<span id="cb31-153"><a></a><span class="ex">28</span>            0</span>
+<span id="cb31-154"><a></a><span class="ex">29</span>            0</span>
+<span id="cb31-155"><a></a><span class="ex">30</span>            0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="testing-data" class="slide level2">
 <h2>Testing data</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>dat2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>testing_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a></a><span class="co"># A tibble: 29 × 33</span></span>
-<span id="cb29-2"><a></a><span class="co"># Groups:   Subject [29]</span></span>
-<span id="cb29-3"><a></a>   <span class="ex">Subject</span> Cond  Attempted Correct percent Date  Time  SMT1 </span>
-<span id="cb29-4"><a></a>     <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>fct<span class="op">&gt;</span>     <span class="op">&lt;</span>int<span class="op">&gt;</span>   <span class="op">&lt;</span>int<span class="op">&gt;</span>   <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>chr<span class="op">&gt;</span> <span class="op">&lt;</span>chr<span class="op">&gt;</span> <span class="op">&lt;</span>chr<span class="op">&gt;</span></span>
-<span id="cb29-5"><a></a> <span class="ex">1</span>       1 self…        16       9   0.562 10/2… 13:2… c    </span>
-<span id="cb29-6"><a></a> <span class="ex">2</span>    5044 self…         5       2   0.4   11/5… 13:3… c    </span>
-<span id="cb29-7"><a></a> <span class="ex">3</span>      11 self…        15       4   0.267 11/1… 13:5… c    </span>
-<span id="cb29-8"><a></a> <span class="ex">4</span>      16 self…         5       1   0.2   11/1… 9:34… c    </span>
-<span id="cb29-9"><a></a> <span class="ex">5</span>       3 self…         8       5   0.625 11/1… 13:2… c    </span>
-<span id="cb29-10"><a></a> <span class="ex">6</span>      20 self…        10       5   0.5   11/1… 18:5… c    </span>
-<span id="cb29-11"><a></a> <span class="ex">7</span>      22 self…         7       4   0.571 11/1… 20:2… c    </span>
-<span id="cb29-12"><a></a> <span class="ex">8</span>      26 self…         7       3   0.429 11/1… 9:30… c    </span>
-<span id="cb29-13"><a></a> <span class="ex">9</span>      32 self…        10       6   0.6   11/1… 9:29… c    </span>
-<span id="cb29-14"><a></a><span class="ex">10</span>      34 self…         7       3   0.429 11/1… 12:2… c    </span>
-<span id="cb29-15"><a></a><span class="co"># ℹ 19 more rows</span></span>
-<span id="cb29-16"><a></a><span class="co"># ℹ 25 more variables: SMT2 &lt;chr&gt;, SMT3 &lt;chr&gt;, SMT4 &lt;chr&gt;,</span></span>
-<span id="cb29-17"><a></a><span class="co">#   SMT5 &lt;chr&gt;, SMT6 &lt;chr&gt;, SMT7 &lt;chr&gt;, SMT8 &lt;chr&gt;,</span></span>
-<span id="cb29-18"><a></a><span class="co">#   SMT9 &lt;chr&gt;, SMT10 &lt;chr&gt;, SMT11 &lt;chr&gt;, SMT12 &lt;chr&gt;,</span></span>
-<span id="cb29-19"><a></a><span class="co">#   SMT13 &lt;chr&gt;, SMT14 &lt;int&gt;, SMT15 &lt;chr&gt;, SMT16 &lt;chr&gt;,</span></span>
-<span id="cb29-20"><a></a><span class="co">#   SMT17 &lt;chr&gt;, SMT18 &lt;chr&gt;, SMT19 &lt;int&gt;, SMT20 &lt;chr&gt;,</span></span>
-<span id="cb29-21"><a></a><span class="co">#   SMT21 &lt;chr&gt;, SMT22 &lt;chr&gt;, SMT23 &lt;chr&gt;, SMT24 &lt;chr&gt;, …</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a></a>   <span class="ex">Subject</span>          Cond Attempted Correct   percent</span>
+<span id="cb33-2"><a></a><span class="ex">1</span>        3 self-handicap        16       9 0.5625000</span>
+<span id="cb33-3"><a></a><span class="ex">2</span>        4 self-handicap         5       2 0.4000000</span>
+<span id="cb33-4"><a></a><span class="ex">3</span>        9 self-handicap         8       5 0.6250000</span>
+<span id="cb33-5"><a></a><span class="ex">4</span>       11 self-handicap         7       4 0.5714286</span>
+<span id="cb33-6"><a></a><span class="ex">5</span>       13 self-handicap         7       3 0.4285714</span>
+<span id="cb33-7"><a></a><span class="ex">6</span>       14 self-handicap        21      12 0.5714286</span>
+<span id="cb33-8"><a></a><span class="ex">7</span>       16 self-handicap         7       3 0.4285714</span>
+<span id="cb33-9"><a></a><span class="ex">8</span>       18 self-handicap         8       4 0.5000000</span>
+<span id="cb33-10"><a></a><span class="ex">9</span>       19 self-handicap        16       8 0.5000000</span>
+<span id="cb33-11"><a></a><span class="ex">10</span>      21 self-handicap         5       3 0.6000000</span>
+<span id="cb33-12"><a></a><span class="ex">11</span>      23 self-handicap         7       3 0.4285714</span>
+<span id="cb33-13"><a></a><span class="ex">12</span>      25 self-handicap        12       3 0.2500000</span>
+<span id="cb33-14"><a></a><span class="ex">13</span>      28 self-handicap         6       4 0.6666667</span>
+<span id="cb33-15"><a></a><span class="ex">14</span>      29 self-handicap         9       6 0.6666667</span>
+<span id="cb33-16"><a></a><span class="ex">15</span>      31 self-handicap         6       1 0.1666667</span>
+<span id="cb33-17"><a></a><span class="ex">16</span>      32 self-handicap         4       1 0.2500000</span>
+<span id="cb33-18"><a></a><span class="ex">17</span>      35       control        10       8 0.8000000</span>
+<span id="cb33-19"><a></a><span class="ex">18</span>      36       control         8       6 0.7500000</span>
+<span id="cb33-20"><a></a><span class="ex">19</span>      37       control        10       7 0.7000000</span>
+<span id="cb33-21"><a></a><span class="ex">20</span>      40       control        11       7 0.6363636</span>
+<span id="cb33-22"><a></a><span class="ex">21</span>      41       control         7       6 0.8571429</span>
+<span id="cb33-23"><a></a><span class="ex">22</span>      43       control        10       4 0.4000000</span>
+<span id="cb33-24"><a></a><span class="ex">23</span>      44       control         9       6 0.6666667</span>
+<span id="cb33-25"><a></a><span class="ex">24</span>      48       control         5       1 0.2000000</span>
+<span id="cb33-26"><a></a><span class="ex">25</span>      51       control         7       4 0.5714286</span>
+<span id="cb33-27"><a></a><span class="ex">26</span>      52       control         4       2 0.5000000</span>
+<span id="cb33-28"><a></a><span class="ex">27</span>      53       control         8       4 0.5000000</span>
+<span id="cb33-29"><a></a><span class="ex">28</span>      54       control         4       1 0.2500000</span>
+<span id="cb33-30"><a></a><span class="ex">29</span>      56       control        17      10 0.5882353</span>
+<span id="cb33-31"><a></a><span class="ex">30</span>      60       control        16       9 0.5625000</span>
+<span id="cb33-32"><a></a><span class="ex">31</span>      61       control         6       2 0.3333333</span>
+<span id="cb33-33"><a></a>         <span class="ex">Date</span>     Time SMT1 SMT2 SMT3 SMT4 SMT5 SMT6 SMT7</span>
+<span id="cb33-34"><a></a><span class="ex">1</span>  10/29/2014 13:29:11    c    x   ok   ok    c    c    c</span>
+<span id="cb33-35"><a></a><span class="ex">2</span>   11/5/2014 13:34:28    c    c   ok   ok   ok   99   99</span>
+<span id="cb33-36"><a></a><span class="ex">3</span>  11/12/2014 13:29:46    c    x   ok   ok    c    c    c</span>
+<span id="cb33-37"><a></a><span class="ex">4</span>  11/12/2014 20:20:19    c    x   ok    c    c    c   ok</span>
+<span id="cb33-38"><a></a><span class="ex">5</span>  11/14/2014  9:30:50    c    x    c   ok    c   ok   ok</span>
+<span id="cb33-39"><a></a><span class="ex">6</span>  11/14/2014 12:21:19    c    c   ok   ok    c   ok    c</span>
+<span id="cb33-40"><a></a><span class="ex">7</span>  11/17/2014 12:24:40    c    x   ok   ok    c   ok    c</span>
+<span id="cb33-41"><a></a><span class="ex">8</span>  11/17/2014 15:32:43    c    x   ok   ok   ok    c    c</span>
+<span id="cb33-42"><a></a><span class="ex">9</span>  11/17/2014 17:12:40    c    x   ok   ok    c    c   ok</span>
+<span id="cb33-43"><a></a><span class="ex">10</span> 11/18/2014 14:23:17    c    c   ok   ok    c   99   99</span>
+<span id="cb33-44"><a></a><span class="ex">11</span> 11/18/2014 17:40:32    c    x   ok   ok    c    c   ok</span>
+<span id="cb33-45"><a></a><span class="ex">12</span> 11/19/2014 13:30:11    c    x   ok   ok   ok    c   ok</span>
+<span id="cb33-46"><a></a><span class="ex">13</span> 11/20/2014  9:19:09    c    x    c   ok    c    c   99</span>
+<span id="cb33-47"><a></a><span class="ex">14</span> 11/20/2014 14:13:35    c    c   ok   ok    c   ok    c</span>
+<span id="cb33-48"><a></a><span class="ex">15</span> 11/25/2014 10:01:56    c    x   ok   ok   ok   ok   99</span>
+<span id="cb33-49"><a></a><span class="ex">16</span> 11/25/2014 14:12:37    c    x   ok   ok   99   99   99</span>
+<span id="cb33-50"><a></a><span class="ex">17</span>  11/5/2014 19:00:03    c    x    c   ok    c    c    c</span>
+<span id="cb33-51"><a></a><span class="ex">18</span>  11/5/2014 20:24:00    c    c   ok   ok    c    c    c</span>
+<span id="cb33-52"><a></a><span class="ex">19</span> 11/10/2014 13:05:31    c    x    c   ok   ok    c    c</span>
+<span id="cb33-53"><a></a><span class="ex">20</span> 11/12/2014 14:12:53    c    x    c   ok    c    c    c</span>
+<span id="cb33-54"><a></a><span class="ex">21</span> 11/12/2014 19:36:37    c    c   ok    c    c    c    c</span>
+<span id="cb33-55"><a></a><span class="ex">22</span> 11/13/2014 17:35:39    c    x   ok   ok    c    c   ok</span>
+<span id="cb33-56"><a></a><span class="ex">23</span> 11/14/2014 10:04:51    c    x   ok    c    c    c    c</span>
+<span id="cb33-57"><a></a><span class="ex">24</span> 11/17/2014 16:07:39    c    x   ok   ok   ok   99   99</span>
+<span id="cb33-58"><a></a><span class="ex">25</span> 11/18/2014 18:19:21    c    c   ok   ok    c   ok    c</span>
+<span id="cb33-59"><a></a><span class="ex">26</span> 11/19/2014  9:41:05    c    c   ok   ok   99   99   99</span>
+<span id="cb33-60"><a></a><span class="ex">27</span> 11/19/2014 14:09:22    c    x   ok   ok    c    c   ok</span>
+<span id="cb33-61"><a></a><span class="ex">28</span> 11/19/2014 15:42:54    c    x   ok   ok   99   99   99</span>
+<span id="cb33-62"><a></a><span class="ex">29</span> 11/19/2014 18:55:57    c    x    c   ok    c    c    c</span>
+<span id="cb33-63"><a></a><span class="ex">30</span> 11/25/2014 13:25:02    c    x   ok   ok    c    c   ok</span>
+<span id="cb33-64"><a></a><span class="ex">31</span>  12/1/2014 12:32:34    c    x   ok   ok    c   ok   99</span>
+<span id="cb33-65"><a></a>   <span class="ex">SMT8</span> SMT9 SMT10 SMT11 SMT12 SMT13 SMT14 SMT15 SMT16</span>
+<span id="cb33-66"><a></a><span class="ex">1</span>     c    c     3     c     3     4     2     c     c</span>
+<span id="cb33-67"><a></a><span class="ex">2</span>    99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-68"><a></a><span class="ex">3</span>     c   99    99    99    99    99    99    99    99</span>
+<span id="cb33-69"><a></a><span class="ex">4</span>    99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-70"><a></a><span class="ex">5</span>    99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-71"><a></a><span class="ex">6</span>     c    c     2     c     2     3     1     c     c</span>
+<span id="cb33-72"><a></a><span class="ex">7</span>    99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-73"><a></a><span class="ex">8</span>     c   99    99    99    99    99    99    99    99</span>
+<span id="cb33-74"><a></a><span class="ex">9</span>     c    c     c     4     3     4     2     c     c</span>
+<span id="cb33-75"><a></a><span class="ex">10</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-76"><a></a><span class="ex">11</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-77"><a></a><span class="ex">12</span>    3    2     3     c     4    99    99    99    99</span>
+<span id="cb33-78"><a></a><span class="ex">13</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-79"><a></a><span class="ex">14</span>    c    c    99    99    99    99    99    99    99</span>
+<span id="cb33-80"><a></a><span class="ex">15</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-81"><a></a><span class="ex">16</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-82"><a></a><span class="ex">17</span>    c    c     c    99    99    99    99    99    99</span>
+<span id="cb33-83"><a></a><span class="ex">18</span>    c   99    99    99    99    99    99    99    99</span>
+<span id="cb33-84"><a></a><span class="ex">19</span>    c    c     c    99    99    99    99    99    99</span>
+<span id="cb33-85"><a></a><span class="ex">20</span>    2    2     c     c    99    99    99    99    99</span>
+<span id="cb33-86"><a></a><span class="ex">21</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-87"><a></a><span class="ex">22</span>    c    4     2    99    99    99    99    99    99</span>
+<span id="cb33-88"><a></a><span class="ex">23</span>    c    2    99    99    99    99    99    99    99</span>
+<span id="cb33-89"><a></a><span class="ex">24</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-90"><a></a><span class="ex">25</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-91"><a></a><span class="ex">26</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-92"><a></a><span class="ex">27</span>    c   99    99    99    99    99    99    99    99</span>
+<span id="cb33-93"><a></a><span class="ex">28</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-94"><a></a><span class="ex">29</span>    c    c     2     c     4     3     3     c     c</span>
+<span id="cb33-95"><a></a><span class="ex">30</span>    c    3     c     c     c     2     3     c     c</span>
+<span id="cb33-96"><a></a><span class="ex">31</span>   99   99    99    99    99    99    99    99    99</span>
+<span id="cb33-97"><a></a>   <span class="ex">SMT17</span> SMT18 SMT19 SMT20 SMT21 SMT22 SMT23 SMT24 SMT25</span>
+<span id="cb33-98"><a></a><span class="ex">1</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-99"><a></a><span class="ex">2</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-100"><a></a><span class="ex">3</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-101"><a></a><span class="ex">4</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-102"><a></a><span class="ex">5</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-103"><a></a><span class="ex">6</span>      c     c     2     c    ok    99    99    99    99</span>
+<span id="cb33-104"><a></a><span class="ex">7</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-105"><a></a><span class="ex">8</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-106"><a></a><span class="ex">9</span>     99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-107"><a></a><span class="ex">10</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-108"><a></a><span class="ex">11</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-109"><a></a><span class="ex">12</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-110"><a></a><span class="ex">13</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-111"><a></a><span class="ex">14</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-112"><a></a><span class="ex">15</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-113"><a></a><span class="ex">16</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-114"><a></a><span class="ex">17</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-115"><a></a><span class="ex">18</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-116"><a></a><span class="ex">19</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-117"><a></a><span class="ex">20</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-118"><a></a><span class="ex">21</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-119"><a></a><span class="ex">22</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-120"><a></a><span class="ex">23</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-121"><a></a><span class="ex">24</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-122"><a></a><span class="ex">25</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-123"><a></a><span class="ex">26</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-124"><a></a><span class="ex">27</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-125"><a></a><span class="ex">28</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-126"><a></a><span class="ex">29</span>    ok    99    99    99    99    99    99    99    99</span>
+<span id="cb33-127"><a></a><span class="ex">30</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-128"><a></a><span class="ex">31</span>    99    99    99    99    99    99    99    99    99</span>
+<span id="cb33-129"><a></a>   <span class="ex">Cond_numeric</span></span>
+<span id="cb33-130"><a></a><span class="ex">1</span>             1</span>
+<span id="cb33-131"><a></a><span class="ex">2</span>             1</span>
+<span id="cb33-132"><a></a><span class="ex">3</span>             1</span>
+<span id="cb33-133"><a></a><span class="ex">4</span>             1</span>
+<span id="cb33-134"><a></a><span class="ex">5</span>             1</span>
+<span id="cb33-135"><a></a><span class="ex">6</span>             1</span>
+<span id="cb33-136"><a></a><span class="ex">7</span>             1</span>
+<span id="cb33-137"><a></a><span class="ex">8</span>             1</span>
+<span id="cb33-138"><a></a><span class="ex">9</span>             1</span>
+<span id="cb33-139"><a></a><span class="ex">10</span>            1</span>
+<span id="cb33-140"><a></a><span class="ex">11</span>            1</span>
+<span id="cb33-141"><a></a><span class="ex">12</span>            1</span>
+<span id="cb33-142"><a></a><span class="ex">13</span>            1</span>
+<span id="cb33-143"><a></a><span class="ex">14</span>            1</span>
+<span id="cb33-144"><a></a><span class="ex">15</span>            1</span>
+<span id="cb33-145"><a></a><span class="ex">16</span>            1</span>
+<span id="cb33-146"><a></a><span class="ex">17</span>            0</span>
+<span id="cb33-147"><a></a><span class="ex">18</span>            0</span>
+<span id="cb33-148"><a></a><span class="ex">19</span>            0</span>
+<span id="cb33-149"><a></a><span class="ex">20</span>            0</span>
+<span id="cb33-150"><a></a><span class="ex">21</span>            0</span>
+<span id="cb33-151"><a></a><span class="ex">22</span>            0</span>
+<span id="cb33-152"><a></a><span class="ex">23</span>            0</span>
+<span id="cb33-153"><a></a><span class="ex">24</span>            0</span>
+<span id="cb33-154"><a></a><span class="ex">25</span>            0</span>
+<span id="cb33-155"><a></a><span class="ex">26</span>            0</span>
+<span id="cb33-156"><a></a><span class="ex">27</span>            0</span>
+<span id="cb33-157"><a></a><span class="ex">28</span>            0</span>
+<span id="cb33-158"><a></a><span class="ex">29</span>            0</span>
+<span id="cb33-159"><a></a><span class="ex">30</span>            0</span>
+<span id="cb33-160"><a></a><span class="ex">31</span>            0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="example-step-3-6" class="slide level2">
 <h2>Example: Step 3-6</h2>
 <div style="font-size: 0.9em;">
-<p>Next I will estimate my “full” model that separates participants by <code>Cond</code> and my “reduced” (unconditional) model</p>
+<p>Next I will estimate my “full” model that separates participants by <code>Cond</code> and my “reduced” (unconditional) model on the training data</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>lm_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> Cond, dat1)</span>
-<span id="cb30-2"><a></a>lm_reduced <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> <span class="dv">1</span>, dat1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>lm_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> Cond, training_data)</span>
+<span id="cb34-2"><a></a>lm_reduced <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> <span class="dv">1</span>, training_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The make predictions in my new dataset using the <code>newdata = dat2</code> argument of the <code>predict()</code> function</p>
+<p>The make predictions in my new dataset using the <code>newdata = testing_data</code> argument of the <code>predict()</code> function</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>predict_full <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_full, <span class="at">newdata =</span> dat2)</span>
-<span id="cb31-2"><a></a>predict_reduced <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_reduced, <span class="at">newdata =</span> dat2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>predict_full <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_full, <span class="at">newdata =</span> testing_data)</span>
+<span id="cb35-2"><a></a>predict_reduced <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_reduced, <span class="at">newdata =</span> testing_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Then calculate RMSE in both cases</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">sqrt</span>(<span class="fu">mean</span>((predict_full <span class="sc">-</span> dat2<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="fu">sqrt</span>(<span class="fu">mean</span>((predict_full <span class="sc">-</span> testing_data<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a></a><span class="ex">[1]</span> 0.2066692</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a></a><span class="ex">[1]</span> 0.1738807</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="fu">sqrt</span>(<span class="fu">mean</span>((predict_reduced <span class="sc">-</span> dat2<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="fu">sqrt</span>(<span class="fu">mean</span>((predict_reduced <span class="sc">-</span> testing_data<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a></a><span class="ex">[1]</span> 0.1973004</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a></a><span class="ex">[1]</span> 0.1734298</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<p>The reduced model made better predictions (lower error), which might be evidence against treating the groups as having meaningfully different means</p>
+<p>The reduced model made <strong>Very slightly</strong> better predictions (lower error), which might be evidence against treating the groups as having meaningfully different means, but the difference here is negligible.</p>
 </div>
 </section>
 <section id="reverse" class="slide level2">
 <h2>Reverse</h2>
 <p>We can also reverse the process, and swap which dataset we use for training and which we use for testing for a full two-way cross validation</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>lm_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> Cond, dat2)</span>
-<span id="cb36-2"><a></a>lm_reduced <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> <span class="dv">1</span>, dat2)</span>
-<span id="cb36-3"><a></a></span>
-<span id="cb36-4"><a></a>predict_full <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_full, <span class="at">newdata =</span> dat1)</span>
-<span id="cb36-5"><a></a>predict_reduced <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_reduced, <span class="at">newdata =</span> dat1)</span>
-<span id="cb36-6"><a></a></span>
-<span id="cb36-7"><a></a><span class="fu">sqrt</span>(<span class="fu">mean</span>((predict_full <span class="sc">-</span> dat1<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>lm_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> Cond, testing_data)</span>
+<span id="cb40-2"><a></a>lm_reduced <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> <span class="dv">1</span>, testing_data)</span>
+<span id="cb40-3"><a></a></span>
+<span id="cb40-4"><a></a>predict_full <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_full, <span class="at">newdata =</span> training_data)</span>
+<span id="cb40-5"><a></a>predict_reduced <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_reduced, <span class="at">newdata =</span> training_data)</span>
+<span id="cb40-6"><a></a></span>
+<span id="cb40-7"><a></a><span class="fu">sqrt</span>(<span class="fu">mean</span>((predict_full <span class="sc">-</span> training_data<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a></a><span class="ex">[1]</span> 0.1968265</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a></a><span class="ex">[1]</span> 0.2186474</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="fu">sqrt</span>(<span class="fu">mean</span>((predict_reduced <span class="sc">-</span> dat1<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="fu">sqrt</span>(<span class="fu">mean</span>((predict_reduced <span class="sc">-</span> training_data<span class="sc">$</span>percent)<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a></a><span class="ex">[1]</span> 0.2064718</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a></a><span class="ex">[1]</span> 0.2289257</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>In this case, the full model made better predictions (lower error)</p>
 <ul>
-<li>We don’t have super clear evidence one way or the other about whether the full or reduced model makes better predictions</li>
-<li>Partly a function of the cost associated with splitting the sample in half</li>
+<li>Suggests that the full model is making better predictions</li>
+<li>Part of the issue here is that the total sample is so small that there’s a big cost to splitting it in half</li>
 </ul>
 </section>
 <section id="alternative-procedures" class="slide level2">
 <h2>Alternative Procedures</h2>
-<div style="font-size: 0.9em;">
+<div style="font-size: 0.77em;">
 <p>Splitting the data in half is costly because of how much your sample size is reduced. Other options that keep the dataset (more) intact are</p>
 <ul>
 <li><span class="math inline">\(k\)</span>-fold cross validation
@@ -892,6 +1253,10 @@ Mark Himmelstein
 <li>Train model on the remaining <span class="math inline">\(N - 1\)</span> datapoints</li>
 <li>Make prediction about the single held out datapoint</li>
 <li>Calculate average RMSE for each held out datapoint</li>
+<li>Can get computationally expensive (slow)
+<ul>
+<li>Sometimes there are ways to approximate LOO methods</li>
+</ul></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -936,7 +1301,7 @@ Mark Himmelstein
 <li><strong>Inductive Behavior:</strong> Based on what I learned from data, should I behave as if self-handicapping is harmful or not?</li>
 <li>Should I consider interventions to prevent self-handicapping, or allow people to self handicap?
 <ul>
-<li>I can’t know for sure, but experiments and models help minimize my errors (costs)</li>
+<li>I can’t know for sure, but experiments and models help minimize the errors I make (costs I incur) across many decisions I might make</li>
 </ul></li>
 </ul>
 </div></div>
@@ -950,6 +1315,7 @@ Mark Himmelstein
 <li>Probability and statistics</li>
 <li>Economics</li>
 <li>Psychology</li>
+<li>Policy and political science</li>
 <li>Business and operations</li>
 </ul></li>
 <li>Covered in <em>The Science of Decision Making</em> (Offered Spring ’27)</li>
