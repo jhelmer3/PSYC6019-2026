@@ -14,6 +14,9 @@ execute:
   echo: true
   dpi: 600
   freeze: auto
+knitr:
+  opts_chunk:
+    dev: svg
 ---
 
 ## Outline
@@ -28,3 +31,787 @@ execute:
 library(tidyverse)
 library(gt)
 ```
+
+
+
+# Effect Size
+
+## Effect Size
+
+Effect sizes provide ways to estimate the magnitude of an effect
+
+::: subpoint
+○ Standardized, so we can compare differences across scales
+:::
+
+::: fragment
+Cohen's $d$: measure of difference (not a test)
+
+::: subpoint
+○ Transforms to the *z*-scale, can interpret in standard deviation units
+:::
+:::
+
+
+## Cohen's *d*
+
+:::: {.columns}
+::: {.column width="28%"}
+#### One Sample
+
+$$ d = \frac{\bar{x} - \mu_0}{s_x} $$
+
+
+::: {style="font-size:85%}
+```{r}
+mu_cty <- 30
+
+cty_bar <- mean(mpg$cty)
+cty_sd <- sd(mpg$cty)
+
+(cty_bar - mu_cty) / cty_sd
+```
+:::
+:::
+
+::: {.column width="44%"}
+#### Independent Samples
+
+$$ d = \frac{\bar{x}_1 - \bar{x}_2}{s_p} $$
+
+::: {style="font-size:85%}
+
+::: panel-tabset
+### Pull Data
+```{r}
+four_cyl <- mpg |>
+  filter(cyl == 4) |>
+  pull(hwy)
+eight_cyl <- mpg |>
+  filter(cyl == 8) |>
+  pull(hwy)
+```
+
+
+### Calculate $d$
+```{r}
+x_bar_four <- mean(four_cyl)
+sd_four <- sd(four_cyl)
+n_four <- length(four_cyl)
+x_bar_eight <- mean(eight_cyl)
+sd_eight <- sd(eight_cyl)
+n_eight <- length(eight_cyl)
+
+pooled_sd <- sqrt( 
+  ((n_four - 1) * sd_four^2 + (n_eight - 1) * sd_eight^2) /
+    ((n_four - 1) + (n_eight - 1)) 
+  )
+
+(x_bar_four - x_bar_eight) / pooled_sd
+```
+:::
+
+:::
+
+
+:::
+
+::: {.column width="28%"}
+#### Paired Sample
+
+$$ d = \frac{\bar{D}}{s_D} $$
+
+::: {style="font-size:85%}
+```{r}
+differences <- mpg$cty - mpg$hwy
+
+d_bar <- mean(differences)
+d_sd <- sd(differences)
+
+d_bar / d_sd
+```
+:::
+
+:::
+::::
+
+
+## Cohen's *d*
+
+:::: {.columns}
+::: {.column width="33%"}
+#### One Sample
+
+$$ d = \frac{\bar{x} - \mu_0}{s_x} $$
+
+
+::: {style="font-size:85%}
+```{r}
+effectsize::cohens_d(mpg$cty, mu = 30)
+```
+:::
+:::
+
+::: {.column width="33%"}
+#### Independent Samples
+
+$$ d = \frac{\bar{x}_1 - \bar{x}_2}{s_p} $$
+
+::: {style="font-size:85%}
+```{r}
+four_cyl <- mpg |>
+  filter(cyl == 4) |>
+  pull(hwy)
+eight_cyl <- mpg |>
+  filter(cyl == 8) |>
+  pull(hwy)
+
+effectsize::cohens_d(four_cyl, eight_cyl)
+```
+:::
+
+
+:::
+
+::: {.column width="33%"}
+#### Paired Sample
+
+$$ d = \frac{\bar{D}}{s_D} $$
+
+::: {style="font-size:85%}
+```{r}
+effectsize::cohens_d(mpg$cty, mpg$hwy, paired = T)
+```
+:::
+
+:::
+
+::::
+
+
+## Cohen's *D* Strength Visualization
+
+```{r}
+#| echo: false
+x_bar <- mean(mpg$hwy)
+x_sd <- sd(mpg$hwy)
+```
+
+
+Based on mean ($\bar{x}$ = `r round(x_bar, 2)` = `r round(x_bar, 2)`) and SD ($\bar{\sigma}$ = `r round(x_sd, 2)` = `r round(x_sd, 2)`) of cars' highway MPG (`hwy`).
+
+Solved backwards for ($\mu$) based on different potential levels of *d*. "What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
+
+$$\bar{x} - d \times s = \mu$$
+
+```{r}
+dat <- data.frame(x = rnorm(100000, x_bar, x_sd))
+
+mu_ex1 <- x_bar - .2 * x_sd
+mu_ex2 <- x_bar - .5 * x_sd
+mu_ex3 <- x_bar - .8 * x_sd
+```
+
+
+## Cohen's *D* Strength Visualization
+
+"What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
+
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+ggplot(dat, aes(x = x)) +
+  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
+  geom_vline(aes(xintercept = x_bar),
+             color = "skyblue3", linewidth = 1, linetype = "dashed") +
+  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
+  guides(y = "none", x = NULL) +
+  labs(y = NULL, x = "Highway MPG") +
+  theme_classic(base_size = 18)
+```
+
+
+## Cohen's *D* Strength Visualization
+
+"What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
+
+
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| layout-ncol: 3
+#| fig-align: center
+ggplot(dat, aes(x = x)) +
+  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
+  geom_vline(aes(xintercept = x_bar),
+             color = "skyblue3", linewidth = 1, linetype = "dashed") +
+  geomtextpath::geom_textvline(aes(xintercept = mu_ex1, label = "d = 0.2"),
+                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
+  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
+  guides(y = "none", x = NULL) +
+  labs(y = NULL, x = "Highway MPG") +
+  theme_classic(base_size = 18)
+
+ggplot(dat, aes(x = x)) +
+  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
+  geom_vline(aes(xintercept = x_bar),
+             color = "skyblue3", linewidth = 1, linetype = "dashed") +
+  geomtextpath::geom_textvline(aes(xintercept = mu_ex2, label = "d = 0.5"),
+                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
+  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
+  guides(y = "none", x = NULL) +
+  labs(y = NULL, x = "Highway MPG") +
+  theme_classic(base_size = 18)
+
+ggplot(dat, aes(x = x)) +
+  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
+  geom_vline(aes(xintercept = x_bar),
+             color = "skyblue3", linewidth = 1, linetype = "dashed") +
+  geomtextpath::geom_textvline(aes(xintercept = mu_ex3, label = "d = 0.8"),
+                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
+  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
+  guides(y = "none", x = NULL) +
+  labs(y = NULL, x = "Highway MPG") +
+  theme_classic(base_size = 18)
+
+```
+
+
+
+# Power Analysis
+
+
+## Power Analysis
+
+*Power*: the proportion of times we'd correctly reject the null hypothesis $H_0$ when something else is true, over many hypothetical repeated experiments
+
+*Power analysis*: the chance of correctly rejecting $H_0$ if $H_0$ is not the reality.
+
+::: {.subpoint .fragment}
+○ Given that our null hypothesis is $H_0: \mu = \mu_0$,
+:::
+
+::: {.subpoint .fragment}
+○ How often would we correctly reject the null if $\mu$ was not $\mu_0$?
+:::
+
+$\beta$: probability of incorrectly retaining the null when $H_0$ is false
+$1 - \beta$: power (probability of correctly rejecting the null when $H_0$ is false)
+
+
+## Power Analysis
+
+What can we change in power analysis?
+
+::: fragment
+| $1 - \beta$ | $N$         | $\alpha$           | $\delta$         |
+|-------------|-------------|--------------------|------------------|
+| Power       | Sample size | significance level | true effect size |
+:::
+
+::: fragment
+If know three, can solve for the fourth. 
+:::
+
+::: fragment
+Can manipulate potential values to create power curves for different combinations
+:::
+
+
+## Power Analysis
+
+We can use the `pwr` package in `R` to conduct power analyses! For a *t*-test, 
+
+`pwr.t.test(n, d, sig.level, power)`
+
+<div class="subpoint">○ `n` = sample size **in each group** </div>
+
+<div class="subpoint">○ `d` = true effect size </div>
+
+<div class="subpoint">○ `sig.level` = significance level, $\alpha$ </div>
+
+<div class="subpoint">○ `power` = power, $1 - \beta$ </div>
+
+Specify exactly three of the four, it will fill in the fourth
+
+<div class="subpoint">○ `alternative` = type of test, default is `"two.sided"` </div>
+
+:::: {.columns}
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t.test(n = 10, d = 0.3, sig.level = 0.05)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t.test(n = 50, sig.level = 0.05, power = 0.8)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t.test(d = 0.3, sig.level = 0.05, power = 0.8)
+```
+:::
+::::
+
+
+## Power Analysis
+
+Object contains a list of each argument, including the one it calculated
+
+```{r}
+power_test <- pwr::pwr.t.test(n = 10, d = 0.3, sig.level = 0.05)
+
+power_test |>
+  glimpse()
+```
+
+Can pull the calculated statistic out with `$`
+
+```{r}
+power_test$power
+```
+
+
+## Power Analysis
+
+Can create power curves by iterating over candidate values for one of the inputs and calculating the remaining.
+
+Example: You are running a study that you believe has a true effect size of $\delta = 0.25$. You want to test your hypothesis with a *t*-test at $\alpha = .05$. What will your power be at varying levels of sample size $N$ per group? 
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+sample_sizes <- c(10, 30, 100, 300)
+power_values <- map_dbl(
+  sample_sizes, 
+  function(sample_size) 
+    pwr::pwr.t.test(
+      n = sample_size, 
+      d = 0.25, 
+      sig.level = 0.05)$power
+)
+```
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+tibble(n = sample_sizes,
+       power = power_values) |>
+  ggplot(aes(x = n, y = power)) +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1))
+```
+
+### Code
+```{r}
+#| eval: false
+tibble(n = sample_sizes,
+       power = power_values) |>
+  ggplot(aes(x = n, y = power)) +
+  geom_line()
+```
+:::
+
+:::
+::::
+
+
+## Power Curves
+
+:::: {.columns}
+::: {.column width="50%"}
+
+::: {.code-stack}
+```{.r code-line-numbers="2-3,9"}
+sample_sizes <- c(10, 30, 100, 300)
+power_values <- map_dbl(
+  sample_sizes, 
+  function(sample_size) 
+    pwr::pwr.t.test(
+      n = sample_size, 
+      d = 0.25, 
+      sig.level = 0.05)$power
+)
+```
+
+::: {.fragment fragment-index="0" .code-overlay}
+```{.r code-line-numbers="4"}
+sample_sizes <- c(10, 30, 100, 300)
+power_values <- map_dbl(
+  sample_sizes, 
+  function(sample_size) 
+    pwr::pwr.t.test(
+      n = sample_size, 
+      d = 0.25, 
+      sig.level = 0.05)$power
+)
+```
+:::
+
+::: {.fragment fragment-index="1" .code-overlay}
+```{.r code-line-numbers="5-8"}
+sample_sizes <- c(10, 30, 100, 300)
+power_values <- map_dbl(
+  sample_sizes, 
+  function(sample_size) 
+    pwr::pwr.t.test(
+      n = sample_size, 
+      d = 0.25, 
+      sig.level = 0.05)$power
+)
+```
+:::
+
+:::
+:::
+
+::: {.column width="50%"}
+**`map_dbl()`**: iterate over every item in `sample_sizes`, do something to it, and return a `double` (a number with decimal points).
+
+::: {.fragment fragment-index="0"}
+**`function(sample_size)`**: defines a function — this tells `map_dbl()` what we want to *do* to each `sample_size`.
+:::
+
+::: {.fragment fragment-index="1"}
+**`pwr::pwr.t.test(...)$power`**: the same function we were using before.
+:::
+:::
+::::
+
+```{=html}
+<style>
+.code-stack { position: relative; }
+.code-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--r-background-color, #fff);
+}
+</style>
+```
+
+
+## Power Analysis
+
+Add more candidate $N$ values with `seq(min, max, by)` and clean up the plot
+
+:::: {.columns}
+::: {.column width="33%"}
+```{r}
+seq(1, 10, by = 1)
+```
+
+:::
+
+::: {.column width="33%"}
+```{r}
+seq(1, 10, by = 2)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+seq(1, 10, by = 5)
+```
+:::
+::::
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+sample_sizes <- seq(10, 300, by = 20)
+power_values <- map_dbl(
+  sample_sizes, 
+  function(sample_size) 
+    pwr::pwr.t.test(
+      n = sample_size, 
+      d = 0.25, 
+      sig.level = 0.05)$power
+)
+```
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+tibble(n = sample_sizes,
+       power = power_values) |>
+  ggplot(aes(x = n, y = power)) +
+  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+
+### Code
+```{r}
+#| eval: false
+tibble(n = sample_sizes,
+       power = power_values) |>
+  ggplot(aes(x = n, y = power)) +
+  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+:::
+
+:::
+::::
+
+
+## Power Curves
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+sample_sizes <- c(10, 30, 100, 300)
+power_values <- map_dbl(
+  sample_sizes, 
+  function(sample_size) 
+    pwr::pwr.t.test(
+      n = sample_size, 
+      d = 0.25, 
+      sig.level = 0.05)$power
+)
+```
+:::
+
+::: {.column width="50%"}
+
+:::
+::::
+
+
+## Power Curves: Bonus
+
+Even better, do it all in a data frame
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+power_values_df <- tibble(
+  sample_sizes = seq(10, 500, by = 20)
+) |>
+  mutate(
+    power = map_dbl(
+      sample_sizes, 
+      function(sample_size) 
+        pwr::pwr.t.test(
+          n = sample_size, 
+          d = 0.25, 
+          sig.level = 0.05)$power
+    )
+  )
+```
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+power_values_df |>
+  ggplot(aes(x = sample_sizes, y = power)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+
+### Code
+```{r}
+#| eval: false
+power_values_df |>
+  ggplot(aes(x = sample_sizes, y = power)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+:::
+
+:::
+::::
+
+
+## Power Curves: Bonus
+
+Let's you easily add more conditions...
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+power_values_df <- tibble(
+  sample_sizes = seq(10, 500, by = 20)
+) |>
+  expand_grid(d = c(0.2, 0.25, 0.3, 0.4)) |>
+  mutate(
+    power = map2_dbl(
+      sample_sizes, d,
+      function(sample_size, d) 
+        pwr::pwr.t.test(
+          n = sample_size, 
+          d = d, 
+          sig.level = 0.05)$power
+    )
+  )
+```
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+power_values_df |>
+  mutate(d = factor(d)) |>
+  ggplot(aes(x = sample_sizes, y = power, color = d, group = d)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+
+### Code
+```{r}
+#| eval: false
+power_values_df |>
+  mutate(d = factor(d)) |>
+  ggplot(aes(x = sample_sizes, y = power, color = d, group = d)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+:::
+
+:::
+::::
+
+
+
+
+<!-- ## Confidence Intervals for $d$ -->
+
+<!-- $$ CI = [d - t_{crit} \times SE, \ d + t_{crit} \times SE] $$ -->
+
+
+<!-- <!-- :::: {.columns} -->
+<!-- <!-- ::: {.column width="50%"} -->
+<!-- <!-- ::: -->
+
+<!-- <!-- ::: {.column width="50%"} -->
+<!-- <!-- $$ SE = s_\text{pooled} \sqrt{\frac{1}{n_1} + \frac{1}{n_2}} $$ -->
+<!-- <!-- ::: -->
+<!-- <!-- :::: -->
+
+<!-- Since we transform to *z*-units, $s_\text{pooled} = 1$  -->
+
+<!-- <!-- If $s_\text{pooled} = 1$, $CI = [d - t_{crit} \times \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}, \ d + t_{crit} \times \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}]$ --> 
+
+
+<!-- ```{r} -->
+<!-- (t_crit <- qt(c(0.025, 0.975), df = nrow(mpg) - 1)) -->
+<!-- ``` -->
+
+
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="25%"} -->
+<!-- #### One Sample -->
+
+<!-- $$ SE = \frac{s_d}{\sqrt{N}} = \frac{1}{\sqrt{N}} $$ -->
+
+
+<!-- ::: {style="font-size:85%} -->
+<!-- ```{r} -->
+<!-- t_crit <- qt(c(0.025, 0.975), df = nrow(mpg) - 1) -->
+<!-- d_one_sample + t_crit * (1 / sqrt(nrow(mpg))) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+<!-- #### Independent Samples -->
+
+<!-- $$ d = \frac{\bar{x}_1 - \bar{x}_2}{s_p} $$ -->
+
+<!-- ::: {style="font-size:85%} -->
+<!-- ```{r} -->
+<!-- d_independent_samples + t_crit * sqrt(1/n_four + 1/n_eight) -->
+<!-- ``` -->
+<!-- ::: -->
+
+
+<!-- ::: -->
+
+<!-- ::: {.column width="25%"} -->
+<!-- #### Paired Sample -->
+
+<!-- $$ d = \frac{\bar{D}}{s_D} $$ -->
+
+<!-- ::: {style="font-size:85%} -->
+<!-- ```{r} -->
+<!-- d_paired_sample + t_crit * (sqrt(1 / length(differences))) -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: -->
+<!-- :::: -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
