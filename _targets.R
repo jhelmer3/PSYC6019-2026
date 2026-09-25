@@ -51,7 +51,6 @@ list(
              "lab/slides/lab_05.qmd", 
              format = "file"),
   tar_target(lab_05_slides, {
-    major_data
     ice_cream_sales_data_file
     quarto::quarto_render(lab_05_slides_qmd, quiet = F)
     qmd_out(lab_05_slides_qmd)

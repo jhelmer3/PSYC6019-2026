@@ -311,7 +311,7 @@ Jess Helmer
 </div></div>
 </section><section id="t-test-example" class="slide level2"><h2>
 <em>t</em>-Test Example</h2>
-<p>Let’s you work for a car manufacturer, and a researcher claims the average city miles per gallon across all cars is 30mpg. They collect data on a sample of 234 cars and would like you to test this. We do not know the population standard deviation.</p>
+<p>Let’s you work for a car manufacturer, and a researcher claims the average city miles per gallon across all cars is 30mpg. They collect data on a sample of 234 cars (<code>mpg</code> dataset) and would like you to test this. We do not know the population standard deviation.</p>
 <p><span class="fragment">One- or two-tailed?</span> <span class="fragment">Two!</span></p>
 <div class="columns" style="font-size:80%">
 <div class="column fragment" style="width:75%;">
@@ -325,7 +325,7 @@ Jess Helmer
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">$</span><span class="va">cty</span><span class="op">)</span> <span class="co"># this won't work if you have missing data</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">n</span> <span class="op">-</span> <span class="fl">1</span></span>
 <span></span>
-<span><span class="va">t_cutoff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span><span class="fl">.975</span>, <span class="va">df</span><span class="op">)</span></span>
+<span><span class="va">t_cutoff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.025</span>, <span class="fl">.975</span><span class="op">)</span>, <span class="va">df</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">x_se</span> <span class="op">&lt;-</span> <span class="va">x_sd</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
 <span></span>
@@ -371,75 +371,13 @@ mean of x
 </div><div class="column fragment" style="width:25%;">
 <p>We see a significant difference between our observed sample mean and our hypothesized population mean.</p>
 </div></div>
-</section><section id="t-test-assumptions" class="slide level2"><h2>
-<em>t</em>-Test Assumptions</h2>
-<div style="font-size:80%">
-<p>We can create QQ plots with <code>ggplot</code></p>
-<p><strong>New <code>geom</code>s</strong>: <code>geom_qq()</code> adds the points, <code>geom_qq_line()</code> adds the expected line.</p>
-<p>The <code>aes()</code> we need to specify is <code>sample</code></p>
-<div class="columns">
-<div class="column fragment" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-1-1">Plot</a></li>
-<li><a href="#tabset-1-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-1-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-11-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-1-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mpg</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>sample <span class="op">=</span> <span class="va">cty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_qq</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_qq_line</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="column fragment" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-2-1">Plot</a></li>
-<li><a href="#tabset-2-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-2-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-13-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-2-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mpg</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">cty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_histogram</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="fu">after_stat</span><span class="op">(</span><span class="va">density</span><span class="op">)</span><span class="op">)</span>, binwidth <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_density</span><span class="op">(</span><span class="op">)</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
-</div>
 </section><section id="t-test-example-output" class="slide level2"><h2>
 <em>t</em>-Test Example Output</h2>
 <div class="columns">
 <div class="column">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cty_ttest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">$</span><span class="va">cty</span>, mu <span class="op">=</span> <span class="fl">30</span>, alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cty_ttest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">$</span><span class="va">cty</span>, mu <span class="op">=</span> <span class="fl">30</span>, </span>
+<span>                    alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></span>
 <span><span class="va">cty_ttest</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -454,23 +392,23 @@ sample estimates:
 mean of x 
  16.85897 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#?t.test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#?t.test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div><div class="column">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cty_ttest</span><span class="op">$</span><span class="va">statistic</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cty_ttest</span><span class="op">$</span><span class="va">statistic</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        t 
 -47.23252 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cty_ttest</span><span class="op">$</span><span class="va">p.value</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cty_ttest</span><span class="op">$</span><span class="va">p.value</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2.581229e-121</code></pre>
 </div>
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cty_ttest</span><span class="op">$</span><span class="va">conf.int</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cty_ttest</span><span class="op">$</span><span class="va">conf.int</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 16.31083 17.40712
 attr(,"conf.level")
@@ -497,11 +435,11 @@ attr(,"conf.level")
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">$</span><span class="va">cty</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">$</span><span class="va">cty</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 18 21 20 21 16 18</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x_bar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">$</span><span class="va">cty</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x_bar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">$</span><span class="va">cty</span><span class="op">)</span></span>
 <span><span class="va">x_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">$</span><span class="va">cty</span><span class="op">)</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">mpg</span><span class="op">$</span><span class="va">cty</span><span class="op">)</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">n</span> <span class="op">-</span> <span class="fl">1</span></span>
@@ -512,7 +450,7 @@ attr(,"conf.level")
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ci_lower</span> <span class="op">&lt;-</span> <span class="va">x_bar</span> <span class="op">-</span> <span class="va">t_cutoff</span> <span class="op">*</span> <span class="va">x_se</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ci_lower</span> <span class="op">&lt;-</span> <span class="va">x_bar</span> <span class="op">-</span> <span class="va">t_cutoff</span> <span class="op">*</span> <span class="va">x_se</span></span>
 <span><span class="va">ci_upper</span> <span class="op">&lt;-</span> <span class="va">x_bar</span> <span class="op">+</span> <span class="va">t_cutoff</span> <span class="op">*</span> <span class="va">x_se</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ci_lower</span>, <span class="va">ci_upper</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -522,6 +460,69 @@ attr(,"conf.level")
 </div></div>
 <p><span class="fragment">Across repeated trials, 95% of intervals (across repeated samples) will contain the true value. [16.31, 17.41] is one such interval.</span></p>
 <p><span class="fragment">If we treated any value inside the 95% confidence interval of [16.31, 17.41] as the null, we could not reject it at <span class="math inline">\(\alpha = 0.05\)</span>.</span></p>
+</section><section id="t-test-assumptions" class="slide level2"><h2>
+<em>t</em>-Test Assumptions</h2>
+<div style="font-size:80%">
+<p>We can create QQ plots with <code>ggplot</code></p>
+<p><strong>New <code>geom</code>s</strong>: <code>geom_qq()</code> adds the points, <code>geom_qq_line()</code> adds the expected line.</p>
+<p>The <code>aes()</code> we need to specify is <code>sample</code></p>
+<div class="columns">
+<div class="column fragment" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-1-1">Plot</a></li>
+<li><a href="#tabset-1-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-16-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mpg</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>sample <span class="op">=</span> <span class="va">cty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_qq</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_qq_line</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column fragment" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-2-1">Plot</a></li>
+<li><a href="#tabset-2-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-2-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-18-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-2-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mpg</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">cty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_histogram</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="fu">after_stat</span><span class="op">(</span><span class="va">density</span><span class="op">)</span><span class="op">)</span>, binwidth <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_density</span><span class="op">(</span><span class="op">)</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</div>
 </section><section id="t-test-example-1" class="slide level2"><h2>
 <em>t</em>-Test Example</h2>
 <p>Let’s say a different researcher claims the average city miles per gallon across all cars is 50mpg. They collect a sample of 234 cars. You are confident they are wrong—you think it is certainly less than that. We do not know the population standard deviation.</p>
@@ -547,58 +548,24 @@ mean of x
 </div><div class="column fragment" style="width:25%;">
 <p>We see a significant difference between our observed sample mean and our hypothesized population mean of 50 city MPG.</p>
 </div></div>
-</section><section id="t-statistic-cutoffs" class="slide level2"><h2>
-<em>t</em>-Statistic Cutoffs</h2>
-<p>Say you want to find the cutoff <em>t</em> values: <span class="math inline">\(t(\text{df}=3)\)</span> and <span class="math inline">\(t(\text{df}=37)\)</span> for <span class="math inline">\(\alpha = .05\)</span>, both upper one-tailed and two-tailed.</p>
-<div class="fragment">
-<p>Which will have the larger magnitude cutoff values?</p>
-</div>
-<div class="columns" style="font-size:70%">
-<div class="column fragment">
-<p><strong>One-Tailed</strong></p>
-<p>All of our <span class="math inline">\(\alpha = .05\)</span> goes on the upper side</p>
-<p>Need a cutoff for <span class="math inline">\(.95\)</span></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span>p <span class="op">=</span> <span class="fl">.95</span>, df <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2.353363</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span>p <span class="op">=</span> <span class="fl">.05</span>, df <span class="op">=</span> <span class="fl">37</span>, lower.tail <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.687094</code></pre>
-</div>
-</div>
-<p><span class="math inline">\(t_{crit}(\text{df}=3) = 2.35\)</span></p>
-<p><span class="math inline">\(t_{crit}(\text{df}=37) = 1.69\)</span></p>
-</div><div class="column fragment">
-<p><strong>Two-Tailed</strong></p>
-<p><span class="math inline">\(\alpha = 1 - .95 = 5\%\)</span> on both sides</p>
-<p>So <span class="math inline">\(.05 / 2 = .025\)</span> on each side</p>
-<p>Need value for <span class="math inline">\(.025\)</span> and <span class="math inline">\(.95 + .025\)</span> (<span class="math inline">\([.025, .975]\)</span>)</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span>p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.025</span>, <span class="fl">.975</span><span class="op">)</span>, df <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] -3.182446  3.182446</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span>p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.025</span>, <span class="fl">.975</span><span class="op">)</span>, df <span class="op">=</span> <span class="fl">37</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] -2.026192  2.026192</code></pre>
-</div>
-</div>
-<p><span class="math inline">\(t_{crit}(\text{df}=3) = [-3.18, 3.18]\)</span></p>
-<p><span class="math inline">\(t_{crit}(\text{df}=37) = [-2.03, 2.03]\)</span></p>
-</div></div>
 </section></section><section><section id="independent-samples-t-test" class="title-slide slide level1 center"><h1>Independent Samples <em>t</em>-Test</h1>
 
 </section><section id="independent-samples-t-test-1" class="slide level2"><h2>Independent Samples <em>t</em>-Test</h2>
 <p>Might want to compare two samples of observations</p>
-<p><span class="subpoint">○ Post-graduation salaries of GT vs.&nbsp;UGA grads</span></p>
-<p><span class="subpoint">○ Treatment vs.&nbsp;control group</span></p>
-<p><span class="subpoint">○ Cats vs.&nbsp;dogs</span></p>
+<!-- [○ Post-graduation salaries of GT vs. UGA grads]{.subpoint} -->
+<div class="subpoint">
+<p>○ Treatment vs.&nbsp;control group</p>
+</div>
+<div class="subpoint">
+<p>○ Cats vs.&nbsp;dogs</p>
+</div>
 <p>We can represent each group with their mean on some outcome and compare the means</p>
 <p>Consider whether the mean difference is significant but also have to account for different levels of variability within group</p>
 </section><section id="independent-samples-t-test-test-statistic" class="slide level2"><h2>Independent Samples <em>t</em>-Test: Test Statistic</h2>
-<p><span class="math display">\[ t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}} = \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} \]</span></p>
+<p><span class="math display">\[ t =
+\frac{\bar{x}_1 - \bar{x}_2}{SE} =
+\frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}} =
+\frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} \]</span></p>
 <p><span class="fragment">Compare against critical <em>t</em>-value with df = <span class="math inline">\((n_1 - 1) + (n_2 - 1)\)</span></span></p>
 </section><section id="independent-samples-t-test-pooled-sd" class="slide level2"><h2>Independent Samples <em>t</em>-Test: Pooled SD</h2>
 <p>Need to pool the sample SDs while noting different sample sizes</p>
@@ -616,11 +583,11 @@ s_p^2 \bigg|_{n_1 = n_2 = n} &amp; = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1
 <p><span class="math display">\[ s_p = \sqrt{s_p^2} = \sqrt{\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{(n_1 - 1) + (n_2 - 1)}} = \sqrt{\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{n_1 + n_2 - 2}} \]</span></p>
 </div>
 </section><section id="independent-samples-t-test-example" class="slide level2"><h2>Independent Samples <em>t</em>-Test: Example</h2>
-<p>Let’s say you work for a car manufacturer, and you’re helping decide features of the next car you produce. You want to test whether there’s a difference in highway MPG for cars with four and eight cylinders. You have a dataset with 234 cars to test this on.</p>
+<p>Let’s say you work for a car manufacturer, and you’re helping decide features of the next car you produce. You want to test whether there’s a difference in <strong>highway</strong> MPG for cars with four and eight cylinders. You have a dataset with 234 cars to test this on.</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">filtered_mpg</span> <span class="op">&lt;-</span> <span class="va">mpg</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">filtered_mpg</span> <span class="op">&lt;-</span> <span class="va">mpg</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu">when_any</span><span class="op">(</span><span class="va">cyl</span> <span class="op">==</span> <span class="fl">4</span>, <span class="va">cyl</span> <span class="op">==</span> <span class="fl">8</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">four_cyl</span> <span class="op">&lt;-</span> <span class="va">mpg</span> <span class="op">|&gt;</span></span>
@@ -633,7 +600,7 @@ s_p^2 \bigg|_{n_1 = n_2 = n} &amp; = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">four_cyl</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">eight_cyl</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">four_cyl</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">eight_cyl</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 29 29 31 30 26 25</code></pre>
 </div>
@@ -645,14 +612,17 @@ s_p^2 \bigg|_{n_1 = n_2 = n} &amp; = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1
 </section><section id="independent-samples-t-test-r-calculation" class="slide level2"><h2>Independent Samples <em>t</em>-Test: R Calculation</h2>
 <div class="columns fragment">
 <div class="column" style="width:50%;">
-<p><span class="math display">\[ t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}} = \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} \]</span></p>
+<p><span class="math display">\[ t =
+\frac{\bar{x}_1 - \bar{x}_2}{SE} =
+\frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}} =
+\frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} \]</span></p>
 </div><div class="column" style="width:50%;">
 <p><span class="math display">\[ s_p^2 = \frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{(n_1 - 1) + (n_2 - 1)} \]</span></p>
 </div></div>
 <div class="columns">
 <div class="column fragment" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x_bar_four</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">four_cyl</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x_bar_four</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">four_cyl</span><span class="op">)</span></span>
 <span><span class="va">sd_four</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">four_cyl</span><span class="op">)</span></span>
 <span><span class="va">n_four</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">four_cyl</span><span class="op">)</span></span>
 <span></span>
@@ -670,7 +640,7 @@ s_p^2 \bigg|_{n_1 = n_2 = n} &amp; = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1
 </div>
 </div><div class="column fragment" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">pooled_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">pooled_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span></span>
 <span>  <span class="op">(</span><span class="op">(</span><span class="va">n_four</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="va">sd_four</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="op">(</span><span class="va">n_eight</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="va">sd_eight</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">/</span></span>
 <span>    <span class="op">(</span><span class="op">(</span><span class="va">n_four</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="va">n_eight</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> </span>
 <span><span class="op">)</span></span>
@@ -678,7 +648,7 @@ s_p^2 \bigg|_{n_1 = n_2 = n} &amp; = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 3.984182</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="va">pooled_sd</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="va">n_four</span> <span class="op">+</span> <span class="fl">1</span> <span class="op">/</span> <span class="va">n_eight</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="va">pooled_sd</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="va">n_four</span> <span class="op">+</span> <span class="fl">1</span> <span class="op">/</span> <span class="va">n_eight</span><span class="op">)</span></span>
 <span><span class="va">se</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.6501838</code></pre>
@@ -688,7 +658,7 @@ s_p^2 \bigg|_{n_1 = n_2 = n} &amp; = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1
 </section><section id="independent-samples-t-test-r-calculation-1" class="slide level2"><h2>Independent Samples <em>t</em>-Test: R Calculation</h2>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">n_four</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="va">n_eight</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">n_four</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="va">n_eight</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">t_crits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.025</span>, <span class="fl">.975</span><span class="op">)</span>, <span class="va">df</span><span class="op">)</span></span>
 <span><span class="va">t_crits</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -700,7 +670,7 @@ s_p^2 \bigg|_{n_1 = n_2 = n} &amp; = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">t_stat</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">x_bar_four</span> <span class="op">-</span> <span class="va">x_bar_eight</span><span class="op">)</span> <span class="op">/</span> <span class="va">se</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">t_stat</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">x_bar_four</span> <span class="op">-</span> <span class="va">x_bar_eight</span><span class="op">)</span> <span class="op">/</span> <span class="va">se</span></span>
 <span><span class="va">t_stat</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 17.18575</code></pre>
@@ -710,9 +680,9 @@ s_p^2 \bigg|_{n_1 = n_2 = n} &amp; = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1
 <p><span class="fragment">We reject the null! Can we tell which had a larger mean?</span></p>
 </section><section id="independent-samples-t-test-ci" class="slide level2"><h2>Independent Samples <em>t</em>-Test: CI</h2>
 <p>Let’s build a confidence interval around our estimated difference in means</p>
-<span class="math display">\[ CI = [\bar{d} - t_{crit} \times s_{\bar{x}}, \ \ \bar{d} + t_{crit} \times s_{\bar{x}}] \]</span>
+<p><span class="math display">\[ CI = [(\bar{x}_1 - \bar{x}_2) - t_{crit} \times s_{\bar{x}}, \ \ (\bar{x}_1 - \bar{x}_2) + t_{crit} \times s_{\bar{x}}] \]</span></p>
 <div class="subpoint">
-○ <span class="math inline">\(\bar{d}\)</span> = our observed mean difference (<span class="math inline">\(\bar{x}_{\text{group 1}} - \bar{x}_{\text{group 2}}\)</span>)
+○ <span class="math inline">\((\bar{x}_1 - \bar{x}_2)\)</span> = our observed mean difference (<span class="math inline">\(\bar{x}_{\text{group 1}} - \bar{x}_{\text{group 2}}\)</span>)
 </div>
 <div class="subpoint">
 ○ <span class="math inline">\(t_{crit}\)</span> = our critical <em>t</em> value
@@ -721,7 +691,7 @@ s_p^2 \bigg|_{n_1 = n_2 = n} &amp; = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1
 ○ <span class="math inline">\(s_{\bar{x}}\)</span> = the standard error of our outcome
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x_bar_difference</span> <span class="op">&lt;-</span> <span class="va">x_bar_four</span> <span class="op">-</span> <span class="va">x_bar_eight</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x_bar_difference</span> <span class="op">&lt;-</span> <span class="va">x_bar_four</span> <span class="op">-</span> <span class="va">x_bar_eight</span></span>
 <span></span>
 <span><span class="va">x_bar_difference</span> <span class="op">+</span> <span class="va">t_crits</span> <span class="op">*</span> <span class="va">se</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -729,24 +699,26 @@ s_p^2 \bigg|_{n_1 = n_2 = n} &amp; = \frac{(n - 1) s_1^2 + (n - 1) s_2^2}{(n - 1
 </div>
 </div>
 </section><section id="independent-samples-t-test-r-function" class="slide level2"><h2>Independent Samples <em>t</em>-Test: R Function</h2>
-<p><code>t.test(outcome ~ group_var, data, var.equal = T)</code></p>
+<p><code>t.test(outcome ~ group_var, data, var.equal = F)</code></p>
 <div class="subpoint">
 ○ <code>var.equal = T</code>: tells <code>R</code> <em>not</em> to use the Welch-Satterthwaite correction, just for demonstration. Generally, we can leave it to its default (if you don’t specify <code>var.equal = T</code>, it will default to <code>var.equal = F</code> and do the correction!)
 </div>
+<div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span><span class="op">(</span><span class="va">hwy</span> <span class="op">~</span> <span class="va">cyl</span>, <span class="va">filtered_mpg</span>, var.equal <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span><span class="op">(</span><span class="va">hwy</span> <span class="op">~</span> <span class="va">cyl</span>, <span class="va">filtered_mpg</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-    Two Sample t-test
+    Welch Two Sample t-test
 
 data:  hwy by cyl
-t = 17.186, df = 149, p-value &lt; 2.2e-16
+t = 17.586, df = 144.65, p-value &lt; 2.2e-16
 alternative hypothesis: true difference in means between group 4 and group 8 is not equal to 0
 95 percent confidence interval:
-  9.889126 12.458669
+  9.918065 12.429731
 sample estimates:
 mean in group 4 mean in group 8 
        28.80247        17.62857 </code></pre>
+</div>
 </div>
 </div>
 </section><section id="independent-samples-t-test-assumptions" class="slide level2"><h2>Independent Samples <em>t</em>-Test Assumptions</h2>
@@ -765,7 +737,7 @@ mean in group 4 mean in group 8
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-31-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
+<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-29-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -773,11 +745,11 @@ mean in group 4 mean in group 8
 </div>
 <div id="tabset-3-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">filtered_mpg</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">filtered_mpg</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>cyl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">hwy</span>, color <span class="op">=</span> <span class="va">cyl</span>, fill <span class="op">=</span> <span class="va">cyl</span>, group <span class="op">=</span> <span class="va">cyl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_histogram</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="fu">after_stat</span><span class="op">(</span><span class="va">density</span><span class="op">)</span><span class="op">)</span>, binwidth <span class="op">=</span> <span class="fl">3</span>, alpha <span class="op">=</span> <span class="fl">0.4</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_density</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>sample <span class="op">=</span> <span class="va">hwy</span>, color <span class="op">=</span> <span class="va">cyl</span>, group <span class="op">=</span> <span class="va">cyl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_qq</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_qq_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -794,7 +766,7 @@ mean in group 4 mean in group 8
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-33-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
+<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-31-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -802,11 +774,12 @@ mean in group 4 mean in group 8
 </div>
 <div id="tabset-4-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">filtered_mpg</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">filtered_mpg</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>cyl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>sample <span class="op">=</span> <span class="va">hwy</span>, color <span class="op">=</span> <span class="va">cyl</span>, group <span class="op">=</span> <span class="va">cyl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_qq</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_qq_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">hwy</span>, color <span class="op">=</span> <span class="va">cyl</span>, fill <span class="op">=</span> <span class="va">cyl</span>, group <span class="op">=</span> <span class="va">cyl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_histogram</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="fu">after_stat</span><span class="op">(</span><span class="va">density</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>                 binwidth <span class="op">=</span> <span class="fl">3</span>, alpha <span class="op">=</span> <span class="fl">0.4</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_density</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -829,7 +802,7 @@ mean in group 4 mean in group 8
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-35-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
+<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-33-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -837,10 +810,11 @@ mean in group 4 mean in group 8
 </div>
 <div id="tabset-5-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sample_size</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sample_size</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span>
 <span><span class="fu">tibble</span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">sample_size</span>, <span class="fl">12</span>, <span class="fl">3</span><span class="op">)</span>,</span>
 <span>       x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">sample_size</span>, <span class="fl">20</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"group"</span>, values_to <span class="op">=</span> <span class="st">"draw"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span>, </span>
+<span>               names_to <span class="op">=</span> <span class="st">"group"</span>, values_to <span class="op">=</span> <span class="st">"draw"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">draw</span>, color <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_density</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -861,7 +835,7 @@ mean in group 4 mean in group 8
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-37-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
+<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-35-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -869,10 +843,11 @@ mean in group 4 mean in group 8
 </div>
 <div id="tabset-6-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sample_size</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sample_size</span> <span class="op">&lt;-</span> <span class="fl">10000</span></span>
 <span><span class="fu">tibble</span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">sample_size</span>, <span class="fl">12</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>       x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">sample_size</span>, <span class="fl">20</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"group"</span>, values_to <span class="op">=</span> <span class="st">"draw"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span>, </span>
+<span>               names_to <span class="op">=</span> <span class="st">"group"</span>, values_to <span class="op">=</span> <span class="st">"draw"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">draw</span>, color <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_density</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -899,7 +874,7 @@ mean in group 4 mean in group 8
 </section><section id="paired-samples-t-test-r-example" class="slide level2"><h2>Paired Samples <em>t</em>-Test: R Example</h2>
 <p>You own an ice cream shop, and you want to decide which flavor of ice cream (vanilla or cookie dough) you want to run a promotion for! The promotion would be for the ice cream flavor that has been selling <em>less</em>. For 20 days, you track the sales of each ice cream flavor.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ice_cream_sales</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"data"</span>, <span class="st">"lab_05"</span>, <span class="st">"ice_cream_sales_data.csv"</span><span class="op">)</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ice_cream_sales</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"data"</span>, <span class="st">"lab_05"</span>, <span class="st">"ice_cream_sales_data.csv"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">glimpse</span><span class="op">(</span><span class="va">ice_cream_sales</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -914,7 +889,7 @@ $ day    &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 
 <p>For a paired samples <em>t</em>-test, our unit of analysis is a <em>difference score</em>. So, currently, this data is too long! Let’s pivot and create some difference scores.</p>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ice_cream_cleaned</span> <span class="op">&lt;-</span> <span class="va">ice_cream_sales</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ice_cream_cleaned</span> <span class="op">&lt;-</span> <span class="va">ice_cream_sales</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">flavor</span>, values_from <span class="op">=</span> <span class="va">sales</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>difference <span class="op">=</span> <span class="va">vanilla</span> <span class="op">-</span> <span class="va">cookie_dough</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ice_cream_cleaned</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -932,9 +907,12 @@ $ day    &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 
 </div>
 </div>
 </section><section id="paired-samples-t-test-r-calculation" class="slide level2"><h2>Paired Samples <em>t</em>-Test: R Calculation</h2>
-<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="math display">\[ t = \frac{\bar{D} - \mu_{D_0}}{\frac{s_D}{\sqrt{n}}} = \text{(usually)} \frac{\bar{D} - 0}{\frac{s_D}{\sqrt{n}}} = \frac{\bar{D}}{\frac{s_D}{\sqrt{n}}}\]</span></p>
+</div><div class="column fragment" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">obs_mean_diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ice_cream_cleaned</span><span class="op">$</span><span class="va">difference</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">obs_mean_diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ice_cream_cleaned</span><span class="op">$</span><span class="va">difference</span><span class="op">)</span></span>
 <span><span class="va">sd_diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">ice_cream_cleaned</span><span class="op">$</span><span class="va">difference</span><span class="op">)</span></span>
 <span><span class="va">n_diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">ice_cream_cleaned</span><span class="op">)</span></span>
 <span></span>
@@ -947,11 +925,11 @@ $ day    &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 
 <pre><code>[1] 1.919921</code></pre>
 </div>
 </div>
-</div>
+</div></div>
 </section><section id="paired-samples-t-test-r-calculation-1" class="slide level2"><h2>Paired Samples <em>t</em>-Test: R Calculation</h2>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">n_diff</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">n_diff</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">t_crits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.025</span>, <span class="fl">.975</span><span class="op">)</span>, <span class="va">df</span><span class="op">)</span></span>
 <span><span class="va">t_crits</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -963,7 +941,7 @@ $ day    &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb65"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">t_stat</span> <span class="op">&lt;-</span> <span class="va">obs_mean_diff</span> <span class="op">/</span> <span class="va">se_diff</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">t_stat</span> <span class="op">&lt;-</span> <span class="va">obs_mean_diff</span> <span class="op">/</span> <span class="va">se_diff</span></span>
 <span><span class="va">t_stat</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 4.823637</code></pre>
@@ -972,9 +950,9 @@ $ day    &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 
 </div>
 </section><section id="paired-samples-t-test-r-calculation-2" class="slide level2"><h2>Paired Samples <em>t</em>-Test: R Calculation</h2>
 <p>Let’s build a confidence interval around our estimated difference in means</p>
-<span class="math display">\[ CI = [(\bar{x}_1 - \bar{x}_2) - t_{crit} \times s_{\bar{x}}, \ \ (\bar{x}_1 - \bar{x}_2) + t_{crit} \times s_{\bar{x}}] \]</span>
+<p><span class="math display">\[ CI = [\bar{d} - t_{crit} \times s_{\bar{x}}, \ \ \bar{d} + t_{crit} \times s_{\bar{x}}] \]</span></p>
 <div class="subpoint">
-○ <span class="math inline">\((\bar{x}_1 - \bar{x}_2)\)</span> = our observed mean difference (<span class="math inline">\(\bar{x}_{\text{group 1}} - \bar{x}_{\text{group 2}}\)</span>)
+○ <span class="math inline">\(\bar{d}\)</span> = our observed mean difference (<span class="math inline">\(\bar{x}_{\text{group 1}} - \bar{x}_{\text{group 2}}\)</span>)
 </div>
 <div class="subpoint">
 ○ <span class="math inline">\(t_{crit}\)</span> = our critical <em>t</em> value
@@ -983,7 +961,7 @@ $ day    &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 
 ○ <span class="math inline">\(s_{\bar{x}}\)</span> = the standard error of our outcome
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ci</span> <span class="op">&lt;-</span> <span class="va">obs_mean_diff</span> <span class="op">+</span> <span class="va">t_crits</span> <span class="op">*</span> <span class="va">se_diff</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ci</span> <span class="op">&lt;-</span> <span class="va">obs_mean_diff</span> <span class="op">+</span> <span class="va">t_crits</span> <span class="op">*</span> <span class="va">se_diff</span></span>
 <span><span class="va">ci</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1]  5.24256 13.27944</code></pre>
@@ -993,7 +971,7 @@ $ day    &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 
 </section><section id="paired-samples-t-test-r-function" class="slide level2"><h2>Paired Samples <em>t</em>-Test: R Function</h2>
 <p><code>t.test(y1_vector, y2_vector, paired = T)</code></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span><span class="op">(</span><span class="va">ice_cream_cleaned</span><span class="op">$</span><span class="va">vanilla</span>, <span class="va">ice_cream_cleaned</span><span class="op">$</span><span class="va">cookie_dough</span>, paired <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span><span class="op">(</span><span class="va">ice_cream_cleaned</span><span class="op">$</span><span class="va">vanilla</span>, <span class="va">ice_cream_cleaned</span><span class="op">$</span><span class="va">cookie_dough</span>, paired <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Paired t-test
@@ -1022,7 +1000,7 @@ mean difference
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-46-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
+<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-44-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1030,7 +1008,7 @@ mean difference
 </div>
 <div id="tabset-7-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ice_cream_cleaned</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ice_cream_cleaned</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">difference</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_histogram</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="fu">after_stat</span><span class="op">(</span><span class="va">density</span><span class="op">)</span><span class="op">)</span>, binwidth <span class="op">=</span> <span class="fl">3</span>, alpha <span class="op">=</span> <span class="fl">0.4</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_density</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1050,7 +1028,7 @@ mean difference
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-48-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
+<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-46-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1058,7 +1036,7 @@ mean difference
 </div>
 <div id="tabset-8-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb72"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ice_cream_cleaned</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ice_cream_cleaned</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>sample <span class="op">=</span> <span class="va">difference</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_qq</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_qq_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1070,6 +1048,81 @@ mean difference
 </div></div>
 </div>
 <p>Not many data points… QQ-plot at least seems OK!</p>
+</section><section id="paired-samples-t-test-plot" class="slide level2"><h2>Paired Samples <em>t</em>-Test Plot</h2>
+<div style="font-size:80%">
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-9" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-9-1">Plot</a></li>
+<li><a href="#tabset-9-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-9-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-48-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-9-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb65"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ice_cream_sales</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">flavor</span>, y <span class="op">=</span> <span class="va">sales</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">stat_summary</span><span class="op">(</span>fun.data <span class="op">=</span> <span class="st">"mean_se"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-10" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-10-1">Plot</a></li>
+<li><a href="#tabset-10-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-10-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_05_files/figure-revealjs/unnamed-chunk-50-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-10-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb66"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># partially GPT-generated code (I didn't want to pick colors)</span></span>
+<span><span class="va">ice_cream_sales</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">flavor</span>, y <span class="op">=</span> <span class="va">sales</span>, fill <span class="op">=</span> <span class="va">flavor</span>, color <span class="op">=</span> <span class="va">flavor</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_violin</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_jitter</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.6</span>, shape <span class="op">=</span> <span class="fl">16</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">stat_summary</span><span class="op">(</span>fun.data <span class="op">=</span> <span class="va">mean_se</span>, color <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>               size <span class="op">=</span> <span class="fl">0.8</span>, linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
+<span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
+<span>         fill <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>         color <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_discrete</span><span class="op">(</span><span class="cn">NULL</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"cookie_dough"</span> <span class="op">=</span> <span class="st">"Cookie Dough"</span>,</span>
+<span>                                    <span class="st">"vanilla"</span> <span class="op">=</span> <span class="st">"Vanilla"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="st">"Sales"</span>, labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_currency.html">label_currency</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"cookie_dough"</span> <span class="op">=</span> <span class="st">"#D6A15D"</span>,</span>
+<span>                               <span class="st">"vanilla"</span> <span class="op">=</span> <span class="st">"#8FB8A8"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"cookie_dough"</span> <span class="op">=</span> <span class="st">"#B47735"</span>,</span>
+<span>                                <span class="st">"vanilla"</span> <span class="op">=</span> <span class="st">"#5E8F7D"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>axis.line.x <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>        axis.ticks.x <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</div>
 <!-- ```{r} -->
 <!-- ice_cream_sales |> -->
 <!--   ggplot(aes(x = day, y = sales, color = flavor)) + -->
@@ -1088,6 +1141,49 @@ mean difference
 <em>t</em>-Test: Interpretation and write-up</h2>
 <p>An [independent samples / paired samples] <em>t</em>-test analysis was conducted between [group 1] and [group 2]. We [<span class="navy-color">fail to reject</span> / <span class="gold-color">reject</span>] <span class="math inline">\(H_0\)</span> [<span class="gold-color">in favor of <span class="math inline">\(H_1\)</span></span>], <em>t</em>([df]) = [____], <em>p</em> [<span class="gold-color">&lt; 0.05</span> / <span class="navy-color">p-value</span>]. We [<span class="navy-color">did not</span>] observe[<span class="gold-color">d</span>] a significant difference between the mean [outcome] of [group 1] and [group 2] in our sample.</p>
 </section><section id="lab-05-assignment" class="slide level2"><h2>Lab 05 Assignment</h2>
+</section></section><section><section id="bonus" class="title-slide slide level1 center"><h1>Bonus</h1>
+
+</section><section id="t-statistic-cutoffs-practice" class="slide level2"><h2>
+<em>t</em>-Statistic Cutoffs Practice</h2>
+<p>Say you want to find the cutoff <em>t</em> values: <span class="math inline">\(t(\text{df}=3)\)</span> and <span class="math inline">\(t(\text{df}=37)\)</span> for <span class="math inline">\(\alpha = .05\)</span>, both upper one-tailed and two-tailed.</p>
+<div class="fragment">
+<p>Which will have the larger magnitude cutoff values?</p>
+</div>
+<div class="columns" style="font-size:70%">
+<div class="column fragment">
+<p><strong>One-Tailed</strong></p>
+<p>All of our <span class="math inline">\(\alpha = .05\)</span> goes on the upper side</p>
+<p>Need a cutoff for <span class="math inline">\(.95\)</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span>p <span class="op">=</span> <span class="fl">.95</span>, df <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.353363</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span>p <span class="op">=</span> <span class="fl">.05</span>, df <span class="op">=</span> <span class="fl">37</span>, lower.tail <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.687094</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(t_{crit}(\text{df}=3) = 2.35\)</span></p>
+<p><span class="math inline">\(t_{crit}(\text{df}=37) = 1.69\)</span></p>
+</div><div class="column fragment">
+<p><strong>Two-Tailed</strong></p>
+<p><span class="math inline">\(\alpha = 1 - .95 = 5\%\)</span> on both sides</p>
+<p>So <span class="math inline">\(.05 / 2 = .025\)</span> on each side</p>
+<p>Need value for <span class="math inline">\(.025\)</span> and <span class="math inline">\(.95 + .025\)</span> (<span class="math inline">\([.025, .975]\)</span>)</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span>p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.025</span>, <span class="fl">.975</span><span class="op">)</span>, df <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -3.182446  3.182446</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb73"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">qt</a></span><span class="op">(</span>p <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.025</span>, <span class="fl">.975</span><span class="op">)</span>, df <span class="op">=</span> <span class="fl">37</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -2.026192  2.026192</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(t_{crit}(\text{df}=3) = [-3.18, 3.18]\)</span></p>
+<p><span class="math inline">\(t_{crit}(\text{df}=37) = [-2.03, 2.03]\)</span></p>
+</div></div>
 <!-- ## Cohen's *D* Revisited -->
 <!-- Now that we have two groups, R functions for Cohen's *D* will be more helpful to us. The `cohens_d()` function from the `effectsize` package allows for many formats of inputs. -->
 <!-- :::: {.columns} -->
