@@ -102,21 +102,21 @@ list(
   
   ## lab 03
 
-  tar_target(lab_03_slides_qmd, 
-             "lab/slides/lab_03.qmd", 
-             format = "file"),
-  tar_target(lab_03_slides, {
-    world_cup_player_stats_file
-    quarto::quarto_render(lab_03_slides_qmd)
-    qmd_out(lab_03_slides_qmd)
-  }, format = "file"),
-  tar_target(lab_03_activity_key_qmd, 
-             "lab/activities/activity-keys/lab_03_activity_key.qmd", 
-             format = "file"),
-  tar_target(lab_03_activity_key, {
-    quarto::quarto_render(lab_03_activity_key_qmd)
-    qmd_out(lab_03_activity_key_qmd)
-  }, format = "file"),
+  # tar_target(lab_03_slides_qmd, 
+  #            "lab/slides/lab_03.qmd", 
+  #            format = "file"),
+  # tar_target(lab_03_slides, {
+  #   world_cup_player_stats_file
+  #   quarto::quarto_render(lab_03_slides_qmd)
+  #   qmd_out(lab_03_slides_qmd)
+  # }, format = "file"),
+  # tar_target(lab_03_activity_key_qmd, 
+  #            "lab/activities/activity-keys/lab_03_activity_key.qmd", 
+  #            format = "file"),
+  # tar_target(lab_03_activity_key, {
+  #   quarto::quarto_render(lab_03_activity_key_qmd)
+  #   qmd_out(lab_03_activity_key_qmd)
+  # }, format = "file"),
   
   ## lab 02
   tar_target(world_cup_player_stats_file, "lab/raw-data/world_cup_player_stats.csv", format = "file"),
