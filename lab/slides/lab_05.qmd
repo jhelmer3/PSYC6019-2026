@@ -345,7 +345,7 @@ $t \bigg|_{\mu = 0} = \frac{\bar{x} - 0}{\frac{s}{\sqrt{n}}} = \frac{\bar{x}}{\f
 
 ## *t*-Test Example
 
-Let's you work for a car manufacturer, and a researcher claims the average city miles per gallon across all cars is 30mpg. They collect data on a sample of 234 cars and would like you to test this. We do not know the population standard deviation.
+Let's you work for a car manufacturer, and a researcher claims the average city miles per gallon across all cars is 30mpg. They collect data on a sample of 234 cars (`mpg` dataset) and would like you to test this. We do not know the population standard deviation.
 
 [One- or two-tailed?]{.fragment} [Two!]{.fragment}
 
@@ -359,7 +359,7 @@ x_sd <- sd(mpg$cty)
 n <- length(mpg$cty) # this won't work if you have missing data
 df <- n - 1
 
-t_cutoff <- qt(.975, df)
+t_cutoff <- qt(c(.025, .975), df)
 
 x_se <- x_sd / sqrt(n)
 
@@ -396,6 +396,78 @@ t.test(mpg$cty, mu = 30, alternative = "two.sided")
 We see a significant difference between our observed sample mean and our hypothesized population mean.
 :::
 ::::
+
+
+## *t*-Test Example Output
+
+:::: {.columns}
+::: column
+```{r}
+cty_ttest <- t.test(mpg$cty, mu = 30, 
+                    alternative = "two.sided")
+cty_ttest
+
+#?t.test
+```
+:::
+
+::: column
+```{r}
+cty_ttest$statistic
+cty_ttest$p.value
+```
+
+::: fragment
+```{r}
+cty_ttest$conf.int
+```
+:::
+:::
+::::
+
+
+## *t*-Test Confidence Intervals
+
+Let's build a confidence interval around our estimated mean
+
+$$ CI = [\bar{x} - t_{crit} \times s_{\bar{x}}, \ \ \bar{x} + t_{crit} \times s_{\bar{x}}] $$
+<div class="subpoint">○ $\bar{x}$ = our observed mean </div>
+
+<div class="subpoint">○ $t_{crit}$ = our critical *t* value </div>
+
+<div class="subpoint">○ $s_{\bar{x}}$ = the standard error of our outcome </div>
+
+
+## *t*-Test Confidence Intervals
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+head(mpg$cty)
+
+x_bar <- mean(mpg$cty)
+x_sd <- sd(mpg$cty)
+n <- length(mpg$cty)
+df <- n - 1
+
+t_cutoff <- qt(.975, df)
+
+x_se <- x_sd / sqrt(n)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+ci_lower <- x_bar - t_cutoff * x_se
+ci_upper <- x_bar + t_cutoff * x_se
+c(ci_lower, ci_upper)
+```
+:::
+::::
+
+[Across repeated trials, 95% of intervals (across repeated samples) will contain the true value. `r glue::glue("[{round(ci_lower, 2)}, {round(ci_upper, 2)}]")` is one such interval.]{.fragment}
+
+[If we treated any value inside the 95% confidence interval of `r glue::glue("[{round(ci_lower, 2)}, {round(ci_upper, 2)}]")` as the null, we could not reject it at $\alpha = 0.05$.]{.fragment}
 
 
 ## *t*-Test Assumptions
@@ -462,78 +534,6 @@ mpg |>
 :::
 
 
-## *t*-Test Example Output
-
-:::: {.columns}
-::: column
-```{r}
-cty_ttest <- t.test(mpg$cty, mu = 30, alternative = "two.sided")
-cty_ttest
-
-#?t.test
-```
-:::
-
-::: column
-```{r}
-cty_ttest$statistic
-cty_ttest$p.value
-```
-
-::: fragment
-```{r}
-cty_ttest$conf.int
-```
-:::
-:::
-::::
-
-
-## *t*-Test Confidence Intervals
-
-Let's build a confidence interval around our estimated mean
-
-$$ CI = [\bar{x} - t_{crit} \times s_{\bar{x}}, \ \ \bar{x} + t_{crit} \times s_{\bar{x}}] $$
-<div class="subpoint">○ $\bar{x}$ = our observed mean </div>
-
-<div class="subpoint">○ $t_{crit}$ = our critical *t* value </div>
-
-<div class="subpoint">○ $s_{\bar{x}}$ = the standard error of our outcome </div>
-
-
-## *t*-Test Confidence Intervals
-
-:::: {.columns}
-::: {.column width="50%"}
-```{r}
-head(mpg$cty)
-
-x_bar <- mean(mpg$cty)
-x_sd <- sd(mpg$cty)
-n <- length(mpg$cty)
-df <- n - 1
-
-t_cutoff <- qt(.975, df)
-
-x_se <- x_sd / sqrt(n)
-```
-:::
-
-::: {.column width="50%"}
-```{r}
-ci_lower <- x_bar - t_cutoff * x_se
-ci_upper <- x_bar + t_cutoff * x_se
-c(ci_lower, ci_upper)
-```
-:::
-::::
-
-[Across repeated trials, 95% of intervals (across repeated samples) will contain the true value. `r glue::glue("[{round(ci_lower, 2)}, {round(ci_upper, 2)}]")` is one such interval.]{.fragment}
-
-[If we treated any value inside the 95% confidence interval of `r glue::glue("[{round(ci_lower, 2)}, {round(ci_upper, 2)}]")` as the null, we could not reject it at $\alpha = 0.05$.]{.fragment}
-
-
-
 ## *t*-Test Example
 
 Let's say a different researcher claims the average city miles per gallon across all cars is 50mpg. They collect a sample of 234 cars. You are confident they are wrong---you think it is certainly less than that. We do not know the population standard deviation.
@@ -556,65 +556,21 @@ We see a significant difference between our observed sample mean and our hypothe
 ::::
 
 
-## *t*-Statistic Cutoffs
-
-Say you want to find the cutoff *t* values: $t(\text{df}=3)$ and $t(\text{df}=37)$ for $\alpha = .05$, both upper one-tailed and two-tailed.
-
-::: fragment
-Which will have the larger magnitude cutoff values?
-:::
-
-:::: {.columns style="font-size:70%"}
-::: {.column .fragment}
-**One-Tailed**
-
-All of our $\alpha = .05$ goes on the upper side
-
-Need a cutoff for $.95$
-```{r}
-qt(p = .95, df = 3)
-
-qt(p = .05, df = 37, lower.tail = F)
-```
-
-$t_{crit}(\text{df}=3) = 2.35$
-
-$t_{crit}(\text{df}=37) = 1.69$
-:::
-
-::: {.column .fragment}
-**Two-Tailed**
-
-$\alpha = 1 - .95 = 5\%$ on both sides
-
-So $.05 / 2 = .025$ on each side
-
-Need value for $.025$ and $.95 + .025$ ($[.025, .975]$)
-```{r}
-qt(p = c(.025, .975), df = 3)
-
-qt(p = c(.025, .975), df = 37)
-```
-
-$t_{crit}(\text{df}=3) = [-3.18, 3.18]$
-
-$t_{crit}(\text{df}=37) = [-2.03, 2.03]$
-:::
-::::
-
-
-
 # Independent Samples *t*-Test
 
 ## Independent Samples *t*-Test
 
 Might want to compare two samples of observations
 
-[○ Post-graduation salaries of GT vs. UGA grads]{.subpoint}
+<!-- [○ Post-graduation salaries of GT vs. UGA grads]{.subpoint} -->
 
-[○ Treatment vs. control group]{.subpoint}
+::: subpoint
+○ Treatment vs. control group
+:::
 
-[○ Cats vs. dogs]{.subpoint}
+::: subpoint
+○ Cats vs. dogs
+:::
 
 We can represent each group with their mean on some outcome and compare the means
 
@@ -623,7 +579,10 @@ Consider whether the mean difference is significant but also have to account for
 
 ## Independent Samples *t*-Test: Test Statistic
 
-$$ t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}} = \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} $$
+$$ t = 
+\frac{\bar{x}_1 - \bar{x}_2}{SE} = 
+\frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}} = 
+\frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} $$
 
 [Compare against critical *t*-value with df = $(n_1 - 1) + (n_2 - 1)$]{.fragment}
 
@@ -655,7 +614,7 @@ $$ s_p = \sqrt{s_p^2} = \sqrt{\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{(n_1 - 1)
 
 ## Independent Samples *t*-Test: Example
 
-Let's say you work for a car manufacturer, and you're helping decide features of the next car you produce. You want to test whether there's a difference in highway MPG for cars with four and eight cylinders. You have a dataset with 234 cars to test this on.
+Let's say you work for a car manufacturer, and you're helping decide features of the next car you produce. You want to test whether there's a difference in **highway** MPG for cars with four and eight cylinders. You have a dataset with 234 cars to test this on.
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -685,7 +644,10 @@ head(four_cyl); head(eight_cyl)
 
 :::: {.columns .fragment}
 ::: {.column width="50%"}
-$$ t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}} = \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} $$
+$$ t = 
+\frac{\bar{x}_1 - \bar{x}_2}{SE} = 
+\frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_p^2}{n_1} + \frac{s_p^2}{n_2}}} = 
+\frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} $$
 :::
 
 ::: {.column width="50%"}
@@ -750,8 +712,9 @@ t_stat
 
 Let's build a confidence interval around our estimated difference in means
 
-$$ CI = [\bar{d} - t_{crit} \times s_{\bar{x}}, \ \ \bar{d} + t_{crit} \times s_{\bar{x}}] $$
-<div class="subpoint">○ $\bar{d}$ = our observed mean difference ($\bar{x}_{\text{group 1}} - \bar{x}_{\text{group 2}}$) </div>
+$$ CI = [(\bar{x}_1 - \bar{x}_2) - t_{crit} \times s_{\bar{x}}, \ \ (\bar{x}_1 - \bar{x}_2) + t_{crit} \times s_{\bar{x}}] $$
+
+<Div class="subpoint">○ $(\bar{x}_1 - \bar{x}_2)$ = our observed mean difference ($\bar{x}_{\text{group 1}} - \bar{x}_{\text{group 2}}$) </div>
 
 <div class="subpoint">○ $t_{crit}$ = our critical *t* value </div>
 
@@ -767,13 +730,15 @@ x_bar_difference + t_crits * se
 
 ## Independent Samples *t*-Test: R Function
 
-`t.test(outcome ~ group_var, data, var.equal = T)`
+`t.test(outcome ~ group_var, data, var.equal = F)`
 
 <div class="subpoint">○ `var.equal = T`: tells `R` *not* to use the Welch-Satterthwaite correction, just for demonstration. Generally, we can leave it to its default (if you don't specify `var.equal = T`, it will default to `var.equal = F` and do the correction!) </div>
 
+::: fragment
 ```{r}
-t.test(hwy ~ cyl, filtered_mpg, var.equal = T)
+t.test(hwy ~ cyl, filtered_mpg)
 ```
+:::
 
 
 ## Independent Samples *t*-Test Assumptions
@@ -794,9 +759,9 @@ Look for normality and *homogeneity of variance*: both groups have the same vari
 #| fig-align: center
 filtered_mpg |>
   mutate(cyl = factor(cyl)) |>
-  ggplot(aes(x = hwy, color = cyl, fill = cyl, group = cyl)) +
-  geom_histogram(aes(y = after_stat(density)), binwidth = 3, alpha = 0.4, color = NA) +
-  geom_density(alpha = 0.6) +
+  ggplot(aes(sample = hwy, color = cyl, group = cyl)) +
+  geom_qq() +
+  geom_qq_line() +
   theme_classic()
 ```
 
@@ -805,9 +770,9 @@ filtered_mpg |>
 #| eval: false
 filtered_mpg |>
   mutate(cyl = factor(cyl)) |>
-  ggplot(aes(x = hwy, color = cyl, fill = cyl, group = cyl)) +
-  geom_histogram(aes(y = after_stat(density)), binwidth = 3, alpha = 0.4, color = NA) +
-  geom_density(alpha = 0.6) +
+  ggplot(aes(sample = hwy, color = cyl, group = cyl)) +
+  geom_qq() +
+  geom_qq_line() +
   theme_classic()
 ```
 :::
@@ -823,9 +788,9 @@ filtered_mpg |>
 #| fig-align: center
 filtered_mpg |>
   mutate(cyl = factor(cyl)) |>
-  ggplot(aes(sample = hwy, color = cyl, group = cyl)) +
-  geom_qq() +
-  geom_qq_line() +
+  ggplot(aes(x = hwy, color = cyl, fill = cyl, group = cyl)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 3, alpha = 0.4, color = NA) +
+  geom_density(alpha = 0.6) +
   theme_classic()
 ```
 
@@ -834,9 +799,10 @@ filtered_mpg |>
 #| eval: false
 filtered_mpg |>
   mutate(cyl = factor(cyl)) |>
-  ggplot(aes(sample = hwy, color = cyl, group = cyl)) +
-  geom_qq() +
-  geom_qq_line() +
+  ggplot(aes(x = hwy, color = cyl, fill = cyl, group = cyl)) +
+  geom_histogram(aes(y = after_stat(density)), 
+                 binwidth = 3, alpha = 0.4, color = NA) +
+  geom_density(alpha = 0.6) +
   theme_classic()
 ```
 :::
@@ -865,7 +831,8 @@ Homogeneity of variance assumption:
 sample_size <- 10000
 tibble(x1 = rnorm(sample_size, 10, 3),
        x2 = rnorm(sample_size, 18, 3)) |>
-  pivot_longer(starts_with("x"), names_to = "group", values_to = "draw") |>
+  pivot_longer(starts_with("x"), 
+               names_to = "group", values_to = "draw") |>
   ggplot(aes(x = draw, color = group)) +
   geom_density() +
   coord_cartesian(xlim = c(0, 40)) +
@@ -878,7 +845,8 @@ tibble(x1 = rnorm(sample_size, 10, 3),
 sample_size <- 10000
 tibble(x1 = rnorm(sample_size, 12, 3),
        x2 = rnorm(sample_size, 20, 3)) |>
-  pivot_longer(starts_with("x"), names_to = "group", values_to = "draw") |>
+  pivot_longer(starts_with("x"), 
+               names_to = "group", values_to = "draw") |>
   ggplot(aes(x = draw, color = group)) +
   geom_density() +
   coord_cartesian(xlim = c(0, 40)) +
@@ -900,7 +868,8 @@ tibble(x1 = rnorm(sample_size, 12, 3),
 sample_size <- 10000
 tibble(x1 = rnorm(sample_size, 12, 2),
        x2 = rnorm(sample_size, 20, 6)) |>
-  pivot_longer(starts_with("x"), names_to = "group", values_to = "draw") |>
+  pivot_longer(starts_with("x"), 
+               names_to = "group", values_to = "draw") |>
   ggplot(aes(x = draw, color = group)) +
   geom_density() +
   coord_cartesian(xlim = c(0, 40)) +
@@ -913,7 +882,8 @@ tibble(x1 = rnorm(sample_size, 12, 2),
 sample_size <- 10000
 tibble(x1 = rnorm(sample_size, 12, 2),
        x2 = rnorm(sample_size, 20, 6)) |>
-  pivot_longer(starts_with("x"), names_to = "group", values_to = "draw") |>
+  pivot_longer(starts_with("x"), 
+               names_to = "group", values_to = "draw") |>
   ggplot(aes(x = draw, color = group)) +
   geom_density() +
   coord_cartesian(xlim = c(0, 40)) +
@@ -981,7 +951,12 @@ head(ice_cream_cleaned)
 
 ## Paired Samples *t*-Test: R Calculation
 
-::: fragment
+:::: {.columns}
+::: {.column width="50%"}
+$$ t = \frac{\bar{D} - \mu_{D_0}}{\frac{s_D}{\sqrt{n}}} = \text{(usually)} \frac{\bar{D} - 0}{\frac{s_D}{\sqrt{n}}} = \frac{\bar{D}}{\frac{s_D}{\sqrt{n}}}$$
+:::
+
+::: {.column .fragment width="50%"}
 ```{r}
 obs_mean_diff <- mean(ice_cream_cleaned$difference)
 sd_diff <- sd(ice_cream_cleaned$difference)
@@ -991,6 +966,9 @@ se_diff <- sd_diff / sqrt(n_diff)
 obs_mean_diff; se_diff
 ```
 :::
+::::
+
+
 
 
 ## Paired Samples *t*-Test: R Calculation
@@ -1018,8 +996,10 @@ t_stat
 
 Let's build a confidence interval around our estimated difference in means
 
-$$ CI = [(\bar{x}_1 - \bar{x}_2) - t_{crit} \times s_{\bar{x}}, \ \ (\bar{x}_1 - \bar{x}_2) + t_{crit} \times s_{\bar{x}}] $$
-<Div class="subpoint">○ $(\bar{x}_1 - \bar{x}_2)$ = our observed mean difference ($\bar{x}_{\text{group 1}} - \bar{x}_{\text{group 2}}$) </div>
+
+$$ CI = [\bar{d} - t_{crit} \times s_{\bar{x}}, \ \ \bar{d} + t_{crit} \times s_{\bar{x}}] $$
+
+<div class="subpoint">○ $\bar{d}$ = our observed mean difference ($\bar{x}_{\text{group 1}} - \bar{x}_{\text{group 2}}$) </div>
 
 <div class="subpoint">○ $t_{crit}$ = our critical *t* value </div>
 
@@ -1108,6 +1088,99 @@ ice_cream_cleaned |>
 
 Not many data points... QQ-plot at least seems OK!
 
+
+## Paired Samples *t*-Test Plot
+
+Can plot the data and means to compare! Which would we give the promotion to?
+
+::: {style="font-size:80%"}
+:::: {.columns}
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+ice_cream_sales |>
+  ggplot(aes(x = flavor, y = sales)) +
+  stat_summary(fun.data = "mean_se")
+```
+
+### Code
+```{r}
+#| eval: false
+ice_cream_sales |>
+  ggplot(aes(x = flavor, y = sales)) +
+  stat_summary(fun.data = "mean_se")
+```
+:::
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+ice_cream_sales |>
+  ggplot(aes(x = flavor, y = sales, fill = flavor, color = flavor)) +
+  geom_violin(alpha = 0.3) +
+  geom_jitter(alpha = 0.6, shape = 16, size = 2) +
+  stat_summary(fun.data = mean_se, color = "black",
+               size = 0.8, linewidth = 0.8) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         fill = "none",
+         color = "none") +
+  scale_x_discrete(NULL, labels = c("cookie_dough" = "Cookie Dough",
+                                    "vanilla" = "Vanilla")) +
+  scale_y_continuous("Sales", labels = scales::label_currency()) +
+  scale_fill_manual(values = c("cookie_dough" = "#D6A15D",
+                               "vanilla" = "#8FB8A8")) +
+  scale_color_manual(values = c("cookie_dough" = "#B47735",
+                                "vanilla" = "#5E8F7D")) +
+  theme_classic() +
+  theme(axis.line.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+
+### Code
+```{r}
+#| eval: false
+# partially GPT-generated code (I didn't want to pick colors)
+ice_cream_sales |>
+  ggplot(aes(x = flavor, y = sales, fill = flavor, color = flavor)) +
+  geom_violin(alpha = 0.3) +
+  geom_jitter(alpha = 0.6, shape = 16, size = 2) +
+  stat_summary(fun.data = mean_se, color = "black",
+               size = 0.8, linewidth = 0.8) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T),
+         fill = "none",
+         color = "none") +
+  scale_x_discrete(NULL, labels = c("cookie_dough" = "Cookie Dough",
+                                    "vanilla" = "Vanilla")) +
+  scale_y_continuous("Sales", labels = scales::label_currency()) +
+  scale_fill_manual(values = c("cookie_dough" = "#D6A15D",
+                               "vanilla" = "#8FB8A8")) +
+  scale_color_manual(values = c("cookie_dough" = "#B47735",
+                                "vanilla" = "#5E8F7D")) +
+  theme_classic() +
+  theme(axis.line.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+:::
+
+:::
+::::
+
+:::
+
 <!-- ```{r} -->
 <!-- ice_cream_sales |> -->
 <!--   ggplot(aes(x = day, y = sales, color = flavor)) + -->
@@ -1132,6 +1205,57 @@ An [independent samples / paired samples] *t*-test analysis was conducted betwee
 
 
 ## Lab 05 Assignment
+
+
+
+# Bonus
+
+## *t*-Statistic Cutoffs Practice
+
+Say you want to find the cutoff *t* values: $t(\text{df}=3)$ and $t(\text{df}=37)$ for $\alpha = .05$, both upper one-tailed and two-tailed.
+
+::: fragment
+Which will have the larger magnitude cutoff values?
+:::
+
+:::: {.columns style="font-size:70%"}
+::: {.column .fragment}
+**One-Tailed**
+
+All of our $\alpha = .05$ goes on the upper side
+
+Need a cutoff for $.95$
+```{r}
+qt(p = .95, df = 3)
+
+qt(p = .05, df = 37, lower.tail = F)
+```
+
+$t_{crit}(\text{df}=3) = 2.35$
+
+$t_{crit}(\text{df}=37) = 1.69$
+:::
+
+::: {.column .fragment}
+**Two-Tailed**
+
+$\alpha = 1 - .95 = 5\%$ on both sides
+
+So $.05 / 2 = .025$ on each side
+
+Need value for $.025$ and $.95 + .025$ ($[.025, .975]$)
+```{r}
+qt(p = c(.025, .975), df = 3)
+
+qt(p = c(.025, .975), df = 37)
+```
+
+$t_{crit}(\text{df}=3) = [-3.18, 3.18]$
+
+$t_{crit}(\text{df}=37) = [-2.03, 2.03]$
+:::
+::::
+
 
 
 <!-- ## Cohen's *D* Revisited -->
