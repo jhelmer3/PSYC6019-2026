@@ -220,8 +220,16 @@ Mark Himmelstein
 </div>
 
 </section>
-<section id="brief-update" class="slide level2">
-<h2>Brief Update</h2>
+<section id="brief-update-1" class="slide level2">
+<h2>Brief Update 1</h2>
+<p>The exam will take place in JS Coon 247/248 instead of 250</p>
+<ul>
+<li>This is where you do lab</li>
+<li>Should be more comfortable/spacious!</li>
+</ul>
+</section>
+<section id="brief-update-2" class="slide level2">
+<h2>Brief Update 2</h2>
 <p>Exam format</p>
 <ul>
 <li><strong>Theoretical Section:</strong> <del>12</del> 10 questions (5 points each)
@@ -719,6 +727,56 @@ Mark Himmelstein
 <h2>QQ Plot (Not)</h2>
 
 <img data-src="Exam-1-Review_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p>Large <span class="math inline">\(W\)</span> because points deviate a lot from reference line</p>
+</section>
+<section id="question-6" class="slide level2">
+<h2>Question 6</h2>
+<div style="font-size: 0.8em;">
+<p>I’m still a bit confused about when to use the paired and independent-samples t-tests. On slide 25 in lab 5, it states that the independent-samples t-test can be used to compare two samples of observations, e.g., a treatment versus a control group.</p>
+<p>Let’s consider a within-subject study.</p>
+<p>So, if the treatment and control groups come from the same population (30 students did both the treatment and control experiments one after the other), does that count as a paired-samples t-test? ( because they come from the same population).</p>
+<p>However, if 3 students in the treatment group opt out, then there are 30 students in the treatment group and 27 in the control group, so the Ns are unequal. Do we use the independent-samples t-test instead? (or we just drop these data points and proceed with the paired sample T?)</p>
+<p>So the question is: does this boil down to whether the data are drawn from the same subject or not? Or what is the exact line between these two tests? Thank you for the explanation!</p>
+</div>
+</section>
+<section id="my-answer" class="slide level2">
+<h2>My Answer</h2>
+<p>The difference between the test is in the <strong>data structure</strong>. If the two variables are <strong>within subject</strong> you <strong>always</strong> use a paired test</p>
+<ul>
+<li>In this example, the three lost datapoints would have to be treated as missing data</li>
+<li>I actually teach <strong>an entire course</strong> on how to deal with missing data! (next offered likely Fall 2027)
+<ul>
+<li>Much messier problem than it seems</li>
+<li>The “simplest” solution is we drop those participants entirely (listwise deletion) and treat it so the sample is <span class="math inline">\(N = 27\)</span></li>
+</ul></li>
+<li>Independent tests come from <strong>samples</strong> that are drawn from <strong>independent populations</strong>
+<ul>
+<li>This is the only criteria by which you should decide</li>
+</ul></li>
+</ul>
+</section>
+<section id="follow-up" class="slide level2">
+<h2>Follow-up</h2>
+<div style="font-size: 0.77em;">
+<p><strong>Follow-up question:</strong> I also calculated a paired sample t test with independent samples t test formula, and the t stats are the same. May we consider paired samples t test an extreme case of independent samples t test (when n is equal)?</p>
+<ul>
+<li>Not quite! There are two additional key differences
+<ul>
+<li>The independent sample <span class="math inline">\(t\)</span>-test has <span class="math inline">\(df\)</span> <span class="math inline">\(n_1 + n_2 -2\)</span>
+<ul>
+<li>So if you have two samples from independent populations <span class="math inline">\(n_1 = n_2 = 30\)</span>, df would be <span class="math inline">\(58\)</span></li>
+</ul></li>
+<li>The paired test has <span class="math inline">\(df = N_{pairs} - 1\)</span>
+<ul>
+<li>So if you have 30 pairs of observations, df are <span class="math inline">\(29\)</span></li>
+</ul></li>
+<li>The <span class="math inline">\(t\)</span>-statistics are not guaranteed to be the same for both tests even with equal samples sizes
+<ul>
+<li>Remember, the independent sample test uses the <strong>pooled</strong> standard error <span class="math inline">\(s_{\bar{x}_1 - \bar{x}_2}\)</span>. The paired test uses the standard error of difference scores, <span class="math inline">\(s_{\bar{D}}\)</span></li>
+<li>So the numerator is the same (difference in group means), but the denominators can be quite different (standard errors)</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
 </section>
 <section id="d-in-r" class="slide level2">
 <h2><span class="math inline">\(d\)</span> in R</h2>

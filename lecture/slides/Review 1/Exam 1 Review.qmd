@@ -58,7 +58,14 @@ my_yellow2 <- "#FFFFCC"
 
 ```
 
-## Brief Update
+## Brief Update 1
+
+The exam will take place in JS Coon 247/248 instead of 250
+
+- This is where you do lab
+- Should be more comfortable/spacious!
+
+## Brief Update 2
 
 Exam format
 
@@ -594,6 +601,55 @@ gridExtra::grid.arrange(p1, p2, nrow = 1)
 
 Large $W$ because points deviate a lot from reference line
 
+## Question 6
+
+::: {style="font-size: 0.8em;"}
+
+I'm still a bit confused about when to use the paired and independent-samples t-tests. On slide 25 in lab 5, it states that the independent-samples t-test can be used to compare two samples of observations, e.g., a treatment versus a control group. 
+
+Let's consider a within-subject study. 
+
+So, if the treatment and control groups come from the same population (30 students did both the treatment and control experiments one after the other), does that count as a paired-samples t-test? ( because they come from the same population). 
+
+However, if 3 students in the treatment group opt out, then there are 30 students in the treatment group and 27 in the control group, so the Ns are unequal. Do we use the independent-samples t-test instead? (or we just drop these data points and proceed with the paired sample T?)
+
+So the question is: does this boil down to whether the data are drawn from the same subject or not?  Or what is the exact line between these two tests?  Thank you for the explanation!
+
+
+:::
+
+## My Answer
+
+The difference between the test is in the **data structure**. If the two variables are **within subject** you **always** use a paired test
+
+- In this example, the three lost datapoints would have to be treated as missing data
+- I actually teach **an entire course** on how to deal with missing data! (next offered likely Fall 2027)
+    - Much messier problem than it seems
+    - The "simplest" solution is we drop those participants entirely (listwise deletion) and treat it so the sample is $N = 27$
+- Independent tests come from **samples** that are drawn from **independent populations**
+    - This is the only criteria by which you should decide
+
+    
+## Follow-up
+
+
+::: {style="font-size: 0.77em;"}
+
+
+**Follow-up question:** I also calculated a paired sample t test with independent samples t test formula, and the t stats are the same. May we consider paired samples t test an extreme case of independent samples t test (when n is equal)?
+
+- Not quite! There are two additional key differences
+    - The independent sample $t$-test has $df$ $n_1 + n_2 -2$
+      - So if you have two samples from independent populations $n_1 = n_2 = 30$, df would be $58$
+    - The paired test has $df = N_{pairs} - 1$
+      - So if you have 30 pairs of observations, df are $29$
+  - The $t$-statistics are not guaranteed to be the same for both tests even with equal samples sizes
+    - Remember, the independent sample test uses the **pooled** standard error $s_{\bar{x}_1 - \bar{x}_2}$. The paired test uses the standard error of difference scores, $s_{\bar{D}}$
+    - So the numerator is the same (difference in group means), but the denominators can be quite different (standard errors)
+    
+::: 
+
+
 ## $d$ in R
 
 One thing you didn't have a chance to go over yet in lab was how to get $d$ in `R`. I did show you in lecture and this **may come up on your exam**.
@@ -622,4 +678,5 @@ I find sometimes this function misbehaves and you have to directly reference the
 library(effectsize)
 cohens_d(dat$percent ~ dat$Cond)
 ```
+
 
