@@ -1,0 +1,682 @@
+---
+title: "Exam 1 Review"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: true 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(gganimate)
+library(gifski)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+
+
+```
+
+## Brief Update 1
+
+The exam will take place in JS Coon 247/248 instead of 250
+
+- This is where you do lab
+- Should be more comfortable/spacious!
+
+## Brief Update 2
+
+Exam format
+
+- **Theoretical Section:** ~~12~~ 10 questions (5 points each)
+  - Variable difficulty!
+  - Some of these should be fast/easy, others will take a bit of time
+  - Even point distribution means you should be able to bank some easy points and not feel **too** stressed about questions that take more time
+- **Applied Section:** 2 questions (~~20~~ 25 points each)
+  - Both follow similar format to applied question on practice exam
+
+
+**You may want to at least load the datasets for the applied section before doing anything else just to make sure you don't run into any bugs**
+
+## Review Question 1
+
+As I was reviewing for Exam 1, one question came up for me that I would like to review next Tuesday. How should we decide whether a risk ratio or odds ratio is the more useful effect size for a study, and what differences in interpretation should we consider? 
+
+
+## Risk
+
+**THIS EXAMPLE IS MADE UP**
+
+The following table shows the relationship between people wearing seatbelts and types of injuries sustained in car crashes
+
+
+|             | **No Injury** | **Injury** | **Fatality**  |  **Total**  |
+|:------------|:------------:|:---------------:|:----------:| :----------:|
+| **Seat Belt** |      50      |     10     |   5   |    **65** |
+| **No Seat Belt** |    10      |     40      |   20   |    **70**   |
+| **Total**   |   **60**    |   **50**    | **25** | **135** |
+
+
+
+What is the **risk** of injury for people who wore a seatbelt?
+
+[$\text{risk of injury} = \frac{\text{Injury \& Seat Belt}}{\text{Seat Belt}} = \frac{10}{65} = 0.15$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+##  Odds
+
+::: {style="font-size: 0.8em;"}
+
+|             | **No Injury** | **Injury** | **Fatality**  |  **Total**  |
+|:------------|:------------:|:---------------:|:----------:| :----------:|
+| **Seat Belt** |      50      |     10     |   5   |    **65** |
+| **No Seat Belt** |    10      |     40      |   20   |    **70**   |
+| **Total**   |   **60**    |   **50**    | **25** | **135** |
+
+
+
+What is the **odds** of injury for people who wore a seatbelt?
+
+[**Not necessarily as clearly defined**. What is the comparison? Odds always compare one group to another. As asked this might mean the odds of injury vs all other outcomes]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+[$\text{odds(injury vs all other outcomes)} = \frac{\text{Injury \& Seat Belt}}{\text{Seat Belt - (Injury \& Seat Belt)}} = \frac{10}{65-10} = 0.18$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+[Could also be injury vs no injury for seatbelt]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+[$\text{odds(injury vs no injury)} = \frac{\text{Injury \& Seat Belt}}{\text{No Injury \& Seat Belt}} = \frac{10}{50} = 0.2$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+::: 
+
+## Risk to Odds and Back
+
+Note that we can move between risk and odds as long as all outcomes are included in odds
+
+Using **only the risk of injury ([$0.15$]{.answer .fragment .content-visible unless-meta="params.v0"}), what is the odds of injury vs all other outcomes**?
+
+[$\text{risk of injury} = \frac{\text{Injury \& Seat Belt}}{\text{Seat Belt}} = \frac{10}{65} = 0.15$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+[$\text{odds(injury vs all other outcomes)} = \frac{\text{Risk}}{1 - \text{risk}} = \frac{0.15}{1 - 0.15} = 0.18$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+Using **only the odds of injury ([$0.18$]{.answer .fragment .content-visible unless-meta="params.v0"}), what is the risk of injury vs all other outcomes**?
+
+[$\text{risk of injury} = \frac{\text{Odds}}{1 + \text{Odds}} = \frac{0.18}{1 + 0.18} = 0.15$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Risk Ratio
+
+Risk ratio always compares one marginal comparison (i.e. injury for seat belt) to the same outcome for a different margin (i.e. injury for no seat belt)
+
+|             | **No Injury** | **Injury** | **Fatality**  |  **Total**  |
+|:------------|:------------:|:---------------:|:----------:| :----------:|
+| **Seat Belt** |      50      |     10     |   5   |    **65** |
+| **No Seat Belt** |    10      |     40      |   20   |    **70**   |
+| **Total**   |   **60**    |   **50**    | **25** | **135** |
+
+
+
+What is the risk ratio of injury for seatbelt vs no seatbelt?
+
+[$\text{risk ratio injury for seatbelt} = \frac{\text{risk(Injury|seatbelt)}}{\text{risk(injury|no seatbelt)}} = \frac{10/65}{40/70} = 0.27$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Odds Ratio
+
+For odds ratio, we again have to decide the comparison class. 
+
+What is the odds of injury vs everything else for seat belt vs no seat belt?
+
+[$\text{odds ratio injury vs everything else for seatbelt} = \frac{\text{odds(Injury vs everything else|seatbelt)}}{\text{odds(injury vs everything else|no seatbelt)}} = \frac{10/(65 - 10)}{40/(70 - 40)} = 0.14$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+What is the odds of injury vs no injury for seat belt vs no seat belt?
+
+[$\text{odds ratio injury vs no injury for seatbelt} = \frac{\text{odds(Injury vs no injury|seatbelt)}}{\text{odds(injury vs no injury|no seatbelt)}} = \frac{10/50}{40/10} = 0.05$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+## Back to the Question
+
+As I was reviewing for Exam 1, one question came up for me that I would like to review next Tuesday. How should we decide whether a risk ratio or odds ratio is the more useful effect size for a study, and what differences in interpretation should we consider?
+
+Thoughts?
+
+## My Answers
+
+::: {style="font-size: 0.8em;"}
+
+- [It is purely a question of the preferred **interpretation**]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Risk = conditional probability]{.answer .fragment .content-visible unless-meta="params.v0"}
+  - [Always compares out outcome to **full sample space** of (conditional on being in) that group]{.answer .fragment .content-visible unless-meta="params.v0"}
+  - [Risk ratio: ratio of conditional probabilities for outcome in one group compared to same outcome in other group]{.answer .fragment .content-visible unless-meta="params.v0"}
+  - [Can be a bit more intuitive]{.answer .fragment .content-visible unless-meta="params.v0"}
+  - [Common effect size in biostats (I think, not my area!)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Odds = ratio of one possible outcome to another]{.answer .fragment .content-visible unless-meta="params.v0"}
+  - [Requires a comparison group (all other outcomes? One particular other outcome?)]{.answer .fragment .content-visible unless-meta="params.v0"}
+  - [Odds ratio: ratio of odds for outcome in one group compared to same outcome in other group]{.answer .fragment .content-visible unless-meta="params.v0"}
+  - [More intuitive in gambling?]{.answer .fragment .content-visible unless-meta="params.v0"}
+  - [Used in computation for **logistic regression** (beyond this course)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+:::
+
+## Question 2
+
+Is it possible to do a crash course on the different power analyses and the red flags that were mentioned in class?
+
+What are the four possible inputs for a power analysis?
+
+- [Sample Size ($N$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Effect size (often $d$, others later)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Type I Error rate ($\alpha$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Power ($1 - \beta$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+Any power analysis plugs in three of these to determine the fourth. The type of power analysis depends on which one is being determined (based on the other three)
+
+## Types Table
+
+::: {style="font-size: 0.8em;"}
+| Type of Power Analysis | Input | Output |
+|:-----------------------|:-----------------------|:-----------------------|
+| **a priori** | $\alpha$<br>Statistical Power<br>Effect Size | Sample Size |
+| **Retrospective** | $\alpha$<br>Sample Size<br>Effect Size | Statistical Power |
+| **Sensitivity** | $\alpha$<br>Statistical Power<br>Sample Size | Effect Size |
+| **Criterion** | Statistical Power<br>Effect Size<br>Sample Size | $\alpha$ |
+ |
+:::
+
+
+
+## A Priori
+
+
+**Inputs:**
+
+- [Effect size (often $d$, others later)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Type I Error rate ($\alpha$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Power ($1 - \beta$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+**Held out:**  [Sample Size ($N$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+[*a priori* power analysis is a way of figuring out what sample size you need to find an effect as small as the $d$ used in the power analysis that satisfies your $\alpha$ (typically .05) and your desired power]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Retrospective
+
+
+**Inputs:**
+
+- [Effect size (often $d$, others later)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Type I Error rate ($\alpha$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Sample Size ($N$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+**Held out:**  [Power ($1 - \beta$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+[*retrospective* power analysis is a way of figuring how much statistical power you have to detect an effect as small as the $d$ value used in the power analysis based on your sample size (from a study you already did) and $\alpha$ (usually .05). Don't use your observed $d$ from the study! Use the smallest $d$ value you care about (or try different $d$ values to see how power changes)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Sensitivity
+
+
+**Inputs:**
+
+- [Power ($1 - \beta$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Type I Error rate ($\alpha$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Sample Size ($N$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+**Held out:**  [Effect size (often $d$, others later)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+[*Sensitivity* power analysis is a way of figuring how what the smallest possible effect size you could detect is based on your sample size $N$, desired level of power, and $\alpha$ (.05). You will often try different values of powre (e.g. 80%, 85%, 90%, 95%) so you can figure out the effect size detectable at different levels of statistical power]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Criterion
+
+
+**Inputs:**
+
+- [Power ($1 - \beta$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Effect size (often $d$, others later)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Sample Size ($N$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+**Held out:**  [Type I Error rate ($\alpha$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+[*Criterion* power analysis is a way of figuring out how your **Type I Error rate** would vary if you fix power, sample size $N$, and effect size. This is not very common, but we've discussed it conceptually. It essentially makes the Type II error rate ($\beta$), which is all about incorrectly retaining the null, the star of the show, rather than $\alpha$, the Type I error rate, which is all about incorrectly rejecting the null]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Summary
+
+Each of these four types of power analysis
+
+- Has three inputs
+- Uses those three inputs to determine the thing left over
+- *a priori* is the most common/useful
+- Retrospective and sensitivity are also useful in that they are different ways of looking at how power and effect size trade off if you know exactly what your sample size must be
+  - Often involve varying one to see how the other changes while holding $N$ and $\alpha$ fixed
+  
+## Question 3
+
+
+Is it possible to go through the purpose of the Inverse Function again (Monte Carlo Simulation Lecture, Slide 10)? Specifically, what the code is doing and how it builds off of slide 9?
+
+## Inverse Function
+
+
+::: {style="font-size: 0.9em;"}
+
+When we have a categorical variable, we often need to **map** it to numbers to make use of it
+
+**Example:**
+
+- $X(\text{coin flip}) = \text{heads} = 1; \text{tails} = 0$
+
+The function $X()$ is how we map the labels $\text{heads}$ and $\text{tails}$ to numeric values
+
+- $X^{-1}(X) = 1 = \text{heads}; 0 = \text{tails}$
+
+The inverse function $X^{-1}()$ just maps the numeric values back to the categorical labels. 
+
+- This lets us use a random number generating function, like `rbinom()`, to get a series of random numbers, and then convert them into categories if we wish.
+
+:::
+
+## Example in `R`
+
+If I want to simulate coin flips, I need a way to define each of the outcomes as numbers. The function $X()$ allows me to do that **conceptually**: $X(\text{coin flip}) = \text{heads} = 1; \text{tails} = 0$ 
+
+But if I want to sample random coin flip outcomes, because `rbinom()` can only give us numbers, I have to start by sampling numbers
+
+```{r}
+#| echo: true
+set.seed(4210)
+(zeros_and_ones <- rbinom(n = 10, size = 1, prob = .5))
+```
+
+Then I can map those numbers back to the categorical labels with the inverse function $X^{-1}(X) = 1 = \text{heads}; 0 = \text{tails}$
+
+```{r}
+#| echo: true
+(heads_or_tals <- ifelse(test = zeros_and_ones == 1, 
+                         yes = "heads", no = "tails"))
+```
+
+
+## Question 4
+
+Can you re-explain the Pythathogrean Theorm of Statistics and why we can't use absolute values for variance instead of squares? Thank you!
+
+**This will not be on the exam! I was mostly including it to give you an idea about why variance is so important**
+
+I will briefly show an example to help though
+
+## Pythagorean Theorem of Statistics
+
+
+::: {style="font-size: 0.9em;"}
+
+$s^2_x + s^2_y - 2\text{cov}_{xy} = s^2_{x + y}$
+
+- If $\text{cov}_{xy} = 0$, then $x$ and $y$ are **independent** 
+    - Definition of independence for **continuous** variables
+    - We will get more into covariance later!
+     
+Let's simulate two independent variables $x$ and $y$ with very large sample sizes.
+
+I will then calculate $\sigma_{x + y}$, $\sqrt{\sigma_x^2 + \sigma_y^2}$, and $\bigg(\frac{\sum|x - \bar{x}|}{N - 1} + \frac{\sum|y - \bar{y}|}{N - 1}\bigg)$ (sum of mean **absolute** errors, instead of variance, which is sum of **squared** errors)
+
+:::
+
+## Simulation
+
+
+```{r}
+#| echo: true
+N <- 10000000 ## very large sample
+mu_x <- 0 ## population mean of x
+mu_y <- 10 ## population mean of y
+sigma_x <- 10 ## population SD of x
+sigma_y <- 2 ## population SD of y
+
+set.seed(5912321)
+x <- rnorm(N, mu_x, sigma_x)
+y <- rnorm(N, mu_y, sigma_y)
+```
+
+First, let's check if they are independent. Is their covariance (correlation) 0 (or close to it)?
+
+```{r}
+#| echo: true
+cor(x, y)
+```           
+
+
+Small amount of correlation because this is a finite sample (not full population)
+
+## Comparing Mean Errors
+
+
+
+
+::: {style="font-size: 0.9em;"}
+
+Now let's calculate $\sigma_{x + y}$, $\sqrt{\sigma_x^2 + \sigma_y^2}$, and $\bigg(\frac{\sum|x - \bar{x}|}{N - 1} + \frac{\sum|y - \bar{y}|}{N - 1}\bigg)$
+
+```{r}
+#| echo: true
+sd(x + y)
+
+sqrt(var(x) + var(y))
+
+sum(abs(x - mean(x)))/(N - 1) + sum(abs(y - mean(y)))/(N - 1)
+
+```
+
+- $\sigma_{x + y}$ and $\sqrt{\sigma_x^2 + \sigma_y^2}$ are *almost* identical (the small amount of correlation is what perturbs it)
+
+    - This is Pythagorean Theorem of Stats
+
+- $\bigg(\frac{\sum|x - \bar{x}|}{N - 1} + \frac{\sum|y - \bar{y}|}{N - 1}\bigg)$ is much more different
+    
+    - A bit how like $c^2 = a^2 + b^2$ for a right triangle, but $c \neq a + b$
+
+:::
+
+## Question 5
+
+How exactly do Kolmogorov-Smirnov and Shapiro-Wilk tests work? I understand they're testing if the sample distribution differs from a normal distribution and they're sensitive to N, but how are they testing it? 
+
+Also, how do they differ?
+
+
+**This will not also not be on the exam! You should know these tests exist and a bit about what they do, you do not need to know the mathematical details of how they work, and I generally discourage their use for testing normality**
+
+## The KS-test
+
+The KS-test is a very flexible test for testing whether two distributions (of any kind) are identical.
+
+- Tests the **maximum distance** between two cumulative distribution functions (CDFs)
+- CDFs are like probability density functions but **cumulative** (always increasing)
+- KS-test finds the point of maximum vertical distance between the two
+
+
+## PDF vs CDF
+
+```{r}
+#| fig-width: 12
+#| fig-height: 3.75
+#| out-width: "100%"
+x_vals <- seq(-4, 4, length.out = 300)
+
+df <- data.frame(
+  x = rep(x_vals, 2),
+  y = c(dnorm(x_vals), pnorm(x_vals)),
+  Panel = factor(rep(c("PDF", "CDF"), each = 300), levels = c("PDF", "CDF"))
+)
+
+ggplot(df, aes(x = x, y = y, color = Panel)) +
+  geom_line(linewidth = 1) +
+  facet_wrap(~ Panel, scales = "free_y") +
+  scale_color_manual(values = c("PDF" = "#2b5c8f", "CDF" = "#d95f02")) +
+  labs(
+    title = "Standard Normal Distribution",
+    x = NULL,
+    y = NULL
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.y = element_blank())
+```
+
+- PDF shows probability **densities** (areas) within ranges of $x$-values
+- CDF shows cumulatively **increasing** densities as $x$ increases
+  - Different ways of representing the same distributions
+- KS test compares two CDFs
+
+## Visual of KS Test
+
+
+```{r}
+library(ggplot2)
+
+# 1. Generate sample data
+set.seed(123)
+n <- 25
+x_sample <- rnorm(n, mean = 0.5, sd = 1)
+
+# 2. Calculate the exact point of maximum distance (KS statistic D)
+fn <- ecdf(x_sample)
+
+d_upper <- abs(fn(x_sample) - pnorm(x_sample))
+d_lower <- abs(fn(x_sample - 1e-7) - pnorm(x_sample))
+
+if (max(d_upper) >= max(d_lower)) {
+  x_max  <- x_sample[which.max(d_upper)]
+  y_ecdf <- fn(x_max)
+  y_cdf  <- pnorm(x_max)
+} else {
+  x_max  <- x_sample[which.max(d_lower)]
+  y_ecdf <- fn(x_max - 1e-7)
+  y_cdf  <- pnorm(x_max)
+}
+
+# 3. Create the Plot with Legend
+ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
+  # Theoretical Normal CDF (Red Line)
+  stat_function(
+    aes(color = "Standard Normal"), 
+    fun = pnorm, 
+    linewidth = 1.2
+  ) +
+  # Empirical CDF Step Function (Blue Line)
+  stat_ecdf(
+    data = data.frame(x = x_sample), 
+    aes(x = x, color = "Normalized Sample Data"), 
+    linewidth = 1
+  ) +
+  # Maximum Distance Arrow (D statistic)
+  annotate(
+    "segment", 
+    x = x_max, xend = x_max, 
+    y = y_ecdf, yend = y_cdf,
+    arrow = arrow(ends = "both", type = "closed", length = unit(0.12, "inches")),
+    linewidth = 1.2, color = "black"
+  ) +
+  # Manual Color Scale mapping
+  scale_color_manual(
+    name = NULL,
+    values = c(
+      "Standard Normal" = "red",
+      "Normalized Sample Data" = "blue"
+    )
+  ) +
+  # Axes Labels & Scale Setup
+  labs(x = "X", y = "Cumulative Probability") +
+  scale_x_continuous(limits = c(-4, 4), breaks = seq(-4, 4, 2), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2), expand = c(0, 0)) +
+  # Plot & Legend Styling
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 16, color = "black"),
+    axis.text = element_text(size = 12, color = "black"),
+    panel.grid.major = element_line(color = "black", linetype = "dashed", linewidth = 0.4),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    # Positions legend in the empty top-left area
+    legend.position = c(0.28, 0.85),
+    legend.background = element_rect(fill = "white", color = "black", linewidth = 0.5),
+    legend.text = element_text(size = 11)
+  )
+```
+
+
+**KS Test:** In repeated samples, would the average length of the black arrow be different than 0?
+
+
+## The Shapiro Test
+
+
+::: {style="font-size: 0.9em;"}
+
+
+The Shapiro test does something similar, but more complicated and specifically tailored to the **normal** distribution (KS test can compare **any two** distributions)
+
+- Takes all sample values, puts them in rank order
+- Takes sequence of matching "normed" values from standard normal distribution
+- Checks how much the order of values in the sample deviates from the normal
+- Sort of like a quantitative summary of how much a QQ plot deviates from the reference line
+- Sampling distribution called $W$-distribution
+- Large $W \rightarrow$ unlikely to be from null $W$ distribution (not normal)
+- Small $W \rightarrow$ likely to be from null $W$ distribution (normal)
+
+(this is a very very rough/intuitive explanation)
+
+:::
+
+## QQ Plot (Normal)
+
+```{r}
+set.seed(5)
+x <- tibble(x = rnorm(10000))
+p1 <- ggplot(x, aes(x)) + geom_histogram(aes(y = ..density..), bins = 20) +
+  stat_function(fun = dnorm, args = list(mean = 0, sd = 1), col = my_red, size = I(1)) +
+  theme_light() +
+  labs(x = "sample") + theme(axis.title = element_text(size = 14))
+p2 <- ggplot(x) + geom_qq(aes(sample = x)) + geom_qq_line(aes(sample = x), col = my_red, size = I(1)) +
+  theme_light()+ theme(axis.title = element_text(size = 14))
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+Small $W$ because points don't deviate far from reference line
+
+## QQ Plot (Not)
+
+```{r}
+set.seed(31)
+x <- tibble(x = rbeta(10000, 2, 10))
+# 2 / (2 + 10) = .17
+# sqrt(12 / (12^2 * 13)) = .08
+p1 <- ggplot(x, aes(x)) + geom_histogram(aes(y = ..density..), bins = 20) +
+  stat_function(fun = dnorm, args = list(mean = .17, sd = .08), col = my_red, size = I(1)) +
+  theme_light() +
+  labs(x = "sample") + theme(axis.title = element_text(size = 14))
+p2 <- ggplot(x) + geom_qq(aes(sample = x)) + geom_qq_line(aes(sample = x), col = my_red, size = I(1)) +
+  theme_light() + theme(axis.title = element_text(size = 14))
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+Large $W$ because points deviate a lot from reference line
+
+## Question 6
+
+::: {style="font-size: 0.8em;"}
+
+I'm still a bit confused about when to use the paired and independent-samples t-tests. On slide 25 in lab 5, it states that the independent-samples t-test can be used to compare two samples of observations, e.g., a treatment versus a control group. 
+
+Let's consider a within-subject study. 
+
+So, if the treatment and control groups come from the same population (30 students did both the treatment and control experiments one after the other), does that count as a paired-samples t-test? ( because they come from the same population). 
+
+However, if 3 students in the treatment group opt out, then there are 30 students in the treatment group and 27 in the control group, so the Ns are unequal. Do we use the independent-samples t-test instead? (or we just drop these data points and proceed with the paired sample T?)
+
+So the question is: does this boil down to whether the data are drawn from the same subject or not?  Or what is the exact line between these two tests?  Thank you for the explanation!
+
+
+:::
+
+## My Answer
+
+The difference between the test is in the **data structure**. If the two variables are **within subject** you **always** use a paired test
+
+- In this example, the three lost datapoints would have to be treated as missing data
+- I actually teach **an entire course** on how to deal with missing data! (next offered likely Fall 2027)
+    - Much messier problem than it seems
+    - The "simplest" solution is we drop those participants entirely (listwise deletion) and treat it so the sample is $N = 27$
+- Independent tests come from **samples** that are drawn from **independent populations**
+    - This is the only criteria by which you should decide
+
+    
+## Follow-up
+
+
+::: {style="font-size: 0.77em;"}
+
+
+**Follow-up question:** I also calculated a paired sample t test with independent samples t test formula, and the t stats are the same. May we consider paired samples t test an extreme case of independent samples t test (when n is equal)?
+
+- Not quite! There are two additional key differences
+    - The independent sample $t$-test has $df$ $n_1 + n_2 -2$
+      - So if you have two samples from independent populations $n_1 = n_2 = 30$, df would be $58$
+    - The paired test has $df = N_{pairs} - 1$
+      - So if you have 30 pairs of observations, df are $29$
+  - The $t$-statistics are not guaranteed to be the same for both tests even with equal samples sizes
+    - Remember, the independent sample test uses the **pooled** standard error $s_{\bar{x}_1 - \bar{x}_2}$. The paired test uses the standard error of difference scores, $s_{\bar{D}}$
+    - So the numerator is the same (difference in group means), but the denominators can be quite different (standard errors)
+    
+::: 
+
+
+## $d$ in R
+
+One thing you didn't have a chance to go over yet in lab was how to get $d$ in `R`. I did show you in lecture and this **may come up on your exam**.
+
+This was from the McCrea data
+
+```{r}
+
+dat <- read.csv("../../data/McCrea.csv") |> 
+  mutate(Cond = recode(as_factor(Cond), 
+                       "1" = "self-handicap", 
+                       "2" = "control"))
+```
+```{r}
+#| echo: true
+library(effectsize)
+cohens_d(percent ~ Cond, data = dat)
+```
+
+## Misbehaving $d$
+
+I find sometimes this function misbehaves and you have to directly reference the data with each variable in the formula as `dat$percent ~ dat$Cond` (I'm not sure why, but if it doesn't work, try this)
+
+```{r}
+#| echo: true
+library(effectsize)
+cohens_d(dat$percent ~ dat$Cond)
+```
+
+
