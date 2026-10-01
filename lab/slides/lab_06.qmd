@@ -191,6 +191,123 @@ effectsize::cohens_d(mpg$cty, mpg$hwy,
 ::::
 
 
+## Risk and Odds
+
+::::: {style="font-size:80%"}
+:::: {.columns}
+::: {.column width="85%"}
+Biologists have studied which kinds of food helps chicks grow best. They randomly assigned newly hatched chicks into different feed type groups and measured their body weight in grams after six weeks. This is a subset of the data that labels chicks under 250g small chicks and chicks above 250g large chicks.
+:::
+
+::: {.column .fragment width="15%"}
+![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
+:::
+::::
+
+```{r}
+#| echo: false
+d <- chickwts |> 
+  as_tibble() |> 
+  mutate(size = ifelse(weight > 250, "large", "small")) |>
+  count(feed, size) |>
+  pivot_wider(names_from = size, values_from = n, values_fill = 0) |>
+  filter(when_any(feed == "soybean", feed == "linseed", feed == "sunflower")) |>
+  mutate(Total = small + large)
+
+d |>
+  mutate(across(c(large, small, Total), as.character)) |>
+  bind_rows(c(feed = "Total", large = sum(d$large), small = sum(d$small), Total = sum(d$Total))) |>
+  select(Feed = feed, Small = small, Large = large, Total) |>
+  gt::gt() |>
+  gt::tab_style(gt::cell_text(weight = "bold"),
+                gt::cells_column_labels()) |>
+  gt::tab_style(gt::cell_text(weight = "bold"),
+                gt::cells_body(rows = Feed == "Total")) |>
+  gt::tab_style(gt::cell_text(weight = "bold"),
+                gt::cells_body(columns = Total))
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+What is the risk of a chick being small if they were in the linseed group? Soybean?
+
+$\text{Risk(small | linseed)} = \frac{8}{12} = 0.6\bar{6}$
+
+$\text{Risk(small | soybean)} = \frac{9}{14} = 0.64$
+:::
+
+::: {.column width="50%"}
+What are the odds of a chick being small if they were in the linseed group? Sunflower?
+
+$\text{Odds(small | linseed)} = \frac{8}{4} = 2$
+
+$\text{Odds(small | sunflower)} = \frac{1}{11} = 0.\bar{09}$
+:::
+::::
+
+:::::
+
+## Risk and Odds
+
+::::: {style="font-size:80%"}
+:::: {.columns}
+::: {.column width="85%"}
+Biologists have studied which kinds of food helps chicks grow best. They randomly assigned newly hatched chicks into different feed type groups and measured their body weight in grams after six weeks. This is a subset of the data that labels chicks under 250g small chicks and chicks above 250g large chicks.
+:::
+
+::: {.column width="15%"}
+![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
+:::
+::::
+
+```{r}
+#| echo: false
+d <- chickwts |> 
+  as_tibble() |> 
+  mutate(size = ifelse(weight > 250, "large", "small")) |>
+  count(feed, size) |>
+  pivot_wider(names_from = size, values_from = n, values_fill = 0) |>
+  filter(when_any(feed == "soybean", feed == "linseed", feed == "sunflower")) |>
+  mutate(Total = small + large)
+
+d |>
+  mutate(across(c(large, small, Total), as.character)) |>
+  bind_rows(c(feed = "Total", large = sum(d$large), small = sum(d$small), Total = sum(d$Total))) |>
+  select(Feed = feed, Small = small, Large = large, Total) |>
+  gt::gt() |>
+  gt::tab_style(gt::cell_text(weight = "bold"),
+                gt::cells_column_labels()) |>
+  gt::tab_style(gt::cell_text(weight = "bold"),
+                gt::cells_body(rows = Feed == "Total")) |>
+  gt::tab_style(gt::cell_text(weight = "bold"),
+                gt::cells_body(columns = Total))
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+What is the risk ratio of a chick being small if they were in the linseed group compared to the soybean?
+
+::: fragment
+$\text{Risk ratio} = \frac{\text{Risk(small | linseed)}}{\text{Risk(small | soybean)}} = \frac{\frac{8}{12}}{\frac{9}{14}} = 1.03$
+:::
+:::
+
+::: {.column width="50%"}
+What is the odds ratio of a chick being small if they were in the linseed group compared to the sunflower?
+
+::: fragment
+$\text{Odds ratio} = \frac{\text{Odds(small | linseed)}}{\text{Odds(small | sunflower)}} = \frac{\frac{8}{4}}{\frac{1}{11}} = 22$
+:::
+:::
+::::
+
+:::::
+
+
+::: {.my-callout .fragment .absolute bottom=210 right=0 width="400px"}
+The odds of a chick being small is 22x greater if they are fed linseed compared to if they are fed sunflowers!
+:::
+
 
 # Power Analysis
 
@@ -653,6 +770,158 @@ power_values_df |>
 
 :::
 ::::
+
+
+## Different Sample Sizes
+
+What if we wanted to have different sample sizes in our *t*-test?
+
+`pwr.t2n.test(n1, n2, d, sig.level, power)`
+
+<div class="subpoint">○ `n1` = sample size for group one </div>
+
+<div class="subpoint">○ `n2` = sample size for group two </div>
+
+<div class="subpoint">○ Everything else the same! </div>
+
+<div class="subpoint">○ Have to specify at least one of the `n` values </div>
+
+:::: {.columns}
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t2n.test(n1 = 10,
+                  n2 = 20,
+                  d = 0.3, 
+                  sig.level = 0.05)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t2n.test(n1 = 50, 
+                  n2 = 25,
+                  sig.level = 0.05,
+                  power = 0.8)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t2n.test(n1 = 100,
+                  d = 0.3, 
+                  sig.level = 0.05, 
+                  power = 0.8)
+```
+:::
+::::
+
+
+## Paired-Samples *t*-Test
+
+What if we wanted to look at power for a paired-samples *t*-test? Back to the original function...
+
+`pwr.t.test(n, d, sig.level, power, type)`
+
+<div class="subpoint">○ `type` = default is `"two.sample"`, but can switch to `"paired"` </div>
+
+<div class="subpoint">○ Everything else the same! </div>
+
+:::: {.columns}
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t.test(n = 10, 
+                d = 0.3, 
+                sig.level = 0.05,
+                type = "paired")
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t.test(n = 50, 
+                sig.level = 0.05,
+                power = 0.8,
+                type = "paired")
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t.test(d = 0.3, 
+                sig.level = 0.05, 
+                power = 0.8,
+                type = "paired")
+```
+:::
+::::
+
+
+## Paired- vs. Independent-Samples
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+power_values_df <- tibble(
+  sample_sizes = seq(10, 500, by = 20)
+) |>
+  expand_grid(d = c(0.2, 0.25, 0.3, 0.4)) |>
+  expand_grid(type = c("two.sample", "paired")) |>
+  mutate(
+    power = pmap_dbl(
+      list(sample_sizes, d, type),
+      function(sample_size, d, type) 
+        pwr::pwr.t.test(
+          n = sample_size, 
+          d = d, 
+          sig.level = 0.05,
+          type = type)$power
+    )
+  )
+```
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 4
+#| fig-align: center
+power_values_df |>
+  mutate(d = factor(d)) |>
+  ggplot(aes(x = sample_sizes, y = power, 
+             color = d, group = d)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  facet_wrap("type") +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+
+### Code
+```{r}
+#| eval: false
+power_values_df |>
+  mutate(d = factor(d)) |>
+  ggplot(aes(x = sample_sizes, y = power, 
+             color = d, group = d)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  facet_wrap("type") +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+:::
+
+:::
+::::
+
 
 
 ## Lab 06 Assignment
