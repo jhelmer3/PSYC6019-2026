@@ -43,13 +43,12 @@ A very user-friendly interface to Bayesian models with `Stan` is the `rstanarm` 
 ```{r}
 # install.packages("rstanarm")
 library(rstanarm)
-```
 
-
-```{r}
 filtered_mpg <- mpg |>
   filter(when_any(cyl == 4, cyl == 8))
 ```
+
+<br>
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -61,7 +60,17 @@ freq_t_test
 
 ::: {.column width="50%"}
 ```{r}
-bayes_t_test <- stan_glm(hwy ~ cyl, family = "gaussian", data = filtered_mpg)
+#| message: false
+#| eval: false
+bayes_t_test <- stan_glm(hwy ~ cyl, data = filtered_mpg,
+                         family = "gaussian")
+summary(bayes_t_test)
+```
+
+```{r}
+#| echo: false
+bayes_t_test <- stan_glm(hwy ~ cyl, data = filtered_mpg,
+                         family = "gaussian", refresh = 0)
 summary(bayes_t_test)
 ```
 :::
@@ -75,7 +84,6 @@ prior_summary(bayes_t_test)
 ```
 
 
-
 ## Model
 
 $$
@@ -87,12 +95,416 @@ $$
 \end{aligned}
 $$
 
-##
+## Credible Intervals
+
+:::: {.columns}
+::: {.column width="50%"}
+**Equal Tailed Interval**
 
 ```{r}
+posterior_interval(bayes_t_test)
+```
+:::
 
+::: {.column width="50%"}
+
+**Highest Density Interval**
+
+```{r}
+# install.packages("bayestestR")
+bayestestR::hdi(bayes_t_test, component = "all")
+```
+:::
+::::
+
+
+<!-- ```{r} -->
+<!-- etis <- posterior_interval(bayes_t_test) |> -->
+<!--   as.data.frame() -->
+<!-- hdpis <- bayestestR::hdi(bayes_t_test, component = "all") |> -->
+<!--   as.data.frame() -->
+
+
+<!-- bayes_t_test |> -->
+<!--   bayesplot::mcmc_dens(pars = c("(Intercept)")) + -->
+<!--   geom_vline(aes(xintercept = etis["(Intercept)", "5%"])) + -->
+<!--   geom_vline(aes(xintercept = etis["(Intercept)", "95%"])) + -->
+<!--   # geomtextpath::geom_textsegment(aes(x = etis["(Intercept)", "5%"], xend = etis["(Intercept)", "95%"],  -->
+<!--   #                                    y = Inf, yend = Inf, label = "90% CTI", vjust = 1)) + -->
+<!--   geom_rect(aes(xmin = hdpis[hdpis$Parameter == "(Intercept)", "CI_low"], xmax = hdpis[hdpis$Parameter == "(Intercept)", "CI_high"], ymin = 0, ymax = 0.5), alpha = 0.3, fill = "pink") -->
+<!--   geom_vline(aes(xintercept = hdpis[hdpis$Parameter == "(Intercept)", "CI_low"])) + -->
+<!--   geom_vline(aes(xintercept = hdpis[hdpis$Parameter == "(Intercept)", "CI_high"])) + -->
+<!--   geomtextpath::geom_textsegment(aes(x = hdpis[hdpis$Parameter == "(Intercept)", "CI_low"], xend = hdpis[hdpis$Parameter == "(Intercept)", "CI_high"],  -->
+<!--                                      y = Inf, yend = Inf, label = "90% HDPI", vjust = 1)) -->
+<!-- ``` -->
+
+# Diagnostics
+
+## Diagnostics with Bayes
+
+Most of the time, Bayes' theorem $P(\theta | D) = \frac{P(\theta) P(D | \theta)}{P(D)}$ is too complex to solve analytically. So, we estimate Bayesian models with Markov Chain Monte Carlo (MCMC).
+
+The job of MCMC is to explore and sample from the posterior probability distribution $P(\theta | D)$ for all $\theta$ at a rate proportional to each probability.
+
+So, after many MCMC samples, we end up with a density distribution of samples with height matching $P(\theta | D)$, and we can use those samples to make inferences about our parameters and outcomes!
+
+::: subpoint
+○ E.g., we believe there is a 90% chance the difference in highway MPG between four- and eight-cylinder cars is within the interval [`r posterior_interval(bayes_t_test)["cyl", ] |> round(2) |> paste(collapse = ", ")`].
+:::
+
+But, all this hinges on the MCMC sampler---we have to check it for evidence that it *sampled well*.
+
+
+## Looking at the Samples
+
+Often, a good first step for checking the sampler is just looking at what it sampled!
+
+::: fragment
+```{r}
+#| fig-height: 2
+#| fig-width: 6
+scale_colors <-  c("steelblue", "#D98282", "#6BAE9D", "#8C7AAE")
+x <- bayesplot::example_mcmc_draws(chains = 1, params = 1)
+bayesplot::mcmc_trace(x) +
+  scale_color_manual(values = scale_colors)
+```
+:::
+
+[This is called a *trace plot*. It shows the samplers' samples for each iteration it runs. Can you tell if this sampler sampled well?]{.fragment}
+
+
+## Looking at the Samples
+
+Often, a good first step for checking the sampler is just looking at what it sampled!
+
+```{r}
+#| fig-height: 2
+#| fig-width: 6
+x <- bayesplot::example_mcmc_draws(chains = 2, params = 1)
+bayesplot::mcmc_trace(x) +
+  scale_color_manual(values = scale_colors)
 ```
 
+[What if I told you we ran another, completely separate run, and its samples looked like this?]{.fragment}
+
+
+## Looking at the Samples
+
+Often, a good first step for checking the sampler is just looking at what it sampled!
+
+```{r}
+#| fig-height: 2
+#| fig-width: 6
+x <- bayesplot::example_mcmc_draws(chains = 3, params = 1)
+bayesplot::mcmc_trace(x) +
+  scale_color_manual(values = scale_colors)
+```
+
+[Or a third?]{.fragment}
+
+
+## Looking at the Samples
+
+Often, a good first step for checking the sampler is just looking at what it sampled!
+
+```{r}
+#| fig-height: 2
+#| fig-width: 6
+x <- bayesplot::example_mcmc_draws(chains = 4, params = 1)
+bayesplot::mcmc_trace(x) +
+  scale_color_manual(values = scale_colors)
+```
+
+[A fourth? How much confidence do you have in the sampler now?]{.fragment}
+
+[They cannot guarantee the sampler is **correctly** sampling from the distribution, but if we run multiple *chains* (separate runs of MCMC, each doing their own thing independently), we can at least check if the sampler is sampling **consistently**.]{.fragment}
+
+## House Layout Example
+
+
+## Looking at the Samples
+
+Our example's trace plots!
+
+```{r}
+#| fig-height: 3
+#| fig-width: 12
+# install.packages("bayesplot")
+library(bayesplot)
+
+mcmc_trace(bayes_t_test)
+```
+
+[Good! They look like "fuzzy caterpillars".]{.fragment}
+
+
+## Trace Rank Plots
+
+These are called "trace rank" plots. They're very similar to trace plots, except they *order* the samples in magnitude.
+
+It's mostly personal preference, but these are sometimes easier to see bad chains.
+
+```{r}
+mcmc_rank_overlay(bayes_t_test)
+```
+
+[What does a bad chain look like?]{.fragment}
+
+
+## Bad Sampling Example
+
+Messing with the algorithm on purpose to make it sample poorly...
+
+```{r}
+#| message: false
+#| fig-height: 2.5
+#| fig-width: 10
+#| echo: false
+bad_example <- stan_glm(hwy ~ cyl, data = filtered_mpg, seed = 12345, adapt_delta = 0.3)
+mcmc_trace(bad_example) +
+  scale_color_manual(values = scale_colors)
+mcmc_rank_overlay(bad_example) +
+  scale_color_manual(values = scale_colors)
+```
+
+[Ick!]{.fragment}
+
+
+## Rhat
+
+Looking at traceplots is great, but it's also helpful to have a numerical measure of how well the chains mixed.
+
+Rhat ($\hat{R}$, read "R-hat") is a measure of convergence among different MCMC *chains*.
+
+The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
+
+
+## Rhat Visualized: Bad
+
+The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
+
+```{r}
+#| echo: false
+set.seed(1)
+n_samples <- 500
+d <- tibble(chain = 1:4) |>
+  mutate(
+    chain_mu = c(3, 3.3, 2.3, 5),
+    samples = map(
+      chain_mu, \(chain_mu) tibble(
+        rep = 1:n_samples, 
+        x = rnorm(n_samples, chain_mu, 0.3)
+      )
+    )
+  ) |>
+  unnest(samples)
+
+chain_means <- d |>
+  summarize(.by = chain, x = mean(x))
+
+d |>
+  ggplot(aes(x = rep, y = x, color = factor(chain), group = chain)) +
+  geom_line() +
+  guides(x = guide_axis(cap = T),
+         y = guide_none(NULL),
+         color = guide_none(),
+         fill = guide_none()) +
+  scale_x_continuous("Rep", limits = c(-50, n_samples + 50), breaks = seq(0, 500, 100)) +
+  scale_color_manual(values = scale_colors, aesthetics = c("color", "fill")) +
+  coord_cartesian(ylim = c(1.2, 6)) +
+  theme_classic()
+```
+
+
+## Rhat Visualized: Bad
+
+The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
+
+```{r}
+#| echo: false
+d |>
+  ggplot(aes(x = rep, y = x, color = factor(chain), group = chain)) +
+  geom_line() +
+  geom_point(
+    data = chain_means |> mutate(rep = 0 - 15),
+    aes(x = rep, y = x),
+    size = 3
+  ) +
+  guides(x = guide_axis(cap = T),
+         y = guide_none(NULL),
+         color = guide_none(),
+         fill = guide_none()) +
+  scale_x_continuous("Rep", limits = c(-50, n_samples + 50), breaks = seq(0, 500, 100)) +
+  scale_color_manual(values = scale_colors, aesthetics = c("color", "fill")) +
+  coord_cartesian(ylim = c(1.2, 6)) +
+  theme_classic()
+```
+
+
+## Rhat Visualized: Bad
+
+The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
+
+```{r}
+#| echo: false
+d |>
+  ggplot(aes(x = rep, y = x, color = factor(chain), group = chain)) +
+  geom_line() +
+  ggdist::stat_slab(
+    data = d |> mutate(rep = n_samples + 10),
+    aes(x = rep, y = x, fill = factor(chain)),
+    color = NA,
+    side = "right",
+    scale = 30,
+    alpha = 0.7
+  ) +
+  ggdist::stat_slab(
+    data = d |> mutate(rep = 0 - 15),
+    aes(x = rep, y = x),
+    color = NA,
+    side = "left",
+    scale = 30,
+    alpha = 0.7,
+    inherit.aes = F
+  ) +
+  geom_point(
+    data = chain_means |> mutate(rep = 0 - 15),
+    aes(x = rep, y = x),
+    size = 3
+  ) +
+  guides(x = guide_axis(cap = T),
+         y = guide_none(NULL),
+         color = guide_none(),
+         fill = guide_none()) +
+  scale_x_continuous("Rep", limits = c(-50, n_samples + 50), breaks = seq(0, 500, 100)) +
+  scale_color_manual(values = scale_colors, aesthetics = c("color", "fill")) +
+  coord_cartesian(ylim = c(1.2, 6)) +
+  theme_classic()
+```
+
+Variance between chain means is sooo different from variance within chains!
+
+
+## Rhat Visualized: Good
+
+The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
+
+```{r}
+#| echo: false
+set.seed(1)
+n_samples <- 500
+d <- tibble(chain = 1:4) |>
+  mutate(
+    chain_mu = mean(c(3, 3.3, 2.3, 5)),
+    samples = map(
+      chain_mu, \(chain_mu) tibble(
+        rep = 1:n_samples, 
+        x = rnorm(n_samples, chain_mu, 0.3)
+      )
+    )
+  ) |>
+  unnest(samples)
+
+chain_means <- d |>
+  summarize(.by = chain, x = mean(x))
+
+d |>
+  ggplot(aes(x = rep, y = x, color = factor(chain), group = chain)) +
+  geom_line() +
+  guides(x = guide_axis(cap = T),
+         y = guide_none(NULL),
+         color = guide_none(),
+         fill = guide_none()) +
+  scale_x_continuous("Rep", limits = c(-50, n_samples + 50), breaks = seq(0, 500, 100)) +
+  scale_color_manual(values = scale_colors, aesthetics = c("color", "fill")) +
+  coord_cartesian(ylim = c(1.2, 6)) +
+  theme_classic()
+```
+
+
+## Rhat Visualized: Good
+
+The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
+
+```{r}
+#| echo: false
+d |>
+  ggplot(aes(x = rep, y = x, color = factor(chain), group = chain)) +
+  geom_line() +
+  geom_point(
+    data = chain_means |> mutate(rep = 0 - 15),
+    aes(x = rep, y = x),
+    size = 3
+  ) +
+  guides(x = guide_axis(cap = T),
+         y = guide_none(NULL),
+         color = guide_none(),
+         fill = guide_none()) +
+  scale_x_continuous("Rep", limits = c(-50, n_samples + 50), breaks = seq(0, 500, 100)) +
+  scale_color_manual(values = scale_colors, aesthetics = c("color", "fill")) +
+  coord_cartesian(ylim = c(1.2, 6)) +
+  theme_classic()
+```
+
+
+## Rhat Visualized: Good
+
+The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
+
+```{r}
+#| echo: false
+d |>
+  ggplot(aes(x = rep, y = x, color = factor(chain), group = chain)) +
+  geom_line() +
+  ggdist::stat_slab(
+    data = d |> mutate(rep = n_samples + 10),
+    aes(x = rep, y = x, fill = factor(chain)),
+    color = NA,
+    side = "right",
+    scale = 30,
+    alpha = 0.7
+  ) +
+  ggdist::stat_slab(
+    data = d |> mutate(rep = 0 - 15),
+    aes(x = rep, y = x),
+    color = NA,
+    side = "left",
+    scale = 30,
+    alpha = 0.7,
+    inherit.aes = F
+  ) +
+  geom_point(
+    data = chain_means |> mutate(rep = 0 - 15),
+    aes(x = rep, y = x),
+    size = 3
+  ) +
+  guides(x = guide_axis(cap = T),
+         y = guide_none(NULL),
+         color = guide_none(),
+         fill = guide_none()) +
+  scale_x_continuous("Rep", limits = c(-50, n_samples + 50), breaks = seq(0, 500, 100)) +
+  scale_color_manual(values = scale_colors, aesthetics = c("color", "fill")) +
+  coord_cartesian(ylim = c(1.2, 6)) +
+  theme_classic()
+```
+
+Variance between chain means is very close to variance within chains!
+
+
+## Rhat
+
+In practice, you want to see $\hat{R}$ values less than 1.01. 
+
+::: fragment
+```{r}
+summary(bayes_t_test)[, "Rhat"]
+```
+:::
+
+
+## Effective Sample Size (ESS)
+
+In order to closely approximate the posterior ($P(\theta | D)$, the point of this all!), we need to make sure we have a large number of MCMC samples.
 
 
 ## Lab 07 Assignment
