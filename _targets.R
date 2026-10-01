@@ -21,6 +21,25 @@ list(
   ## lab index page
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
+  
+  ## lab 07
+  tar_target(lab_07_slides_qmd, 
+             "lab/slides/lab_07.qmd", 
+             format = "file"),
+  tar_target(lab_07_slides, {
+    quarto::quarto_render(lab_07_slides_qmd, quiet = F)
+    qmd_out(lab_07_slides_qmd)
+  }, format = "file"),
+  # tar_target(lab_07_activity_key_qmd, 
+  #            "lab/activities/activity-keys/lab_07_activity_key.qmd", 
+  #            format = "file"),
+  # tar_target(lab_07_activity_key, {
+  #   leaves_data_file
+  #   quarto::quarto_render(lab_07_activity_key_qmd)
+  #   qmd_out(lab_07_activity_key_qmd)
+  # }, format = "file"),
+  
+  
   ## lab 06
   tar_target(lab_06_slides_qmd, 
              "lab/slides/lab_06.qmd", 
@@ -29,20 +48,16 @@ list(
     quarto::quarto_render(lab_06_slides_qmd, quiet = F)
     qmd_out(lab_06_slides_qmd)
   }, format = "file"),
-  
+  tar_target(lab_06_activity_key_qmd, 
+             "lab/activities/activity-keys/lab_06_activity_key.qmd", 
+             format = "file"),
+  tar_target(lab_06_activity_key, {
+    leaves_data_file
+    quarto::quarto_render(lab_06_activity_key_qmd)
+    qmd_out(lab_06_activity_key_qmd)
+  }, format = "file"),
   
   ## lab 05
-  # tar_target(major_data, make_major_data()),
-  # tar_target(major_data_file, 
-  #            write.csv(major_data, "lab/data/lab_04/major_data.csv", row.names = F),
-  #            format = "file"),
-  # tar_target(ice_cream_sales_data, make_ice_cream_sales_data()),
-  # tar_target(ice_cream_sales_data_file, 
-  #            write.csv(ice_cream_sales_data, "lab/data/lab_04/ice_cream_sales_data.csv", row.names = F),
-  #            format = "file"),
-  # tar_target(leaves_data, make_leaves_data()),
-  # tar_target(leaves_data_file, 
-  #            write.csv(leaves_data, "lab/data/lab_04/leaves.csv", row.names = F)),
   tar_target(ice_cream_sales_data, make_ice_cream_sales_data()),
   tar_target(ice_cream_sales_data_file, 
              write.csv(ice_cream_sales_data, "lab/data/lab_05/ice_cream_sales_data.csv", row.names = F),
@@ -55,25 +70,8 @@ list(
     quarto::quarto_render(lab_05_slides_qmd, quiet = F)
     qmd_out(lab_05_slides_qmd)
   }, format = "file"),
-  # tar_target(lab_05_activity_key_qmd, 
-  #            "lab/activities/activity-keys/lab_05_activity_key.qmd", 
-  #            format = "file"),
-  # tar_target(lab_05_activity_key, {
-  #   leaves_data_file
-  #   quarto::quarto_render(lab_05_activity_key_qmd)
-  #   qmd_out(lab_05_activity_key_qmd)
-  # }, format = "file"),
   
   ## lab 04
-  # tar_target(gatech_admissions_data, make_gatech_admissions_data()),
-  # tar_target(gatech_admissions_data_file, 
-  #            write.csv(gatech_admissions_data, "lab/data/gatech_admissions.csv",
-  #                      row.names = F),
-  #            format = "file"),
-  # tar_target(pumpkin_data, make_pumpkin_data()),
-  # tar_target(pumpkin_data_file, 
-  #            write.csv(pumpkin_data, "lab/data/pumpkin_data.csv", row.names = F),
-  #            format = "file"),
   tar_target(major_data, make_major_data()),
   tar_target(major_data_file, 
              write.csv(major_data, "lab/data/lab_04/major_data.csv", row.names = F),

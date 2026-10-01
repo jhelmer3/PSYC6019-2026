@@ -103,10 +103,10 @@ sd_eight <- sd(eight_cyl)
 n_eight <- length(eight_cyl)
 
 pooled_sd <- sqrt( 
-  ((n_four - 1) * sd_four^2 + (n_eight - 1) * sd_eight^2) /
+  ((n_four - 1) * sd_four^2 + 
+     (n_eight - 1) * sd_eight^2) /
     ((n_four - 1) + (n_eight - 1)) 
-  )
-
+)
 (x_bar_four - x_bar_eight) / pooled_sd
 ```
 :::
@@ -166,7 +166,8 @@ eight_cyl <- mpg |>
   filter(cyl == 8) |>
   pull(hwy)
 
-effectsize::cohens_d(four_cyl, eight_cyl)
+effectsize::cohens_d(four_cyl, 
+                     eight_cyl)
 ```
 :::
 
@@ -180,104 +181,14 @@ $$ d = \frac{\bar{D}}{s_D} $$
 
 ::: {style="font-size:85%}
 ```{r}
-effectsize::cohens_d(mpg$cty, mpg$hwy, paired = T)
+effectsize::cohens_d(mpg$cty, mpg$hwy, 
+                     paired = T)
 ```
 :::
 
 :::
 
 ::::
-
-
-## Cohen's *D* Strength Visualization
-
-```{r}
-#| echo: false
-x_bar <- mean(mpg$hwy)
-x_sd <- sd(mpg$hwy)
-```
-
-
-Based on mean ($\bar{x}$ = `r round(x_bar, 2)` = `r round(x_bar, 2)`) and SD ($\bar{\sigma}$ = `r round(x_sd, 2)` = `r round(x_sd, 2)`) of cars' highway MPG (`hwy`).
-
-Solved backwards for ($\mu$) based on different potential levels of *d*. "What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
-
-$$\bar{x} - d \times s = \mu$$
-
-```{r}
-dat <- data.frame(x = rnorm(100000, x_bar, x_sd))
-
-mu_ex1 <- x_bar - .2 * x_sd
-mu_ex2 <- x_bar - .5 * x_sd
-mu_ex3 <- x_bar - .8 * x_sd
-```
-
-
-## Cohen's *D* Strength Visualization
-
-"What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
-
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-ggplot(dat, aes(x = x)) +
-  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
-  geom_vline(aes(xintercept = x_bar),
-             color = "skyblue3", linewidth = 1, linetype = "dashed") +
-  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
-  guides(y = "none", x = NULL) +
-  labs(y = NULL, x = "Highway MPG") +
-  theme_classic(base_size = 18)
-```
-
-
-## Cohen's *D* Strength Visualization
-
-"What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
-
-
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| layout-ncol: 3
-#| fig-align: center
-ggplot(dat, aes(x = x)) +
-  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
-  geom_vline(aes(xintercept = x_bar),
-             color = "skyblue3", linewidth = 1, linetype = "dashed") +
-  geomtextpath::geom_textvline(aes(xintercept = mu_ex1, label = "d = 0.2"),
-                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
-  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
-  guides(y = "none", x = NULL) +
-  labs(y = NULL, x = "Highway MPG") +
-  theme_classic(base_size = 18)
-
-ggplot(dat, aes(x = x)) +
-  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
-  geom_vline(aes(xintercept = x_bar),
-             color = "skyblue3", linewidth = 1, linetype = "dashed") +
-  geomtextpath::geom_textvline(aes(xintercept = mu_ex2, label = "d = 0.5"),
-                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
-  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
-  guides(y = "none", x = NULL) +
-  labs(y = NULL, x = "Highway MPG") +
-  theme_classic(base_size = 18)
-
-ggplot(dat, aes(x = x)) +
-  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
-  geom_vline(aes(xintercept = x_bar),
-             color = "skyblue3", linewidth = 1, linetype = "dashed") +
-  geomtextpath::geom_textvline(aes(xintercept = mu_ex3, label = "d = 0.8"),
-                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
-  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
-  guides(y = "none", x = NULL) +
-  labs(y = NULL, x = "Highway MPG") +
-  theme_classic(base_size = 18)
-
-```
 
 
 
@@ -298,8 +209,9 @@ ggplot(dat, aes(x = x)) +
 ○ How often would we correctly reject the null if $\mu$ was not $\mu_0$?
 :::
 
-$\beta$: probability of incorrectly retaining the null when $H_0$ is false
-$1 - \beta$: power (probability of correctly rejecting the null when $H_0$ is false)
+[$\beta$: probability of incorrectly retaining the null when $H_0$ is false]{.fragment}
+
+[$1 - \beta$: power (probability of correctly rejecting the null when $H_0$ is false)]{.fragment}
 
 
 ## Power Analysis
@@ -339,22 +251,33 @@ Specify exactly three of the four, it will fill in the fourth
 
 <div class="subpoint">○ `alternative` = type of test, default is `"two.sided"` </div>
 
+
+## Power Analysis
+
+`pwr.t.test(n, d, sig.level, power)`
+
 :::: {.columns}
 ::: {.column width="33%"}
 ```{r}
-pwr::pwr.t.test(n = 10, d = 0.3, sig.level = 0.05)
+pwr::pwr.t.test(n = 10, 
+                d = 0.3, 
+                sig.level = 0.05)
 ```
 :::
 
 ::: {.column width="33%"}
 ```{r}
-pwr::pwr.t.test(n = 50, sig.level = 0.05, power = 0.8)
+pwr::pwr.t.test(n = 50, 
+                sig.level = 0.05,
+                power = 0.8)
 ```
 :::
 
 ::: {.column width="33%"}
 ```{r}
-pwr::pwr.t.test(d = 0.3, sig.level = 0.05, power = 0.8)
+pwr::pwr.t.test(d = 0.3, 
+                sig.level = 0.05, 
+                power = 0.8)
 ```
 :::
 ::::
@@ -379,6 +302,8 @@ power_test$power
 
 
 ## Power Analysis
+
+::::: {style="font-size:80%"}
 
 Can create power curves by iterating over candidate values for one of the inputs and calculating the remaining.
 
@@ -423,6 +348,33 @@ tibble(n = sample_sizes,
   geom_line()
 ```
 :::
+
+:::
+::::
+
+:::::
+
+
+## Power Curves
+
+:::: {.columns}
+::: {.column width="50%"}
+
+```{.r}
+#| code-line-numbers: true
+sample_sizes <- c(10, 30, 100, 300)
+power_values <- map_dbl(
+  sample_sizes, 
+  function(sample_size) 
+    pwr::pwr.t.test(
+      n = sample_size, 
+      d = 0.25, 
+      sig.level = 0.05)$power
+)
+```
+:::
+
+::: {.column width="50%"}
 
 :::
 ::::
@@ -478,10 +430,10 @@ power_values <- map_dbl(
 :::
 
 ::: {.column width="50%"}
-**`map_dbl()`**: iterate over every item in `sample_sizes`, do something to it, and return a `double` (a number with decimal points).
+**`map_dbl()`**: iterate over every item in `sample_sizes`, do something to it, and return a `double` (number with decimal points).
 
 ::: {.fragment fragment-index="0"}
-**`function(sample_size)`**: defines a function — this tells `map_dbl()` what we want to *do* to each `sample_size`.
+**`function(sample_size)`**: defines a function, tells `map_dbl()` what we want to *do* to each `sample_size`.
 :::
 
 ::: {.fragment fragment-index="1"}
@@ -506,7 +458,7 @@ power_values <- map_dbl(
 
 Add more candidate $N$ values with `seq(min, max, by)` and clean up the plot
 
-:::: {.columns}
+:::: {.columns .fragment}
 ::: {.column width="33%"}
 ```{r}
 seq(1, 10, by = 1)
@@ -527,7 +479,7 @@ seq(1, 10, by = 5)
 :::
 ::::
 
-:::: {.columns}
+:::: {.columns .fragment}
 ::: {.column width="50%"}
 ```{r}
 sample_sizes <- seq(10, 300, by = 20)
@@ -565,7 +517,8 @@ tibble(n = sample_sizes,
 tibble(n = sample_sizes,
        power = power_values) |>
   ggplot(aes(x = n, y = power)) +
-  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
   geom_line() +
   coord_cartesian(ylim = c(0, 1)) +
   theme_classic(base_size = 14)
@@ -576,32 +529,9 @@ tibble(n = sample_sizes,
 ::::
 
 
-## Power Curves
-
-:::: {.columns}
-::: {.column width="50%"}
-```{r}
-sample_sizes <- c(10, 30, 100, 300)
-power_values <- map_dbl(
-  sample_sizes, 
-  function(sample_size) 
-    pwr::pwr.t.test(
-      n = sample_size, 
-      d = 0.25, 
-      sig.level = 0.05)$power
-)
-```
-:::
-
-::: {.column width="50%"}
-
-:::
-::::
-
-
 ## Power Curves: Bonus
 
-Even better, do it all in a data frame
+Even better, do it all in a data frame, so you don't have to track multiple vectors.
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -619,6 +549,7 @@ power_values_df <- tibble(
           sig.level = 0.05)$power
     )
   )
+power_values_df |> head(4)
 ```
 
 :::
@@ -646,7 +577,8 @@ power_values_df |>
 power_values_df |>
   ggplot(aes(x = sample_sizes, y = power)) +
   geom_line() +
-  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
   geom_line() +
   coord_cartesian(ylim = c(0, 1)) +
   theme_classic(base_size = 14)
@@ -659,7 +591,7 @@ power_values_df |>
 
 ## Power Curves: Bonus
 
-Let's you easily add more conditions...
+Let's you easily add more conditions, like "what if the effect size was different?"
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -678,6 +610,7 @@ power_values_df <- tibble(
           sig.level = 0.05)$power
     )
   )
+power_values_df |> head(4)
 ```
 
 :::
@@ -692,9 +625,11 @@ power_values_df <- tibble(
 #| fig-align: center
 power_values_df |>
   mutate(d = factor(d)) |>
-  ggplot(aes(x = sample_sizes, y = power, color = d, group = d)) +
+  ggplot(aes(x = sample_sizes, y = power, 
+             color = d, group = d)) +
   geom_line() +
-  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
   geom_line() +
   coord_cartesian(ylim = c(0, 1)) +
   theme_classic(base_size = 14)
@@ -705,9 +640,11 @@ power_values_df |>
 #| eval: false
 power_values_df |>
   mutate(d = factor(d)) |>
-  ggplot(aes(x = sample_sizes, y = power, color = d, group = d)) +
+  ggplot(aes(x = sample_sizes, y = power, 
+             color = d, group = d)) +
   geom_line() +
-  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
   geom_line() +
   coord_cartesian(ylim = c(0, 1)) +
   theme_classic(base_size = 14)
@@ -718,7 +655,7 @@ power_values_df |>
 ::::
 
 
-
+## Lab 06 Assignment
 
 <!-- ## Confidence Intervals for $d$ -->
 
