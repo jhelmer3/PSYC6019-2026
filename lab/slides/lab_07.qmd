@@ -1,0 +1,121 @@
+---
+title: "Bayesian *t*-Tests and Diagnostics"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2025-10-09 | Lab 7"
+author: "Jess Helmer"
+footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
+format: 
+  revealjs:
+    code-link: true
+    slide-number: true
+    code-line-numbers: false
+    theme: ../../gt-theme.scss
+    width: 1200
+execute: 
+  echo: true
+  dpi: 600
+  freeze: auto
+knitr:
+  opts_chunk:
+    dev: svg
+---
+
+## Outline
+
+- Bayesian *t*-tests
+
+- Diagnostics
+
+```{r setup}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(gt)
+```
+
+
+
+# Bayesian *t*-Tests
+
+## Bayesian *t*-Tests
+
+A very user-friendly interface to Bayesian models with `Stan` is the `rstanarm` R package!
+
+```{r}
+# install.packages("rstanarm")
+library(rstanarm)
+```
+
+
+```{r}
+filtered_mpg <- mpg |>
+  filter(when_any(cyl == 4, cyl == 8))
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+freq_t_test <- t.test(hwy ~ cyl, data = filtered_mpg)
+freq_t_test
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+bayes_t_test <- stan_glm(hwy ~ cyl, family = "gaussian", data = filtered_mpg)
+summary(bayes_t_test)
+```
+:::
+::::
+
+
+## Bayesian *t*-Tests
+
+```{r}
+prior_summary(bayes_t_test)
+```
+
+
+
+## Model
+
+$$
+\begin{aligned}
+\text{highway MPG}_i &= \beta_0 + \beta_1 \text{cylinders}_i + \epsilon_i && \text{likelihood: a linear model} \\
+\beta_0 &\sim N(24, 17) && \text{prior for intercept} \\
+\beta_1 &\sim N(0, 8.6) && \text{prior for slope} \\
+\epsilon &\sim \text{Exponential}(0.15)  && \text{prior for residual variance}
+\end{aligned}
+$$
+
+##
+
+```{r}
+
+```
+
+
+
+## Lab 07 Assignment
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
