@@ -50,7 +50,13 @@ Cohen's $d$: measure of difference (not a test)
 ::: subpoint
 ○ Transforms to the *z*-scale, can interpret in standard deviation units
 :::
+
+::: {.subpoint .fragment}
+○ Mathematically, looks like *t*-statistic equations but has *standard deviation* ($s$) in the denominator instead of *standard error* ($SE$).
 :::
+:::
+
+
 
 
 ## Cohen's *d*
@@ -59,10 +65,12 @@ Cohen's $d$: measure of difference (not a test)
 ::: {.column width="28%"}
 #### One Sample
 
+::: fragment
 $$ d = \frac{\bar{x} - \mu_0}{s_x} $$
+:::
 
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 ```{r}
 mu_cty <- 30
 
@@ -77,9 +85,11 @@ cty_sd <- sd(mpg$cty)
 ::: {.column width="44%"}
 #### Independent Samples
 
+::: fragment
 $$ d = \frac{\bar{x}_1 - \bar{x}_2}{s_p} $$
+:::
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 
 ::: panel-tabset
 ### Pull Data
@@ -119,9 +129,11 @@ pooled_sd <- sqrt(
 ::: {.column width="28%"}
 #### Paired Sample
 
+::: fragment
 $$ d = \frac{\bar{D}}{s_D} $$
+:::
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 ```{r}
 differences <- mpg$cty - mpg$hwy
 
@@ -145,7 +157,7 @@ d_bar / d_sd
 $$ d = \frac{\bar{x} - \mu_0}{s_x} $$
 
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 ```{r}
 effectsize::cohens_d(mpg$cty, mu = 30)
 ```
@@ -157,7 +169,7 @@ effectsize::cohens_d(mpg$cty, mu = 30)
 
 $$ d = \frac{\bar{x}_1 - \bar{x}_2}{s_p} $$
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 ```{r}
 four_cyl <- mpg |>
   filter(cyl == 4) |>
@@ -179,7 +191,7 @@ effectsize::cohens_d(four_cyl,
 
 $$ d = \frac{\bar{D}}{s_D} $$
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 ```{r}
 effectsize::cohens_d(mpg$cty, mpg$hwy, 
                      paired = T)
@@ -189,6 +201,7 @@ effectsize::cohens_d(mpg$cty, mpg$hwy,
 :::
 
 ::::
+
 
 
 ## Risk and Odds
@@ -206,18 +219,13 @@ Biologists have studied which kinds of food helps chicks grow best. They randoml
 
 ```{r}
 #| echo: false
-d <- chickwts |> 
-  as_tibble() |> 
-  mutate(size = ifelse(weight > 250, "large", "small")) |>
-  count(feed, size) |>
-  pivot_wider(names_from = size, values_from = n, values_fill = 0) |>
-  filter(when_any(feed == "soybean", feed == "linseed", feed == "sunflower")) |>
-  mutate(Total = small + large)
+d <- read_csv(here::here("lab", "data", "lab_05", "chick_data.csv"))
 
-d |>
-  mutate(across(c(large, small, Total), as.character)) |>
-  bind_rows(c(feed = "Total", large = sum(d$large), small = sum(d$small), Total = sum(d$Total))) |>
-  select(Feed = feed, Small = small, Large = large, Total) |>
+tbl <- d |>
+  mutate(total = small + large) |>
+  mutate(across(c(large, small, total), as.character)) |>
+  bind_rows(c(feed = "Total", large = sum(d$large), small = sum(d$small), total = sum(d$small + d$large))) |>
+  select(Feed = feed, Small = small, Large = large, Total = total) |>
   gt::gt() |>
   gt::tab_style(gt::cell_text(weight = "bold"),
                 gt::cells_column_labels()) |>
@@ -225,27 +233,99 @@ d |>
                 gt::cells_body(rows = Feed == "Total")) |>
   gt::tab_style(gt::cell_text(weight = "bold"),
                 gt::cells_body(columns = Total))
+tbl
 ```
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 What is the risk of a chick being small if they were in the linseed group? Soybean?
 
+::: fragment
 $\text{Risk(small | linseed)} = \frac{8}{12} = 0.6\bar{6}$
 
 $\text{Risk(small | soybean)} = \frac{9}{14} = 0.64$
 :::
+:::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 What are the odds of a chick being small if they were in the linseed group? Sunflower?
 
+::: fragment
 $\text{Odds(small | linseed)} = \frac{8}{4} = 2$
 
 $\text{Odds(small | sunflower)} = \frac{1}{11} = 0.\bar{09}$
 :::
+:::
 ::::
 
 :::::
+
+
+
+## Risk and Odds in R
+
+::::: {style="font-size:80%"}
+:::: {.columns}
+::: {.column width="85%"}
+Biologists have studied which kinds of food helps chicks grow best. They randomly assigned newly hatched chicks into different feed type groups and measured their body weight in grams after six weeks. This is a subset of the data that labels chicks under 250g small chicks and chicks above 250g large chicks.
+:::
+
+::: {.column width="15%"}
+![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
+:::
+::::
+:::::
+
+```{r}
+chick_data <- read_csv(here::here("lab", "data", "lab_06", "chick_data.csv"))
+chick_data
+```
+
+
+
+## Risk and Odds in R
+
+::::: {style="font-size:80%"}
+:::: {.columns}
+::: {.column width="85%"}
+Biologists have studied which kinds of food helps chicks grow best. They randomly assigned newly hatched chicks into different feed type groups and measured their body weight in grams after six weeks. This is a subset of the data that labels chicks under 250g small chicks and chicks above 250g large chicks.
+:::
+
+::: {.column width="15%"}
+![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
+:::
+::::
+:::::
+
+:::: {.columns}
+::: {.column .fragment width="50%"}
+**Risk**
+
+```{r}
+risk_data <- chick_data |>
+  pivot_longer(c("large", "small"), 
+               names_to = "size", values_to = "count") |>
+  mutate(.by = feed, 
+         total = sum(count),
+         risk = count / total) |>
+  filter(size == "small")
+risk_data
+```
+:::
+
+::: {.column .fragment width="50%"}
+**Odds**
+
+::: fragment
+```{r}
+odds_data <- chick_data |>
+  mutate(odds = small / large)
+odds_data
+```
+:::
+:::
+::::
+
 
 ## Risk and Odds
 
@@ -262,29 +342,11 @@ Biologists have studied which kinds of food helps chicks grow best. They randoml
 
 ```{r}
 #| echo: false
-d <- chickwts |> 
-  as_tibble() |> 
-  mutate(size = ifelse(weight > 250, "large", "small")) |>
-  count(feed, size) |>
-  pivot_wider(names_from = size, values_from = n, values_fill = 0) |>
-  filter(when_any(feed == "soybean", feed == "linseed", feed == "sunflower")) |>
-  mutate(Total = small + large)
-
-d |>
-  mutate(across(c(large, small, Total), as.character)) |>
-  bind_rows(c(feed = "Total", large = sum(d$large), small = sum(d$small), Total = sum(d$Total))) |>
-  select(Feed = feed, Small = small, Large = large, Total) |>
-  gt::gt() |>
-  gt::tab_style(gt::cell_text(weight = "bold"),
-                gt::cells_column_labels()) |>
-  gt::tab_style(gt::cell_text(weight = "bold"),
-                gt::cells_body(rows = Feed == "Total")) |>
-  gt::tab_style(gt::cell_text(weight = "bold"),
-                gt::cells_body(columns = Total))
+tbl
 ```
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 What is the risk ratio of a chick being small if they were in the linseed group compared to the soybean?
 
 ::: fragment
@@ -292,7 +354,7 @@ $\text{Risk ratio} = \frac{\text{Risk(small | linseed)}}{\text{Risk(small | soyb
 :::
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 What is the odds ratio of a chick being small if they were in the linseed group compared to the sunflower?
 
 ::: fragment
@@ -307,6 +369,66 @@ $\text{Odds ratio} = \frac{\text{Odds(small | linseed)}}{\text{Odds(small | sunf
 ::: {.my-callout .fragment .absolute bottom=210 right=0 width="400px"}
 The odds of a chick being small is 22x greater if they are fed linseed compared to if they are fed sunflowers!
 :::
+
+
+## Risk and Odds
+
+::::: {style="font-size:80%"}
+:::: {.columns}
+::: {.column width="85%"}
+Biologists have studied which kinds of food helps chicks grow best. They randomly assigned newly hatched chicks into different feed type groups and measured their body weight in grams after six weeks. This is a subset of the data that labels chicks under 250g small chicks and chicks above 250g large chicks.
+:::
+
+::: {.column width="15%"}
+![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
+:::
+::::
+
+
+:::: {.columns}
+::: {.column .fragment width="50%"}
+**Risk**
+
+What is the risk ratio of a chick being small if they were in the linseed group compared to the soybean?
+
+::: fragment
+```{r}
+linseed_small_risk <- risk_data |>
+  filter(feed == "linseed") |>
+  pull(risk)
+
+soybean_small_risk <- risk_data |>
+  filter(feed == "soybean") |>
+  pull(risk)
+
+linseed_small_risk / soybean_small_risk
+```
+
+:::
+:::
+
+::: {.column .fragment width="50%"}
+**Odds**
+
+What is the odds ratio of a chick being small if they were in the linseed group compared to the sunflower?
+
+::: fragment
+```{r}
+linseed_small_odds <- odds_data |>
+  filter(feed == "linseed") |>
+  pull(odds)
+sunflower_small_odds <- odds_data |>
+  filter(feed == "sunflower") |>
+  pull(odds)
+
+linseed_small_odds / sunflower_small_odds
+```
+:::
+:::
+::::
+
+:::::
+
 
 
 # Power Analysis
@@ -405,7 +527,7 @@ pwr::pwr.t.test(d = 0.3,
 Object contains a list of each argument, including the one it calculated
 
 ```{r}
-power_test <- pwr::pwr.t.test(n = 10, d = 0.3, sig.level = 0.05)
+power_test <- pwr::pwr.t.test(n = 30, d = 0.3, sig.level = 0.05)
 
 power_test |>
   glimpse()
@@ -418,6 +540,25 @@ power_test$power
 ```
 
 
+## Aside: Low-Powered Studies
+
+::: {style="font-size:80%"}
+One of the components of the **replication crisis** is low-powered studies combined with publication bias (studies with $p < .05$ tend to get published more than $p \geq .05$). Why?
+
+[When studies have small sample sizes (and thus low power), their standard errors are large, because $SE = \frac{s_x}{\sqrt{N}}$.]{.fragment}
+
+[When standard errors are large, it takes a *very large* effect size to "beat" the null. So, low-powered studies that do beat the null are going to report a larger effect size.]{.fragment}
+
+[But when they're the only studies that get published (selection on significance), it *looks* like some effect is large in the literature, when in fact the rest of the distribution of effect sizes are left in the *file drawer*.]{.fragment}
+
+[Low-powered studies will often yield null results, but when they do have a significant effect (by chance), the effect will appear large.]{.fragment}
+:::
+
+::: footer
+[Ioannis, 2005, "Why Most Published Research Findings Are False"](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124), [Gelman, 2006,  "What 'Power = .06' Looks Like."](https://statmodeling.stat.columbia.edu/2014/11/17/power-06-looks-like-get-used/)
+
+:::
+
 ## Power Analysis
 
 ::::: {style="font-size:80%"}
@@ -426,17 +567,18 @@ Can create power curves by iterating over candidate values for one of the inputs
 
 Example: You are running a study that you believe has a true effect size of $\delta = 0.25$. You want to test your hypothesis with a *t*-test at $\alpha = .05$. What will your power be at varying levels of sample size $N$ per group? 
 
-:::: {.columns}
+:::: {.columns .fragment}
 ::: {.column width="50%"}
 ```{r}
 sample_sizes <- c(10, 30, 100, 300)
 power_values <- map_dbl(
   sample_sizes, 
-  function(sample_size) 
+  function(sample_size) {
     pwr::pwr.t.test(
       n = sample_size, 
       d = 0.25, 
       sig.level = 0.05)$power
+  }
 )
 ```
 :::
@@ -477,16 +619,16 @@ tibble(n = sample_sizes,
 :::: {.columns}
 ::: {.column width="50%"}
 
-```{.r}
-#| code-line-numbers: true
+```{.r code-line-numbers=true}
 sample_sizes <- c(10, 30, 100, 300)
 power_values <- map_dbl(
   sample_sizes, 
-  function(sample_size) 
+  function(sample_size) }
     pwr::pwr.t.test(
       n = sample_size, 
       d = 0.25, 
       sig.level = 0.05)$power
+  }
 )
 ```
 :::
@@ -507,11 +649,12 @@ power_values <- map_dbl(
 sample_sizes <- c(10, 30, 100, 300)
 power_values <- map_dbl(
   sample_sizes, 
-  function(sample_size) 
+  function(sample_size) { 
     pwr::pwr.t.test(
       n = sample_size, 
       d = 0.25, 
       sig.level = 0.05)$power
+  }
 )
 ```
 
@@ -520,11 +663,12 @@ power_values <- map_dbl(
 sample_sizes <- c(10, 30, 100, 300)
 power_values <- map_dbl(
   sample_sizes, 
-  function(sample_size) 
+  function(sample_size) {
     pwr::pwr.t.test(
       n = sample_size, 
       d = 0.25, 
       sig.level = 0.05)$power
+  }
 )
 ```
 :::
@@ -534,11 +678,12 @@ power_values <- map_dbl(
 sample_sizes <- c(10, 30, 100, 300)
 power_values <- map_dbl(
   sample_sizes, 
-  function(sample_size) 
+  function(sample_size) {
     pwr::pwr.t.test(
       n = sample_size, 
       d = 0.25, 
       sig.level = 0.05)$power
+  }
 )
 ```
 :::
@@ -710,7 +855,7 @@ power_values_df |>
 
 Let's you easily add more conditions, like "what if the effect size was different?"
 
-:::: {.columns}
+:::: {.columns .fragment}
 ::: {.column width="50%"}
 ```{r}
 power_values_df <- tibble(

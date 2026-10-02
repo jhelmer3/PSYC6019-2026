@@ -23,10 +23,15 @@ list(
   
   
   ## lab 07
+  tar_target(chick_data, make_chick_data()),
+  tar_file(chick_data_file, 
+           write.csv(chick_data, "lab/data/lab_06/chick_data.csv", row.names = F)),
+  
   tar_target(lab_07_slides_qmd, 
              "lab/slides/lab_07.qmd", 
              format = "file"),
   tar_target(lab_07_slides, {
+    chick_data_file
     quarto::quarto_render(lab_07_slides_qmd, quiet = F)
     qmd_out(lab_07_slides_qmd)
   }, format = "file"),
