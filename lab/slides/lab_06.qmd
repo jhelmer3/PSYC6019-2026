@@ -50,7 +50,13 @@ Cohen's $d$: measure of difference (not a test)
 ::: subpoint
 ○ Transforms to the *z*-scale, can interpret in standard deviation units
 :::
+
+::: {.subpoint .fragment}
+○ Mathematically, looks like *t*-statistic equations but has *standard deviation* ($s$) in the denominator instead of *standard error* ($SE$).
 :::
+:::
+
+
 
 
 ## Cohen's *d*
@@ -59,10 +65,12 @@ Cohen's $d$: measure of difference (not a test)
 ::: {.column width="28%"}
 #### One Sample
 
+::: fragment
 $$ d = \frac{\bar{x} - \mu_0}{s_x} $$
+:::
 
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 ```{r}
 mu_cty <- 30
 
@@ -77,9 +85,11 @@ cty_sd <- sd(mpg$cty)
 ::: {.column width="44%"}
 #### Independent Samples
 
+::: fragment
 $$ d = \frac{\bar{x}_1 - \bar{x}_2}{s_p} $$
+:::
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 
 ::: panel-tabset
 ### Pull Data
@@ -103,10 +113,10 @@ sd_eight <- sd(eight_cyl)
 n_eight <- length(eight_cyl)
 
 pooled_sd <- sqrt( 
-  ((n_four - 1) * sd_four^2 + (n_eight - 1) * sd_eight^2) /
+  ((n_four - 1) * sd_four^2 + 
+     (n_eight - 1) * sd_eight^2) /
     ((n_four - 1) + (n_eight - 1)) 
-  )
-
+)
 (x_bar_four - x_bar_eight) / pooled_sd
 ```
 :::
@@ -119,9 +129,11 @@ pooled_sd <- sqrt(
 ::: {.column width="28%"}
 #### Paired Sample
 
+::: fragment
 $$ d = \frac{\bar{D}}{s_D} $$
+:::
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 ```{r}
 differences <- mpg$cty - mpg$hwy
 
@@ -145,7 +157,7 @@ d_bar / d_sd
 $$ d = \frac{\bar{x} - \mu_0}{s_x} $$
 
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 ```{r}
 effectsize::cohens_d(mpg$cty, mu = 30)
 ```
@@ -157,7 +169,7 @@ effectsize::cohens_d(mpg$cty, mu = 30)
 
 $$ d = \frac{\bar{x}_1 - \bar{x}_2}{s_p} $$
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 ```{r}
 four_cyl <- mpg |>
   filter(cyl == 4) |>
@@ -166,7 +178,8 @@ eight_cyl <- mpg |>
   filter(cyl == 8) |>
   pull(hwy)
 
-effectsize::cohens_d(four_cyl, eight_cyl)
+effectsize::cohens_d(four_cyl, 
+                     eight_cyl)
 ```
 :::
 
@@ -178,9 +191,10 @@ effectsize::cohens_d(four_cyl, eight_cyl)
 
 $$ d = \frac{\bar{D}}{s_D} $$
 
-::: {style="font-size:85%}
+::: {.fragment style="font-size:85%}
 ```{r}
-effectsize::cohens_d(mpg$cty, mpg$hwy, paired = T)
+effectsize::cohens_d(mpg$cty, mpg$hwy, 
+                     paired = T)
 ```
 :::
 
@@ -189,95 +203,231 @@ effectsize::cohens_d(mpg$cty, mpg$hwy, paired = T)
 ::::
 
 
-## Cohen's *D* Strength Visualization
+
+## Risk and Odds
+
+::::: {style="font-size:80%"}
+:::: {.columns}
+::: {.column width="85%"}
+Biologists have studied which kinds of food helps chicks grow best. They randomly assigned newly hatched chicks into different feed type groups and measured their body weight in grams after six weeks. This is a subset of the data that labels chicks under 250g small chicks and chicks above 250g large chicks.
+:::
+
+::: {.column .fragment width="15%"}
+![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
+:::
+::::
 
 ```{r}
 #| echo: false
-x_bar <- mean(mpg$hwy)
-x_sd <- sd(mpg$hwy)
+d <- read_csv(here::here("lab", "data", "lab_06", "chick_data.csv"))
+
+tbl <- d |>
+  mutate(total = small + large) |>
+  mutate(across(c(large, small, total), as.character)) |>
+  bind_rows(c(feed = "Total", large = sum(d$large), small = sum(d$small), total = sum(d$small + d$large))) |>
+  select(Feed = feed, Small = small, Large = large, Total = total) |>
+  gt::gt() |>
+  gt::tab_style(gt::cell_text(weight = "bold"),
+                gt::cells_column_labels()) |>
+  gt::tab_style(gt::cell_text(weight = "bold"),
+                gt::cells_body(rows = Feed == "Total")) |>
+  gt::tab_style(gt::cell_text(weight = "bold"),
+                gt::cells_body(columns = Total))
+tbl
 ```
 
+:::: {.columns}
+::: {.column .fragment width="50%"}
+What is the risk of a chick being small if they were in the linseed group? Soybean?
 
-Based on mean ($\bar{x}$ = `r round(x_bar, 2)` = `r round(x_bar, 2)`) and SD ($\bar{\sigma}$ = `r round(x_sd, 2)` = `r round(x_sd, 2)`) of cars' highway MPG (`hwy`).
+::: fragment
+$\text{Risk(small | linseed)} = \frac{8}{12} = 0.6\bar{6}$
 
-Solved backwards for ($\mu$) based on different potential levels of *d*. "What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
+$\text{Risk(small | soybean)} = \frac{9}{14} = 0.64$
+:::
+:::
 
-$$\bar{x} - d \times s = \mu$$
+::: {.column .fragment width="50%"}
+What are the odds of a chick being small if they were in the linseed group? Sunflower?
+
+::: fragment
+$\text{Odds(small | linseed)} = \frac{8}{4} = 2$
+
+$\text{Odds(small | sunflower)} = \frac{1}{11} = 0.\bar{09}$
+:::
+:::
+::::
+
+:::::
+
+
+
+## Risk and Odds in R
+
+::::: {style="font-size:80%"}
+:::: {.columns}
+::: {.column width="85%"}
+Biologists have studied which kinds of food helps chicks grow best. They randomly assigned newly hatched chicks into different feed type groups and measured their body weight in grams after six weeks. This is a subset of the data that labels chicks under 250g small chicks and chicks above 250g large chicks.
+:::
+
+::: {.column width="15%"}
+![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
+:::
+::::
+:::::
 
 ```{r}
-dat <- data.frame(x = rnorm(100000, x_bar, x_sd))
-
-mu_ex1 <- x_bar - .2 * x_sd
-mu_ex2 <- x_bar - .5 * x_sd
-mu_ex3 <- x_bar - .8 * x_sd
+chick_data <- read_csv(here::here("lab", "data", "lab_06", "chick_data.csv"))
+chick_data
 ```
 
 
-## Cohen's *D* Strength Visualization
 
-"What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
+## Risk and Odds in R
+
+::::: {style="font-size:80%"}
+:::: {.columns}
+::: {.column width="85%"}
+Biologists have studied which kinds of food helps chicks grow best. They randomly assigned newly hatched chicks into different feed type groups and measured their body weight in grams after six weeks. This is a subset of the data that labels chicks under 250g small chicks and chicks above 250g large chicks.
+:::
+
+::: {.column width="15%"}
+![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
+:::
+::::
+:::::
+
+:::: {.columns}
+::: {.column .fragment width="50%"}
+**Risk**
+
+```{r}
+risk_data <- chick_data |>
+  pivot_longer(c("large", "small"), 
+               names_to = "size", values_to = "count") |>
+  mutate(.by = feed, 
+         total = sum(count),
+         risk = count / total) |>
+  filter(size == "small")
+risk_data
+```
+:::
+
+::: {.column .fragment width="50%"}
+**Odds**
+
+::: fragment
+```{r}
+odds_data <- chick_data |>
+  mutate(odds = small / large)
+odds_data
+```
+:::
+:::
+::::
+
+
+## Risk and Odds
+
+::::: {style="font-size:80%"}
+:::: {.columns}
+::: {.column width="85%"}
+Biologists have studied which kinds of food helps chicks grow best. They randomly assigned newly hatched chicks into different feed type groups and measured their body weight in grams after six weeks. This is a subset of the data that labels chicks under 250g small chicks and chicks above 250g large chicks.
+:::
+
+::: {.column width="15%"}
+![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
+:::
+::::
 
 ```{r}
 #| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-ggplot(dat, aes(x = x)) +
-  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
-  geom_vline(aes(xintercept = x_bar),
-             color = "skyblue3", linewidth = 1, linetype = "dashed") +
-  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
-  guides(y = "none", x = NULL) +
-  labs(y = NULL, x = "Highway MPG") +
-  theme_classic(base_size = 18)
+tbl
 ```
 
+:::: {.columns}
+::: {.column .fragment width="50%"}
+What is the risk ratio of a chick being small if they were in the linseed group compared to the soybean?
 
-## Cohen's *D* Strength Visualization
+::: fragment
+$\text{Risk ratio} = \frac{\text{Risk(small | linseed)}}{\text{Risk(small | soybean)}} = \frac{\frac{8}{12}}{\frac{9}{14}} = 1.03$
+:::
+:::
 
-"What would the hypothesized mean have to have been to get different levels of Cohen's *d*?"
+::: {.column .fragment width="50%"}
+What is the odds ratio of a chick being small if they were in the linseed group compared to the sunflower?
+
+::: fragment
+$\text{Odds ratio} = \frac{\text{Odds(small | linseed)}}{\text{Odds(small | sunflower)}} = \frac{\frac{8}{4}}{\frac{1}{11}} = 22$
+:::
+:::
+::::
+
+:::::
 
 
+::: {.my-callout .fragment .absolute bottom=210 right=0 width="400px"}
+The odds of a chick being small is 22x greater if they are fed linseed compared to if they are fed sunflowers!
+:::
+
+
+## Risk and Odds
+
+::::: {style="font-size:80%"}
+:::: {.columns}
+::: {.column width="85%"}
+Biologists have studied which kinds of food helps chicks grow best. They randomly assigned newly hatched chicks into different feed type groups and measured their body weight in grams after six weeks. This is a subset of the data that labels chicks under 250g small chicks and chicks above 250g large chicks.
+:::
+
+::: {.column width="15%"}
+![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
+:::
+::::
+
+
+:::: {.columns}
+::: {.column .fragment width="50%"}
+**Risk**
+
+What is the risk ratio of a chick being small if they were in the linseed group compared to the soybean?
+
+::: fragment
 ```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| layout-ncol: 3
-#| fig-align: center
-ggplot(dat, aes(x = x)) +
-  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
-  geom_vline(aes(xintercept = x_bar),
-             color = "skyblue3", linewidth = 1, linetype = "dashed") +
-  geomtextpath::geom_textvline(aes(xintercept = mu_ex1, label = "d = 0.2"),
-                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
-  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
-  guides(y = "none", x = NULL) +
-  labs(y = NULL, x = "Highway MPG") +
-  theme_classic(base_size = 18)
+linseed_small_risk <- risk_data |>
+  filter(feed == "linseed") |>
+  pull(risk)
 
-ggplot(dat, aes(x = x)) +
-  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
-  geom_vline(aes(xintercept = x_bar),
-             color = "skyblue3", linewidth = 1, linetype = "dashed") +
-  geomtextpath::geom_textvline(aes(xintercept = mu_ex2, label = "d = 0.5"),
-                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
-  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
-  guides(y = "none", x = NULL) +
-  labs(y = NULL, x = "Highway MPG") +
-  theme_classic(base_size = 18)
+soybean_small_risk <- risk_data |>
+  filter(feed == "soybean") |>
+  pull(risk)
 
-ggplot(dat, aes(x = x)) +
-  geom_histogram(fill = 'skyblue3', alpha = .4, bins = 16) +
-  geom_vline(aes(xintercept = x_bar),
-             color = "skyblue3", linewidth = 1, linetype = "dashed") +
-  geomtextpath::geom_textvline(aes(xintercept = mu_ex3, label = "d = 0.8"),
-                               hjust = .3, size = 10, color = "steelblue4", linewidth = 1.5) +
-  coord_cartesian(xlim = c(0, 60), expand = F, clip = "off") +
-  guides(y = "none", x = NULL) +
-  labs(y = NULL, x = "Highway MPG") +
-  theme_classic(base_size = 18)
-
+linseed_small_risk / soybean_small_risk
 ```
+
+:::
+:::
+
+::: {.column .fragment width="50%"}
+**Odds**
+
+What is the odds ratio of a chick being small if they were in the linseed group compared to the sunflower?
+
+::: fragment
+```{r}
+linseed_small_odds <- odds_data |>
+  filter(feed == "linseed") |>
+  pull(odds)
+sunflower_small_odds <- odds_data |>
+  filter(feed == "sunflower") |>
+  pull(odds)
+
+linseed_small_odds / sunflower_small_odds
+```
+:::
+:::
+::::
+
+:::::
 
 
 
@@ -298,8 +448,9 @@ ggplot(dat, aes(x = x)) +
 ○ How often would we correctly reject the null if $\mu$ was not $\mu_0$?
 :::
 
-$\beta$: probability of incorrectly retaining the null when $H_0$ is false
-$1 - \beta$: power (probability of correctly rejecting the null when $H_0$ is false)
+[$\beta$: probability of incorrectly retaining the null when $H_0$ is false]{.fragment}
+
+[$1 - \beta$: power (probability of correctly rejecting the null when $H_0$ is false)]{.fragment}
 
 
 ## Power Analysis
@@ -339,22 +490,33 @@ Specify exactly three of the four, it will fill in the fourth
 
 <div class="subpoint">○ `alternative` = type of test, default is `"two.sided"` </div>
 
+
+## Power Analysis
+
+`pwr.t.test(n, d, sig.level, power)`
+
 :::: {.columns}
 ::: {.column width="33%"}
 ```{r}
-pwr::pwr.t.test(n = 10, d = 0.3, sig.level = 0.05)
+pwr::pwr.t.test(n = 10, 
+                d = 0.3, 
+                sig.level = 0.05)
 ```
 :::
 
 ::: {.column width="33%"}
 ```{r}
-pwr::pwr.t.test(n = 50, sig.level = 0.05, power = 0.8)
+pwr::pwr.t.test(n = 50, 
+                sig.level = 0.05,
+                power = 0.8)
 ```
 :::
 
 ::: {.column width="33%"}
 ```{r}
-pwr::pwr.t.test(d = 0.3, sig.level = 0.05, power = 0.8)
+pwr::pwr.t.test(d = 0.3, 
+                sig.level = 0.05, 
+                power = 0.8)
 ```
 :::
 ::::
@@ -365,7 +527,7 @@ pwr::pwr.t.test(d = 0.3, sig.level = 0.05, power = 0.8)
 Object contains a list of each argument, including the one it calculated
 
 ```{r}
-power_test <- pwr::pwr.t.test(n = 10, d = 0.3, sig.level = 0.05)
+power_test <- pwr::pwr.t.test(n = 30, d = 0.3, sig.level = 0.05)
 
 power_test |>
   glimpse()
@@ -378,23 +540,45 @@ power_test$power
 ```
 
 
+## Aside: Low-Powered Studies
+
+::: {style="font-size:80%"}
+One of the components of the **replication crisis** is low-powered studies combined with publication bias (studies with $p < .05$ tend to get published more than $p \geq .05$). Why?
+
+[When studies have small sample sizes (and thus low power), their standard errors are large, because $SE = \frac{s_x}{\sqrt{N}}$.]{.fragment}
+
+[When standard errors are large, it takes a *very large* effect size to "beat" the null. So, low-powered studies that do beat the null are going to report a larger effect size.]{.fragment}
+
+[But when they're the only studies that get published (selection on significance), it *looks* like some effect is large in the literature, when in fact the rest of the distribution of effect sizes are left in the *file drawer*.]{.fragment}
+
+[Low-powered studies will often yield null results, but when they do have a significant effect (by chance), the effect will appear large.]{.fragment}
+:::
+
+::: footer
+[(Ioannis 2005, "Why Most Published Research Findings Are False")](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124), [(Gelman 2006, "What 'Power = .06' Looks Like")](https://statmodeling.stat.columbia.edu/2014/11/17/power-06-looks-like-get-used/)
+
+:::
+
 ## Power Analysis
+
+::::: {style="font-size:80%"}
 
 Can create power curves by iterating over candidate values for one of the inputs and calculating the remaining.
 
 Example: You are running a study that you believe has a true effect size of $\delta = 0.25$. You want to test your hypothesis with a *t*-test at $\alpha = .05$. What will your power be at varying levels of sample size $N$ per group? 
 
-:::: {.columns}
+:::: {.columns .fragment}
 ::: {.column width="50%"}
 ```{r}
 sample_sizes <- c(10, 30, 100, 300)
 power_values <- map_dbl(
   sample_sizes, 
-  function(sample_size) 
+  function(sample_size) {
     pwr::pwr.t.test(
       n = sample_size, 
       d = 0.25, 
       sig.level = 0.05)$power
+  }
 )
 ```
 :::
@@ -427,6 +611,33 @@ tibble(n = sample_sizes,
 :::
 ::::
 
+:::::
+
+
+## Power Curves
+
+:::: {.columns}
+::: {.column width="50%"}
+
+```{.r code-line-numbers=true}
+sample_sizes <- c(10, 30, 100, 300)
+power_values <- map_dbl(
+  sample_sizes, 
+  function(sample_size) }
+    pwr::pwr.t.test(
+      n = sample_size, 
+      d = 0.25, 
+      sig.level = 0.05)$power
+  }
+)
+```
+:::
+
+::: {.column width="50%"}
+
+:::
+::::
+
 
 ## Power Curves
 
@@ -438,11 +649,12 @@ tibble(n = sample_sizes,
 sample_sizes <- c(10, 30, 100, 300)
 power_values <- map_dbl(
   sample_sizes, 
-  function(sample_size) 
+  function(sample_size) { 
     pwr::pwr.t.test(
       n = sample_size, 
       d = 0.25, 
       sig.level = 0.05)$power
+  }
 )
 ```
 
@@ -451,11 +663,12 @@ power_values <- map_dbl(
 sample_sizes <- c(10, 30, 100, 300)
 power_values <- map_dbl(
   sample_sizes, 
-  function(sample_size) 
+  function(sample_size) {
     pwr::pwr.t.test(
       n = sample_size, 
       d = 0.25, 
       sig.level = 0.05)$power
+  }
 )
 ```
 :::
@@ -465,11 +678,12 @@ power_values <- map_dbl(
 sample_sizes <- c(10, 30, 100, 300)
 power_values <- map_dbl(
   sample_sizes, 
-  function(sample_size) 
+  function(sample_size) {
     pwr::pwr.t.test(
       n = sample_size, 
       d = 0.25, 
       sig.level = 0.05)$power
+  }
 )
 ```
 :::
@@ -478,10 +692,10 @@ power_values <- map_dbl(
 :::
 
 ::: {.column width="50%"}
-**`map_dbl()`**: iterate over every item in `sample_sizes`, do something to it, and return a `double` (a number with decimal points).
+**`map_dbl()`**: iterate over every item in `sample_sizes`, do something to it, and return a `double` (number with decimal points).
 
 ::: {.fragment fragment-index="0"}
-**`function(sample_size)`**: defines a function — this tells `map_dbl()` what we want to *do* to each `sample_size`.
+**`function(sample_size)`**: defines a function, tells `map_dbl()` what we want to *do* to each `sample_size`.
 :::
 
 ::: {.fragment fragment-index="1"}
@@ -506,7 +720,7 @@ power_values <- map_dbl(
 
 Add more candidate $N$ values with `seq(min, max, by)` and clean up the plot
 
-:::: {.columns}
+:::: {.columns .fragment}
 ::: {.column width="33%"}
 ```{r}
 seq(1, 10, by = 1)
@@ -527,7 +741,7 @@ seq(1, 10, by = 5)
 :::
 ::::
 
-:::: {.columns}
+:::: {.columns .fragment}
 ::: {.column width="50%"}
 ```{r}
 sample_sizes <- seq(10, 300, by = 20)
@@ -565,7 +779,8 @@ tibble(n = sample_sizes,
 tibble(n = sample_sizes,
        power = power_values) |>
   ggplot(aes(x = n, y = power)) +
-  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
   geom_line() +
   coord_cartesian(ylim = c(0, 1)) +
   theme_classic(base_size = 14)
@@ -576,32 +791,9 @@ tibble(n = sample_sizes,
 ::::
 
 
-## Power Curves
-
-:::: {.columns}
-::: {.column width="50%"}
-```{r}
-sample_sizes <- c(10, 30, 100, 300)
-power_values <- map_dbl(
-  sample_sizes, 
-  function(sample_size) 
-    pwr::pwr.t.test(
-      n = sample_size, 
-      d = 0.25, 
-      sig.level = 0.05)$power
-)
-```
-:::
-
-::: {.column width="50%"}
-
-:::
-::::
-
-
 ## Power Curves: Bonus
 
-Even better, do it all in a data frame
+Even better, do it all in a data frame, so you don't have to track multiple vectors.
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -619,6 +811,7 @@ power_values_df <- tibble(
           sig.level = 0.05)$power
     )
   )
+power_values_df |> head(4)
 ```
 
 :::
@@ -646,7 +839,8 @@ power_values_df |>
 power_values_df |>
   ggplot(aes(x = sample_sizes, y = power)) +
   geom_line() +
-  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
   geom_line() +
   coord_cartesian(ylim = c(0, 1)) +
   theme_classic(base_size = 14)
@@ -659,9 +853,9 @@ power_values_df |>
 
 ## Power Curves: Bonus
 
-Let's you easily add more conditions...
+Let's you easily add more conditions, like "what if the effect size was different?"
 
-:::: {.columns}
+:::: {.columns .fragment}
 ::: {.column width="50%"}
 ```{r}
 power_values_df <- tibble(
@@ -678,6 +872,7 @@ power_values_df <- tibble(
           sig.level = 0.05)$power
     )
   )
+power_values_df |> head(4)
 ```
 
 :::
@@ -692,9 +887,11 @@ power_values_df <- tibble(
 #| fig-align: center
 power_values_df |>
   mutate(d = factor(d)) |>
-  ggplot(aes(x = sample_sizes, y = power, color = d, group = d)) +
+  ggplot(aes(x = sample_sizes, y = power, 
+             color = d, group = d)) +
   geom_line() +
-  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
   geom_line() +
   coord_cartesian(ylim = c(0, 1)) +
   theme_classic(base_size = 14)
@@ -705,9 +902,11 @@ power_values_df |>
 #| eval: false
 power_values_df |>
   mutate(d = factor(d)) |>
-  ggplot(aes(x = sample_sizes, y = power, color = d, group = d)) +
+  ggplot(aes(x = sample_sizes, y = power, 
+             color = d, group = d)) +
   geom_line() +
-  geom_hline(aes(yintercept = 0.8), linetype = "dashed", color = "gray75") +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
   geom_line() +
   coord_cartesian(ylim = c(0, 1)) +
   theme_classic(base_size = 14)
@@ -718,7 +917,159 @@ power_values_df |>
 ::::
 
 
+## Different Sample Sizes
 
+What if we wanted to have different sample sizes in our *t*-test?
+
+`pwr.t2n.test(n1, n2, d, sig.level, power)`
+
+<div class="subpoint">○ `n1` = sample size for group one </div>
+
+<div class="subpoint">○ `n2` = sample size for group two </div>
+
+<div class="subpoint">○ Everything else the same! </div>
+
+<div class="subpoint">○ Have to specify at least one of the `n` values </div>
+
+:::: {.columns}
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t2n.test(n1 = 10,
+                  n2 = 20,
+                  d = 0.3, 
+                  sig.level = 0.05)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t2n.test(n1 = 50, 
+                  n2 = 25,
+                  sig.level = 0.05,
+                  power = 0.8)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t2n.test(n1 = 100,
+                  d = 0.3, 
+                  sig.level = 0.05, 
+                  power = 0.8)
+```
+:::
+::::
+
+
+## Paired-Samples *t*-Test
+
+What if we wanted to look at power for a paired-samples *t*-test? Back to the original function...
+
+`pwr.t.test(n, d, sig.level, power, type)`
+
+<div class="subpoint">○ `type` = default is `"two.sample"`, but can switch to `"paired"` </div>
+
+<div class="subpoint">○ Everything else the same! </div>
+
+:::: {.columns}
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t.test(n = 10, 
+                d = 0.3, 
+                sig.level = 0.05,
+                type = "paired")
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t.test(n = 50, 
+                sig.level = 0.05,
+                power = 0.8,
+                type = "paired")
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.t.test(d = 0.3, 
+                sig.level = 0.05, 
+                power = 0.8,
+                type = "paired")
+```
+:::
+::::
+
+
+## Paired- vs. Independent-Samples
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+power_values_df <- tibble(
+  sample_sizes = seq(10, 500, by = 20)
+) |>
+  expand_grid(d = c(0.2, 0.25, 0.3, 0.4)) |>
+  expand_grid(type = c("two.sample", "paired")) |>
+  mutate(
+    power = pmap_dbl(
+      list(sample_sizes, d, type),
+      function(sample_size, d, type) 
+        pwr::pwr.t.test(
+          n = sample_size, 
+          d = d, 
+          sig.level = 0.05,
+          type = type)$power
+    )
+  )
+```
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 4
+#| fig-align: center
+power_values_df |>
+  mutate(d = factor(d)) |>
+  ggplot(aes(x = sample_sizes, y = power, 
+             color = d, group = d)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  facet_wrap("type") +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+
+### Code
+```{r}
+#| eval: false
+power_values_df |>
+  mutate(d = factor(d)) |>
+  ggplot(aes(x = sample_sizes, y = power, 
+             color = d, group = d)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  facet_wrap("type") +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+:::
+
+:::
+::::
+
+
+
+## Lab 06 Assignment
 
 <!-- ## Confidence Intervals for $d$ -->
 
