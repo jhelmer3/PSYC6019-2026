@@ -248,7 +248,7 @@ Let's say we have two events, $\color{blue}{A}$ and $\color{red}{B}$.
     -   More precisely, $P(\color{red}{B})$ is the is probability a thrown ball will land to the right of the cue ball **for any possible cue ball location**
     -   $P(\color{red}{B} | \color{blue}{A})$ is the is probability a thrown ball will land to the right of the cue ball **for a specific possible cue ball location**
 
-**Inverse Probability** is the **conditional probability** of $\color{blue}{A}$ given what we know about $\color{red}{B}$ $\color{#BAA53D}{P(A|B)}$. It's what we *learn* about $\color{blue}{A}$ by observing $\color{red}{B}$
+**Inverse Probability** is the **conditional probability** of $\color{blue}{A}$ given what we know about $\color{red}{B}$: $\color{#BAA53D}{P(A|B)}$. It's what we *learn* about $\color{blue}{A}$ by observing $\color{red}{B}$
 :::
 
 ## Inverting Probability I
@@ -258,7 +258,7 @@ So how can we get to $\color{#BAA53D}{P(A|B)}$?
 
 -   We start with $P(\color{red}{B}|\color{blue}{A})$
 -   While $\color{blue}{A}$ is unknown, we can consider **every possibility of** $\color{blue}{A}$
--   Then we weight each possibility by our prior probability $P(\color{blue}{A})$
+-   Then we weight each possible way $P(\color{red}{B}|\color{blue}{A})$ could be by our prior probability $P(\color{blue}{A})$
     -   Either our "guess" about the likely possible positions (subjective prior)
     -   Or we treat all possible $\color{blue}{A}$'s as equally likely (uniform prior)
 
@@ -315,8 +315,19 @@ Most commonly (and most generally) it is written as:
 $$\color{#BAA53D}{P(A|B)}  =\frac{P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})}{P(\color{red}{B})}$$
 
 
+## More Intuition
+
+- $P(\color{blue}{A})$ is our **prior belief** about what $\color{blue}{A}$ is likely to be
+- $P(\color{red}{B}|\color{blue}{A})$ is the **likelihood** (last lecture) of different ways the known observation $\color{red}{B}$ might arise for different unknown $\color{blue}{A}$ states of the world
+- $\sum_{i=1}^k P(\color{red}B|\color{blue}{A_i}) = P(\color{red}{B})$ is a **scaling** or **normalizing** term to make the whole thing a proper probability
+    - To make sure the fraction is always between 0 and 1
+
+
+
 ## Read
 
+
+::: {style="font-size: 0.95em;"}
 
 We can read Bayes' rule as saying:
 
@@ -324,9 +335,11 @@ We can read Bayes' rule as saying:
     -   All possible ways the known $\color{red}{B}$ could arise given a valid possible unknown $\color{blue}{A}$
         -   All possible ways the 9-ball could wind up to the right of the cue ball
     -   Weighted by our prior belief about the different possibilities for $\color{blue}{A}$
-        -   Weighted by all possible locations of the clue ball
+        -   Weighted by all possible locations of the cue ball
     -   Divided by all the ways the known $\color{red}{B}$ could arise from the unknown $\color{blue}{A}$
         -   Divided by the sum of all possible ways the 9-ball could be to the right of the cue ball
+
+::: 
 
 ## Laplace vs. Bayes
 
@@ -340,7 +353,8 @@ We can read Bayes' rule as saying:
 ## What Happened?
 
 - Laplace appreciated Bayes' rule, but ultimately decided it was impractical
-- If you collect enough data, it will eventually overwhelm your prior
+- If you collect enough data, the likelihood (data) will eventually overwhelm the prior
+    - Means things often just reduce to the same solution we get from **least squares** or **maximum likelihood** anyway
 - By the 20th century, science was rejecting all things subjective
 - Fisher and most early 20th century statisticians refused to incorporate subjective belief into objective analysis
   - Offending Fisher was not wise!
@@ -351,10 +365,10 @@ Using the likelihood notation we developed last time, we can write a more genera
 
 $$P(\boldsymbol{\theta}|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{P(\boldsymbol{D})}$$
 
-- **Prior:** $P(\boldsymbol{\theta})$
-- **Likelihood:** $P(\boldsymbol{D}|\boldsymbol{\theta})$
-- **Scaling term:** $P(\boldsymbol{D})$
-- **Posterior:** $P(\boldsymbol{\theta}|\boldsymbol{D})$
+- **Prior:** $P(\boldsymbol{\theta})$ about **unknonw parameters**
+- **Likelihood:** $P(\boldsymbol{D}|\boldsymbol{\theta})$ of **known data** for different possible **unknown parameters**
+- **Scaling term:** $P(\boldsymbol{D})$ Makes sure the fraction is a proper probability
+- **Posterior:** $P(\boldsymbol{\theta}|\boldsymbol{D})$ Belief about possible **unknown parameters** given **known data**
 
 ## The Other Wrinkle
 
@@ -368,9 +382,9 @@ Can you guess which one?
 
 
 
-[It's not the prior! Specifying priors is controversial, and not easy to do with technical sophistication, but they are relatively straightforward from a computational perspective]{.answer .fragment .content-visible unless-meta="params.v0"}
+[It's not the prior! Specifying priors is controversial, but they are relatively straightforward from a computational perspective]{.answer .fragment .content-visible unless-meta="params.v0"}
 
-[It's not the likelihood! Computational algorithms made likelihood based analysis more accessible, but the computational hurdles to Bayes' rule go fay beyond these]{.answer .fragment .content-visible unless-meta="params.v0"}
+[It's not the likelihood! Computational algorithms made likelihood based analysis more accessible, but the computational hurdles to Bayes' rule go far beyond these]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 [It's the innocuous looking **scaling term** in the denominator. We'll see how this got solved next time and start to implement Bayesian analyses]{.answer .fragment .content-visible unless-meta="params.v0"}
 

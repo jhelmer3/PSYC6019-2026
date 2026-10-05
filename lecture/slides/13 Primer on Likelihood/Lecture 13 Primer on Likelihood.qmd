@@ -1,5 +1,5 @@
 ---
-title: "Lecture 12: The Model Based Perspective"
+title: "Lecture 13: Primer on Likelihood"
 author: "Mark Himmelstein"
 format: 
   revealjs:
@@ -53,6 +53,8 @@ my_orange2 <- "#FED9A6"
 my_yellow2 <- "#FFFFCC"
 
 ```
+
+
 
 ## Probability and Statistics
 
@@ -109,10 +111,125 @@ text(x = 1.9, y = 0.3, "Statistics", col = my_purple)
 ::: {style="margin-top: -10px;"}
 Probability theory links data with parameters.
 
-When we talk about probability distributions, we usually think of things as:
+One way to think of this:
 
-- Parameters: fixed quantities (knowns)
-- Data: random variables (unknowns)
+- We observe statistics
+- Use them to estimate parameters
+
+:::
+::::
+
+## Least Squares for One Variable
+
+We have already seen one **estimation algorithm** for trying to learn something about parameters using statistics
+
+- **Least squares estimation:** Minimize the amount of **squared error** in our predictions
+    - aka use squared error as loss function
+
+If we don't know anything else about a variable, squared error is minimized by the mean
+
+
+$$\text{Sum of Squared Errors (SSE)} = \sum (x - \bar{x})^2$$
+
+
+## Least Squares for Models
+
+If we have some other model that improves our predictions, we try to minimize error between *predicted* and observed values
+
+- Most common estimator for general linear models is called **ordinary** least squares (OLS)
+- Try to minimize:
+
+
+$$\text{Sum of Squared Errors (SSE)} = \sum (x - \hat{x})^2$$
+
+## Beyond Least Squares
+
+We're going to see **a lot** more least squares this semester 
+
+Today, we're going to discuss a different approach: **likelihood**
+
+- **Maximum** likelihood is another common estimation algorithm
+    - Critical for estimating complex models like general
+      - General**ized** linear models (e.g. logistic regression)
+      - Multilevel models
+      - Structural equation models
+      - Most of these are beyond scope of our course
+- **More important for us:** Likelihood is also critical for Bayesian methods
+
+## Likelihood and Bayes
+
+Treat this content as a brief introduction
+
+- I want to familiarize you with these concepts so they're less unexpected if/when you encounter them later
+
+For likelihood
+
+- I may ask you conceptual questions, won't ask you for complex likelihood calculations
+
+For Bayes
+
+- We'll only really scratch the surface, but I want you to be able to do Bayesian versions of most of the types of analyses we'll cover in this class
+
+
+## Probability and Statistics
+
+```{r}
+#| fig.width: 6
+#| fig.height: 2
+#| out.width: "100%"
+
+# Zero out standard plot margins
+par(mar = c(0, 0, 0, 0))
+
+# Initialize empty canvas
+plot(0, 0, col = "white", xlim = c(0, 5), ylim = c(0, 3.5),
+     bty = "n", xlab = "", ylab = "", xaxt = "n", yaxt = "n")
+
+# --- Left Box (Population) ---
+polygon(x = c(0.2, 1.7, 1.7, 0.2), y = c(2, 2, 3, 3), border = my_blue, lwd = 2)
+
+# --- Right Box (Sample) ---
+polygon(x = c(3.3, 4.8, 4.8, 3.3), y = c(.5, .5, 1.5, 1.5), border = my_purple, lwd = 2)
+
+# --- Top Curve (Probability) ---
+x_top <- seq(0.95, 4.05, length = 30)
+y_top <- -0.478 * x_top^2 + 1.905 * x_top + 1.621
+points(x_top, y_top, type = 'l', col = my_blue, lwd = 2)
+
+# Top Arrow (pointing to Sample)
+arrows(x0 = x_top[28], x1 = x_top[30], 
+       y0 = y_top[28], y1 = y_top[30], 
+       col = my_blue, lwd = 2)
+
+# --- Bottom Curve (Statistics) ---
+x_bot <- seq(0.95, 4.05, length = 30)
+y_bot <- 0.435 * x_bot^2 - 2.656 * x_bot + 4.132
+points(x_bot, y_bot, type = 'l', col = my_purple, lwd = 2)
+
+# Bottom Arrow (pointing to Population)
+arrows(x0 = x_bot[3], x1 = x_bot[1], 
+       y0 = y_bot[3], y1 = y_bot[1], 
+       col = my_purple, lwd = 2)
+
+# --- Text Labels ---
+text(x = 0.95, y = 2.65, "Population", col = my_blue)
+text(x = 0.95, y = 2.35, "(Parameter)", col = my_blue)
+
+text(x = 4.05, y = 1.15, "Sample", col = my_purple)
+text(x = 4.05, y = 0.85, "(Data)", col = my_purple)
+
+text(x = 3.1, y = 3.3, "Probability", col = my_blue)
+text(x = 1.9, y = 0.3, "Statistics", col = my_purple)
+```
+
+:::: {style="font-size: 0.8em;"}
+::: {style="margin-top: -10px;"}
+Probability theory links data with parameters.
+
+A slightly different way to think about this in probability theory:
+
+- Parameters are fixed quantities aka knowns
+- Data are random variables aka unknowns
 
 :::
 ::::
@@ -194,7 +311,7 @@ ggplot(data_df, aes(x = x, y = density)) +
 
 
 
-## Densities and Probabilities
+## Densities 
 
 Densities are a bit confusing, because they aren't probabilities. They are the *height* of the distribution at any given point, scaled so that the entire area under the curve is equal to 1.
 
@@ -202,7 +319,7 @@ In terms of probabilities, we usually talk about them by "slicing up" the distri
 
 For example, when we say that 68% of all observations lie within 1 SD of the mean, that means, literally, that 68% of the area under the curve is between -1 and 1
 
-## Densities and Probabilities
+## Densities as Areas
 
 ```{r}
 
@@ -228,47 +345,49 @@ ggplot(data_df, aes(x = x, y = density)) +
 ```
 
 
-## What Does This Do for Us?
+## How Does This Help?
 
-We're not (all) probability theorists. Most of us are applied statisticians.
+We are statisticians, not probability theorists!
 
-So how does this help us?
-
-**Specifically:** What is different about what we usually do in the real world from what we just described?
+- What is different about what we usually do in the real world from the process we just described?
 
 [We have *data* and want to estimate *parameters*]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+[In probability theory, parameters are knowns and data are unknonws]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 [Our situation is reversed! The data are known, parameters are not!]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 
 ## Enter: Likelihood
 
+:::: {style="font-size: 0.8em;"}
+
 A *likelihood* function switches things around, and assumes data are known and parameters are not.
 
-BUT! 
-
-A likelihood function is not a probability function! 
+- But a likelihood function is not a probability function! 
 
 If we call $\boldsymbol{D}$ our data, and $\boldsymbol{\theta}$ our space of parameters ($\mu$ and $\sigma$ for a normal distribution), the function we are working with is still conceptually $P(\boldsymbol{D}|\boldsymbol{\theta})$
 
-* This is a bit weird because we know $\boldsymbol{D}$ and are trying to estimate $\boldsymbol{\theta}$
-* Which is NOT the same as $P(\boldsymbol{\theta} |\boldsymbol{D})$
-    + We need Bayes' rule for this, more to come
-* To avoid confusion usually write likelihood functions like this $\mathcal{L}(\boldsymbol{\theta};\boldsymbol{D})$
-    + This is because with fixed $\boldsymbol{D}$ and unknown $\boldsymbol{\theta}$, the function $P(\boldsymbol{D}|\boldsymbol{\theta})$ won't sum to 1 under the curve
-    + It would only do this for fixed $\boldsymbol{\theta}$ and unknown $\boldsymbol{D}$
-    
+- This is a bit weird because we know $\boldsymbol{D}$ and are trying to estimate $\boldsymbol{\theta}$
+    - Remember, conditional probabilities divide up the sample space so that it only refers the probability of the thing on the left when the thing on the right is true
+    - We are saying we know what the thing on the left is, not the thing on the right
+    - Makes this **not** a probability!
+        - With fixed $\boldsymbol{D}$ and unknown $\boldsymbol{\theta}$, the function $P(\boldsymbol{D}|\boldsymbol{\theta})$ won't sum to 1 under the curve
+- To avoid confusion usually write likelihood functions like this $\mathcal{L}(\boldsymbol{\theta};\boldsymbol{D})$
+
+:::: 
 
 ## Turning the Tables
 
 
 Let's imagine we flip a coin, but know nothing about coins. The coin lands on heads (we will treat Heads = 1, Tails = 0).
 
-What is the *likelihood* for different values of $\pi$?
+- What is the *likelihood* for different values of $\pi$?
 
 :::::{.fragment}
 
-Let's figure it out by plugging in some different values to our Bernoulli function from before (Slide 4) Let's start with $\pi=0$
+We're going to figure this out by keeping $y = 1$ fixed and plugging in different values of $\pi$ in our Bernoulli function. Let's start with $\pi=0$
 
 $\mathcal{L}(\pi = 0; y = 1) = \pi(1) + (1 - \pi)(1 - 1) = 0(1) + 1(0) = 0$
 
@@ -283,24 +402,24 @@ Unsurprisingly, the likelihood of the "true" probability of a coin landing on he
 What about $p = .25$?
 
 
-[$\mathcal{L}( p = .25; y = 1) = p(1) + (1 - p)(1 - 1) = .25(1) + .75(0) = .25$]{.fragment}
+[$\mathcal{L}( \pi = .25; y = 1) = \pi(1) + (1 - \pi)(1 - 1) = .25(1) + .75(0) = .25$]{.fragment}
 
-[What about $p = .5$?]{.fragment}
+[What about $\pi = .5$?]{.fragment}
 
-[$\mathcal{L}( p = .5; y = 1) = p(1) + (1 - p)(1 - 1) = .5(1) + .5(0) = .5$]{.fragment}
+[$\mathcal{L}( \pi = .5; y = 1) = \pi(1) + (1 - \pi)(1 - 1) = .5(1) + .5(0) = .5$]{.fragment}
 
 
 [What about $p = .75$?]{.fragment}
 
 
-[$\mathcal{L}( p = .75; y = 1) = p(1) + (1 - p)(1 - 1) = .75(1) + .25(0) = .75$]{.fragment}
+[$\mathcal{L}( \pi = .75; y = 1) = \pi(1) + (1 - \pi)(1 - 1) = .75(1) + .25(0) = .75$]{.fragment}
 
 
 [What about $p = 1$?]{.fragment}
 
-[$\mathcal{L}(y = 1; p = 1) = p(1) + (1 - p)(1 - 1) = 1(1) + 0(0) = 1$]{.fragment}
+[$\mathcal{L}(y = 1; \pi = 1) = \pi(1) + (1 - \pi)(1 - 1) = 1(1) + 0(0) = 1$]{.fragment}
 
-## Likelihood Function of One Coin Flip Landing Heads
+## My Likelihood Function
 
 ```{r}
 #| message: false
@@ -316,49 +435,60 @@ d <- rbind(d, data.frame(P_Heads = 1, Likelihood = 0)) %>%
 
 ggplot(d, aes(x = p, y = Likelihood)) + geom_line() + 
   geom_area(fill = my_blue, alpha = .66) +
+  xlab(expression(pi)) +
   scale_x_continuous(breaks = seq(0, 1, .1), limits = c(0,1)) +
   theme_minimal()
 ```
 
 ## Maximum Likelihood
 
-Note that unlike a probability function, the $x$-axis of a likelihood function is the parameter (in this example $p$), not the random variable (the outcome of the coin flips).
+:::: {style="font-size: 0.9em;"}
 
-The goal of *maximum* likelihood, is to find the parameter value that maximizes the likelihood function.
+Unlike a probability function, the $x$-axis of a likelihood function is the parameter (in this example $\pi$), not the random variable (the outcome of the coin flips).
 
-In this case, the "likeliest" probability value to produce exactly one coin flip landing heads is 1.
+- The goal of *maximum* likelihood, is to find the parameter value that maximizes the likelihood function.
 
-We can also tell from this exercise that likelihoods are not probabilities. How?
+- In this case, the "likeliest" probability value to produce exactly one coin flip landing heads is 1.
+
+- We can also tell from this exercise that likelihoods are not probabilities. How?
 
 [The area of the graph of the likelihood function is not 1]{.answer .fragment .content-visible unless-meta="params.v0"}
 
-[Likelihood does not have a clear interpretation the way probability does. It is a measure of the strength of evidence for various parameter values, but it doesn't really have a precise meaning]{.fragment}
+[Likelihood does not have a clear interpretation the way probability does. It is a measure of the strength of evidence for various parameter values, but it doesn't really have such a precise, generalizable meaning the way probability does]{.fragment}
 
-## A Slightly More Complex Example
+::::
+
+## More Complex Example
+
+
 
 What is the maximum likelihood value for one flip landing heads, then one flip landing tails?
 
 How might we approach this problem?
 
-[To get the joint probability of two independent events, you take the product of each of their probabilities. So we solve for flip 1 for a given $p$, then flip 2 for that $p$, and multiply them]{.answer .fragment .content-visible unless-meta="params.v0"}
+[To get the joint probability of two independent events, you take the product of each of their probabilities. So we solve for flip 1 for a given $\pi$, then flip 2 for that $\pi$, and multiply them]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ## Two Coins
 
-[$p = 0$?]{.fragment}
+:::: {style="font-size: 0.9em;"}
 
-[$\mathcal{L}(p = 0; y_1 = 1, y_2 = 0) = \mathcal{L}(p = 0; y_1 = 1) \times \mathcal{L}(p = 0; y_2 = 0) = (0)(1) = 0$]{.fragment}
+[$\pi = 0$?]{.fragment}
 
-[$p = .25$?]{.fragment}
+[$\mathcal{L}(\pi = 0; y_1 = 1, y_2 = 0) = \mathcal{L}(\pi = 0; y_1 = 1) \times \mathcal{L}(\pi = 0; y_2 = 0) = (0)(1) = 0$]{.fragment}
 
-[$\mathcal{L}(p = .25; y_1 = 1, y_2 = 0) = \mathcal{L}(p = .25; y_1 = 1) \times \mathcal{L}(p = .25; y_2 = 0) = (.25)(.75) = .1875$]{.fragment}
+[$\pi = .25$?]{.fragment}
 
-[$p = .5$?]{.fragment}
+[$\mathcal{L}(\pi = .25; y_1 = 1, y_2 = 0) = \mathcal{L}(\pi = .25; y_1 = 1) \times \mathcal{L}(\pi = .25; y_2 = 0) = (.25)(.75) = .1875$]{.fragment}
 
-[$\mathcal{L}(p = .5; y_1 = 1, y_2 = 0) = \mathcal{L}(p = .5; y_1 = 1) \times \mathcal{L}(p = .5; y_2 = 0) = (.5)(.5) = .25$]{.fragment}
+[$\pi = .5$?]{.fragment}
 
-[$p = .75$?]{.fragment}
+[$\mathcal{L}(\pi = .5; y_1 = 1, y_2 = 0) = \mathcal{L}(\pi = .5; y_1 = 1) \times \mathcal{L}(\pi = .5; y_2 = 0) = (.5)(.5) = .25$]{.fragment}
 
-[$\mathcal{L}(p = .75; y_1 = 1, y_2 = 0) = \mathcal{L}(p = .75; y_1 = 1) \times \mathcal{L}(p = .75; y_2 = 0) = (.75)(.25) = .1875$]{.fragment}
+[$\pi = .75$?]{.fragment}
+
+[$\mathcal{L}(\pi = .75; y_1 = 1, y_2 = 0) = \mathcal{L}(\pi = .75; y_1 = 1) \times \mathcal{L}(\pi = .75; y_2 = 0) = (.75)(.25) = .1875$]{.fragment}
+
+:::: 
 
 ## Two Coins
 
@@ -370,7 +500,7 @@ d2 <- d %>%
 ggplot(d2, aes(x = p, y = Likelihood)) + geom_line() +  
   geom_area(fill = my_blue, alpha = .66) +
   scale_x_continuous(breaks = seq(0, 1, .1), limits = c(0,1)) +
-  xlab("p") +
+  xlab(expression(pi)) +
   theme_minimal()
 ```
 
@@ -378,11 +508,13 @@ ggplot(d2, aes(x = p, y = Likelihood)) + geom_line() +
 
 To find the maximally likely value, we simply find the highest point on this graph.
 
-In this case, the most likely value of $p$ to produce one heads and one tails in two coin flips is $p = .5$
+In this case, the most likely value of $\pi$ to produce one heads and one tails in two coin flips is $\pi = .5$
+
+- This example is simple, but imagine how hard it might get if we were dealing with normal distributions instead of just a small number of Bernoulli trials!
 
 ## Log Likelihood
 
-Once we start getting a lot of data, we wind up multiplying a lot of probability values together.
+If we have a lot of data, or more complex distributions, we will wind up multiplying a lot of probability values together.
 
 If we have a dataset with $N$ rows, our likelihood function becomes:
 
@@ -404,9 +536,11 @@ $$LL(\boldsymbol{\theta}; \boldsymbol{D}) = \log\big(\prod_{i=1}^N \mathcal{L}(\
 
 Now instead of multiplying lots of decimals, we wind up adding lots of (negative) numbers!
 
-::: {.small}
-* (The log of any number $x$ where $0 < x < 1$ will be negative)
-:::
+
+* The log of any number $x$ where $0 < x < 1$ will be negative
+
+
+## Log Likelihood Helps
 
 This both helps with computation and means we don't have extremely small numbers to deal with multiplying:
 
@@ -416,11 +550,15 @@ This both helps with computation and means we don't have extremely small numbers
 
 Rank order is preserved under log transformation, so this doesn't change our search for the maximum point.
 
-## Finding the Maximum: Grid Search
+## Grid Search
 
 The most brute force approach to finding the maximum is **grid search**.
 
-This just involves plugging in as many possible parameter values as possible to the likelihood function, and choosing the largest value. Because the rank order is preserved, it doesn't matter if we use likelihood or log likelihood.
+- Involves plugging in as many possible parameter values as possible to the likelihood function
+- Choosing the largest value
+- Because the rank order is preserved, it doesn't matter if we use likelihood or log likelihood
+
+## Grid Search Visual
 
 ```{r}
 
@@ -428,7 +566,7 @@ This just involves plugging in as many possible parameter values as possible to 
 p1 <- ggplot(d2, aes(x = p, y = Likelihood)) + geom_line() + geom_point() + 
   geom_area(fill = my_blue, alpha = .66) +
   scale_x_continuous(breaks = seq(0, 1, .1), limits = c(0,1)) +
-  xlab("p") + theme_minimal()
+  xlab(expression(pi)) + theme_minimal()
 
 p2 <- ggplot(d2, aes(x = p, y = log(Likelihood))) +
   geom_line(color = "black") +
@@ -436,13 +574,15 @@ p2 <- ggplot(d2, aes(x = p, y = log(Likelihood))) +
   geom_ribbon(aes(ymin = min(log(Likelihood)), ymax = log(Likelihood)),
               fill = my_blue, alpha = 0.66) +
   scale_x_continuous(breaks = seq(0, 1, .1), limits = c(0,1)) +
-  xlab("p") +
+  xlab(expression(pi)) +
   theme_minimal()
 
 gridExtra::grid.arrange(p1, p2, nrow = 1)
 ```
 
-## Normal Distribution Likleihood
+## Normal Likelihood
+
+:::: {style="font-size: 0.9em;"}
 
 The same logic applies to any distribution:
 
@@ -457,7 +597,11 @@ Then take our variable, $\boldsymbol{x}$, and sum up the log likelihoods for all
 
 The combination of $\mu$ and $\sigma$ with the largest log likelihood are the **maximum likelihood** estimates of those parameters.
 
+::::
+
 ## Linear Model Likelihood
+
+:::: {style="font-size: 0.8em;"}
 
 In a general linear model, we assume the residuals are normally distributed with a mean of 0. Put another way, each observation for the outcome variable $y_i$ follows a normal distribution with mean $\hat{y_i}$ and residual variance $\sigma_{\epsilon}$
 
@@ -472,12 +616,13 @@ And We plug in for different combinations of:
 * $\beta_0 \dots \beta_P$ 
 * $\sigma$ 
 
+::::
 
 ## Grid Search Alternatives
 
 When you have a continuous distribution, like a normal distribution, grid search is often intractable. 
 
-There is too much data and too many possible parameter values to search across. Finding the peak would be very slow going.
+- There is too much data and too many possible parameter values to search across. Finding the peak would be very slow even for a computer.
 
 A popular alternative is based on "hill climbing" algorithms
 
@@ -490,7 +635,10 @@ A popular alternative is based on "hill climbing" algorithms
 
 ## Gradient Ascent/Descent
 
-Procedure:
+
+:::: {style="font-size: 0.9em;"}
+
+Very simplified description of procedure:
 
 * Step 1: Try a random parameter value (or combo of parameter values)
 * Step 2: Check the log likelihood
@@ -500,6 +648,8 @@ Procedure:
     + If the log likelihood in Step 4 increased, try a value larger than the value(s) in Step 3
     + If the log likelihood in Step 4 decreased, try a value smaller than the value in Step 1 for at least one parameter
 * Repeat process until change in the log likelihood is (approximately) 0 between steps
+
+::::
 
 ## Hill Climbing
 
@@ -517,7 +667,7 @@ As we try different values, we check if the log likelihood increases or decrease
 
 Maximum likelihood is a very flexible method for **estimating** general linear models. 
 
-- There are frequentist inference methods that use maximum likelihood, but they're beyond the scope of our class
+- There are frequentist inference methods that use maximum likelihood to **test null hypotheses**, but they're beyond the scope of our class
   - You will learn more about these in classes like multilevel models or structural equation modeling
   - Getting an early intuition for likelihood also helps as a foundation for many different machine learning techniques
 

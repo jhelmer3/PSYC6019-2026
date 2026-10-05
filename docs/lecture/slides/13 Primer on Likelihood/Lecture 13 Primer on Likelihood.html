@@ -6,21 +6,27 @@
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.42">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
 
   <meta name="author" content="Mark Himmelstein">
-  <title>PSYC 6019 – Lecture 12: The Model Based Perspective</title>
+  <title>PSYC 6019 – Lecture 13: Primer on Likelihood</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
   <style>
-    code{white-space: pre-wrap;}
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
     ul.task-list li input[type="checkbox"] {
@@ -29,7 +35,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-2582ab04281e2830c4f577af83bc552c.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-15d324c2aafc27a03d2c3a1c4b493f27.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -137,12 +143,12 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Lecture 12: The Model Based Perspective</h1>
+  <h1 class="title">Lecture 13: Primer on Likelihood</h1>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Mark Himmelstein 
+Mark Himmelstein
 </div>
 </div>
 </div>
@@ -154,10 +160,78 @@ Mark Himmelstein
 <img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><div style="font-size: 0.8em;">
 <div style="margin-top: -10px;">
 <p>Probability theory links data with parameters.</p>
-<p>When we talk about probability distributions, we usually think of things as:</p>
+<p>One way to think of this:</p>
 <ul>
-<li>Parameters: fixed quantities (knowns)</li>
-<li>Data: random variables (unknowns)</li>
+<li>We observe statistics</li>
+<li>Use them to estimate parameters</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="least-squares-for-one-variable" class="slide level2">
+<h2>Least Squares for One Variable</h2>
+<p>We have already seen one <strong>estimation algorithm</strong> for trying to learn something about parameters using statistics</p>
+<ul>
+<li><strong>Least squares estimation:</strong> Minimize the amount of <strong>squared error</strong> in our predictions
+<ul>
+<li>aka use squared error as loss function</li>
+</ul></li>
+</ul>
+<p>If we don’t know anything else about a variable, squared error is minimized by the mean</p>
+<p><span class="math display">\[\text{Sum of Squared Errors (SSE)} = \sum (x - \bar{x})^2\]</span></p>
+</section>
+<section id="least-squares-for-models" class="slide level2">
+<h2>Least Squares for Models</h2>
+<p>If we have some other model that improves our predictions, we try to minimize error between <em>predicted</em> and observed values</p>
+<ul>
+<li>Most common estimator for general linear models is called <strong>ordinary</strong> least squares (OLS)</li>
+<li>Try to minimize:</li>
+</ul>
+<p><span class="math display">\[\text{Sum of Squared Errors (SSE)} = \sum (x - \hat{x})^2\]</span></p>
+</section>
+<section id="beyond-least-squares" class="slide level2">
+<h2>Beyond Least Squares</h2>
+<p>We’re going to see <strong>a lot</strong> more least squares this semester</p>
+<p>Today, we’re going to discuss a different approach: <strong>likelihood</strong></p>
+<ul>
+<li><strong>Maximum</strong> likelihood is another common estimation algorithm
+<ul>
+<li>Critical for estimating complex models like general
+<ul>
+<li>General<strong>ized</strong> linear models (e.g.&nbsp;logistic regression)</li>
+<li>Multilevel models</li>
+<li>Structural equation models</li>
+<li>Most of these are beyond scope of our course</li>
+</ul></li>
+</ul></li>
+<li><strong>More important for us:</strong> Likelihood is also critical for Bayesian methods</li>
+</ul>
+</section>
+<section id="likelihood-and-bayes" class="slide level2">
+<h2>Likelihood and Bayes</h2>
+<p>Treat this content as a brief introduction</p>
+<ul>
+<li>I want to familiarize you with these concepts so they’re less unexpected if/when you encounter them later</li>
+</ul>
+<p>For likelihood</p>
+<ul>
+<li>I may ask you conceptual questions, won’t ask you for complex likelihood calculations</li>
+</ul>
+<p>For Bayes</p>
+<ul>
+<li>We’ll only really scratch the surface, but I want you to be able to do Bayesian versions of most of the types of analyses we’ll cover in this class</li>
+</ul>
+</section>
+<section id="probability-and-statistics-1" class="slide level2">
+<h2>Probability and Statistics</h2>
+
+<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><div style="font-size: 0.8em;">
+<div style="margin-top: -10px;">
+<p>Probability theory links data with parameters.</p>
+<p>A slightly different way to think about this in probability theory:</p>
+<ul>
+<li>Parameters are fixed quantities aka knowns</li>
+<li>Data are random variables aka unknowns</li>
 </ul>
 </div>
 </div>
@@ -177,7 +251,7 @@ Mark Himmelstein
 <p>If I sample one gummy bear and <span class="math inline">\(\pi_\text{pineapple} = .2\)</span>, then the distribution (PMF) of whether I draw a pineapple gummy bear in my sample is:</p>
 </div>
 
-<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p>We like mass functions because each bar represents a discrete probability</p>
+<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p>We like mass functions because each bar represents a discrete probability</p>
 </section>
 <section id="the-normal-distribution" class="slide level2">
 <h2>The Normal Distribution</h2>
@@ -190,50 +264,57 @@ Mark Himmelstein
 <section id="normal-density-plot" class="slide level2">
 <h2>Normal Density Plot</h2>
 
-<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="densities-and-probabilities" class="slide level2">
-<h2>Densities and Probabilities</h2>
+<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="densities" class="slide level2">
+<h2>Densities</h2>
 <p>Densities are a bit confusing, because they aren’t probabilities. They are the <em>height</em> of the distribution at any given point, scaled so that the entire area under the curve is equal to 1.</p>
 <p>In terms of probabilities, we usually talk about them by “slicing up” the distribution.</p>
 <p>For example, when we say that 68% of all observations lie within 1 SD of the mean, that means, literally, that 68% of the area under the curve is between -1 and 1</p>
 </section>
-<section id="densities-and-probabilities-1" class="slide level2">
-<h2>Densities and Probabilities</h2>
+<section id="densities-as-areas" class="slide level2">
+<h2>Densities as Areas</h2>
 
-<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="what-does-this-do-for-us" class="slide level2">
-<h2>What Does This Do for Us?</h2>
-<p>We’re not (all) probability theorists. Most of us are applied statisticians.</p>
-<p>So how does this help us?</p>
-<p><strong>Specifically:</strong> What is different about what we usually do in the real world from what we just described?</p>
+<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="how-does-this-help" class="slide level2">
+<h2>How Does This Help?</h2>
+<p>We are statisticians, not probability theorists!</p>
+<ul>
+<li>What is different about what we usually do in the real world from the process we just described?</li>
+</ul>
 <p><span class="answer fragment" data-unless-meta="params.v0">We have <em>data</em> and want to estimate <em>parameters</em></span></p>
+<p><span class="answer fragment" data-unless-meta="params.v0">In probability theory, parameters are knowns and data are unknonws</span></p>
 <p><span class="answer fragment" data-unless-meta="params.v0">Our situation is reversed! The data are known, parameters are not!</span></p>
 </section>
 <section id="enter-likelihood" class="slide level2">
 <h2>Enter: Likelihood</h2>
+<div style="font-size: 0.8em;">
 <p>A <em>likelihood</em> function switches things around, and assumes data are known and parameters are not.</p>
-<p>BUT!</p>
-<p>A likelihood function is not a probability function!</p>
+<ul>
+<li>But a likelihood function is not a probability function!</li>
+</ul>
 <p>If we call <span class="math inline">\(\boldsymbol{D}\)</span> our data, and <span class="math inline">\(\boldsymbol{\theta}\)</span> our space of parameters (<span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> for a normal distribution), the function we are working with is still conceptually <span class="math inline">\(P(\boldsymbol{D}|\boldsymbol{\theta})\)</span></p>
 <ul>
-<li>This is a bit weird because we know <span class="math inline">\(\boldsymbol{D}\)</span> and are trying to estimate <span class="math inline">\(\boldsymbol{\theta}\)</span></li>
-<li>Which is NOT the same as <span class="math inline">\(P(\boldsymbol{\theta} |\boldsymbol{D})\)</span>
+<li>This is a bit weird because we know <span class="math inline">\(\boldsymbol{D}\)</span> and are trying to estimate <span class="math inline">\(\boldsymbol{\theta}\)</span>
 <ul>
-<li>We need Bayes’ rule for this, more to come</li>
-</ul></li>
-<li>To avoid confusion usually write likelihood functions like this <span class="math inline">\(\mathcal{L}(\boldsymbol{\theta};\boldsymbol{D})\)</span>
+<li>Remember, conditional probabilities divide up the sample space so that it only refers the probability of the thing on the left when the thing on the right is true</li>
+<li>We are saying we know what the thing on the left is, not the thing on the right</li>
+<li>Makes this <strong>not</strong> a probability!
 <ul>
-<li>This is because with fixed <span class="math inline">\(\boldsymbol{D}\)</span> and unknown <span class="math inline">\(\boldsymbol{\theta}\)</span>, the function <span class="math inline">\(P(\boldsymbol{D}|\boldsymbol{\theta})\)</span> won’t sum to 1 under the curve</li>
-<li>It would only do this for fixed <span class="math inline">\(\boldsymbol{\theta}\)</span> and unknown <span class="math inline">\(\boldsymbol{D}\)</span></li>
+<li>With fixed <span class="math inline">\(\boldsymbol{D}\)</span> and unknown <span class="math inline">\(\boldsymbol{\theta}\)</span>, the function <span class="math inline">\(P(\boldsymbol{D}|\boldsymbol{\theta})\)</span> won’t sum to 1 under the curve</li>
 </ul></li>
+</ul></li>
+<li>To avoid confusion usually write likelihood functions like this <span class="math inline">\(\mathcal{L}(\boldsymbol{\theta};\boldsymbol{D})\)</span></li>
 </ul>
+</div>
 </section>
 <section id="turning-the-tables" class="slide level2">
 <h2>Turning the Tables</h2>
 <p>Let’s imagine we flip a coin, but know nothing about coins. The coin lands on heads (we will treat Heads = 1, Tails = 0).</p>
-<p>What is the <em>likelihood</em> for different values of <span class="math inline">\(\pi\)</span>?</p>
+<ul>
+<li>What is the <em>likelihood</em> for different values of <span class="math inline">\(\pi\)</span>?</li>
+</ul>
 <div class="fragment">
-<p>Let’s figure it out by plugging in some different values to our Bernoulli function from before (Slide 4) Let’s start with <span class="math inline">\(\pi=0\)</span></p>
+<p>We’re going to figure this out by keeping <span class="math inline">\(y = 1\)</span> fixed and plugging in different values of <span class="math inline">\(\pi\)</span> in our Bernoulli function. Let’s start with <span class="math inline">\(\pi=0\)</span></p>
 <p><span class="math inline">\(\mathcal{L}(\pi = 0; y = 1) = \pi(1) + (1 - \pi)(1 - 1) = 0(1) + 1(0) = 0\)</span></p>
 <p>Unsurprisingly, the likelihood of the “true” probability of a coin landing on heads being zero, when it has landed on heads, is zero.</p>
 </div>
@@ -241,56 +322,65 @@ Mark Himmelstein
 <section id="turning-the-tables-1" class="slide level2">
 <h2>Turning the Tables</h2>
 <p>What about <span class="math inline">\(p = .25\)</span>?</p>
-<p><span class="fragment"><span class="math inline">\(\mathcal{L}( p = .25; y = 1) = p(1) + (1 - p)(1 - 1) = .25(1) + .75(0) = .25\)</span></span></p>
-<p><span class="fragment">What about <span class="math inline">\(p = .5\)</span>?</span></p>
-<p><span class="fragment"><span class="math inline">\(\mathcal{L}( p = .5; y = 1) = p(1) + (1 - p)(1 - 1) = .5(1) + .5(0) = .5\)</span></span></p>
+<p><span class="fragment"><span class="math inline">\(\mathcal{L}( \pi = .25; y = 1) = \pi(1) + (1 - \pi)(1 - 1) = .25(1) + .75(0) = .25\)</span></span></p>
+<p><span class="fragment">What about <span class="math inline">\(\pi = .5\)</span>?</span></p>
+<p><span class="fragment"><span class="math inline">\(\mathcal{L}( \pi = .5; y = 1) = \pi(1) + (1 - \pi)(1 - 1) = .5(1) + .5(0) = .5\)</span></span></p>
 <p><span class="fragment">What about <span class="math inline">\(p = .75\)</span>?</span></p>
-<p><span class="fragment"><span class="math inline">\(\mathcal{L}( p = .75; y = 1) = p(1) + (1 - p)(1 - 1) = .75(1) + .25(0) = .75\)</span></span></p>
+<p><span class="fragment"><span class="math inline">\(\mathcal{L}( \pi = .75; y = 1) = \pi(1) + (1 - \pi)(1 - 1) = .75(1) + .25(0) = .75\)</span></span></p>
 <p><span class="fragment">What about <span class="math inline">\(p = 1\)</span>?</span></p>
-<p><span class="fragment"><span class="math inline">\(\mathcal{L}(y = 1; p = 1) = p(1) + (1 - p)(1 - 1) = 1(1) + 0(0) = 1\)</span></span></p>
+<p><span class="fragment"><span class="math inline">\(\mathcal{L}(y = 1; \pi = 1) = \pi(1) + (1 - \pi)(1 - 1) = 1(1) + 0(0) = 1\)</span></span></p>
 </section>
-<section id="likelihood-function-of-one-coin-flip-landing-heads" class="slide level2">
-<h2>Likelihood Function of One Coin Flip Landing Heads</h2>
+<section id="my-likelihood-function" class="slide level2">
+<h2>My Likelihood Function</h2>
 
-<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="maximum-likelihood" class="slide level2">
 <h2>Maximum Likelihood</h2>
-<p>Note that unlike a probability function, the <span class="math inline">\(x\)</span>-axis of a likelihood function is the parameter (in this example <span class="math inline">\(p\)</span>), not the random variable (the outcome of the coin flips).</p>
-<p>The goal of <em>maximum</em> likelihood, is to find the parameter value that maximizes the likelihood function.</p>
-<p>In this case, the “likeliest” probability value to produce exactly one coin flip landing heads is 1.</p>
-<p>We can also tell from this exercise that likelihoods are not probabilities. How?</p>
+<div style="font-size: 0.9em;">
+<p>Unlike a probability function, the <span class="math inline">\(x\)</span>-axis of a likelihood function is the parameter (in this example <span class="math inline">\(\pi\)</span>), not the random variable (the outcome of the coin flips).</p>
+<ul>
+<li><p>The goal of <em>maximum</em> likelihood, is to find the parameter value that maximizes the likelihood function.</p></li>
+<li><p>In this case, the “likeliest” probability value to produce exactly one coin flip landing heads is 1.</p></li>
+<li><p>We can also tell from this exercise that likelihoods are not probabilities. How?</p></li>
+</ul>
 <p><span class="answer fragment" data-unless-meta="params.v0">The area of the graph of the likelihood function is not 1</span></p>
-<p><span class="fragment">Likelihood does not have a clear interpretation the way probability does. It is a measure of the strength of evidence for various parameter values, but it doesn’t really have a precise meaning</span></p>
+<p><span class="fragment">Likelihood does not have a clear interpretation the way probability does. It is a measure of the strength of evidence for various parameter values, but it doesn’t really have such a precise, generalizable meaning the way probability does</span></p>
+</div>
 </section>
-<section id="a-slightly-more-complex-example" class="slide level2">
-<h2>A Slightly More Complex Example</h2>
+<section id="more-complex-example" class="slide level2">
+<h2>More Complex Example</h2>
 <p>What is the maximum likelihood value for one flip landing heads, then one flip landing tails?</p>
 <p>How might we approach this problem?</p>
-<p><span class="answer fragment" data-unless-meta="params.v0">To get the joint probability of two independent events, you take the product of each of their probabilities. So we solve for flip 1 for a given <span class="math inline">\(p\)</span>, then flip 2 for that <span class="math inline">\(p\)</span>, and multiply them</span></p>
+<p><span class="answer fragment" data-unless-meta="params.v0">To get the joint probability of two independent events, you take the product of each of their probabilities. So we solve for flip 1 for a given <span class="math inline">\(\pi\)</span>, then flip 2 for that <span class="math inline">\(\pi\)</span>, and multiply them</span></p>
 </section>
 <section id="two-coins" class="slide level2">
 <h2>Two Coins</h2>
-<p><span class="fragment"><span class="math inline">\(p = 0\)</span>?</span></p>
-<p><span class="fragment"><span class="math inline">\(\mathcal{L}(p = 0; y_1 = 1, y_2 = 0) = \mathcal{L}(p = 0; y_1 = 1) \times \mathcal{L}(p = 0; y_2 = 0) = (0)(1) = 0\)</span></span></p>
-<p><span class="fragment"><span class="math inline">\(p = .25\)</span>?</span></p>
-<p><span class="fragment"><span class="math inline">\(\mathcal{L}(p = .25; y_1 = 1, y_2 = 0) = \mathcal{L}(p = .25; y_1 = 1) \times \mathcal{L}(p = .25; y_2 = 0) = (.25)(.75) = .1875\)</span></span></p>
-<p><span class="fragment"><span class="math inline">\(p = .5\)</span>?</span></p>
-<p><span class="fragment"><span class="math inline">\(\mathcal{L}(p = .5; y_1 = 1, y_2 = 0) = \mathcal{L}(p = .5; y_1 = 1) \times \mathcal{L}(p = .5; y_2 = 0) = (.5)(.5) = .25\)</span></span></p>
-<p><span class="fragment"><span class="math inline">\(p = .75\)</span>?</span></p>
-<p><span class="fragment"><span class="math inline">\(\mathcal{L}(p = .75; y_1 = 1, y_2 = 0) = \mathcal{L}(p = .75; y_1 = 1) \times \mathcal{L}(p = .75; y_2 = 0) = (.75)(.25) = .1875\)</span></span></p>
+<div style="font-size: 0.9em;">
+<p><span class="fragment"><span class="math inline">\(\pi = 0\)</span>?</span></p>
+<p><span class="fragment"><span class="math inline">\(\mathcal{L}(\pi = 0; y_1 = 1, y_2 = 0) = \mathcal{L}(\pi = 0; y_1 = 1) \times \mathcal{L}(\pi = 0; y_2 = 0) = (0)(1) = 0\)</span></span></p>
+<p><span class="fragment"><span class="math inline">\(\pi = .25\)</span>?</span></p>
+<p><span class="fragment"><span class="math inline">\(\mathcal{L}(\pi = .25; y_1 = 1, y_2 = 0) = \mathcal{L}(\pi = .25; y_1 = 1) \times \mathcal{L}(\pi = .25; y_2 = 0) = (.25)(.75) = .1875\)</span></span></p>
+<p><span class="fragment"><span class="math inline">\(\pi = .5\)</span>?</span></p>
+<p><span class="fragment"><span class="math inline">\(\mathcal{L}(\pi = .5; y_1 = 1, y_2 = 0) = \mathcal{L}(\pi = .5; y_1 = 1) \times \mathcal{L}(\pi = .5; y_2 = 0) = (.5)(.5) = .25\)</span></span></p>
+<p><span class="fragment"><span class="math inline">\(\pi = .75\)</span>?</span></p>
+<p><span class="fragment"><span class="math inline">\(\mathcal{L}(\pi = .75; y_1 = 1, y_2 = 0) = \mathcal{L}(\pi = .75; y_1 = 1) \times \mathcal{L}(\pi = .75; y_2 = 0) = (.75)(.25) = .1875\)</span></span></p>
+</div>
 </section>
 <section id="two-coins-1" class="slide level2">
 <h2>Two Coins</h2>
 
-<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="maximum-likelihood-1" class="slide level2">
 <h2>Maximum Likelihood</h2>
 <p>To find the maximally likely value, we simply find the highest point on this graph.</p>
-<p>In this case, the most likely value of <span class="math inline">\(p\)</span> to produce one heads and one tails in two coin flips is <span class="math inline">\(p = .5\)</span></p>
+<p>In this case, the most likely value of <span class="math inline">\(\pi\)</span> to produce one heads and one tails in two coin flips is <span class="math inline">\(\pi = .5\)</span></p>
+<ul>
+<li>This example is simple, but imagine how hard it might get if we were dealing with normal distributions instead of just a small number of Bernoulli trials!</li>
+</ul>
 </section>
 <section id="log-likelihood" class="slide level2">
 <h2>Log Likelihood</h2>
-<p>Once we start getting a lot of data, we wind up multiplying a lot of probability values together.</p>
+<p>If we have a lot of data, or more complex distributions, we will wind up multiplying a lot of probability values together.</p>
 <p>If we have a dataset with <span class="math inline">\(N\)</span> rows, our likelihood function becomes:</p>
 <p><span class="math display">\[L(\boldsymbol{\theta}; \boldsymbol{D}) = \prod_{i=1}^N \mathcal{L}(\boldsymbol{\theta}; d_i)\]</span></p>
 <p>What happens when we multiply a lot of probability values (always between 0 and 1)?</p>
@@ -303,11 +393,12 @@ Mark Himmelstein
 <p>Applying the product rule:</p>
 <p><span class="math display">\[LL(\boldsymbol{\theta}; \boldsymbol{D}) = \log\big(\prod_{i=1}^N \mathcal{L}(\boldsymbol{\theta}; d_i)\big) = \sum_{i=1}^N \log\big(\mathcal{L}(\boldsymbol{\theta}; d_i )\big)\]</span></p>
 <p>Now instead of multiplying lots of decimals, we wind up adding lots of (negative) numbers!</p>
-<div class="small">
 <ul>
-<li>(The log of any number <span class="math inline">\(x\)</span> where <span class="math inline">\(0 &lt; x &lt; 1\)</span> will be negative)</li>
+<li>The log of any number <span class="math inline">\(x\)</span> where <span class="math inline">\(0 &lt; x &lt; 1\)</span> will be negative</li>
 </ul>
-</div>
+</section>
+<section id="log-likelihood-helps" class="slide level2">
+<h2>Log Likelihood Helps</h2>
 <p>This both helps with computation and means we don’t have extremely small numbers to deal with multiplying:</p>
 <ul>
 <li>Addition is faster than multiplication</li>
@@ -316,14 +407,22 @@ Mark Himmelstein
 </ul>
 <p>Rank order is preserved under log transformation, so this doesn’t change our search for the maximum point.</p>
 </section>
-<section id="finding-the-maximum-grid-search" class="slide level2">
-<h2>Finding the Maximum: Grid Search</h2>
+<section id="grid-search" class="slide level2">
+<h2>Grid Search</h2>
 <p>The most brute force approach to finding the maximum is <strong>grid search</strong>.</p>
-<p>This just involves plugging in as many possible parameter values as possible to the likelihood function, and choosing the largest value. Because the rank order is preserved, it doesn’t matter if we use likelihood or log likelihood.</p>
+<ul>
+<li>Involves plugging in as many possible parameter values as possible to the likelihood function</li>
+<li>Choosing the largest value</li>
+<li>Because the rank order is preserved, it doesn’t matter if we use likelihood or log likelihood</li>
+</ul>
+</section>
+<section id="grid-search-visual" class="slide level2">
+<h2>Grid Search Visual</h2>
 
-<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
-<section id="normal-distribution-likleihood" class="slide level2">
-<h2>Normal Distribution Likleihood</h2>
+<img data-src="Lecture-13-Primer-on-Likelihood_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="normal-likelihood" class="slide level2">
+<h2>Normal Likelihood</h2>
+<div style="font-size: 0.9em;">
 <p>The same logic applies to any distribution:</p>
 <p><span class="math display">\[LL(\boldsymbol{x}| \mu, \sigma) = \sum_{i=1}^N \log\bigg(\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{1}{2}(\frac{x_i - \mu}{\sigma})^2}\bigg)\]</span></p>
 <p>We can plug in for different combinations of:</p>
@@ -333,9 +432,11 @@ Mark Himmelstein
 </ul>
 <p>Then take our variable, <span class="math inline">\(\boldsymbol{x}\)</span>, and sum up the log likelihoods for all of the observed values in our variable.</p>
 <p>The combination of <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> with the largest log likelihood are the <strong>maximum likelihood</strong> estimates of those parameters.</p>
+</div>
 </section>
 <section id="linear-model-likelihood" class="slide level2">
 <h2>Linear Model Likelihood</h2>
+<div style="font-size: 0.8em;">
 <p>In a general linear model, we assume the residuals are normally distributed with a mean of 0. Put another way, each observation for the outcome variable <span class="math inline">\(y_i\)</span> follows a normal distribution with mean <span class="math inline">\(\hat{y_i}\)</span> and residual variance <span class="math inline">\(\sigma_{\epsilon}\)</span></p>
 <p><span class="math display">\[LL(\boldsymbol{y}| \boldsymbol{\beta}, \sigma) = \sum_{i=1}^N \log\bigg(\frac{1}{\sigma_{\epsilon}\sqrt{2\pi}}e^{-\frac{1}{2}(\frac{y_i - \hat{y}_i}{\sigma_{\epsilon}})^2}\bigg)\]</span></p>
 <p>Where</p>
@@ -345,11 +446,14 @@ Mark Himmelstein
 <li><span class="math inline">\(\beta_0 \dots \beta_P\)</span></li>
 <li><span class="math inline">\(\sigma\)</span></li>
 </ul>
+</div>
 </section>
 <section id="grid-search-alternatives" class="slide level2">
 <h2>Grid Search Alternatives</h2>
 <p>When you have a continuous distribution, like a normal distribution, grid search is often intractable.</p>
-<p>There is too much data and too many possible parameter values to search across. Finding the peak would be very slow going.</p>
+<ul>
+<li>There is too much data and too many possible parameter values to search across. Finding the peak would be very slow even for a computer.</li>
+</ul>
 <p>A popular alternative is based on “hill climbing” algorithms</p>
 <ul>
 <li><p>These are more formally referred to as gradient ascent or gradient descent</p>
@@ -361,7 +465,8 @@ Mark Himmelstein
 </section>
 <section id="gradient-ascentdescent" class="slide level2">
 <h2>Gradient Ascent/Descent</h2>
-<p>Procedure:</p>
+<div style="font-size: 0.9em;">
+<p>Very simplified description of procedure:</p>
 <ul>
 <li>Step 1: Try a random parameter value (or combo of parameter values)</li>
 <li>Step 2: Check the log likelihood</li>
@@ -374,6 +479,7 @@ Mark Himmelstein
 </ul></li>
 <li>Repeat process until change in the log likelihood is (approximately) 0 between steps</li>
 </ul>
+</div>
 </section>
 <section id="hill-climbing" class="slide level2">
 <h2>Hill Climbing</h2>
@@ -384,6 +490,18 @@ Mark Himmelstein
 <h2>Iteration Table</h2>
 
 <img data-src="../../Figs/gradasctab.png" class="r-stretch"><p>As we try different values, we check if the log likelihood increases or decreases, and stop once the change between iterations gets close to zero</p>
+</section>
+<section id="so-what" class="slide level2">
+<h2>So What?</h2>
+<p>Maximum likelihood is a very flexible method for <strong>estimating</strong> general linear models.</p>
+<ul>
+<li>There are frequentist inference methods that use maximum likelihood to <strong>test null hypotheses</strong>, but they’re beyond the scope of our class
+<ul>
+<li>You will learn more about these in classes like multilevel models or structural equation modeling</li>
+<li>Getting an early intuition for likelihood also helps as a foundation for many different machine learning techniques</li>
+</ul></li>
+</ul>
+<p>We needed this detour because likelihood functions <strong>also</strong> play a large role in Bayesian inference!</p>
 
 
 </section>
@@ -576,7 +694,7 @@ Mark Himmelstein
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -679,190 +797,173 @@ Mark Himmelstein
     
 
     <script id="quarto-html-after-body" type="application/javascript">
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-      const toggleBodyColorMode = (bsSheetEl) => {
-        const mode = bsSheetEl.getAttribute("data-mode");
-        const bodyEl = window.document.querySelector("body");
-        if (mode === "dark") {
-          bodyEl.classList.add("quarto-dark");
-          bodyEl.classList.remove("quarto-light");
-        } else {
-          bodyEl.classList.add("quarto-light");
-          bodyEl.classList.remove("quarto-dark");
-        }
-      }
-      const toggleBodyColorPrimary = () => {
-        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-        if (bsSheetEl) {
-          toggleBodyColorMode(bsSheetEl);
-        }
-      }
-      toggleBodyColorPrimary();  
-      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
-      tabsets.forEach(function(tabset) {
-        const tabby = new Tabby('#' + tabset.id);
-      });
-      const isCodeAnnotation = (el) => {
-        for (const clz of el.classList) {
-          if (clz.startsWith('code-annotation-')) {                     
-            return true;
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
           }
+          return false;
         }
-        return false;
-      }
-      const onCopySuccess = function(e) {
-        // button target
-        const button = e.trigger;
-        // don't keep focus
-        button.blur();
-        // flash "checked"
-        button.classList.add('code-copy-button-checked');
-        var currentTitle = button.getAttribute("title");
-        button.setAttribute("title", "Copied!");
-        let tooltip;
-        if (window.bootstrap) {
-          button.setAttribute("data-bs-toggle", "tooltip");
-          button.setAttribute("data-bs-placement", "left");
-          button.setAttribute("data-bs-title", "Copied!");
-          tooltip = new bootstrap.Tooltip(button, 
-            { trigger: "manual", 
-              customClass: "code-copy-button-tooltip",
-              offset: [0, -8]});
-          tooltip.show();    
-        }
-        setTimeout(function() {
-          if (tooltip) {
-            tooltip.hide();
-            button.removeAttribute("data-bs-title");
-            button.removeAttribute("data-bs-toggle");
-            button.removeAttribute("data-bs-placement");
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
           }
-          button.setAttribute("title", currentTitle);
-          button.classList.remove('code-copy-button-checked');
-        }, 1000);
-        // clear code selection
-        e.clearSelection();
-      }
-      const getTextToCopy = function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
           for (const childEl of codeEl.children) {
             if (isCodeAnnotation(childEl)) {
               childEl.remove();
             }
           }
           return codeEl.innerText;
-      }
-      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-        text: getTextToCopy
-      });
-      clipboard.on('success', onCopySuccess);
-      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-          text: getTextToCopy,
-          container: window.document.getElementById('quarto-embedded-source-code-modal')
-        });
-        clipboardModal.on('success', onCopySuccess);
-      }
-        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-        var mailtoRegex = new RegExp(/^mailto:/);
-          var filterRegex = new RegExp("https:\/\/jhelmer3\.github\.io\/PSYC6019-2026\/");
-        var isInternal = (href) => {
-            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
         }
-        // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-        for (var i=0; i<links.length; i++) {
-          const link = links[i];
-          if (!isInternal(link.href)) {
-            // undo the damage that might have been done by quarto-nav.js in the case of
-            // links that we want to consider external
-            if (link.dataset.originalHref !== undefined) {
-              link.href = link.dataset.originalHref;
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jhelmer3\.github\.io\/PSYC6019-2026\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
             }
           }
-        }
-      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-        const config = {
-          allowHTML: true,
-          maxWidth: 500,
-          delay: 100,
-          arrow: false,
-          appendTo: function(el) {
-              return el.closest('section.slide') || el.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'light-border',
-          placement: 'bottom-start',
-        };
-        if (contentFn) {
-          config.content = contentFn;
-        }
-        if (onTriggerFn) {
-          config.onTrigger = onTriggerFn;
-        }
-        if (onUntriggerFn) {
-          config.onUntrigger = onUntriggerFn;
-        }
-          config['offset'] = [0,0];
-          config['maxWidth'] = 700;
-        window.tippy(el, config); 
-      }
-      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-      for (var i=0; i<noterefs.length; i++) {
-        const ref = noterefs[i];
-        tippyHover(ref, function() {
-          // use id or data attribute instead here
-          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-          try { href = new URL(href).hash; } catch {}
-          const id = href.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note) {
-            return note.innerHTML;
-          } else {
-            return "";
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
           }
-        });
-      }
-      const findCites = (el) => {
-        const parentEl = el.parentElement;
-        if (parentEl) {
-          const cites = parentEl.dataset.cites;
-          if (cites) {
-            return {
-              el,
-              cites: cites.split(' ')
-            };
-          } else {
-            return findCites(el.parentElement)
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
           }
-        } else {
-          return undefined;
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
         }
-      };
-      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-      for (var i=0; i<bibliorefs.length; i++) {
-        const ref = bibliorefs[i];
-        const citeInfo = findCites(ref);
-        if (citeInfo) {
-          tippyHover(citeInfo.el, function() {
-            var popup = window.document.createElement('div');
-            citeInfo.cites.forEach(function(cite) {
-              var citeDiv = window.document.createElement('div');
-              citeDiv.classList.add('hanging-indent');
-              citeDiv.classList.add('csl-entry');
-              var biblioDiv = window.document.getElementById('ref-' + cite);
-              if (biblioDiv) {
-                citeDiv.innerHTML = biblioDiv.innerHTML;
-              }
-              popup.appendChild(citeDiv);
-            });
-            return popup.innerHTML;
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
           });
         }
-      }
-    });
-    </script>
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
     
 
 </body></html>
