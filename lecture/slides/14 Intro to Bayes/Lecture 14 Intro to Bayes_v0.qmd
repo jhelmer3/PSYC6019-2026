@@ -121,9 +121,9 @@ Statistics is about how infer facts about the world based on observed data
 
 ## The Story so Far
 
-Until now, we've approached this probably with a particular style of thought experiment
+Until now, we've approached this problem with a particular style of thought experiment
 
-- Make a supposition (null hypothesis) about the true probability
+- Make a supposition (null hypothesis) about the true parameter(s)
 - Collect data
 - Consider how unlikely our data are for that supposition
 - Five straight sixes are possible for a fair die, but unlikely
@@ -238,17 +238,17 @@ $$P(X\cap Y) = P(X) \times P(Y|X)$$
 
 ## General Representation
 
-::: {style="font-size: 0.9em;"}
+::: {style="font-size: 0.85em;"}
 Let's say we have two events, $\color{blue}{A}$ and $\color{red}{B}$.
 
 -   $\color{blue}{A}$ is the location of the cue ball.
-    -   More precisely, $P(\color{blue}{A})$ is **the probability a randomly rolled ball will land to its right**
+    -   More precisely, $P(\color{blue}{A})$ is our prior belief about **possible locations of the cue ball**
     -   We do not know $P(\color{blue}{A})$
 -   $\color{red}{B}$ is the location of the nine ball
     -   More precisely, $P(\color{red}{B})$ is the is probability a thrown ball will land to the right of the cue ball **for any possible cue ball location**
     -   $P(\color{red}{B} | \color{blue}{A})$ is the is probability a thrown ball will land to the right of the cue ball **for a specific possible cue ball location**
 
-**Inverse Probability** is the **conditional probability** of $\color{blue}{A}$ given what we know about $\color{red}{B}$: $\color{#BAA53D}{P(A|B)}$. It's what we *learn* about $\color{blue}{A}$ by observing $\color{red}{B}$
+**Inverse Probability** is the **conditional probability** of $\color{blue}{A}$ given what we know about $\color{red}{B}$: $\color{#BAA53D}{P(A|B)}$. It's what we *learn* about where the cue ball is likely to be by observing whether other balls land to its left or right
 :::
 
 ## Inverting Probability I
@@ -271,10 +271,9 @@ This gives us the **joint** probability of $\color{blue}{A}$ and $\color{red}{B}
 $$\color{purple}{P(A \cap B)} = P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})$$
 
 -   This is the probability that both $A$ and $B$ occur simultaneously for all possibilities of $A$
+-  **Notice:** For any possible $\color{blue}{A}$ we can say something about $P(\color{red}{B}|\color{blue}{A})$
+-   We are assuming we also know our prior $P(\color{blue}{A})$
 
-::: {style="text-align: center;"}
-**Joint Probability is the product of a conditional probability and the marginal probability to the event condition on**
-:::
 
 ## Inverting Probability III
 
@@ -340,6 +339,18 @@ We can read Bayes' rule as saying:
         -   Divided by the sum of all possible ways the 9-ball could be to the right of the cue ball
 
 ::: 
+
+
+## Bayesian Updating
+
+**Bayes rule is a mathematical formula for how we can update our beliefs about something we don't know for sure, based on data we do know for sure**
+
+
+- $\color{blue}{A}$: Something we don't know for sure when we start out
+- $P(\color{blue}{A})$: Our belief about possible values of the thing we don't know for sure
+- $\color{red}{B}$: Something we subsequently observe and learn for sure
+- $P(\color{red}{B}|\color{blue}{A})$: The likelihood of how the thing we do know fore sure would happen for all possibilities of values of the thing we've observed
+- $\color{#BAA53D}{P(A|B)}$: Our **updated** belief about the thing we don't know for sure after observing $\color{red}{B}$
 
 ## Laplace vs. Bayes
 
