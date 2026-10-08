@@ -1,6 +1,6 @@
 ---
 title: "Bayesian *t*-Tests and Diagnostics"
-subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2025-10-09 | Lab 7"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2025-10-13 | Lab 7"
 author: "Jess Helmer"
 footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
 format: 
@@ -17,9 +17,13 @@ execute:
 knitr:
   opts_chunk:
     dev: svg
+resources:
+  - ../media/lab_07/samples.mp4
 ---
 
 ## Outline
+
+- *t*-tests as linear models
 
 - Bayesian *t*-tests
 
@@ -34,7 +38,332 @@ library(gt)
 
 
 
+# *t*-Tests as a Linear Model
+
+
+## *t*-Tests as a Linear Model
+
+We can specify a *t*-test as a linear model.
+
+:::: {.columns}
+::: {.column width="50%"}
+Our goal with *t*-tests is to compare means.
+
+$H_0$: $\mu_1 = \mu_2$ aka $\mu_1 - \mu_2 = 0$
+:::
+
+::: {.column width="50%"}
+We can estimate the overall mean of the outcome with an intercept-only model, where $\beta_0$ is the intercept.
+
+$y = \beta_0 + \epsilon$
+
+Then, we can add a slope term $\beta_1$ to represent the difference in means between groups.
+
+$y = \beta_0 + \beta_1 \times \text{group} + \epsilon$
+:::
+::::
+
+
+## *t*-Tests as a Linear Model
+
+Together, these parameters contain us the same information as a *t*-test.
+
+For example, in an experiment, if the control group is coded $\text{group}_\text{control} = 0$ and the treatment group is coded $\text{group}_\text{control} = 1$,
+
+::: subpoint
+○ $\beta_0 =$ mean of control group
+:::
+
+::: subpoint
+○ $\beta_1 =$ difference in means between control group and treatment group
+:::
+
+::: subpoint
+○ $\beta_0 + \beta_1 =$ mean of treatment group
+:::
+
+
+
 # Bayesian *t*-Tests
+
+
+## Bayesian Inference
+
+So far, we've been working with the frequentist statistical framework, Null Hypothesis Significance Testing (NHST).
+
+:::: {.columns style="font-size:80%"}
+::: {.column width="50%"}
+**Frequentist**
+
+In NHST, we speak only about *likelihoods*. The probability that we would have observed our data $D$ (or more extreme data) given some null hypothesis parameter $\theta$
+
+E.g., the probability that we would observe a mean difference on a test of $\bar{x}_\text{treatment} - \bar{x}_\text{control} = 5$ points given the true mean difference in the population is $\bar{x}_\text{treatment} - \bar{x}_\text{control} = 0$.
+
+$P(D | \theta)$
+:::
+
+::: {.column width="50%"}
+**Bayesian**
+
+What we as researchers are often more interested in is the probability that a parameter $\theta$ is the true parameter given data $D$ we have observed.
+
+E.g., given that we have observed a mean difference of $\bar{x}_\text{treatment} - \bar{x}_\text{control} = 5$, what is the probability that the true mean difference is $\bar{x}_\text{treatment} - \bar{x}_\text{control} = 0$? What is the probability that the true mean difference is $\bar{x}_\text{treatment} - \bar{x}_\text{control} = 5$?
+
+$P(\theta | D)$
+:::
+::::
+
+
+## Bayesian Inference
+
+In order to get $P(\theta | D)$, we need Bayes' Rule. 
+
+$$ P(\theta | D) = \frac{ P(\theta) P(D | \theta) }{ P(D) } $$
+
+::: subpoint
+○ $P(\theta | D) =$ *posterior* distribution, this is what we want to create!
+:::
+
+::: subpoint
+○ $P(\theta)$ *prior* distribution, information we know about $\theta$ before seeing $D$
+:::
+
+::: subpoint
+○ $P(D | \theta)$ likelihood, the same as before
+:::
+
+::: subpoint
+○ $P(D)$ scaling term, brings everything back down to probability scale. Makes Bayes analytic calulations mathematically challenging / impossible! 
+:::
+
+::: fragment
+Motivates *sampling* from the posterior distribution, instead of calculating it.
+:::
+
+
+## Getting to the Posterior
+
+Our goal in Bayes is to estimate $P(\theta | D) = \frac{P(\theta) P(D | \theta)}{P(D)} = \frac{\text{prior} \times \text{likelihood}}{\text{scaling term}}$.
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+
+# I made the original plot; gave to Claude to help with the 
+# labelling and annotating.
+n <- 10
+k <- 2
+
+a <- 8
+b <- 6
+
+x <- seq(0, 1, length.out = 500)
+
+curves <- bind_rows(
+  tibble(x, y = dbeta(x, a, b), curve = "Prior"),
+  tibble(x, y = choose(n, k) * x^k * (1 - x)^(n - k) * 8, curve = "Likelihood"),
+  tibble(x, y = dbeta(x, a + k, b + n - k), curve = "Posterior")
+) |>
+  mutate(hjust = recode_values(
+    curve,
+    "Prior" ~ 0.1,
+    "Posterior" ~ 0.7,
+    "Likelihood" ~ 0.36
+    
+  ))
+
+# where to point the arrow: the posterior's peak
+post_mode <- (a + k - 1) / (a + b + n - 2)
+post_peak <- dbeta(post_mode, a + k, b + n - k)
+
+just_prior <- curves |>
+  filter(curve == "Prior")
+
+just_prior |>
+  ggplot(aes(x, y, label = curve, linetype = curve)) +
+  geomtextpath::geom_textline(
+    aes(color = curve),
+    linewidth = 1,
+    hjust = just_prior$hjust,            # position of label along each curve (0-1)
+    vjust = -0.2,           # sit just above the line
+    size = 5
+  ) +
+  scale_linetype_manual(values = c(Prior = "dotted", Likelihood = "dashed", Posterior = "solid")) +
+  scale_color_manual(values = c(Prior = "steelblue", Likelihood = "#D98282", Posterior = "#8C7AAE")) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 4.1), clip = "off") +
+  theme_void() +
+  theme(legend.position = "none")
+```
+
+
+## Getting to the Posterior
+
+Our goal in Bayes is to estimate $P(\theta | D) = \frac{P(\theta) P(D | \theta)}{P(D)}$.
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+just_prior_and_likelihood <- curves |>
+  filter(curve == "Prior" | curve == "Likelihood")
+
+just_prior_and_likelihood |>
+  ggplot(aes(x, y, label = curve, linetype = curve)) +
+  geomtextpath::geom_textline(
+    aes(color = curve),
+    linewidth = 1,
+    hjust = just_prior_and_likelihood$hjust,            # position of label along each curve (0-1)
+    vjust = -0.2,           # sit just above the line
+    size = 5
+  ) +
+  scale_linetype_manual(values = c(Prior = "dotted", Likelihood = "dashed", Posterior = "solid")) +
+  scale_color_manual(values = c(Prior = "steelblue", Likelihood = "#D98282", Posterior = "#8C7AAE")) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 4.1), clip = "off") +
+  theme_void() +
+  theme(legend.position = "none")
+```
+
+
+
+## Getting to the Posterior
+
+Our goal in Bayes is to estimate $P(\theta | D) = \frac{P(\theta) P(D | \theta)}{P(D)}$.
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+curves |>
+  ggplot(aes(x, y, label = curve, linetype = curve)) +
+  geomtextpath::geom_textline(
+    aes(color = curve),
+    linewidth = 1,
+    hjust = curves$hjust,            # position of label along each curve (0-1)
+    vjust = -0.2,           # sit just above the line
+    size = 5
+  ) +
+  scale_linetype_manual(values = c(Prior = "dotted", Likelihood = "dashed", Posterior = "solid")) +
+  scale_color_manual(values = c(Prior = "steelblue", Likelihood = "#D98282", Posterior = "#8C7AAE")) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 4.1), clip = "off") +
+  theme_void() +
+  theme(legend.position = "none")
+```
+
+
+## Getting to the Posterior
+
+Our goal in Bayes is to estimate $P(\theta | D) = \frac{P(\theta) P(D | \theta)}{P(D)}$.
+
+<!-- But most of the time, $P(\theta | D)$ is too complex to solve analytically.  -->
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+ggplot(curves, aes(x, y, label = curve, linetype = curve)) +
+  geomtextpath::geom_textline(
+    aes(color = curve),
+    linewidth = 1,
+    hjust = curves$hjust,            # position of label along each curve (0-1)
+    vjust = -0.2,           # sit just above the line
+    size = 5
+  ) +
+  scale_linetype_manual(values = c(Prior = "dotted", Likelihood = "dashed", Posterior = "solid")) +
+  scale_color_manual(values = c(Prior = "steelblue", Likelihood = "#D98282", Posterior = "#8C7AAE")) +
+  annotate("curve",
+           x = post_mode + 0.225, xend = post_mode + 0.08,
+           y = post_peak * 0.97, yend = post_peak * 0.92,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
+           linewidth = 0.6, color = scales::col_darker("#8C7AAE", 30)) +
+  annotate("text",
+           x = post_mode + 0.25, y = post_peak * 0.94,
+           label = "Can be difficult or impossible\nto analytically calculate" |>
+             str_wrap(25),
+           hjust = 0, size = 4.5, lineheight = 0.9, 
+           color = scales::col_darker("#8C7AAE", 30)) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 4.1), clip = "off") +
+  theme_void() +
+  theme(legend.position = "none")
+```
+
+
+## Getting to the Posterior
+
+Our goal in Bayes is to estimate $P(\theta | D) = \frac{P(\theta) P(D | \theta)}{P(D)}$.
+
+<!-- But most of the time, $P(\theta | D)$ is too complex to solve analytically.  -->
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+just_prior_and_likelihood |>
+  ggplot(aes(x, y, label = curve, linetype = curve)) +
+  geomtextpath::geom_textline(
+    aes(color = curve),
+    linewidth = 1,
+    hjust = just_prior_and_likelihood$hjust,            # position of label along each curve (0-1)
+    vjust = -0.2,           # sit just above the line
+    size = 5
+  ) +
+  annotate("curve",
+           x = post_mode + 0.225, xend = post_mode + 0.08,
+           y = post_peak * 0.97, yend = post_peak * 0.92,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
+           linewidth = 0.6, color = scales::col_darker("#8C7AAE", 30)) +
+  annotate("text",
+           x = post_mode + 0.25, y = post_peak * 0.94,
+           label = "Can be difficult or impossible\nto analytically calculate" |>
+             str_wrap(25),
+           hjust = 0, size = 4.5, lineheight = 0.9, 
+           color = scales::col_darker("#8C7AAE", 30)) +
+  scale_linetype_manual(values = c(Prior = "dotted", Likelihood = "dashed", Posterior = "solid")) +
+  scale_color_manual(values = c(Prior = "steelblue", Likelihood = "#D98282", Posterior = "#8C7AAE")) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 4.1), clip = "off") +
+  theme_void() +
+  theme(legend.position = "none")
+```
+
+
+## Getting to the Posterior
+
+Our goal in Bayes is to estimate $P(\theta | D) = \frac{P(\theta) P(D | \theta)}{P(D)}$.
+
+<!-- {{ video ../media/lab_07/samples.mp4 }} -->
+
+::: {.absolute left="18%" top="30%" width="880" height="522"}
+<video src="../media/lab_07/samples.mp4"
+       style="width:100%; height:100%; object-fit:contain; display:block; background:white;"
+       controls></video>
+:::
+
+
+## Getting to the Posterior
+
+How can we sample from posterior distributions? We can use a *probabalistic programming language*.
+
+:::: {.columns}
+::: {.column width="33%"}
+![](https://mc-stan.org/docs/img/logo_tm.png)
+:::
+
+::: {.column width="66%"}
+*Stan* is an open-source probabalistic programming language that's widely used to write Bayesian models.
+
+It has a well-developed, user-friendly R interface called `rstanarm`, which we will use!
+
+::: subpoint-narrow
+○ Means we can start to work with Bayesian models without having to lean the Stan language itself
+:::
+:::
+::::
+
 
 ## Bayesian *t*-Tests
 
@@ -44,11 +373,17 @@ A very user-friendly interface to Bayesian models with `Stan` is the `rstanarm` 
 # install.packages("rstanarm")
 library(rstanarm)
 
+options(mc.cores = parallel::detectCores())
+
 filtered_mpg <- mpg |>
-  filter(when_any(cyl == 4, cyl == 8))
+  filter(when_any(cyl == 4, cyl == 8)) |>
+  mutate(cyl = factor(cyl))
 ```
 
-<br>
+
+## Bayesian *t*-Tests
+
+A very user-friendly interface to Bayesian models with `Stan` is the `rstanarm` R package!
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -79,12 +414,63 @@ summary(bayes_t_test)
 
 ## Bayesian *t*-Tests
 
+A very user-friendly interface to Bayesian models with `Stan` is the `rstanarm` R package!
+
+:::: {.columns style="font-size:80%"}
+::: {.column width="50%"}
+`summary()` function contains lots of information about the model:
+
+::: subpoint-narrow
+○ `Estimates`: means, SDs, and quantiles (can specify with `probs`) for each parameter.
+:::
+
+::: subpoint-narrow
+○ `Fit Diagnostics`: `mean_PPD` mean of the posterior distribution of the outcome. If `mean_PPD` is very different from what you'd expect the mean of the outcome variable to be, may be an indicator of something being wrong. 
+:::
+
+::: subpoint-narrow
+○ `MCMC Diagnostics`: Diagnostics for the Markov Chain Monte Carlo sampler (more on this later).
+:::
+
+:::
+
+::: {.column width="50%"}
+```{r}
+#| message: false
+#| eval: false
+bayes_t_test <- stan_glm(hwy ~ cyl, data = filtered_mpg,
+                         family = "gaussian")
+summary(bayes_t_test, probs = c(0.05, 0.5, 0.95))
+```
+
+```{r}
+#| echo: false
+bayes_t_test <- stan_glm(hwy ~ cyl, data = filtered_mpg,
+                         family = "gaussian", refresh = 0)
+summary(bayes_t_test, probs = c(0.05, 0.5, 0.95))
+```
+:::
+::::
+
+
+## Bayesian *t*-Tests
+
+:::: {.columns}
+::: {.column width="50%"}
 ```{r}
 prior_summary(bayes_t_test)
 ```
+:::
+
+::: {.column width="50%"}
+`\{rstanarm\}` generally defines priors on the *z*-scale ("specified prior") and then transforms them to the scale of our variables ("adjusted prior") to actually run the model.
+
+The "adjusted prior" is what was actually used.
+:::
+::::
 
 
-## Model
+## Full Model
 
 $$
 \begin{aligned}
@@ -95,6 +481,304 @@ $$
 \end{aligned}
 $$
 
+
+## Visualizing Results
+
+The `bayesplot` package provides many helpful functions for plotting results of a Bayesian model.
+
+```{r}
+# install.packages("bayesplot")
+library(bayesplot)
+```
+
+
+## Visualizing Results
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+ppc_dens_overlay(
+  y = filtered_mpg$hwy,
+  yrep = posterior_predict(bayes_t_test, draws = 50)
+)
+```
+
+### Code
+```{r}
+#| eval: false
+ppc_dens_overlay(
+  y = filtered_mpg$hwy,
+  yrep = posterior_predict(bayes_t_test, draws = 50)
+)
+```
+:::
+
+
+## Visualizing Results
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 4
+#| fig-align: center
+
+bayesplot::ppc_dens_overlay_grouped(
+  y = filtered_mpg$hwy,
+  yrep = posterior_predict(bayes_t_test, draws = 50),
+  group = filtered_mpg$cyl
+)
+```
+
+### Code
+```{r}
+#| eval: false
+bayesplot::ppc_dens_overlay_grouped(
+  y = filtered_mpg$hwy,
+  yrep = posterior_predict(bayes_t_test, draws = 50),
+  group = filtered_mpg$cyl
+)
+```
+:::
+
+
+## Visualizing Results
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+bayesplot::ppc_violin_grouped(
+  y = filtered_mpg$hwy,
+  yrep = posterior_predict(bayes_t_test, draws = 50),
+  group = filtered_mpg$cyl
+)
+```
+
+### Code
+```{r}
+#| eval: false
+bayesplot::ppc_violin_grouped(
+  y = filtered_mpg$hwy,
+  yrep = posterior_predict(bayes_t_test, draws = 50),
+  group = filtered_mpg$cyl
+)
+```
+:::
+
+
+
+## Visualizing Results
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+bayesplot::ppc_violin_grouped(
+  y = filtered_mpg$hwy,
+  yrep = posterior_predict(bayes_t_test, draws = 50),
+  group = filtered_mpg$cyl
+) +
+  geom_jitter(data = filtered_mpg, 
+              aes(y = hwy, x = cyl),
+              alpha = 0.3,
+              color = "#011f4b",
+              inherit.aes = F)
+```
+
+### Code
+```{r}
+#| eval: false
+bayesplot::ppc_violin_grouped(
+  y = filtered_mpg$hwy,
+  yrep = posterior_predict(bayes_t_test, draws = 50),
+  group = filtered_mpg$cyl
+) +
+  geom_jitter(data = filtered_mpg, 
+              aes(y = hwy, x = cyl),
+              alpha = 0.3,
+              color = "#011f4b",
+              inherit.aes = F)
+```
+:::
+
+
+
+## Prior Implications
+
+:::: {.columns}
+::: {.column width="50%"}
+Given that the distribution of the outcome following just the priors includes negative values for highway MPG, maybe we can afford to narrow them a bit!
+
+And maybe we want to be a little more skeptical of large effects, so we can narrow the prior on the slope, too.
+:::
+
+::: {.column width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5.5
+#| fig-height: 2.5
+#| fig-align: center
+t_test_from_prior_only <- stan_glm(
+  hwy ~ cyl, data = filtered_mpg,
+  family = "gaussian", refresh = 0,
+  prior_PD = T
+)
+ppc_dens_overlay_grouped(
+  y = filtered_mpg$hwy, 
+  yrep = posterior_predict(t_test_from_prior_only, draws = 50),
+  group = filtered_mpg$cyl
+)
+```
+
+### Code
+```{r}
+#| eval: false
+t_test_from_prior_only <- stan_glm(
+  hwy ~ cyl, data = filtered_mpg,
+  family = "gaussian", refresh = 0,
+  prior_PD = T
+)
+ppc_dens_overlay_grouped(
+  y = filtered_mpg$hwy, 
+  yrep = posterior_predict(t_test_from_prior_only, draws = 50),
+  group = filtered_mpg$cyl
+)
+```
+:::
+
+
+:::
+::::
+
+
+## Changing Priors
+
+:::: {.columns}
+::: {.column width="50%"}
+**Original Model**
+```{r}
+prior_summary(bayes_t_test)
+```
+:::
+
+::: {.column style="font-size:80%" width="50%"}
+`\{{rstanarm}\}` generally defines priors on the *z*-scale ("specified prior") and then transforms them to the scale of our variables ("adjusted prior") to actually run the model.
+
+The "adjusted prior" is what was actually used.
+
+We can choose to specify a prior on the *z*-scale (`autoscale = T`) or as-is (default) (example on next slide).
+:::
+::::
+
+
+## Changing Priors
+
+:::: {.columns}
+::: {.column width="50%"}
+**Original Model**
+```{r}
+prior_summary(bayes_t_test)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| message: false
+#| eval: false
+bayes_t_test_v2 <- stan_glm(
+  hwy ~ cyl, data = filtered_mpg,
+  prior = normal(0, 1.5, autoscale = T),
+  prior_intercept = normal(24, 15),
+  family = "gaussian"
+)
+summary(bayes_t_test_v2, probs = c(0.05, 0.5, 0.95))
+```
+
+```{r}
+#| echo: false
+bayes_t_test_v2 <- stan_glm(
+  hwy ~ cyl, data = filtered_mpg,
+  prior = normal(0, 1.5, autoscale = T),
+  prior_intercept = normal(24, 15),
+  family = "gaussian"
+)
+summary(bayes_t_test_v2, probs = c(0.05, 0.5, 0.95))
+```
+:::
+::::
+
+
+## Prior Implications
+
+:::: {.columns}
+::: {.column width="50%"}
+Implications of our new priors.
+:::
+
+::: {.column width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5.5
+#| fig-height: 2.5
+#| fig-align: center
+t_test_from_prior_only_v2 <- stan_glm(
+  hwy ~ cyl, data = filtered_mpg,
+  family = "gaussian", refresh = 0,
+  prior = normal(0, 1, autoscale = T),
+  prior_intercept = normal(24, 4),
+  prior_PD = T
+)
+ppc_dens_overlay_grouped(
+  y = filtered_mpg$hwy, 
+  yrep = posterior_predict(t_test_from_prior_only_v2, draws = 50),
+  group = filtered_mpg$cyl
+)
+```
+
+### Code
+```{r}
+#| eval: false
+t_test_from_prior_only_v2 <- stan_glm(
+  hwy ~ cyl, data = filtered_mpg,
+  family = "gaussian", refresh = 0,
+  prior = normal(0, 1, autoscale = T),
+  prior_intercept = normal(24, 4),
+  prior_PD = T
+)
+ppc_dens_overlay_grouped(
+  y = filtered_mpg$hwy, 
+  yrep = posterior_predict(t_test_from_prior_only_v2, draws = 50),
+  group = filtered_mpg$cyl
+)
+```
+:::
+
+
+:::
+::::
+
+
 ## Credible Intervals
 
 :::: {.columns}
@@ -104,6 +788,8 @@ $$
 ```{r}
 posterior_interval(bayes_t_test)
 ```
+
+Can also get ETIs from the `summary()` function, as before.
 :::
 
 ::: {.column width="50%"}
@@ -140,99 +826,276 @@ bayestestR::hdi(bayes_t_test, component = "all")
 
 # Diagnostics
 
+
+## Diagnostics
+
+Our goal in Bayes is to estimate $P(\theta | D) = \frac{P(\theta) P(D | \theta)}{P(D)} = \frac{\text{prior} \times \text{likelihood}}{\text{scaling term}}$.
+
+But most of the time, $P(\theta | D)$ is too complex to solve analytically. So, we estimate Bayesian models by drawing **samples** from the posterior with Markov Chain Monte Carlo (MCMC).
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+#| echo: false
+n <- 10
+k <- 2
+
+a <- 8
+b <- 6
+
+x <- seq(0, 1, length.out = 500)
+
+curves <- bind_rows(
+  tibble(x, y = dbeta(x, a, b), curve = "Prior"),
+  tibble(x, y = choose(n, k) * x^k * (1 - x)^(n - k) * 8, curve = "Likelihood"),
+  tibble(x, y = dbeta(x, a + k, b + n - k), curve = "Posterior")
+) |>
+  mutate(hjust = recode_values(
+    curve,
+    "Prior" ~ 0.1,
+    "Posterior" ~ 0.7,
+    "Likelihood" ~ 0.36
+    
+  ))
+
+post_mode <- (a + k - 1) / (a + b + n - 2)
+post_peak <- dbeta(post_mode, a + k, b + n - k)
+
+just_prior_and_likelihood <- curves |>
+  filter(curve == "Prior" | curve == "Likelihood")
+
+n_samples <- 4000
+
+set.seed(2)
+posterior_samples <- tibble(
+  t = 1:n_samples,
+  x = rbeta(n_samples, a + k, b + n - k)
+)
+
+base_plot <- just_prior_and_likelihood |>
+  ggplot(aes(x, y, label = curve, linetype = curve)) +
+  geomtextpath::geom_textline(
+    aes(color = curve),
+    linewidth = 1,
+    hjust = just_prior_and_likelihood$hjust,            # position of label along each curve (0-1)
+    vjust = -0.2,           # sit just above the line
+    size = 5
+  ) +
+  annotate("curve",
+           x = post_mode + 0.225, xend = post_mode + 0.08,
+           y = post_peak * 0.97, yend = post_peak * 0.92,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
+           linewidth = 0.6, color = scales::col_darker("#8C7AAE", 30)) +
+  annotate("text",
+           x = post_mode + 0.25, y = post_peak * 0.94,
+           label = "Can be difficult or impossible\nto analytically calculate" |>
+             str_wrap(25),
+           hjust = 0, size = 4.5, lineheight = 0.9, 
+           color = scales::col_darker("#8C7AAE", 30)) +
+  scale_linetype_manual(values = c(Prior = "dotted", Likelihood = "dashed", Posterior = "solid")) +
+  scale_color_manual(values = c(Prior = "steelblue", Likelihood = "#D98282", Posterior = "#8C7AAE")) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 4.1), clip = "off") +
+  theme_void() +
+  theme(legend.position = "none")
+
+post_col <- "#8C7AAE"
+
+base_plot +
+  geom_density(
+    data = posterior_samples,   # density needs >= 2 points
+    aes(x = x),
+    inherit.aes = FALSE,
+    fill = post_col, color = post_col, alpha = 0.3, linewidth = 1
+  ) +
+  geom_segment(
+    data = posterior_samples,
+    aes(x = x, xend = x, y = 0, yend = 0.2),
+    inherit.aes = FALSE,
+    color = scales::col_darker(post_col, 30), linewidth = 0.7, alpha = 0.35
+  ) +
+  guides(color = guide_none(),
+         alpha = guide_none()) +
+  theme_void() +
+  theme(plot.title = element_text(size = 14, color = "grey40", hjust = 0.02),
+        legend.position = "none")
+```
+
+
+
 ## Diagnostics with Bayes
 
-Most of the time, Bayes' theorem $P(\theta | D) = \frac{P(\theta) P(D | \theta)}{P(D)}$ is too complex to solve analytically. So, we estimate Bayesian models with Markov Chain Monte Carlo (MCMC).
+But most of the time, $P(\theta | D)$ is too complex to solve analytically. So, we estimate Bayesian models with Markov Chain Monte Carlo (MCMC).
 
-The job of MCMC is to explore and sample from the posterior probability distribution $P(\theta | D)$ for all $\theta$ at a rate proportional to each probability.
+[The job of MCMC is to explore and sample from the posterior probability distribution $P(\theta | D)$ for all $\theta$ at a rate proportional to each probability.]{.fragment}
 
-So, after many MCMC samples, we end up with a density distribution of samples with height matching $P(\theta | D)$, and we can use those samples to make inferences about our parameters and outcomes!
+[So, after many MCMC samples, we end up with a density distribution of samples with height matching $P(\theta | D)$, and we can use those samples to make inferences about our parameters and outcomes!]{.fragment}
 
-::: subpoint
-○ E.g., we believe there is a 90% chance the difference in highway MPG between four- and eight-cylinder cars is within the interval [`r posterior_interval(bayes_t_test)["cyl", ] |> round(2) |> paste(collapse = ", ")`].
+::: {.subpoint .fragment}
+○ E.g., we believe there is a 90% chance the difference in highway MPG between four- and eight-cylinder cars is within the interval [`r posterior_interval(bayes_t_test)["cyl8", ] |> round(2) |> paste(collapse = ", ")`].
 :::
 
-But, all this hinges on the MCMC sampler---we have to check it for evidence that it *sampled well*.
+[But, all this hinges on the MCMC sampler---we have to check it for evidence that it *sampled well*.]{.fragment}
 
 
 ## Looking at the Samples
 
 Often, a good first step for checking the sampler is just looking at what it sampled!
 
-::: fragment
+:::: {.columns}
+::: {.column width="50%"}
+[This is called a *trace plot*. It shows the samplers' samples for each iteration it runs. Can you tell if this sampler sampled well?]{.fragment fragment-index=2}
+:::
+
+::: {.column width="50%"}
+::: {.fragment fragment-index=1}
+::: {.panel-tabset}
+### Plot
 ```{r}
-#| fig-height: 2
+#| echo: false
 #| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+scale_colors <-  c("steelblue", "#D98282", "#6BAE9D", "#8C7AAE")
+x <- bayesplot::example_mcmc_draws(chains = 1, params = 1)
+bayesplot::mcmc_trace(x) +
+  scale_color_manual(values = scale_colors)
+```
+
+### Code
+```{r}
+#| eval: false
 scale_colors <-  c("steelblue", "#D98282", "#6BAE9D", "#8C7AAE")
 x <- bayesplot::example_mcmc_draws(chains = 1, params = 1)
 bayesplot::mcmc_trace(x) +
   scale_color_manual(values = scale_colors)
 ```
 :::
-
-[This is called a *trace plot*. It shows the samplers' samples for each iteration it runs. Can you tell if this sampler sampled well?]{.fragment}
+:::
+:::
+::::
 
 
 ## Looking at the Samples
 
 Often, a good first step for checking the sampler is just looking at what it sampled!
 
+:::: {.columns}
+::: {.column width="50%"}
+What if I told you we ran another, completely separate run, and its samples looked like this?
+
+:::
+
+::: {.column width="50%"}
+
+::: {.panel-tabset}
+### Plot
 ```{r}
-#| fig-height: 2
+#| echo: false
 #| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
 x <- bayesplot::example_mcmc_draws(chains = 2, params = 1)
 bayesplot::mcmc_trace(x) +
-  scale_color_manual(values = scale_colors)
+  scale_color_manual(values = scale_colors) +
+  guides(color = guide_none())
 ```
 
-[What if I told you we ran another, completely separate run, and its samples looked like this?]{.fragment}
+### Code
+```{r}
+#| eval: false
+x <- bayesplot::example_mcmc_draws(chains = 2, params = 1)
+bayesplot::mcmc_trace(x) +
+  scale_color_manual(values = scale_colors) +
+  guides(color = guide_none())
+```
+:::
+:::
+::::
 
 
 ## Looking at the Samples
 
 Often, a good first step for checking the sampler is just looking at what it sampled!
 
+:::: {.columns}
+::: {.column width="50%"}
+Or a third?
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
 ```{r}
-#| fig-height: 2
+#| echo: false
 #| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
 x <- bayesplot::example_mcmc_draws(chains = 3, params = 1)
 bayesplot::mcmc_trace(x) +
-  scale_color_manual(values = scale_colors)
+  scale_color_manual(values = scale_colors) +
+  guides(color = guide_none())
 ```
 
-[Or a third?]{.fragment}
+### Code
+```{r}
+#| eval: false
+x <- bayesplot::example_mcmc_draws(chains = 3, params = 1)
+bayesplot::mcmc_trace(x) +
+  scale_color_manual(values = scale_colors) +
+  guides(color = guide_none())
+```
+:::
+:::
+::::
 
 
 ## Looking at the Samples
 
 Often, a good first step for checking the sampler is just looking at what it sampled!
 
+:::: {.columns}
+::: {.column width="50%"}
+A fourth? How much confidence do you have in the sampler now?
+
+[Looking at traceplots cannot guarantee the sampler is **correctly** sampling from the distribution, but if we run multiple *chains* (separate runs of MCMC, each doing their own thing independently), we can at least check if the sampler is sampling **consistently**.]{.fragment}
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
 ```{r}
-#| fig-height: 2
+#| echo: false
 #| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
 x <- bayesplot::example_mcmc_draws(chains = 4, params = 1)
 bayesplot::mcmc_trace(x) +
-  scale_color_manual(values = scale_colors)
+  scale_color_manual(values = scale_colors) +
+  guides(color = guide_none())
 ```
 
-[A fourth? How much confidence do you have in the sampler now?]{.fragment}
-
-[They cannot guarantee the sampler is **correctly** sampling from the distribution, but if we run multiple *chains* (separate runs of MCMC, each doing their own thing independently), we can at least check if the sampler is sampling **consistently**.]{.fragment}
-
-## House Layout Example
+### Code
+```{r}
+#| eval: false
+x <- bayesplot::example_mcmc_draws(chains = 4, params = 1)
+bayesplot::mcmc_trace(x) +
+  scale_color_manual(values = scale_colors) +
+  guides(color = guide_none())
+```
+:::
+:::
+::::
 
 
 ## Looking at the Samples
 
-Our example's trace plots!
+Our example's trace plots! Also from `bayesplot`.
 
 ```{r}
 #| fig-height: 3
 #| fig-width: 12
-# install.packages("bayesplot")
-library(bayesplot)
-
-mcmc_trace(bayes_t_test)
+mcmc_trace(bayes_t_test_v2)
 ```
 
 [Good! They look like "fuzzy caterpillars".]{.fragment}
@@ -240,12 +1103,14 @@ mcmc_trace(bayes_t_test)
 
 ## Trace Rank Plots
 
-These are called "trace rank" plots. They're very similar to trace plots, except they *order* the samples in magnitude.
+These are called "trace rank" plots. They're very similar to trace plots, except they *order* the samples in magnitude. Want to see all chains (colors) equally represented across the x-axis.
 
 It's mostly personal preference, but these are sometimes easier to see bad chains.
 
 ```{r}
-mcmc_rank_overlay(bayes_t_test)
+#| fig-height: 3
+#| fig-width: 12
+mcmc_rank_overlay(bayes_t_test_v2)
 ```
 
 [What does a bad chain look like?]{.fragment}
@@ -255,36 +1120,97 @@ mcmc_rank_overlay(bayes_t_test)
 
 Messing with the algorithm on purpose to make it sample poorly...
 
+:::: {.columns}
+::: {.column width="45%"}
+::: {.panel-tabset}
+### Plot
 ```{r}
-#| message: false
-#| fig-height: 2.5
-#| fig-width: 10
 #| echo: false
-bad_example <- stan_glm(hwy ~ cyl, data = filtered_mpg, seed = 12345, adapt_delta = 0.3)
+#| fig-height: 3
+#| fig-width: 12
+#| fig-align: center
+bad_example <- stan_glm(
+  hwy ~ cyl,
+  data = filtered_mpg,
+  seed = 12345,
+  chains = 4,
+  iter = 1200,
+  warmup = 200 ,
+  control = list(
+    max_treedepth = 2
+  )
+)
 mcmc_trace(bad_example) +
   scale_color_manual(values = scale_colors)
+```
+
+### Code
+```{r}
+#| eval: false
+bad_example <- stan_glm(
+  hwy ~ cyl,
+  data = filtered_mpg,
+  seed = 12345,
+  chains = 4,
+  iter = 1200,
+  warmup = 200 ,
+  control = list(
+    max_treedepth = 2
+  )
+)
+mcmc_trace(bad_example) +
+  scale_color_manual(values = scale_colors)
+```
+:::
+:::
+
+::: {.column width="45%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-height: 3
+#| fig-width: 12
+#| fig-align: center
 mcmc_rank_overlay(bad_example) +
   scale_color_manual(values = scale_colors)
 ```
 
+### Code
+```{r}
+#| eval: false
+mcmc_rank_overlay(bad_example) +
+  scale_color_manual(values = scale_colors)
+```
+:::
+:::
+
+::: {.column width="5%"}
 [Ick!]{.fragment}
+:::
+::::
 
 
 ## Rhat
 
-Looking at traceplots is great, but it's also helpful to have a numerical measure of how well the chains mixed.
+Looking at traceplots is great, but it's also helpful to have a numerical measure of how well the chains mixed. Especially when you have lots of parameters, not just three.
 
-Rhat ($\hat{R}$, read "R-hat") is a measure of convergence among different MCMC *chains*.
+[Rhat ($\hat{R}$, read "R-hat") is a measure of convergence among different MCMC *chains*.]{.fragment}
 
-The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
+[The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.]{.fragment}
 
 
 ## Rhat Visualized: Bad
 
 The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
 
+:::: {.columns}
+::: {.column width="70%"}
 ```{r}
 #| echo: false
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
 set.seed(1)
 n_samples <- 500
 d <- tibble(chain = 1:4) |>
@@ -293,8 +1219,9 @@ d <- tibble(chain = 1:4) |>
     samples = map(
       chain_mu, \(chain_mu) tibble(
         rep = 1:n_samples, 
-        x = rnorm(n_samples, chain_mu, 0.3)
-      )
+        sin_x = sin(1:n_samples)^100,
+        x = sin_x + rnorm(n_samples, chain_mu, 0.3)
+      ) 
     )
   ) |>
   unnest(samples)
@@ -314,14 +1241,27 @@ d |>
   coord_cartesian(ylim = c(1.2, 6)) +
   theme_classic()
 ```
+:::
+
+::: {.column width="30%"}
+
+:::
+::::
+
+
 
 
 ## Rhat Visualized: Bad
 
 The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
 
+:::: {.columns}
+::: {.column width="70%"}
 ```{r}
 #| echo: false
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
 d |>
   ggplot(aes(x = rep, y = x, color = factor(chain), group = chain)) +
   geom_line() +
@@ -339,14 +1279,72 @@ d |>
   coord_cartesian(ylim = c(1.2, 6)) +
   theme_classic()
 ```
+:::
+
+::: {.column width="30%"}
+
+:::
+::::
+
+
 
 
 ## Rhat Visualized: Bad
 
 The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
 
+:::: {.columns}
+::: {.column width="70%"}
 ```{r}
 #| echo: false
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
+d |>
+  ggplot(aes(x = rep, y = x, color = factor(chain), group = chain)) +
+  geom_line() +
+  ggdist::stat_slab(
+    data = d |> mutate(rep = 0 - 15),
+    aes(x = rep, y = x),
+    color = NA,
+    side = "left",
+    scale = 30,
+    alpha = 0.7,
+    inherit.aes = F
+  ) +
+  geom_point(
+    data = chain_means |> mutate(rep = 0 - 15),
+    aes(x = rep, y = x),
+    size = 3
+  ) +
+  guides(x = guide_axis(cap = T),
+         y = guide_none(NULL),
+         color = guide_none(),
+         fill = guide_none()) +
+  scale_x_continuous("Rep", limits = c(-50, n_samples + 50), breaks = seq(0, 500, 100)) +
+  scale_color_manual(values = scale_colors, aesthetics = c("color", "fill")) +
+  coord_cartesian(ylim = c(1.2, 6)) +
+  theme_classic()
+```
+:::
+
+::: {.column width="30%"}
+
+:::
+::::
+
+
+## Rhat Visualized: Bad
+
+The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
+
+:::: {.columns}
+::: {.column width="70%"}
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
 d |>
   ggplot(aes(x = rep, y = x, color = factor(chain), group = chain)) +
   geom_line() +
@@ -381,16 +1379,25 @@ d |>
   coord_cartesian(ylim = c(1.2, 6)) +
   theme_classic()
 ```
+:::
 
+::: {.column .fragment width="30%"}
 Variance between chain means is sooo different from variance within chains!
+:::
+::::
 
 
 ## Rhat Visualized: Good
 
 The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
 
+:::: {.columns}
+::: {.column width="70%"}
 ```{r}
 #| echo: false
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
 set.seed(1)
 n_samples <- 500
 d <- tibble(chain = 1:4) |>
@@ -420,14 +1427,27 @@ d |>
   coord_cartesian(ylim = c(1.2, 6)) +
   theme_classic()
 ```
+:::
+
+::: {.column width="30%"}
+
+:::
+::::
+
+
 
 
 ## Rhat Visualized: Good
 
 The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
 
+:::: {.columns}
+::: {.column width="70%"}
 ```{r}
 #| echo: false
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
 d |>
   ggplot(aes(x = rep, y = x, color = factor(chain), group = chain)) +
   geom_line() +
@@ -445,14 +1465,25 @@ d |>
   coord_cartesian(ylim = c(1.2, 6)) +
   theme_classic()
 ```
+:::
+
+::: {.column width="30%"}
+
+:::
+::::
 
 
 ## Rhat Visualized: Good
 
 The main idea of $\hat{R}$ is to compare the variance *between* chains to the variance *within* chains.
 
+:::: {.columns}
+::: {.column width="70%"}
 ```{r}
 #| echo: false
+#| fig-width: 6
+#| fig-height: 4
+#| fig-align: center
 d |>
   ggplot(aes(x = rep, y = x, color = factor(chain), group = chain)) +
   geom_line() +
@@ -487,27 +1518,311 @@ d |>
   coord_cartesian(ylim = c(1.2, 6)) +
   theme_classic()
 ```
+:::
 
+::: {.column .fragment width="30%"}
 Variance between chain means is very close to variance within chains!
+
+:::
+::::
+
 
 
 ## Rhat
 
 In practice, you want to see $\hat{R}$ values less than 1.01. 
 
-::: fragment
+:::: {.columns}
+::: {.column width="40%"}
 ```{r}
-summary(bayes_t_test)[, "Rhat"]
+summary(bayes_t_test_v2)
 ```
 :::
+
+::: {.column width="60%"}
+::: fragment
+```{r}
+summary(bayes_t_test_v2)[, "Rhat"]
+```
+:::
+:::
+::::
 
 
 ## Effective Sample Size (ESS)
 
 In order to closely approximate the posterior ($P(\theta | D)$, the point of this all!), we need to make sure we have a large number of MCMC samples.
 
+But one issue: the samples within a chain are **not** independent samples.
+
+:::: {.columns}
+::: {.column width="33%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 3
+#| fig-align: center
+x <- bayesplot::example_mcmc_draws(chains = 1, params = 1)
+bayesplot::mcmc_trace(x) +
+  scale_color_manual(values = scale_colors)
+```
+
+### Code
+```{r}
+#| eval: false
+x <- bayesplot::example_mcmc_draws(chains = 1, params = 1)
+bayesplot::mcmc_trace(x) +
+  scale_color_manual(values = scale_colors)
+```
+:::
+
+
+:::
+
+::: {.column width="66%"}
+Do you see how they follow each other around?
+
+ESS accounts for that *autocorrelation*. No hard and fast rule, but might be concerned if ESS is lower than 200 or lower than 10% of your total samples.
+:::
+::::
+
+
+## Effective Sample Size (ESS)
+
+Let's check our ESS values.
+
+:::: {.columns}
+::: {.column width="40%"}
+```{r}
+summary(bayes_t_test_v2)
+```
+
+:::
+
+::: {.column width="60%"}
+::: fragment
+```{r}
+summary(bayes_t_test_v2)[, "n_eff"]
+```
+:::
+:::
+::::
+
+
+## Effective Sample Size (ESS)
+
+Bulk and Tail ESS tell you about your effective sample size in the center (bulk) of the distribution and the tails of the distribution. 
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+post_col  <- "#8C7AAE"
+annot_col <- scales::col_darker(post_col, 30)
+
+# Posterior quantiles for placing the annotations
+tail_x <- qbeta(0.99, a + k, b + n - k)
+tail_y <- dbeta(tail_x, a + k, b + n - k)
+
+base_plot <- just_prior_and_likelihood |>
+  ggplot(aes(x, y, label = curve, linetype = curve)) +
+  geomtextpath::geom_textline(
+    aes(color = curve),
+    linewidth = 1,
+    hjust = just_prior_and_likelihood$hjust,
+    vjust = -0.2,
+    size = 5
+  ) +
+  # Bulk annotation
+  annotate("curve",
+           x = post_mode - 0.15, xend = post_mode - 0.1,
+           y = post_peak * 0.76, yend = post_peak * 0.68,
+           curvature = -0.25,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
+           linewidth = 0.6, color = annot_col) +
+  annotate("text",
+           x = post_mode - 0.34, y = post_peak * 0.75,
+           label = str_wrap("Do I have enough samples of the posterior here?", 22),
+           hjust = 0, vjust = 0, size = 4.5, lineheight = 0.9,
+           color = annot_col) +
+  # Tail annotation
+  annotate("curve",
+           x = tail_x + 0.12, xend = tail_x + 0.005,
+           y = 1.5, yend = tail_y + 0.05,
+           curvature = 0.25,
+           arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
+           linewidth = 0.6, color = annot_col) +
+  annotate("text",
+           x = tail_x + 0.13, y = 1.55,
+           label = "How about here?",
+           hjust = 0, vjust = 0, size = 4.5, lineheight = 0.9,
+           color = annot_col) +
+  scale_linetype_manual(values = c(Prior = "dotted", Likelihood = "dashed", Posterior = "solid")) +
+  scale_color_manual(values = c(Prior = "steelblue", Likelihood = "#D98282", Posterior = "#8C7AAE")) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 4.1), clip = "off") +
+  theme_void() +
+  theme(legend.position = "none")
+
+base_plot +
+  geom_density(
+    data = posterior_samples,
+    aes(x = x),
+    inherit.aes = FALSE,
+    fill = post_col, color = post_col, alpha = 0.3, linewidth = 1
+  ) +
+  geom_segment(
+    data = posterior_samples,
+    aes(x = x, xend = x, y = 0, yend = 0.2),
+    inherit.aes = FALSE,
+    color = scales::col_darker(post_col, 30), linewidth = 0.7, alpha = 0.35
+  ) +
+  guides(color = guide_none(), alpha = guide_none()) +
+  theme_void() +
+  theme(plot.title = element_text(size = 14, color = "grey40", hjust = 0.02),
+        legend.position = "none")
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+# install.packages("posterior")
+posterior::summarise_draws(bayes_t_test_v2, 
+                           "mean", "sd", 
+                           "ess_bulk", "ess_tail")
+```
+:::
+::::
+
+
+
+
+
+
+## Warnings
+
+```{r}
+#| eval: false
+bad_example <- stan_glm(hwy ~ cyl, data = filtered_mpg, seed = 12345, iter = 40)
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 2
+#| fig-align: center
+mcmc_trace(bad_example) +
+  scale_color_manual(values = scale_colors)
+mcmc_rank_overlay(bad_example) +
+  scale_color_manual(values = scale_colors)
+```
+
+### Code
+```{r}
+#| eval: false
+bad_example <- stan_glm(hwy ~ cyl, data = filtered_mpg, seed = 12345, iter = 40, refresh = 0)
+
+mcmc_trace(bad_example) +
+  scale_color_manual(values = scale_colors)
+mcmc_rank_overlay(bad_example) +
+  scale_color_manual(values = scale_colors)
+```
+:::
+
+:::
+
+::: {.column width="50%"}
+**Output**
+
+```{r}
+#| echo: false
+bad_example <- stan_glm(hwy ~ cyl, data = filtered_mpg, seed = 12345, iter = 40)
+```
+:::
+::::
+
+
+## Warnings
+
+[Stan documentation on warnings](https://mc-stan.org/learn-stan/diagnostics-warnings.html)
+
+[`{rstanarm}` documentation on troubleshooting`](https://mc-stan.org/rstanarm/articles/rstanarm.html#troubleshooting){preview-link="}
+
+Things to try...
+
+:::: {.columns}
+::: {.column width="33%"}
+**Rhat or ESS too low?**
+
+Try increasing the number of samples (`iter`, default is 1000 for each of four chains).
+:::
+
+::: {.column width="33%"}
+**Divergent transitions?**
+
+Increase `adapt_delta` towards 1 (default is `0.95`)
+:::
+
+::: {.column width="33%"}
+**Max treedepth exceeded?**
+
+If everything else is good, probably fine. Otherwise, try increasing `max_treedepth` (default is 15). Add to `control` argument (`control = list(max_treedepth = 16)`).
+:::
+::::
+
+
+## Bayes Factors
+
+Comparing models to each other. Here, an intercept-only model to a slope-and-intercept model.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| cache: true
+# install.packages("bayestestR")
+# install.packages("bridgesampling")
+bayes_t_test_v0 <- stan_glm(
+  hwy ~ 1, data = filtered_mpg,
+  prior_intercept = normal(24, 15),
+  family = "gaussian",
+  diagnostic_file = here::here("lab", "model-diagnostics", 
+                               "bayes_t_test_v0.csv")
+)
+bayes_t_test_v2 <- stan_glm(
+  hwy ~ cyl, data = filtered_mpg,
+  prior = normal(0, 1.5, autoscale = T),
+  prior_intercept = normal(24, 15),
+  family = "gaussian",
+  diagnostic_file = here::here("lab", "model-diagnostics", 
+                               "bayes_t_test_v2.csv")
+)
+
+bayes_factor <- bayestestR::bayesfactor_models(bayes_t_test_v0, 
+                                               bayes_t_test_v2)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+bayes_factor
+```
+
+We can say the model with the slope term is $9.44\times10^{33}$ (very large!) times as likely as the model without.
+
+:::
+::::
+
 
 ## Lab 07 Assignment
+
+Due **Friday**, 10/16!
 
 
 
