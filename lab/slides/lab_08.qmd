@@ -1,0 +1,1070 @@
+---
+title: "Frequentist and Bayesian Comparison of ANOVA"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2025-10-16 | Lab 8"
+author: "Jess Helmer"
+footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
+format: 
+  revealjs:
+    code-link: true
+    slide-number: true
+    code-line-numbers: false
+    theme: ../../gt-theme.scss
+    width: 1200
+execute: 
+  echo: true
+  dpi: 600
+  freeze: auto
+knitr:
+  opts_chunk:
+    dev: svg
+---
+
+## Outline
+
+- ANOVA review
+
+- Frequentist ANOVA
+
+- Bayesian ANOVA
+
+```{r setup}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(gt)
+```
+
+
+# ANOVA
+
+
+## [**An**]{style="color:#b04c19"}alysis [**o**]{style="color:#5a55fa"}f [**Va**]{style="color:#dfc127"}riance (**[AN]{style="color:#b04c19"}[O]{style="color:#5a55fa"}[VA]{style="color:#dfc127"}**)
+
+[**An**]{style="color:#b04c19"}alysis [**o**]{style="color:#5a55fa"}f [**Va**]{style="color:#dfc127"}riance (**[AN]{style="color:#b04c19"}[O]{style="color:#5a55fa"}[VA]{style="color:#dfc127"}**)
+
+Method of understanding how categorical variables are related to a continuous outcome of interest
+
+Compares *between groups* to *within groups* variance to jointly compare multiple means
+
+
+## ANOVA: Partitioning Variance
+
+**Total Sum of Squared Errors:** error term around the grand mean
+
+$$ SS_{total} = \sum (x_i - \bar{x})^2 $$ 
+
+If we have outcomes separated into different groups (e.g., control, treatment A, treatment B), can partition $SS_{total}$ into *between groups sums of squares* $SS_B$ and *within groups sums of squares* $SS_W$
+
+$$ SS_{total} = SS_B + SS_W $$
+
+[So, with $j$ indexing $J$ total groups and $i$ indexing $I$ people within a group, we can write $SS_{total}$ as...]{.fragment}
+
+## ANOVA: Partitioning Variance
+
+**Total Sum of Squared Errors:** error term around the grand mean
+
+$$ SS_{total} = \sum_{j=1}^J \sum_{i=1}^I (x_{ij} - \bar{x})^2 $$ 
+
+:::: {.columns}
+::: {.column width="50%"}
+**Between-Group Sum of Squares:** error between the group mean and the grand mean
+
+$$ SS_{B} = \sum_{j=1}^J n_j (\bar{x_{j}} - \bar{x})^2 $$ 
+:::
+
+::: {.column width="50%"}
+**Within-Group Sum of Squares:** error between observations and their group mean
+
+$$ SS_{W} = \sum_{j=1}^J \sum_{i=1}^I (x_{ij} - \bar{x_{j}})^2 $$ 
+:::
+::::
+
+
+## ANOVA: Partitioning Variance
+
+Let's say we have three groups and some outcome variable
+
+
+## ANOVA: Partitioning Variance
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+n <- 1000
+data.frame(i = seq(0, 15, length.out = n)) |>
+  mutate(g1 = dnorm(i, 4, 1),
+         g2 = dnorm(i, 6, 1),
+         g3 = dnorm(i, 11, 1)) |>
+  ggplot(aes(x = i)) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .5), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## ANOVA: Partitioning Variance
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+n <- 20
+i <- 100
+
+dat <- data.frame(i = 1:n) |>
+  mutate(x1 = rnorm(n, 4, 1),
+         x2 = rnorm(n, 6, 1),
+         x3 = rnorm(n, 11, 1),
+         h_x1 = runif(n, 0, dnorm(x1, 4, 1) * .9),
+         h_x2 = runif(n, 0, dnorm(x2, 6, 1) * .9),
+         h_x3 = runif(n, 0, dnorm(x3, 11, 1) * .9))
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 1),
+         g2 = dnorm(i, 6, 1),
+         g3 = dnorm(i, 11, 1)) |>
+  ggplot(aes(x = i)) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .5), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## ANOVA: Partitioning Variance
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 1),
+         g2 = dnorm(i, 6, 1),
+         g3 = dnorm(i, 11, 1)) |>
+  ggplot(aes(x = i)) +
+  annotate("segment", x = mean(c(dat$x1, dat$x2, dat$x3)), y = 0, yend = .45, color = "gray60",
+           linewidth = 3, linetype = "dashed") +
+  annotate("text", x = mean(c(dat$x1, dat$x2, dat$x3)),
+           label = paste("grand mean = ", round(mean(c(dat$x1, dat$x2, dat$x3)), 2)),
+           y = Inf, color = "gray60", size = 8, vjust = 1) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .5), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance: $SS_{total}$
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 1),
+         g2 = dnorm(i, 6, 1),
+         g3 = dnorm(i, 11, 1)) |>
+  ggplot(aes(x = i)) +
+  annotate("segment", x = mean(c(dat$x1, dat$x2, dat$x3)), y = 0, yend = .45, color = "gray60",
+           linewidth = 3, linetype = "dashed") +
+  annotate("text", x = mean(c(dat$x1, dat$x2, dat$x3)),
+           label = paste("grand mean = ", round(mean(c(dat$x1, dat$x2, dat$x3)), 2)),
+           y = Inf, color = "gray60", size = 8, vjust = 1) +
+  geom_segment(aes(x = x1, xend = mean(c(x1, x2, x3)), y = h_x1), color = "gray60",
+               linewidth = 1, data = dat) +
+  geom_segment(aes(x = x2, xend = mean(c(x1, x2, x3)), y = h_x2), color = "gray60",
+               linewidth = 1, data = dat) +
+  geom_segment(aes(x = x3, xend = mean(c(x1, x2, x3)), y = h_x3), color = "gray60",
+               linewidth = 1, data = dat) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .5), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 1),
+         g2 = dnorm(i, 6, 1),
+         g3 = dnorm(i, 11, 1)) |>
+  ggplot(aes(x = i)) +
+  annotate("segment", x = mean(c(dat$x1, dat$x2, dat$x3)), y = 0, yend = .45, color = "gray60",
+           linewidth = 3, linetype = "dashed") +
+  annotate("text", x = mean(c(dat$x1, dat$x2, dat$x3)),
+           label = paste("grand mean = ", round(mean(c(dat$x1, dat$x2, dat$x3)), 2)),
+           y = Inf, color = "gray60", size = 8, vjust = 1) +
+  annotate("segment", x = 4, y = 0, yend = dnorm(4, 4, 1), color = "#b04c19",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 4, y = dnorm(4, 4, 1),
+           label = "group 1 mean", vjust = -1.2,
+           color = "#b04c19", size = 8) +
+  annotate("segment", x = 6, y = 0, yend = dnorm(6, 6, 1), color = "#5a55fa",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 6, y = dnorm(6, 6, 1),
+           label = "group 2 mean", vjust = -.4,
+           color = "#5a55fa", size = 8) +
+  annotate("segment", x = 11, y = 0, yend = dnorm(11, 11, 1), color = "#dfc127",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 11, y = dnorm(11, 11, 1),
+           label = "group 3 mean", vjust = -.8,
+           color = "#dfc127", size = 8) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .5), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance: $SS_B$
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 1),
+         g2 = dnorm(i, 6, 1),
+         g3 = dnorm(i, 11, 1)) |>
+  ggplot(aes(x = i)) +
+  annotate("segment", x = mean(c(dat$x1, dat$x2, dat$x3)), y = 0, yend = .45, color = "gray60",
+           linewidth = 3, linetype = "dashed") +
+  annotate("text", x = mean(c(dat$x1, dat$x2, dat$x3)),
+           label = paste("grand mean = ", round(mean(c(dat$x1, dat$x2, dat$x3)), 2)),
+           y = Inf, color = "gray60", size = 8, vjust = 1) +
+  annotate("segment", x = 4, y = 0, yend = dnorm(4, 4, 1), color = "#b04c19",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 4, y = dnorm(4, 4, 1),
+           label = "group 1 mean", vjust = -1.2,
+           color = "#b04c19", size = 8) +
+  geom_segment(aes(x = mean(c(x1, x2, x3)), xend = 4, y = dnorm(4, 4, 1)), color = "#b04c19",
+               linewidth = 2, data = dat) +
+  annotate("segment", x = 6, y = 0, yend = dnorm(6, 6, 1), color = "#5a55fa",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 6, y = dnorm(6, 6, 1),
+           label = "group 2 mean", vjust = -.4,
+           color = "#5a55fa", size = 8) +
+  geom_segment(aes(x = mean(c(x1, x2, x3)), xend = 6, y = dnorm(6, 6, 1) - .05), color = "#5a55fa",
+               linewidth = 2, data = dat) +
+  annotate("segment", x = 11, y = 0, yend = dnorm(11, 11, 1), color = "#dfc127",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 11, y = dnorm(11, 11, 1),
+           label = "group 3 mean", vjust = -.8,
+           color = "#dfc127", size = 8) +
+  geom_segment(aes(x = mean(c(x1, x2, x3)), xend = 11, y = dnorm(11, 11, 1) - .025), color = "#dfc127",
+               linewidth = 2, data = dat) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .5), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance: $SS_W$
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 1),
+         g2 = dnorm(i, 6, 1),
+         g3 = dnorm(i, 11, 1)) |>
+  ggplot(aes(x = i)) +
+  annotate("segment", x = mean(c(dat$x1, dat$x2, dat$x3)), y = 0, yend = .45, color = "gray60",
+           linewidth = 3, linetype = "dashed") +
+  annotate("text", x = mean(c(dat$x1, dat$x2, dat$x3)),
+           label = paste("grand mean = ", round(mean(c(dat$x1, dat$x2, dat$x3)), 2)),
+           y = Inf, color = "gray60", size = 8, vjust = 1) +
+  annotate("segment", x = 4, y = 0, yend = dnorm(4, 4, 1), color = "#b04c19",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 4, y = dnorm(4, 4, 1),
+           label = "group 1 mean", vjust = -1.2,
+           color = "#b04c19", size = 8) +
+  geom_segment(aes(x = x1, xend = 4, y = h_x1), color = "#b04c19",
+               linewidth = 1, data = dat) +
+  annotate("segment", x = 6, y = 0, yend = dnorm(6, 6, 1), color = "#5a55fa",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 6, y = dnorm(6, 6, 1),
+           label = "group 2 mean", vjust = -.4,
+           color = "#5a55fa", size = 8) +
+  geom_segment(aes(x = x2, xend = 6, y = h_x2), color = "#5a55fa",
+               linewidth = 1, data = dat) +
+  annotate("segment", x = 11, y = 0, yend = dnorm(11, 11, 1), color = "#dfc127",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 11, y = dnorm(11, 11, 1),
+           label = "group 3 mean", vjust = -.8,
+           color = "#dfc127", size = 8) +
+  geom_segment(aes(x = x3, xend = 11, y = h_x3), color = "#dfc127",
+               linewidth = 1, data = dat) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .5), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+n <- 1000
+data.frame(i = seq(0, 15, length.out = n)) |>
+  mutate(g1 = dnorm(i, 4, 4),
+         g2 = dnorm(i, 6, 4),
+         g3 = dnorm(i, 11, 4)) |>
+  ggplot(aes(x = i)) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .2), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+n <- 20
+i <- 100
+
+dat <- data.frame(i = 1:n) |>
+  mutate(x1 = rnorm(n, 4, 4),
+         x2 = rnorm(n, 6, 4),
+         x3 = rnorm(n, 11, 4),
+         h_x1 = runif(n, 0, dnorm(x1, 4, 4) * .9),
+         h_x2 = runif(n, 0, dnorm(x2, 6, 4) * .9),
+         h_x3 = runif(n, 0, dnorm(x3, 11, 4) * .9))
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 4),
+         g2 = dnorm(i, 6, 4),
+         g3 = dnorm(i, 11, 4)) |>
+  ggplot(aes(x = i)) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .2), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 4),
+         g2 = dnorm(i, 6, 4),
+         g3 = dnorm(i, 11, 4)) |>
+  ggplot(aes(x = i)) +
+  annotate("segment", x = mean(c(dat$x1, dat$x2, dat$x3)), y = 0, yend = .45, color = "gray60",
+           linewidth = 3, linetype = "dashed") +
+  annotate("text", x = mean(c(dat$x1, dat$x2, dat$x3)),
+           label = paste("grand mean = ", round(mean(c(dat$x1, dat$x2, dat$x3)), 2)),
+           y = Inf, color = "gray60", size = 8, vjust = 1) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .2), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance: $SS_{total}$
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 4),
+         g2 = dnorm(i, 6, 4),
+         g3 = dnorm(i, 11, 4)) |>
+  ggplot(aes(x = i)) +
+  annotate("segment", x = mean(c(dat$x1, dat$x2, dat$x3)), y = 0, yend = .45, color = "gray60",
+           linewidth = 3, linetype = "dashed") +
+  annotate("text", x = mean(c(dat$x1, dat$x2, dat$x3)),
+           label = paste("grand mean = ", round(mean(c(dat$x1, dat$x2, dat$x3)), 2)),
+           y = Inf, color = "gray60", size = 8, vjust = 1) +
+  geom_segment(aes(x = x1, xend = mean(c(x1, x2, x3)), y = h_x1), color = "gray60",
+               linewidth = 1, data = dat) +
+  geom_segment(aes(x = x2, xend = mean(c(x1, x2, x3)), y = h_x2), color = "gray60",
+               linewidth = 1, data = dat) +
+  geom_segment(aes(x = x3, xend = mean(c(x1, x2, x3)), y = h_x3), color = "gray60",
+               linewidth = 1, data = dat) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .2), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 4),
+         g2 = dnorm(i, 6, 4),
+         g3 = dnorm(i, 11, 4)) |>
+  ggplot(aes(x = i)) +
+  annotate("segment", x = mean(c(dat$x1, dat$x2, dat$x3)), y = 0, yend = .21, color = "gray60",
+           linewidth = 3, linetype = "dashed") +
+  annotate("text", x = mean(c(dat$x1, dat$x2, dat$x3)),
+           label = paste("grand mean = ", round(mean(c(dat$x1, dat$x2, dat$x3)), 2)),
+           y = Inf, color = "gray60", size = 8, vjust = 1) +
+  annotate("segment", x = 4, y = 0, yend = dnorm(4, 4, 4), color = "#b04c19",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 4, y = dnorm(4, 4, 4),
+           label = "group 1 mean", vjust = -1.2,
+           color = "#b04c19", size = 8) +
+  annotate("segment", x = 6, y = 0, yend = dnorm(6, 6, 4), color = "#5a55fa",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 6, y = dnorm(6, 6, 4),
+           label = "group 2 mean", vjust = -.4,
+           color = "#5a55fa", size = 8) +
+  annotate("segment", x = 11, y = 0, yend = dnorm(11, 11, 4), color = "#dfc127",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 11, y = dnorm(11, 11, 4),
+           label = "group 3 mean", vjust = -.8,
+           color = "#dfc127", size = 8) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .2), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance: $SS_B$
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 4),
+         g2 = dnorm(i, 6, 4),
+         g3 = dnorm(i, 11, 4)) |>
+  ggplot(aes(x = i)) +
+  annotate("segment", x = mean(c(dat$x1, dat$x2, dat$x3)), y = 0, yend = .45, color = "gray60",
+           linewidth = 3, linetype = "dashed") +
+  annotate("text", x = mean(c(dat$x1, dat$x2, dat$x3)),
+           label = paste("grand mean = ", round(mean(c(dat$x1, dat$x2, dat$x3)), 2)),
+           y = Inf, color = "gray60", size = 8, vjust = 1) +
+  annotate("segment", x = 4, y = 0, yend = dnorm(4, 4, 4), color = "#b04c19",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 4, y = dnorm(4, 4, 4),
+           label = "group 1 mean", vjust = -1.2,
+           color = "#b04c19", size = 8) +
+  geom_segment(aes(x = mean(c(x1, x2, x3)), xend = 4, y = dnorm(4, 4, 4)), color = "#b04c19",
+               linewidth = 2, data = dat) +
+  annotate("segment", x = 6, y = 0, yend = dnorm(6, 6, 4), color = "#5a55fa",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 6, y = dnorm(6, 6, 4),
+           label = "group 2 mean", vjust = -.4,
+           color = "#5a55fa", size = 8) +
+  geom_segment(aes(x = mean(c(x1, x2, x3)), xend = 6, y = dnorm(6, 6, 4) - .05), color = "#5a55fa",
+               linewidth = 2, data = dat) +
+  annotate("segment", x = 11, y = 0, yend = dnorm(11, 11, 4), color = "#dfc127",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 11, y = dnorm(11, 11, 4),
+           label = "group 3 mean", vjust = -.8,
+           color = "#dfc127", size = 8) +
+  geom_segment(aes(x = mean(c(x1, x2, x3)), xend = 11, y = dnorm(11, 11, 4) - .025), color = "#dfc127",
+               linewidth = 2, data = dat) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .2), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance: $SS_W$
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| fig-align: center
+
+data.frame(i = seq(0, 15, length.out = i)) |>
+  mutate(g1 = dnorm(i, 4, 4),
+         g2 = dnorm(i, 6, 4),
+         g3 = dnorm(i, 11, 4)) |>
+  ggplot(aes(x = i)) +
+  annotate("segment", x = mean(c(dat$x1, dat$x2, dat$x3)), y = 0, yend = .45, color = "gray60",
+           linewidth = 3, linetype = "dashed") +
+  annotate("text", x = mean(c(dat$x1, dat$x2, dat$x3)),
+           label = paste("grand mean = ", round(mean(c(dat$x1, dat$x2, dat$x3)), 2)),
+           y = Inf, color = "gray60", size = 8, vjust = 1) +
+  annotate("segment", x = 4, y = 0, yend = dnorm(4, 4, 4), color = "#b04c19",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 4, y = dnorm(4, 4, 4),
+           label = "group 1 mean", vjust = -1.2,
+           color = "#b04c19", size = 8) +
+  geom_segment(aes(x = x1, xend = 4, y = h_x1), color = "#b04c19",
+               linewidth = 1, data = dat) +
+  annotate("segment", x = 6, y = 0, yend = dnorm(6, 6, 4), color = "#5a55fa",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 6, y = dnorm(6, 6, 4),
+           label = "group 2 mean", vjust = -.4,
+           color = "#5a55fa", size = 8) +
+  geom_segment(aes(x = x2, xend = 6, y = h_x2), color = "#5a55fa",
+               linewidth = 1, data = dat) +
+  annotate("segment", x = 11, y = 0, yend = dnorm(11, 11, 4), color = "#dfc127",
+           linewidth = 2, linetype = "dashed") +
+  annotate("text", x = 11, y = dnorm(11, 11, 4),
+           label = "group 3 mean", vjust = -.8,
+           color = "#dfc127", size = 8) +
+  geom_segment(aes(x = x3, xend = 11, y = h_x3), color = "#dfc127",
+               linewidth = 1, data = dat) +
+  geom_line(aes(y = g1), color = "#b04c19", linewidth = 3) +
+  geom_line(aes(y = g2), color = "#5a55fa", linewidth = 3) +
+  geom_line(aes(y = g3), color = "#dfc127", linewidth = 3) +
+  geom_point(aes(x = x1, y = h_x1), dat, color = "#b04c19") +
+  geom_point(aes(x = x2, y = h_x2), dat, color = "#5a55fa") +
+  geom_point(aes(x = x3, y = h_x3), dat, color = "#dfc127") +
+  scale_x_continuous(breaks = c(0, 5, 10, 15)) +
+  coord_cartesian(xlim = c(0, 15), ylim = c(0, .2), expand = F) +
+  guides(y = "none", x = guide_axis(cap = "both")) +
+  labs(y = NULL, x = NULL) +
+  theme_classic(base_size = 20)
+```
+
+
+## Partitioning Variance
+
+Ratio of $SS_B$ to $SS_W$
+
+If $SS_B >> SS_W$, good model. Easy to predict differences based on groups.
+
+If $SS_B \approx SS_W$, less good model. Not easy to predict differences based on groups.
+
+$$ F \propto \frac{\text{between-group variance}}{\text{within-group variance}} $$
+
+
+## ANOVA: $F$
+
+:::: {.columns}
+::: {.column width="50%"}
+**Mean Square Between**
+
+$MS_B = \frac{SS_B}{J - 1} = \frac{\sum_{j=1}^J n_j (\bar{x_{j}} - \bar{x})^2}{J - 1}$
+:::
+
+::: {.column width="50%"}
+**Mean Square Within**
+
+$MS_W = \frac{SS_W}{N - J} = \frac{\sum_{j=1}^J \sum_{i=1}^I (x_{ij} - \bar{x})^2}{N - J}$
+:::
+::::
+
+<br>
+
+$$ F = \frac{MS_B}{MS_W} $$
+
+
+## ANOVA: Hypotheses
+
+$H_0$: $\sigma^2_B = 0$
+
+$H_1$: $\sigma^2_B \neq 0$
+
+::: fragment
+Equivalent to:
+
+$H_0$: $\mu_1 = \mu_2 = ... = \mu_J$
+
+$H_1$: not $H_0$
+
+:::
+
+
+## Penguins ANOVA Example
+
+<!-- ![](https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png) -->
+
+:::: {.columns}
+::: {.column width="33%"}
+**Chinstrap**
+
+![](https://www.secretatlas.com/assets/handbook/antarctica-destination-micro-guide/half-moon-island/full-length-photograph-of-a-chinstrap-penguin-half-moon-island-south-shetland-islands-antarctica-shutterstock-secret-atlas.jpg)
+:::
+
+::: {.column width="33%"}
+**Adelie**
+
+![](https://res.cloudinary.com/enchanting/q_70,f_auto,w_1024,h_683,c_fit/quark-web/2024/09/SamEdmonds20-20Adelie20closeup202.jpg)
+:::
+
+::: {.column width="33%"}
+**Gentoo**
+
+![](https://upload.wikimedia.org/wikipedia/commons/c/c5/2020-11_Kerguelen_Islands_-_Gentoo_penguin_06_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original)
+:::
+::::
+
+
+## Penguins ANOVA Examples
+
+```{r}
+library(palmerpenguins)
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+glimpse(penguins)
+```
+
+:::
+
+::: {.column width="50%"}
+```{r}
+penguins
+```
+:::
+::::
+
+
+# Frequentist ANOVA
+
+
+## ANOVA: R function
+
+`aov(y ~ grouping_var, data = data)`
+
+::: subpoint-narrow
+○ `y` = outcome
+:::
+
+::: subpoint-narrow
+○ `grouping_var` = name of grouping variable
+:::
+
+::: subpoint-narrow
+○ `data` = dataframe that includes `grouping_var` and `y`
+:::
+
+Very similar syntax to `lm(y ~ predictor)` (and you can think of it similarly)
+
+Uses dummy coding by default
+
+`summary(model)`
+
+
+## ANOVA: Example
+
+::: fragment
+```{r}
+penguins_cleaned <- penguins |>
+  filter_out(when_any(is.na(flipper_length_mm), is.na(species)))
+
+flipper_model <- aov(flipper_length_mm ~ species, data = penguins_cleaned)
+summary(flipper_model)
+```
+:::
+
+[Huge $F$-statistic!]{.fragment}
+
+[We reject the null in favor of the alternative that there is significant variation between penguin species in flipper length]{.fragment}
+
+
+## Effect Sizes: Example
+
+:::: {.columns}
+::: {.column .fragment width="50%"}
+$\eta^2$
+
+::: fragment
+```{r}
+effectsize::eta_squared(flipper_model)
+```
+:::
+:::
+
+::: {.column width="50%"}
+$\omega^2$
+
+::: fragment
+```{r}
+effectsize::omega_squared(flipper_model)
+```
+:::
+:::
+::::
+
+
+## Assumptions: Normality and Outliers
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+penguins_cleaned |>
+  ggplot(aes(x = species, y = flipper_length_mm, fill = species, color = species)) +
+  geom_violin(alpha = 0.5, color = NA) +
+  geom_boxplot(width = 0.2, outliers = F) +
+  geom_jitter(alpha = 0.4, shape = 16, size = 3) +
+  stat_summary(geom = "point", fun = mean, size = 2.5) +
+  scale_fill_manual(values = c("#b04c19", "#5a55fa", "#dfc127")) +
+  scale_color_manual(values = scales::col_darker(c("#b04c19", "#5a55fa", "#dfc127"), 15)) +
+  labs(x = "Species", y = "Flipper Length (mm)") +
+  guides(y = guide_axis(cap = "both"), x = guide_axis(cap = "both")) +
+  coord_flip() +
+  theme_classic(base_size = 14) +
+  theme(legend.position = "none")
+```
+
+### Code
+```{r}
+#| eval: false
+penguins_cleaned |>
+  ggplot(aes(x = species, y = flipper_length_mm, fill = species, color = species)) +
+  geom_violin(alpha = 0.5, color = NA) +
+  geom_boxplot(width = 0.2, outliers = F) +
+  geom_jitter(alpha = 0.4, shape = 16, size = 3) +
+  stat_summary(geom = "point", fun = mean, size = 2.5) +
+  scale_fill_manual(values = c("#b04c19", "#5a55fa", "#dfc127")) +
+  scale_color_manual(values = scales::col_darker(c("#b04c19", "#5a55fa", "#dfc127"), 15)) +
+  labs(x = "Species", y = "Flipper Length (mm)") +
+  guides(y = guide_axis(cap = "both"), x = guide_axis(cap = "both")) +
+  coord_flip() +
+  theme_classic(base_size = 14) +
+  theme(legend.position = "none")
+```
+:::
+
+
+# Bayesian ANOVA
+
+## Bayesian ANOVA: Example
+
+Can use `stan_glm()` within `{rstanarm}` again.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| eval: false
+library(rstanarm)
+flipper_model_bayes <- stan_glm(
+  flipper_length_mm ~ species, 
+  data = penguins_cleaned, 
+  family = "gaussian"
+) 
+summary(flipper_model_bayes)
+```
+
+```{r}
+#| echo: false
+library(rstanarm)
+flipper_model_bayes <- stan_glm(
+  flipper_length_mm ~ species, 
+  data = penguins_cleaned, 
+  family = "gaussian",
+  refresh = 0
+) 
+summary(flipper_model_bayes)
+```
+:::
+
+::: {.column width="50%"}
+With dummy coding, 
+
+::: subpoint-narrow
+○ $\beta_0 = $ mean of reference group (here, $\mu_\text{Adelie}$)
+:::
+
+::: subpoint-narrow
+○ $\beta_1 = $ difference between target group and reference group (here, $\mu_\text{Chinstrap} - \mu_\text{Adelie}$)
+:::
+
+::: subpoint-narrow
+○ $\beta_2 = $ difference between target group and reference group (here, $\mu_\text{Gentoo} - \mu_\text{Adelie}$)
+:::
+:::
+::::
+
+
+## Check Diagnostics
+
+```{r}
+posterior::summarise_draws(flipper_model_bayes, "mean", "sd", "rhat", "ess_bulk", "ess_tail")
+```
+
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+bayesplot::mcmc_trace(flipper_model_bayes)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+bayesplot::mcmc_rank_overlay(flipper_model_bayes)
+```
+:::
+::::
+
+
+## Look at Posterior Predictive
+
+:::: {.columns}
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 3
+#| fig-align: center
+bayesplot::ppc_dens_overlay_grouped(
+  y = penguins_cleaned$flipper_length_mm,
+  yrep = posterior_predict(flipper_model_bayes, draws = 50),
+  group = penguins_cleaned$species
+)
+```
+
+### Code
+```{r}
+#| eval: false
+bayesplot::ppc_dens_overlay_grouped(
+  y = penguins_cleaned$flipper_length_mm,
+  yrep = posterior_predict(flipper_model_bayes, draws = 50),
+  group = penguins_cleaned$species
+)
+```
+:::
+
+:::
+
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+posterior_predictive_data <- bayesplot::ppc_data(
+  y = penguins_cleaned$flipper_length_mm,
+  yrep = posterior_predict(flipper_model_bayes, draws = 50),
+  group = penguins_cleaned$species
+)
+
+original_data <- posterior_predictive_data |>
+  filter(is_y)
+model_draws <- posterior_predictive_data |>
+  filter_out(is_y)
+
+model_draws |>
+  ggplot() +
+  ggridges::geom_density_ridges(
+    aes(x = value, y = group, group = interaction(group, rep_id)),
+    fill = NA, color = "steelblue", alpha = 0.5, linewidth = 0.25,
+    scale = 1, rel_min_height = 0
+  ) +
+  ggridges::geom_density_ridges(
+    data = original_data,
+    aes(x = value, y = group),
+    fill = NA, color = "black", linewidth = 0.8,
+    scale = 1, rel_min_height = 0
+  ) +
+  labs(x = "Flipper length (mm)", y = NULL) +
+  ggridges::theme_ridges()
+```
+
+### Code
+```{r}
+#| eval: false
+posterior_predictive_data <- bayesplot::ppc_data(
+  y = penguins_cleaned$flipper_length_mm,
+  yrep = posterior_predict(flipper_model_bayes, draws = 50),
+  group = penguins_cleaned$species
+)
+
+original_data <- posterior_predictive_data |>
+  filter(is_y)
+model_draws <- posterior_predictive_data |>
+  filter_out(is_y)
+
+model_draws |>
+  ggplot() +
+  ggridges::geom_density_ridges(
+    aes(x = value, y = group, group = interaction(group, rep_id)),
+    fill = NA, color = "steelblue", alpha = 0.5, linewidth = 0.25,
+    scale = 1, rel_min_height = 0
+  ) +
+  ggridges::geom_density_ridges(
+    data = original_data,
+    aes(x = value, y = group),
+    fill = NA, color = "black", linewidth = 0.8,
+    scale = 1, rel_min_height = 0
+  ) +
+  labs(x = "Flipper length (mm)", y = NULL) +
+  ggridges::theme_ridges()
+```
+:::
+
+
+:::
+::::
+
+
+## Comparison
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+summary(flipper_model)
+```
+
+:::
+
+::: {.column width="50%"}
+```{r}
+summary(flipper_model_bayes)
+```
+
+:::
+::::
+
+
+
+
+
+
+
+
+
+
