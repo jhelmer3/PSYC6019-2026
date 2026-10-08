@@ -21,19 +21,40 @@ list(
   ## lab index page
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
+  ## lab 08
+  tar_target(lab_08_slides_qmd, 
+             "lab/slides/lab_08.qmd", 
+             format = "file"),
+  tar_target(lab_08_slides, {
+    posterior_samples_plt
+    quarto::quarto_render(lab_08_slides_qmd, quiet = F)
+    qmd_out(lab_08_slides_qmd)
+  }, format = "file"),
   
   ## lab 07
-  tar_target(chick_data, make_chick_data()),
-  tar_file(chick_data_file, 
-           write.csv(chick_data, "lab/data/lab_06/chick_data.csv", row.names = F)),
+  tar_target(where_ffmpeg, Sys.which("ffmpeg")),
+  tar_file(posterior_samples_plt, plt_posterior_samples(), packages = c("tidyverse", "gganimate", "av")),
+  
+  tar_target(pumpkin_prices_data, make_pumpkin_prices_data()),
+  tar_file(pumpkin_prices_data_file, 
+           write.csv(pumpkin_prices_data, "lab/data/lab_07/pumpkin_prices_data.csv", row.names = F)),
   
   tar_target(lab_07_slides_qmd, 
              "lab/slides/lab_07.qmd", 
              format = "file"),
   tar_target(lab_07_slides, {
-    chick_data_file
+    posterior_samples_plt
     quarto::quarto_render(lab_07_slides_qmd, quiet = F)
     qmd_out(lab_07_slides_qmd)
+  }, format = "file"),
+  
+  tar_target(lab_07_activity_key_qmd, 
+             "lab/activities/activity-keys/lab_07_activity_key.qmd", 
+             format = "file"),
+  tar_target(lab_07_activity_key, {
+    pumpkin_prices_data_file
+    quarto::quarto_render(lab_07_activity_key_qmd)
+    qmd_out(lab_07_activity_key_qmd)
   }, format = "file"),
   # tar_target(lab_07_activity_key_qmd, 
   #            "lab/activities/activity-keys/lab_07_activity_key.qmd", 
@@ -46,10 +67,14 @@ list(
   
   
   ## lab 06
+  tar_target(chick_data, make_chick_data()),
+  tar_file(chick_data_file, 
+           write.csv(chick_data, "lab/data/lab_06/chick_data.csv", row.names = F)),
   tar_target(lab_06_slides_qmd, 
              "lab/slides/lab_06.qmd", 
              format = "file"),
   tar_target(lab_06_slides, {
+    chick_data_file
     quarto::quarto_render(lab_06_slides_qmd, quiet = F)
     qmd_out(lab_06_slides_qmd)
   }, format = "file"),
@@ -57,7 +82,6 @@ list(
              "lab/activities/activity-keys/lab_06_activity_key.qmd", 
              format = "file"),
   tar_target(lab_06_activity_key, {
-    leaves_data_file
     quarto::quarto_render(lab_06_activity_key_qmd)
     qmd_out(lab_06_activity_key_qmd)
   }, format = "file"),
