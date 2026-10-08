@@ -176,9 +176,9 @@ Mark Himmelstein
 </section>
 <section id="the-story-so-far" class="slide level2">
 <h2>The Story so Far</h2>
-<p>Until now, we’ve approached this probably with a particular style of thought experiment</p>
+<p>Until now, we’ve approached this problem with a particular style of thought experiment</p>
 <ul>
-<li>Make a supposition (null hypothesis) about the true probability</li>
+<li>Make a supposition (null hypothesis) about the true parameter(s)</li>
 <li>Collect data</li>
 <li>Consider how unlikely our data are for that supposition</li>
 <li>Five straight sixes are possible for a fair die, but unlikely</li>
@@ -306,12 +306,12 @@ Mark Himmelstein
 </section>
 <section id="general-representation" class="slide level2">
 <h2>General Representation</h2>
-<div style="font-size: 0.9em;">
+<div style="font-size: 0.85em;">
 <p>Let’s say we have two events, <span class="math inline">\(\color{blue}{A}\)</span> and <span class="math inline">\(\color{red}{B}\)</span>.</p>
 <ul>
 <li><span class="math inline">\(\color{blue}{A}\)</span> is the location of the cue ball.
 <ul>
-<li>More precisely, <span class="math inline">\(P(\color{blue}{A})\)</span> is <strong>the probability a randomly rolled ball will land to its right</strong></li>
+<li>More precisely, <span class="math inline">\(P(\color{blue}{A})\)</span> is our prior belief about <strong>possible locations of the cue ball</strong></li>
 <li>We do not know <span class="math inline">\(P(\color{blue}{A})\)</span></li>
 </ul></li>
 <li><span class="math inline">\(\color{red}{B}\)</span> is the location of the nine ball
@@ -320,7 +320,7 @@ Mark Himmelstein
 <li><span class="math inline">\(P(\color{red}{B} | \color{blue}{A})\)</span> is the is probability a thrown ball will land to the right of the cue ball <strong>for a specific possible cue ball location</strong></li>
 </ul></li>
 </ul>
-<p><strong>Inverse Probability</strong> is the <strong>conditional probability</strong> of <span class="math inline">\(\color{blue}{A}\)</span> given what we know about <span class="math inline">\(\color{red}{B}\)</span>: <span class="math inline">\(\color{#BAA53D}{P(A|B)}\)</span>. It’s what we <em>learn</em> about <span class="math inline">\(\color{blue}{A}\)</span> by observing <span class="math inline">\(\color{red}{B}\)</span></p>
+<p><strong>Inverse Probability</strong> is the <strong>conditional probability</strong> of <span class="math inline">\(\color{blue}{A}\)</span> given what we know about <span class="math inline">\(\color{red}{B}\)</span>: <span class="math inline">\(\color{#BAA53D}{P(A|B)}\)</span>. It’s what we <em>learn</em> about where the cue ball is likely to be by observing whether other balls land to its left or right</p>
 </div>
 </section>
 <section id="inverting-probability-i" class="slide level2">
@@ -342,10 +342,9 @@ Mark Himmelstein
 <p><span class="math display">\[\color{purple}{P(A \cap B)} = P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})\]</span></p>
 <ul>
 <li>This is the probability that both <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> occur simultaneously for all possibilities of <span class="math inline">\(A\)</span></li>
+<li><strong>Notice:</strong> For any possible <span class="math inline">\(\color{blue}{A}\)</span> we can say something about <span class="math inline">\(P(\color{red}{B}|\color{blue}{A})\)</span></li>
+<li>We are assuming we also know our prior <span class="math inline">\(P(\color{blue}{A})\)</span></li>
 </ul>
-<div style="text-align: center;">
-<p><strong>Joint Probability is the product of a conditional probability and the marginal probability to the event condition on</strong></p>
-</div>
 </section>
 <section id="inverting-probability-iii" class="slide level2">
 <h2>Inverting Probability III</h2>
@@ -358,18 +357,18 @@ Mark Himmelstein
 <section id="inverting-probability-iv" class="slide level2">
 <h2>Inverting Probability IV</h2>
 <p>One way to think of <span class="math inline">\(P(\color{red}{B})\)</span> is the probability of our known event (9-ball to the right of the cue ball) for all possibilities of our unknown event <span class="math inline">\(\color{blue}{A}\)</span> (location of the cue ball)</p>
-<p><span class="math display">\[P(\color{red}B) = P(\color{red}B|\color{blue}{A_1}) + P(\color{red}B|\color{blue}{A_2}) \dots P(\color{red}B|\color{blue}{A_k}) =\]</span> <span class="math display">\[\sum_{i=1}^k P(\color{red}B|\color{blue}{A_i})\]</span></p>
+<p><span class="math display">\[P(\color{red}B) = P(\color{red}B|\color{blue}{A_1}) + P(\color{red}B|\color{blue}{A_2}) \dots P(\color{red}B|\color{blue}{A_k}) =\]</span> <span class="math display">\[\sum_{i=1}^k P(\color{blue}{A_k}) \times P(\color{red}B|\color{blue}{A_i})\]</span></p>
 </section>
 <section id="recap" class="slide level2">
 <h2>Recap</h2>
 <p>We have established the following:</p>
 <p><span class="math display">\[\frac{\color{purple}{P(A\cap B)}}{P(\color{red}{B})} = \color{#BAA53D}{P(A|B)}\]</span> <span class="math display">\[\color{purple}{P(A \cap B)} = P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})\]</span></p>
-<p><span class="math display">\[P(\color{red}{B}) = \sum_{i=1}^k P(\color{red}B|\color{blue}{A_i})\]</span></p>
+<p><span class="math display">\[P(\color{red}{B}) = \sum_{i=1}^k P(\color{blue}{A_k}) \times P(\color{red}B|\color{blue}{A_i})\]</span></p>
 </section>
 <section id="substituting" class="slide level2">
 <h2>Substituting</h2>
 <p>To get to Bayes’ rule, all we have to do is substitute!</p>
-<p><span class="math display">\[\color{#BAA53D}{P(A|B)} = \frac{\color{purple}{P(A\cap B)}}{P(\color{red}{B})} =\frac{P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})}{P(\color{red}{B})} =\]</span> <span class="math display">\[\frac{P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})}{\sum_{i=1}^k P(\color{red}B|\color{blue}{A_i})}\]</span></p>
+<p><span class="math display">\[\color{#BAA53D}{P(A|B)} = \frac{\color{purple}{P(A\cap B)}}{P(\color{red}{B})} =\frac{P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})}{P(\color{red}{B})} =\]</span> <span class="math display">\[\frac{P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})}{\sum_{i=1}^k P(\color{blue}{A_k}) \times P(\color{red}B|\color{blue}{A_i})}\]</span></p>
 <p>Most commonly (and most generally) it is written as:</p>
 <p><span class="math display">\[\color{#BAA53D}{P(A|B)}  =\frac{P(\color{blue}{A}) \times P(\color{red}{B}|\color{blue}{A})}{P(\color{red}{B})}\]</span></p>
 </section>
@@ -378,7 +377,7 @@ Mark Himmelstein
 <ul>
 <li><span class="math inline">\(P(\color{blue}{A})\)</span> is our <strong>prior belief</strong> about what <span class="math inline">\(\color{blue}{A}\)</span> is likely to be</li>
 <li><span class="math inline">\(P(\color{red}{B}|\color{blue}{A})\)</span> is the <strong>likelihood</strong> (last lecture) of different ways the known observation <span class="math inline">\(\color{red}{B}\)</span> might arise for different unknown <span class="math inline">\(\color{blue}{A}\)</span> states of the world</li>
-<li><span class="math inline">\(\sum_{i=1}^k P(\color{red}B|\color{blue}{A_i}) = P(\color{red}{B})\)</span> is a <strong>scaling</strong> or <strong>normalizing</strong> term to make the whole thing a proper probability
+<li><span class="math inline">\(\sum_{i=1}^k P(\color{blue}{A_k}) \times P(\color{red}B|\color{blue}{A_i}) = P(\color{red}{B})\)</span> is a <strong>scaling</strong> or <strong>normalizing</strong> term to make the whole thing a proper probability
 <ul>
 <li>To make sure the fraction is always between 0 and 1</li>
 </ul></li>
@@ -406,6 +405,17 @@ Mark Himmelstein
 </ul></li>
 </ul>
 </div>
+</section>
+<section id="bayesian-updating" class="slide level2">
+<h2>Bayesian Updating</h2>
+<p><strong>Bayes rule is a mathematical formula for how we can update our beliefs about something we don’t know for sure, based on data we do know for sure</strong></p>
+<ul>
+<li><span class="math inline">\(\color{blue}{A}\)</span>: Something we don’t know for sure when we start out</li>
+<li><span class="math inline">\(P(\color{blue}{A})\)</span>: Our belief about possible values of the thing we don’t know for sure</li>
+<li><span class="math inline">\(\color{red}{B}\)</span>: Something we subsequently observe and learn for sure</li>
+<li><span class="math inline">\(P(\color{red}{B}|\color{blue}{A})\)</span>: The likelihood of how the thing we do know fore sure would happen for all possibilities of values of the thing we’ve observed</li>
+<li><span class="math inline">\(\color{#BAA53D}{P(A|B)}\)</span>: Our <strong>updated</strong> belief about the thing we don’t know for sure after observing <span class="math inline">\(\color{red}{B}\)</span></li>
+</ul>
 </section>
 <section id="laplace-vs.-bayes" class="slide level2">
 <h2>Laplace vs.&nbsp;Bayes</h2>
