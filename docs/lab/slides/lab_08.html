@@ -317,7 +317,7 @@ Jess Helmer
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://allisonhorst.github.io/palmerpenguins/">palmerpenguins</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="columns">
-<div class="column" style="width:50%;">
+<div class="column" style="width:33%;">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">glimpse</span><span class="op">(</span><span class="va">penguins</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -333,7 +333,7 @@ $ sex               &lt;fct&gt; male, female, female, NA, female, male, female, 
 $ year              &lt;int&gt; 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007…</code></pre>
 </div>
 </div>
-</div><div class="column" style="width:50%;">
+</div><div class="column" style="width:66%;">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -425,7 +425,9 @@ species   |   0.78 | [0.75, 1.00]
 </div>
 </div>
 </div></div>
-</section><section id="assumptions-normality-and-outliers" class="slide level2"><h2>Assumptions: Normality and Outliers</h2>
+<p><span class="fragment">In this case, <span class="math inline">\(\eta_2\)</span> and <span class="math inline">\(\omega^2\)</span> happen to be the same.</span></p>
+</section><section id="assumptions" class="slide level2"><h2>Assumptions</h2>
+<p>Visualize the distributions to check for normality, outliers, and homogeniety of variance.</p>
 <div class="panel-tabset">
 <ul id="tabset-1" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-1-1">Plot</a></li>
@@ -491,8 +493,8 @@ Model Info:
 
 Estimates:
                    mean   sd    10%   50%   90%
-(Intercept)      190.0    0.6 189.3 190.0 190.7
-speciesChinstrap   5.8    1.0   4.6   5.8   7.1
+(Intercept)      190.0    0.5 189.3 190.0 190.6
+speciesChinstrap   5.9    1.0   4.6   5.9   7.1
 speciesGentoo     27.2    0.8  26.2  27.2  28.3
 sigma              6.7    0.3   6.3   6.7   7.0
 
@@ -504,12 +506,12 @@ The mean_ppd is the sample average posterior predictive distribution of the outc
 
 MCMC diagnostics
                  mcse Rhat n_eff
-(Intercept)      0.0  1.0  4249 
-speciesChinstrap 0.0  1.0  4475 
-speciesGentoo    0.0  1.0  4601 
-sigma            0.0  1.0  4672 
-mean_PPD         0.0  1.0  4031 
-log-posterior    0.0  1.0  1809 
+(Intercept)      0.0  1.0  3691 
+speciesChinstrap 0.0  1.0  3868 
+speciesGentoo    0.0  1.0  3660 
+sigma            0.0  1.0  4371 
+mean_PPD         0.0  1.0  4068 
+log-posterior    0.0  1.0  1950 
 
 For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
@@ -533,10 +535,10 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <pre><code># A tibble: 4 × 6
   variable           mean    sd  rhat ess_bulk ess_tail
   &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 (Intercept)      190.   0.553 1.00     4265.    2765.
-2 speciesChinstrap   5.84 0.976 1.000    4472.    3011.
-3 speciesGentoo     27.2  0.815 1.00     4603.    2841.
-4 sigma              6.66 0.260 1.00     4694.    2813.</code></pre>
+1 (Intercept)      190.   0.541 1.00     3700.    3112.
+2 speciesChinstrap   5.87 0.970 1.000    3873.    3119.
+3 speciesGentoo     27.2  0.801 1.00     3700.    2662.
+4 sigma              6.66 0.254 1.00     4391.    2812.</code></pre>
 </div>
 </div>
 <div class="columns">
@@ -561,91 +563,102 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 </div>
 </div></div>
-</section><section id="look-at-posterior-predictive" class="slide level2"><h2>Look at Posterior Predictive</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-2-1">Plot</a></li>
-<li><a href="#tabset-2-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-2-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_08_files/figure-revealjs/unnamed-chunk-28-1.svg" class="quarto-figure quarto-figure-center" width="768"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-2-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/PPC-distributions.html">ppc_dens_overlay_grouped</a></span><span class="op">(</span></span>
-<span>  y <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">$</span><span class="va">flipper_length_mm</span>,</span>
-<span>  yrep <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">flipper_model_bayes</span>, draws <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span>
-<span>  group <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">$</span><span class="va">species</span></span>
-<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-3-1">Plot</a></li>
-<li><a href="#tabset-3-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-3-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_08_files/figure-revealjs/unnamed-chunk-30-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-3-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">posterior_predictive_data</span> <span class="op">&lt;-</span> <span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/PPC-distributions.html">ppc_data</a></span><span class="op">(</span></span>
-<span>  y <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">$</span><span class="va">flipper_length_mm</span>,</span>
-<span>  yrep <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">flipper_model_bayes</span>, draws <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span>
-<span>  group <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">$</span><span class="va">species</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">original_data</span> <span class="op">&lt;-</span> <span class="va">posterior_predictive_data</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">is_y</span><span class="op">)</span></span>
-<span><span class="va">model_draws</span> <span class="op">&lt;-</span> <span class="va">posterior_predictive_data</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">filter_out</span><span class="op">(</span><span class="va">is_y</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">model_draws</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggridges</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/ggridges/reference/geom_density_ridges.html">geom_density_ridges</a></span><span class="op">(</span></span>
-<span>    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span>, y <span class="op">=</span> <span class="va">group</span>, group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/interaction.html">interaction</a></span><span class="op">(</span><span class="va">group</span>, <span class="va">rep_id</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    fill <span class="op">=</span> <span class="cn">NA</span>, color <span class="op">=</span> <span class="st">"steelblue"</span>, alpha <span class="op">=</span> <span class="fl">0.5</span>, linewidth <span class="op">=</span> <span class="fl">0.25</span>,</span>
-<span>    scale <span class="op">=</span> <span class="fl">1</span>, rel_min_height <span class="op">=</span> <span class="fl">0</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggridges</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/ggridges/reference/geom_density_ridges.html">geom_density_ridges</a></span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="va">original_data</span>,</span>
-<span>    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span>, y <span class="op">=</span> <span class="va">group</span><span class="op">)</span>,</span>
-<span>    fill <span class="op">=</span> <span class="cn">NA</span>, color <span class="op">=</span> <span class="st">"black"</span>, linewidth <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span>    scale <span class="op">=</span> <span class="fl">1</span>, rel_min_height <span class="op">=</span> <span class="fl">0</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Flipper length (mm)"</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggridges</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/ggridges/reference/theme_ridges.html">theme_ridges</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
+<!-- ## Look at Posterior Predictive -->
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 8 -->
+<!-- #| fig-height: 3 -->
+<!-- #| fig-align: center -->
+<!-- bayesplot::ppc_dens_overlay_grouped( -->
+<!--   y = penguins_cleaned$flipper_length_mm, -->
+<!--   yrep = posterior_predict(flipper_model_bayes, draws = 50), -->
+<!--   group = penguins_cleaned$species -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- bayesplot::ppc_dens_overlay_grouped( -->
+<!--   y = penguins_cleaned$flipper_length_mm, -->
+<!--   yrep = posterior_predict(flipper_model_bayes, draws = 50), -->
+<!--   group = penguins_cleaned$species -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- ::: {.column width="50%"} -->
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 5 -->
+<!-- #| fig-height: 4 -->
+<!-- #| fig-align: center -->
+<!-- posterior_predictive_data <- bayesplot::ppc_data( -->
+<!--   y = penguins_cleaned$flipper_length_mm, -->
+<!--   yrep = posterior_predict(flipper_model_bayes, draws = 50), -->
+<!--   group = penguins_cleaned$species -->
+<!-- ) -->
+<!-- original_data <- posterior_predictive_data |> -->
+<!--   filter(is_y) -->
+<!-- model_draws <- posterior_predictive_data |> -->
+<!--   filter_out(is_y) -->
+<!-- model_draws |> -->
+<!--   ggplot() + -->
+<!--   ggridges::geom_density_ridges( -->
+<!--     aes(x = value, y = group, group = interaction(group, rep_id)), -->
+<!--     fill = NA, color = "steelblue", alpha = 0.5, linewidth = 0.25, -->
+<!--     scale = 1, rel_min_height = 0 -->
+<!--   ) + -->
+<!--   ggridges::geom_density_ridges( -->
+<!--     data = original_data, -->
+<!--     aes(x = value, y = group), -->
+<!--     fill = NA, color = "black", linewidth = 0.8, -->
+<!--     scale = 1, rel_min_height = 0 -->
+<!--   ) + -->
+<!--   labs(x = "Flipper length (mm)", y = NULL) + -->
+<!--   ggridges::theme_ridges() -->
+<!-- ``` -->
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- posterior_predictive_data <- bayesplot::ppc_data( -->
+<!--   y = penguins_cleaned$flipper_length_mm, -->
+<!--   yrep = posterior_predict(flipper_model_bayes, draws = 50), -->
+<!--   group = penguins_cleaned$species -->
+<!-- ) -->
+<!-- original_data <- posterior_predictive_data |> -->
+<!--   filter(is_y) -->
+<!-- model_draws <- posterior_predictive_data |> -->
+<!--   filter_out(is_y) -->
+<!-- model_draws |> -->
+<!--   ggplot() + -->
+<!--   ggridges::geom_density_ridges( -->
+<!--     aes(x = value, y = group, group = interaction(group, rep_id)), -->
+<!--     fill = NA, color = "steelblue", alpha = 0.5, linewidth = 0.25, -->
+<!--     scale = 1, rel_min_height = 0 -->
+<!--   ) + -->
+<!--   ggridges::geom_density_ridges( -->
+<!--     data = original_data, -->
+<!--     aes(x = value, y = group), -->
+<!--     fill = NA, color = "black", linewidth = 0.8, -->
+<!--     scale = 1, rel_min_height = 0 -->
+<!--   ) + -->
+<!--   labs(x = "Flipper length (mm)", y = NULL) + -->
+<!--   ggridges::theme_ridges() -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- :::: -->
 </section><section id="comparison" class="slide level2"><h2>Comparison</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">flipper_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">flipper_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             Df Sum Sq Mean Sq F value Pr(&gt;F)    
 species       2  52473   26237   594.8 &lt;2e-16 ***
@@ -656,7 +669,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">flipper_model_bayes</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">flipper_model_bayes</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
@@ -671,8 +684,8 @@ Model Info:
 
 Estimates:
                    mean   sd    10%   50%   90%
-(Intercept)      190.0    0.6 189.3 190.0 190.7
-speciesChinstrap   5.8    1.0   4.6   5.8   7.1
+(Intercept)      190.0    0.5 189.3 190.0 190.6
+speciesChinstrap   5.9    1.0   4.6   5.9   7.1
 speciesGentoo     27.2    0.8  26.2  27.2  28.3
 sigma              6.7    0.3   6.3   6.7   7.0
 
@@ -684,17 +697,204 @@ The mean_ppd is the sample average posterior predictive distribution of the outc
 
 MCMC diagnostics
                  mcse Rhat n_eff
-(Intercept)      0.0  1.0  4249 
-speciesChinstrap 0.0  1.0  4475 
-speciesGentoo    0.0  1.0  4601 
-sigma            0.0  1.0  4672 
-mean_PPD         0.0  1.0  4031 
-log-posterior    0.0  1.0  1809 
+(Intercept)      0.0  1.0  3691 
+speciesChinstrap 0.0  1.0  3868 
+speciesGentoo    0.0  1.0  3660 
+sigma            0.0  1.0  4371 
+mean_PPD         0.0  1.0  4068 
+log-posterior    0.0  1.0  1950 
 
 For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
 </div>
 </div></div>
+</section><section id="effect-coding" class="slide level2"><h2>Effect Coding</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Dummy coding compares <span class="math inline">\(g-1\)</span> groups to <span class="math inline">\(\beta_0 =\)</span> <strong>reference group mean</strong>:</p>
+<table class="caption-top">
+<thead><tr class="header">
+<th style="text-align: center;">Predictor</th>
+<th style="text-align: center;"><span class="math inline">\(g_1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(g_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\cdots\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(g_{G-1}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(g_G\)</span></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(x_1\)</span></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(\cdots\)</span></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(x_2\)</span></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(\cdots\)</span></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\vdots\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\vdots\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\vdots\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\ddots\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\vdots\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\vdots\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(x_{G-1}\)</span></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(\cdots\)</span></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:50%;">
+<p><strong>Dummy coding:</strong></p>
+<ul>
+<li><span class="math inline">\(\beta_0: = \mu_3\)</span></li>
+<li><span class="math inline">\(\beta_1: = \mu_{1} - \mu_3\)</span></li>
+<li><span class="math inline">\(\beta_2: = \mu_{2} - \mu_3\)</span></li>
+</ul>
+</div></div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Effects or contrast coding compares <span class="math inline">\(g-1\)</span> groups to <span class="math inline">\(\beta_0 =\)</span> <strong>grand mean</strong>:</p>
+<table class="caption-top">
+<thead><tr class="header">
+<th style="text-align: center;">Predictor</th>
+<th style="text-align: center;"><span class="math inline">\(g_1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(g_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\cdots\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(g_{G-1}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(g_G\)</span></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(x_1\)</span></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(\cdots\)</span></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">-1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(x_2\)</span></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(\cdots\)</span></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">-1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\vdots\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\vdots\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\vdots\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\ddots\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\vdots\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\vdots\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(x_{G-1}\)</span></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(\cdots\)</span></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">-1</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:50%;">
+<p><strong>Contrast/Effects coding:</strong></p>
+<ul>
+<li><span class="math inline">\(\beta_0: = \mu\)</span></li>
+<li><span class="math inline">\(\beta_1: = \mu_{1} - \mu\)</span></li>
+<li><span class="math inline">\(\beta_2: = \mu_{2} - \mu\)</span></li>
+</ul>
+<p>Compares groups to <strong>grand mean</strong></p>
+</div></div>
+<div class="footer">
+<p><a href="https://jhelmer3.github.io/PSYC6019-2026/lecture/lecture-index.html">Stolen from Mark’s slides</a></p>
+</div>
+</section><section id="changing-to-effect-coding-in-r" class="slide level2"><h2>Changing to Effect Coding in R</h2>
+<p>We can tell R we want to use effect coding instead of dummy coding; we don’t have to manually create the effect coding columns ourselves.</p>
+<p>We need to set the <code>contrasts</code> setting of our grouping variable to <code>contr.sum</code>. Everything you run after that will use effect coding.</p>
+<p>If you ever need to change it back to dummy coding, set it to <code>contr.treatment</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/contrasts.html">contrasts</a></span><span class="op">(</span><span class="va">penguins_cleaned</span><span class="op">$</span><span class="va">species</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">contr.sum</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">flipper_model_effect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aov.html">aov</a></span><span class="op">(</span></span>
+<span>  <span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">species</span>, </span>
+<span>  data <span class="op">=</span> <span class="va">penguins_cleaned</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">flipper_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Df Sum Sq Mean Sq F value Pr(&gt;F)    
+species       2  52473   26237   594.8 &lt;2e-16 ***
+Residuals   339  14953      44                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">flipper_model_bayes_effect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span></span>
+<span>  <span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">species</span>, </span>
+<span>  data <span class="op">=</span> <span class="va">penguins_cleaned</span>, </span>
+<span>  family <span class="op">=</span> <span class="st">"gaussian"</span></span>
+<span><span class="op">)</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">flipper_model_bayes_effect</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Info:
+ function:     stan_glm
+ family:       gaussian [identity]
+ formula:      flipper_length_mm ~ species
+ algorithm:    sampling
+ sample:       4000 (posterior sample size)
+ priors:       see help('prior_summary')
+ observations: 342
+ predictors:   3
+
+Estimates:
+              mean   sd    10%   50%   90%
+(Intercept) 201.0    0.4 200.5 201.0 201.5
+species1    -11.0    0.5 -11.7 -11.0 -10.4
+species2     -5.1    0.6  -5.9  -5.2  -4.4
+sigma         6.7    0.2   6.3   6.6   7.0
+
+Fit Diagnostics:
+           mean   sd    10%   50%   90%
+mean_PPD 200.9    0.5 200.3 200.9 201.6
+
+The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
+
+MCMC diagnostics
+              mcse Rhat n_eff
+(Intercept)   0.0  1.0  3599 
+species1      0.0  1.0  3198 
+species2      0.0  1.0  2806 
+sigma         0.0  1.0  4240 
+mean_PPD      0.0  1.0  4068 
+log-posterior 0.0  1.0  1815 
+
+For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
+</div>
+</div>
+</div></div>
+</section><section id="lab-08-assignment" class="slide level2"><h2>Lab 08 Assignment</h2>
 
 
 </section></section>
