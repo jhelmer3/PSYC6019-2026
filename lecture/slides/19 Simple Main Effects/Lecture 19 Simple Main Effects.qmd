@@ -1,0 +1,514 @@
+---
+title: "Lecture 12: The Model Based Perspective"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+```
+
+
+## Traditional Two-way ANOVA
+
+::: {style="font-size: 0.8em;"}
+
+For the two-way ANOVA, there are two categorical IVs (factors)
+
+Factor $A$ has levels $j = 1, \ldots, J$ and Factor $B$ has levels $k = 1, \ldots, K$
+
+Population model:
+
+$$y_{ijk} = \mu_G + \alpha_j + \beta_k + (\alpha\beta)_{jk} + \epsilon_{ijk}$$
+
+- $y_{ijk}$: Observed value of observation $i$ belonging to level $j$ of factor $A$ and level $k$ of factor $B$
+- $\mu_{G}$: Population grand mean (disregarding group membership) 
+- $\alpha_j = \mu_{A_j} - \mu_G$: effect of factor $A_j$
+- $\beta_k = \mu_{B_k} - \mu_G$: effect of factor $B_k$
+- $(\alpha\beta)_{jk} = \mu_{AB_{jk}} - \mu_{A_j} - \mu_{B_k} + \mu_G$: interaction of factor $A_j$ and factor $B_k$
+- $\epsilon_{ijk}$: deviation of observation $i$ from the mean of observations in both group $A_j$ and group $B_k$
+
+::: 
+
+## Omnibus Tests
+
+
+::: {style="font-size: 0.6em;"}
+
+| Effect / Source | Sums of Squares | Degrees of Freedom | Mean Squares | $F$ |
+| :--- | :--- | :--- | :--- |  :--- |
+| **Between-Gp Effect** | $SS_{G}=\sum_{k}\sum_{j}[n_{jk}(\bar{y}_{jk}-\bar{y})^{2}]$ | $df_{G}=(J\times K-1)$ | $MS_{G}=\frac{SS_{G}}{df_{G}}$ |  |
+| **Main Effect $A$** | $SS_{A}=nK\sum_{j}(\bar{y}_{j}-\bar{y})^{2}$ | $df_{A}=J-1$ | $MS_{A}=\frac{SS_{A}}{df_{A}}$ | $F(df_A, df_W) = \frac{MS_A}{MS_W}$ |
+| **Main Effect $B$** | $SS_{B}=nJ\sum_{k}(\bar{y}_{k}-\bar{y})^{2}$ | $df_{B}=K-1$ | $MS_{B}=\frac{SS_{B}}{df_{B}}$ | $F(df_B, df_W) = \frac{MS_B}{MS_W}$ |
+| **Interaction Effect** | $SS_{AB}=SS_{G}-SS_{A}-SS_{B}$ | $df_{AB}=(J-1)(K-1)$ | $MS_{AB}=\frac{SS_{AB}}{df_{AB}}$ | $F_{df_{AB}, df_W} = \frac{MS_{AB}}{MS_W}$ |
+| **Within-Gp Effect** | $SS_{W}=SS_{T}-SS_{G}$ | $df_{W}=df_{T}-df_{G}$ | $MS_{W}=\frac{SS_{W}}{df_{W}}$ | |
+| **Total Effect** | $SS_{T}=\sum_{k}\sum_{j}\sum_{i}(y_{ijk}-\bar{y})^{2}$ | $df_{T}=N-1$ | $MS_{T}=\frac{SS_{T}}{df_{T}}$ | |
+
+:::
+
+
+## Interpretations
+
+- **Interaction** $F_{df_{AB}, df_W}$: Do differences in means for factor $A$ different depend on the level of $B$ OR do differences in means for factor $B$ different depend on the level of $A$
+- **Main Effect** $A$ $F(df_A, df_W)$: Are there differences in the group means for factor $A$ at the **average** level of $B$
+- **Main Effect** $B$ $F(df_B, df_W)$: Are there differences in the group means for factor $B$ at the **average** level of $A$
+
+Like ommibus test in one-way ANOVA does not tell us **how** groups might differ, only **whether** there are differences in means and if those differences depend on one factor or both.
+
+To investigate **how** groups differ, we need **simple main effects**
+
+
+## Simple Main Effects
+
+**Simple Main Effects** are a way of looking at how the effects of one factor differ for different levels of the other.
+
+- We can investigate the simple main effect of factor $A$ on the outcome, separately in each group of factor $B$
+- **Equivalently**, we can investigate the simple main effect of factor $B$ on the outcome, separately in each group of factor $A$
+- Either procedure is sufficient, no need to do both
+- Choosing which one to look at depends primarily on if there is a particular interpretation you prefer
+
+
+## Simple Main Effects: Conceptual Method
+
+Suppose we want to run simple effects for main effect $A$
+
+**Step 1**: Run a separate one-way ANOVA for each level of factor $B$
+
+**Step 2**: Record the sums of squares, degrees of freedom, and mean squares of the main effect for each one-way ANOVA
+
+**Step 3**: Use the mean squares within and $df$ within from the original factorial ANOVA
+
+**Step 4**: Hypothesis Testing (next slide)
+
+
+## Simple Main Effects: Hypothesis Testing
+
+$H_0$: there is no simple main effect in the population
+
+$H_1$: there is a simple main effect in the population
+
+Test statistic:
+
+$$F(df_{\text{simple}}, df_W) = \frac{MS_{\text{simple}}}{MS_W}$$
+
+When $H_0$ is true, test statistic follows the $F$ distribution with $df_{\text{simple}}$ numerator and $df_W$ degrees of freedom
+
+
+## Bodegas Himmelstein
+
+::: {style="text-align:center;"}
+
+![](../../figs/vineyard.jpg){width=68%}
+
+(an actual vineyard I visited in Spain)
+
+:::
+
+
+```{r}
+#| include: false
+
+dat <- read.csv("../../data/wine east west.csv")
+dat$condition <- factor(dat$condition, levels = c("control","a","b"))
+dat$method <- dat$condition
+dat$condition <- NULL
+```
+
+
+## Two-Way ANOVA in R
+
+**Way 1**: Using built-in `R` commands
+
+```{r}
+#| echo: true
+
+a1 <- aov(rating ~ hill * method, dat)
+summary(a1)
+```
+
+## Simple Main Effect 1
+
+First redo model looking at the effect of method **only** for the east hill
+
+```{r}
+#| echo: true
+
+a1_east <- aov(rating ~ method, dat |> filter(hill == "east"))
+summary(a1_east)
+```
+
+
+But instead of ignoring the west hill, I use $MS_W$ from the **full** ANOVA, rather than this one. Why?
+
+- [Homogeneity of variance! The full model is a better estimate of the shared within group variance than the model that ignores half my data (west side of hill)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Main Effect 1 $p$
+
+
+- $MS_{\text{method}} = 433$, $df_{\text{method}} = 2$ (from east only model)
+- $MS_{W} = 13.8$, $df_W = 294$ (from full model)
+
+```{r}
+
+433.0 / 13.8
+pf(31.38, df1 = 2, df2 = 294, lower.tail = FALSE)
+```
+
+On the East side, there were significant differences in method
+
+
+
+
+## Simple Main Effects 2
+
+Now I do the same for the west side of the hill
+
+
+```{r}
+a1_west <- aov(rating ~ method, dat %>% filter(hill == "west"))
+summary(a1_west)
+904.4 / 13.8
+pf(65.54, df1 = 2, df2 = 294, lower.tail = FALSE)
+```
+
+On the west side, there were also significant differences in method
+
+
+## Simple Main Effects in R
+
+The `emmeans` package includes a more straightforward way to conduct simple main effects:
+
+```{r}
+#| echo: true
+
+library(emmeans)
+e1 <- emmeans(a1, ~ hill * method)
+joint_tests(e1, by = "hill")
+```
+
+(slight numerical differences due to rounding)
+
+## Reversed Simple Mian
+
+I could also look at the effect of hill by method if I prefer to make that interpretation
+
+```{r}
+#| echo: true
+
+joint_tests(e1, by = "method")
+```
+
+There were significant differences in the side of the hill for control and method `a`, but not method `b`.
+
+
+## Simple Main Effects: Post-Hoc Comparisons
+
+We can conduct multiple comparisons between pairs of groups of factor $A$, separately in groups of factor $B$
+
+- We can use the procedures that we learned about last week to control the Type I error rate (e.g., Tukey HSD)
+
+Multiple comparisons are not necessary when there are only two levels of a factor
+
+
+## Simple Main Effects
+
+On both sides of hill, there is a statistically significant simple main effect of growing method. We can perform pairwise tests for each growing method by each side of the hill separately.
+
+```{r}
+#| echo: true
+
+pairs(e1, by = "hill")
+```
+
+## Interpretations
+
+On th east side of the hill, using Tukey's HSD for Type I error control:
+
+- `control` is significantly different from `a`
+- `control` is significantly different from `b`
+- `a` is not significantly different from `b`
+
+On the west side of the hill
+
+- All groups are significantly different from each other
+
+
+## A Priori Comparisons: Linear Contrasts
+
+We can also do linear contrasts for simple main effects. For example, we can compare whether control is significantly different from the average of the two treatment conditions for each side of the hill separately. 
+
+- What linear contrast would compare `control` to the average of `a` and `b`?
+
+- [Homogeneity of variance! The full model is a better estimate of the shared within group variance than the model that ignores half my data (west side of hill)]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Linear Contrasts
+
+```{r}
+#| echo: true
+#| message: false
+
+levels(dat$method) # view order of IV levels
+contrast(e1, by = "hill", method = list(c(1, -1/2, -1/2)))
+```
+
+
+For both sides of the hill, `control` is significantly different from the average of `a` and `b`
+
+
+
+## ~~Simple~~ Main Effects
+
+If we assume that the interaction isn't meaningful then we may want to look at the ~~simple~~ main effects
+
+- What is meaningful?
+- Often interpreted as "significant"
+    - Personally don't love this way of thinking! Significance doesn't always mean an effect is "real"
+- **More importantly:** If differences in one factor change for different levels of another factor, it may not make sense to interpret ~~simple~~ main effects
+    - Because ~~simple~~ main effects average over all levels of other factors
+
+## Example
+
+For example, let's look at pairwise comparisons for the main effect of Method **averaged** over the effects of both sides of the hill
+
+```{r}
+#| echo: true
+
+em2 <- emmeans(a1, specs = "method")
+pairs(em2)
+```
+
+
+At the **average** of `east` and `west` hills
+- `control` is significantly different from `a`
+- `control` is significantly different from `b`
+- `a` and `b` are not significantly different from each other
+
+## Semantic Clarification
+
+- **Simple** Main effects: The main effect of one factor at different levels of the other factor
+  - e.g. the effect of Factor A at each level of Factor B separately
+  - This is how/when you probe the interaction effect
+  
+- ~~Simple~~ main effects (sometimes called marginal effects or **ordinary** main effects): The main effect of one factor **averaged** over all of the levels of the other factor.
+  - e.g. the effect of Factor A **averaged** over all levels of Factor B
+  - This is how/when you interpret/probe the main effects directly
+  
+  
+## Suggested Procedures
+
+::: {style="font-size: 0.9em;"}
+
+- First, investigate the interaction effect
+- If significant, or effect size of interaction is large, investigate the **simple main effect** of factor $A$ on outcome, separately in each group in factor $B$
+    - **Equivalently**, you could investigate the simple main effect of factor $B$ on outcome, separately in each group in factor $A$
+    - Either procedure is sufficient
+- Consider whether it is meaningful to average over all levels of a factor before considering any interpretations of main effects
+    - Does your data adequately represent all possible factors you want to generalize about? 
+    - Is the interaction effect non-significant/small?
+    - If yes to either, main effects can be sensible
+
+:::
+
+
+
+## Effect Size
+
+Standardized associations:
+
+::: {.columns}
+
+::: {.column width="50%"}
+* $\eta^2$ and partial $\eta^2$
+:::
+
+::: {.column width="50%"}
+* $\omega^2$ and partial $\omega^2$
+:::
+
+:::
+
+
+Similar to calculations and interpretations for interaction and main effects
+
+::: {.columns}
+
+::: {.column width="50%"}
+::: {.callout-note title="$\eta^2$ for simple main effect"}
+$$\frac{SS_{\text{simple}}}{SS_{T}}$$
+:::
+
+::: {.callout-important title="$\omega^2$ for simple main effect"}
+$$\frac{df_{\text{simple}}(MS_{\text{simple }}-MS_{W})}{MS_{W}+SS_{T}}$$
+:::
+:::
+
+::: {.column width="50%"}
+::: {.callout-important title="Partial $\eta^2$ for simple main effect"}
+$$\frac{SS_{\text{simple}}}{SS_{\text{simple}}+SS_{W}}$$
+:::
+
+::: {.callout-note title="Partial $\omega^2$ for simple main effect"}
+$$\frac{df_{\text{simple}}(MS_{\text{simple}}-MS_{W})}{SS_{\text{simple}}+(N-df_{\text{simple}})MS_{W}}$$
+:::
+:::
+
+:::
+
+
+
+## Example
+
+::: {style="font-size: 0.9em;"}
+
+```{r}
+#| echo: true
+summary(a1_east)
+summary(a1)
+```
+
+
+$$\text{partial} \ \eta^2 = \frac{866}{866 + 4045}= .18$$
+
+
+$$\text{partial} \ \omega^2 = \frac{2  (433 - 13.8)}{866 + (300 - 2)13.8}= .17$$
+
+::: 
+
+
+## Post-Hoc Comparisons
+
+Cohen's $d$ between groups $k$ and $l$:
+
+$$d = \frac{\bar{y}_k - \bar{y}_l}{s}$$
+
+- $\bar{y}_k$: sample mean of group $k$
+- $\bar{y}_l$: sample mean of group $l$
+
+Options for $s$:
+
+- Sample $SD$ of group $k$ (focal interest in group $k$)
+- Sample $SD$ of group $l$ (focal interest in group $l$)
+- $\sqrt{MS_W}$: $SD$ of within-group effect
+
+## Example
+
+We can calculate $d$ for the difference between `a` and `control` on the east side of the hill. The `emmeans` object we saved before can give us the cell means
+
+```{r}
+#| echo: true
+e1
+```
+I'll use $\sqrt{MS_W} = \sqrt{13.8}$ as my denominator
+
+$$d_{\text{a} - \text{control}} = \frac{91.1 - 85.4}{\sqrt{13.8}} = 1.53$$
+
+
+## Interaction Contrasts
+
+Allow us to test whether whether a linear contrast for one factor differs as a function of a linear contrast for another
+
+**Example:** Is the **difference** between method A and method B on hill A the same as the difference between Method A and method B on hill B
+
+## Setting Up Contrasts
+
+First we need to set up the relevant contrasts for both factors as separate lists (you can have several different contrasts for each factor)
+
+
+```{r}
+#| echo: true
+hill_contrast <- list("East vs West" = c(east = -1, west = 1))
+
+condition_contrasts <- list("Method A vs Method B" = c(control = 0, a = 1, b = -1))
+```
+
+
+Then we use `contrast()` and specify the interaction as a list with both of our lists
+
+
+```{r}
+#| echo: true
+interaction_results <- contrast(e1, 
+  interaction = list(hill = hill_contrast, condition = condition_contrasts))
+
+summary(interaction_results)
+```
+
+The difference $(\mu_{A,east} - \mu_{B,east}) - (\mu_{A,west} - \mu_{B,west})$ was significantly different from 0
+
+## Bayesian Versions
+
+All of this stuff generalizes to Bayes-world! You can use `emmeans()` with `rstanarm` objects and do parallel analyses for everything we've talked about
+
+```{r}
+#| echo: true
+library(rstanarm)
+stan_a1 <- stan_glm(rating ~ hill * method, dat, family = "gaussian")
+```
+
+
+
+## Simple Main Effects
+
+```{r}
+#| echo: true
+stan_e1 <- emmeans(stan_a1, ~ hill * method)
+pairs(stan_e1, by = "hill")
+```
+
+For inference, we get the 95% HPD credible intervals
+
+## Interaction Contrasts
+
+```{r}
+#| echo: true
+interaction_results <- contrast(stan_e1, 
+  interaction = list(hill = hill_contrast, condition = condition_contrasts))
+
+summary(interaction_results)
+```

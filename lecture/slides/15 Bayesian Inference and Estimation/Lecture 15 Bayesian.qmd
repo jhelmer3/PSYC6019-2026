@@ -58,7 +58,7 @@ my_yellow2 <- "#FFFFCC"
 
 
 
-## What is Bayesian Inference
+## Bayesian Inference
 
 NHST is a decision rule framework for how we make a categorical choice: do we decide to reject the null hypothesis?
 
@@ -66,28 +66,34 @@ NHST is a decision rule framework for how we make a categorical choice: do we de
 
 - Way of defining how we can use new data to updating our existing beliefs about what a population parameter is likely to be.
 
-## The Elements of Bayes' Rule
+## Elements of Bayes' Rule
 
 Let's imagine we have a coin, we want to determine the true proportion of times that the coin will land on heads (vs. tails).
 
 * We will call the coin's true proportion of landing on heads (which is unknown) $\pi$. 
 * We then flip the coin 10 times, and observe 7 heads and 3 tails, which is our "data," which we will call $\boldsymbol{D}$.
 
-## The Elements of Bayes' Rule
+## More Elements
 
-$$P(\theta|D) = \frac{P(D|\theta)P(\theta)}{P(D)}$$ 
+::: {style="font-size: 0.8em;"}
+
+$$P(\pi|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\pi)P(\pi)}{P(\boldsymbol{D})}$$ 
 
 - $P(\pi)$ - our **prior** belief about the proportion of times the coin will lands heads
   - [Notice: The true $\pi$ is unknown. This is a statement about our **confidence** it might take on certain values. So we might think it is very likely 50%, but there is some chance it is not, and is an unfair coin]{.fragment}
 - $P(\boldsymbol{D}|\pi)$ - The *likelihood* of observing 7 heads and 3 tails, given the (unknown) true $\pi$.
 - $P(\boldsymbol{D})$ - The probability of observing 7 heads and 3 tails *unconditionally*
-  - [One way to define this: $P(\boldsymbol{D}) = \sum P(\boldsymbol{D}|\theta)P(\theta)$]{.fragment}
-  - [Really we typically need calculus for this: $P(\boldsymbol{D}) = \int P(\boldsymbol{D}|\theta)P(\theta)\,d\theta$]{.fragment}
-- $P(\theta | \boldsymbol{D})$ - the posterior belief about the proportion of times the coin will land on heads, incorporating both the prior and the data. 
+  - [One way to define this: $P(\boldsymbol{D}) = \sum P(\boldsymbol{D}|\pi)P(\pi)$]{.fragment}
+- $P(\pi | \boldsymbol{D})$ - the posterior belief about the proportion of times the coin will land on heads, incorporating both the prior and the data. 
   
+  
+:::
+
 ## Probabilities of Probabilities
   
-Notice that our prior is a probability statement about not about how likely the coin is to land on heads, but our **confidence** in the true proportion of times the coin will land on heads $\pi$. If we are very confident, our prior might look something like this.
+Notice that our prior is a probability statement about not about how likely the coin is to land on heads, but our **confidence** in the true proportion of times the coin will land on heads $\pi$. If we are very confident, our prior might look something like:
+
+## Prior 1
 
 ```{r out.width = "85%", warning = FALSE, message = FALSE}
 library(ggplot2)
@@ -306,6 +312,8 @@ ggplot(data, aes(x = x, y = pdf)) +
 
 ## How to Specify your Prior
 
+::: {style="font-size: 0.95em;"}
+
 In practice, priors are specified as probability distributions.
 
 For example, if I am very confident the coin is likely to be fair, my prior might be a normal distribution with $\mu = 0.5$ and $\sigma = 0.1$. 
@@ -315,6 +323,8 @@ For example, if I am very confident the coin is likely to be fair, my prior migh
     + Because 68% of the values in a normal distribution are within 1 SD of the mean
 * Likewise, I am around 98% certain the true proportion is between $0.3$ and $0.7$
     + Because 98% of the values in a normal distribution are within 2 SD of the mean
+
+:::
 
 ## How to Specify your Prior
 
@@ -330,7 +340,8 @@ This prior would technically be improper. Can anyone see why?
 You can use improper priors, but in general, proper priors are going to allow us to do more and more interesting things.
 
 
-## How to Incorportate Data
+
+## How to Incorporate Data
 
 How does data move us from prior to posterior? 
 
@@ -403,23 +414,62 @@ ggplot(likelihood_df, aes(x = p, y = likelihood)) +
 ```
 
 
+## Back to Bayesics
+
+
+
+In our running coin flip example, we said we are trying to figure out a posterior belief about the true probability of heads $\pi$
+
+$$P(\pi|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\pi)P(\pi)}{P(\boldsymbol{D})}$$
+
+- **Prior:** $P(\pi)$
+- **Likelihood:** $P(\boldsymbol{D}|\pi)$
+- **Scaling term:** $P(\boldsymbol{D})$
+- **Posterior:** $P(\pi|\boldsymbol{D})$
+
+## Problems with Scale
+
+We sort of glossed over the scaling term by saying
+
+- One way to define this: $P(\boldsymbol{D}) = \sum P(\boldsymbol{D}|\pi)P(\pi)$
+
+But really what we're summing over is all possible values of $\pi$
+
+- This really needs to be an **integral:** $P(\boldsymbol{D}) = \int P(\boldsymbol{D}|\pi)P(\pi)d\pi$
+- This integral is often not going to be analytically solvable, making it a cbig computational challenge
+
+
+
 ## MAP Estimation
 
-One approach to Bayesian estimation is very similar to Maximum Likelihood. It is known as Maximum **A Posteriori** estimation (MAP). Under MAP, we aren't necessarily interested in the actual probability distribution $P(\pi |\boldsymbol{D})$, just the value of $\pi$ that maximizes this function.
+
+
+One approach to Bayesian estimation is very similar to Maximum Likelihood, and lets us ignore this problem. It is known as Maximum **A Posteriori** estimation (MAP). Under MAP, we aren't necessarily interested in the actual probability distribution $P(\pi |\boldsymbol{D})$, just the value of $\pi$ that maximizes this function.
 
 Notice what this allows us to do with Bayes' rule:
 
 $$P(\theta|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\theta)P(\theta)}{P(\boldsymbol{D})} = \frac{P(\boldsymbol{D}|\theta)P(\theta)}{\int P(\boldsymbol{D}|\theta)P(\theta)\,d\theta}$$ 
 
+
+## Proportionality over Equality
+
 Because we don't care about the equality, only the maximum point, we can drop out the denominator, and instead say
 
 $$P(\theta|\boldsymbol{D}) \propto P(\boldsymbol{D}|\theta)P(\theta)$$ 
 
+
+
 Where $\propto$ means "is proportional to".
 
-This is a common approach when the primary goal is making predictions, rather than making a confidence statement about parameter values. 
+This is a common approach when the primary goal finding the single most likely parameter values, rather than making a confidence statement about parameter values. 
+
+- Often useful for making predictions
+
+
 
 ## General Form
+
+::: {style="font-size: 0.95em;"}
 
 The coin flip was a motivating example, but not very practice. Our general version of Bayes' rule is:
 
@@ -432,8 +482,11 @@ $$P(\boldsymbol{\theta}|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\boldsymbol{\th
 
 This allows us to consider our confidence in multiple parameters simultaneously, represented generically as $\boldsymbol{\theta}$
 
+:::
 
 ## General Linear Model
+
+::: {style="font-size: 0.8em;"}
 
 For example, recall that we can rewrite a $t$-test in the form of a simple linear model
 
@@ -450,10 +503,11 @@ We want to estimate Bayes' rule **without** losing the denominator, complex inte
 
 $$P(\boldsymbol{\theta}|\boldsymbol{D})  = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{P(\boldsymbol{D})} = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{\sum P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})} = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{\int P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})\,d\boldsymbol{\theta}}$$
 
+:::
 
-## Markov Chain Monte Carlo
+## Markov Chain Monte Carlo {style="font-size: .8em;"}
 
-Markov Chain Monte Carlo (MCMC) is a simulation-based procedure for determining the **goint** of posterior distribution of all parameters $\boldsymbol{\theta}$ when it's too complicated to figure out numerically.
+Markov Chain Monte Carlo (MCMC) is a simulation-based procedure for determining the **joint** of posterior distribution of all parameters $\boldsymbol{\theta}$ when it's too complicated to figure out numerically.
 
 There are many different MCMC based algorithms. In a very general/intuitive sense, the way MCMC works is as follows:
 
@@ -478,6 +532,8 @@ In our example, where $\boldsymbol{\theta} = [\beta_0, \beta_1, \sigma_\epsilon]
     
 ## MCMC: More Detail II
 
+::: {style="font-size: 0.77em;"}
+
 **Step 4:** If 
 
 -  $\mathcal{L}(\beta_{0_2}, \beta_{1_1}, \sigma_{\epsilon_1} ; \boldsymbol{D}) \geq \mathcal{L}(\beta_{0_1}, \beta_{1_1}, \sigma_{\epsilon_1} ; \boldsymbol{D})$, keep the proposed value $\beta_{0_2}$ for sure. 
@@ -493,7 +549,9 @@ In our example, where $\boldsymbol{\theta} = [\beta_0, \beta_1, \sigma_\epsilon]
 **Step 8:** Repeat steps 3-5 for $\sigma_{\epsilon}$ using $\beta_{0_2}$ and $\beta_{1_2}$ if they were accepted as as a proposals, otherwise $\beta_{0_1}$ and/or $\beta_{0_1}$
 
 
-Repeat this entire process a pre=specified number of times. Eventually, the random draws should "converge" on a stable distribution that represents the posterior.
+Repeat this entire process a pre-specified number of times. Eventually, the random draws should "converge" on a stable distribution that represents the posterior.
+
+:::
 
 ## Gibbs Sampling and the Metropolis Hastings Algorithm
 
@@ -566,7 +624,7 @@ I found the following explanations useful for better understanding these
 
 The posterior distributions of each parameter can directly provide us inferential information.
 
-Point estimates about parameters can be made using measures of central tendency
+Point estimates about (most likely values of) parameters can be made using measures of central tendency
 
 - Mean: the posterior mean for a parameter is the value that will minimize squared error
 - Median: the posterior median for a parameter is the value that will minimize absolute error
@@ -574,6 +632,8 @@ Point estimates about parameters can be made using measures of central tendency
 
 
 ## Credible Intervals
+
+::: {style="font-size: 0.85em;"}
 
 The spread of the distributions quantify confidence in parameter estimates, or plausible values parameters might take
 
@@ -586,9 +646,10 @@ The spread of the distributions quantify confidence in parameter estimates, or p
     - Contrast this with our earlier definitions of frequentist confidence intervals!
       - In 95% of samples, true parameter will fall inside interval
       - Range of values we cannot reject if treated as null hypothesis
+
+:::
     
-    
-## Types of Credible Intervals
+## Types of CIs
 
 Equal Tailed Intervals (ETI):
 
@@ -604,10 +665,117 @@ The two types will be equal in symmetric distributions, but will not be in asymm
 
 ##
 
-![](../../Figs/etihdi.png)
+```{r}
+
+
+# --- 1. Model Posterior Distribution for Residual SD (sigma) ---
+shape_param <- 2.5
+scale_param <- 1.0
+
+x_grid <- seq(0.001, 8, length.out = 1000)
+df_post <- data.frame(
+  sigma = x_grid,
+  density = dgamma(x_grid, shape = shape_param, scale = scale_param)
+)
+
+# --- 2. Calculate Interval Boundaries ---
+# ETI Bounds
+eti_lower <- qgamma(0.025, shape = shape_param, scale = scale_param)
+eti_upper <- qgamma(0.975, shape = shape_param, scale = scale_param)
+
+# HPD Bounds (Shortest width containing 95% mass)
+hpd_width <- function(a) {
+  b <- qgamma(pgamma(a, shape = shape_param, scale = scale_param) + 0.95, 
+              shape = shape_param, scale = scale_param)
+  return(b - a)
+}
+opt <- optimize(hpd_width, interval = c(0.0001, qgamma(0.05, shape = shape_param, scale = scale_param)))
+hpd_lower <- opt$minimum
+hpd_upper <- qgamma(pgamma(hpd_lower, shape = shape_param, scale = scale_param) + 0.95, 
+                    shape = shape_param, scale = scale_param)
+
+# --- 3. Compute Tail Percentages ---
+eti_left_pct  <- round(pgamma(eti_lower, shape_param, scale_param) * 100, 2)
+eti_right_pct <- round((1 - pgamma(eti_upper, shape_param, scale_param)) * 100, 2)
+
+hpd_left_pct  <- round(pgamma(hpd_lower, shape_param, scale_param) * 100, 2)
+hpd_right_pct <- round((1 - pgamma(hpd_upper, shape_param, scale_param)) * 100, 2)
+
+# --- 4. Build Faceted Data for Side-by-Side Tail Comparison ---
+df_eti <- df_post
+df_eti$type <- "Equal-Tailed Interval (ETI)"
+df_eti$region <- ifelse(df_eti$sigma < eti_lower, "Left Tail",
+                 ifelse(df_eti$sigma > eti_upper, "Right Tail", "95% Interval"))
+
+df_hpd <- df_post
+df_hpd$type <- "Highest Posterior Density (HPD)"
+df_hpd$region <- ifelse(df_hpd$sigma < hpd_lower, "Left Tail",
+                 ifelse(df_hpd$sigma > hpd_upper, "Right Tail", "95% Interval"))
+
+df_combined <- rbind(df_eti, df_hpd)
+df_combined$type <- factor(df_combined$type, levels = c("Equal-Tailed Interval (ETI)", "Highest Posterior Density (HPD)"))
+
+# Tail label annotations dataframe
+df_text <- data.frame(
+  type = factor(c("Equal-Tailed Interval (ETI)", "Equal-Tailed Interval (ETI)",
+                  "Highest Posterior Density (HPD)", "Highest Posterior Density (HPD)"),
+                levels = c("Equal-Tailed Interval (ETI)", "Highest Posterior Density (HPD)")),
+  sigma = c(0.20, 7.1, 0.08, 6.8),
+  density = c(0.08, 0.08, 0.08, 0.08),
+  label = c(paste0("Left Tail:\n", eti_left_pct, "%"),
+            paste0("Right Tail:\n", eti_right_pct, "%"),
+            paste0("Left Tail:\n", hpd_left_pct, "%"),
+            paste0("Right Tail:\n", hpd_right_pct, "%"))
+)
+
+# --- 5. Generate Plot ---
+ggplot(df_combined, aes(x = sigma, y = density)) +
+  # Shaded regions for tails and intervals
+  geom_ribbon(aes(ymin = 0, ymax = density, fill = region), alpha = 0.5) +
+  geom_line(color = "black", size = 0.8) +
+  
+  # Facet by interval method
+  facet_wrap(~ type, ncol = 1) +
+  
+  # Tail Percentage Labels
+  geom_label(data = df_text, aes(x = sigma, y = density, label = label),
+             fill = "white", color = "grey10", fontface = "bold", size = 3.5, label.size = 0.3) +
+  
+  # Vertical Cutoff Lines
+  geom_vline(data = data.frame(type = factor("Equal-Tailed Interval (ETI)", levels = levels(df_combined$type)), 
+                               x = c(eti_lower, eti_upper)),
+             aes(xintercept = x), linetype = "dashed", color = "#2b5c8f", size = 0.8) +
+  geom_vline(data = data.frame(type = factor("Highest Posterior Density (HPD)", levels = levels(df_combined$type)), 
+                               x = c(hpd_lower, hpd_upper)),
+             aes(xintercept = x), linetype = "dashed", color = "#d95f02", size = 0.8) +
+  
+  # Color Palette and Formatting
+  scale_fill_manual(
+    name = "Posterior Region",
+    values = c("95% Interval" = "#b3cde3", "Left Tail" = "#e41a1c", "Right Tail" = "#377eb8")
+  ) +
+  scale_x_continuous(breaks = seq(0, 8, by = 1)) +
+  labs(
+    title = "Tail Mass Comparison: 95% ETI vs. 95% HPD for Residual SD (\u03c3)",
+    subtitle = "ETI explicitly balances 2.5% mass per tail; HPD shifts left to maximize density, leaving asymmetric tails",
+    x = "Residual SD (\u03c3)",
+    y = "Posterior Density"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "bottom",
+    strip.text = element_text(face = "bold", size = 11),
+    plot.title = element_text(face = "bold", size = 13),
+    plot.subtitle = element_text(color = "grey30", size = 10),
+    panel.grid.minor = element_blank()
+  )
+```
+
 
 
 ## Bayes Factors
+
+::: {style="font-size: 0.85em;"}
 
 Bayes Factors are a way of comparing the support for different models in a Bayesian framework.
 
@@ -621,7 +789,11 @@ $$BF = \frac{P(\boldsymbol{D}|M_1)}{P(\boldsymbol{D}|M_2)}$$
 - When $BF < 1$, $M_2$ is more likely than $M_1$
     - When $BF = \frac{1}{3}$, $M_2$ is three times as likely to be the "true" model as $M_1$
 
+::: 
+
 ## Advantages and Disadvantages
+
+::: {style="font-size: 0.85em;"}
 
 Advantages:
 
@@ -635,12 +807,19 @@ Disadvantages:
 - Can lead to similar pitfalls as frequentist analysis
     - $BF$ of 3 (or $\frac{1}{3}$) have been proposed as "cutoff" values. This is just as arbitrary as $\alpha = .05$, and even sillier since Bayes Factors have a much more intuitive interpretation than $p$-values
     
+:::
 
 ## Bayes Factors and Support Intervals
 
 **Support Interval:** Region of the posterior distribution of a parameter that is taller than the prior distribution.
 
 **Interpretation:** Data added evidentiary support for this region over our prior.
+
+In the following figure:
+
+- Dashed outline is prior
+- Shaded orange is posterior
+- Support interval is region where posterior is taller than prior
 
 ## Support Intervals
 
@@ -669,10 +848,7 @@ ggplot(mapping = aes(x = x, y = y)) +
   ) +
   # BF = 1 SI in blue
   geom_vline(xintercept = si_1$CI_low, color = "royalblue", linewidth = 1) +
-  geom_vline(xintercept = si_1$CI_high, color = "royalblue", linewidth = 1) +
-  # BF = 3 SI in red
-  geom_vline(xintercept = si_3$CI_low, color = "red", linewidth = 1, linetype = 2) +
-  geom_vline(xintercept = si_3$CI_high, color = "red", linewidth = 1, linetype = 2)
+  geom_vline(xintercept = si_1$CI_high, color = "royalblue", linewidth = 1)
 ```
 
 
@@ -680,17 +856,24 @@ Figure from [https://easystats.github.io/bayestestR/articles/credible_interval.h
 
 ## Cross Validation
 
-Cross validation (CV) methods slice data up into sections.
 
-They use one part of data as a "training" sample, and another as a "testing" sample.
+::: {style="font-size: 0.85em;"}
+
+We briefly discussed cross-validation based methods a few lectures ago
+
+- Slice data up into sections.
+
+- Use one part of data as a "training" sample, and another as a "testing" sample.
 
 The downside to this is the loss of precision/power.
 
-**Leave one out (LOO)** cross-validation takes all possible combinations of $N-1$ observations, leaving one row out a time, and cross validates on that single observation.
+- **Leave one out (LOO)** cross-validation takes all possible combinations of $N-1$ observations, leaving one row out a time, and cross validates on that single observation.
 
-Pareto Smoothed Importance Sampling (PSIS) provides a method for estimating LOO-CV in a tractable way, and can be quite useful (though not always feasible).
+- Pareto Smoothed Importance Sampling (PSIS) provides a method for estimating LOO-CV in a tractable way, and can be quite useful (though not always feasible).
 
 This is a great method when available though, since models are validated on data that wasn't in the sample on which they were fit, which is a huge bonus for generalizability and avoiding overfit. 
+
+::: 
 
 ## `Stan` and `rstanarm`
 
@@ -727,6 +910,8 @@ McCrea, S. M. (2008). Self-handicapping, excuse making, and counterfactual think
 **Step 3**: Subjects took a second surprise math exam
 :::
 
+
+
 ```{r}
 dat <- read.csv("../../data/McCrea.csv") |> 
   mutate(Cond = recode(as_factor(Cond), 
@@ -752,13 +937,18 @@ summary(lm1)
 ## In `rstanarm`
 
 ```{r}
+library(rstanarm)
+```
+
+```{r}
 #| echo: true
 #| cache: true
 library(rstanarm)
 options(mc.cores = parallel::detectCores())
 
 stan_lm1 <- stan_glm(percent ~ Cond, dat, family = "gaussian",
-                     diagnostic_file = "df1.csv")
+                     diagnostic_file = "df1.csv", #for Bayes factor
+                     seed = 1224)
 summary(stan_lm1, digits = 2, probs = c(.025, .5, .975))
 
 ```
@@ -769,11 +959,14 @@ summary(stan_lm1, digits = 2, probs = c(.025, .5, .975))
 By default, `rstanarm` uses the following priors
 
 - For $\beta_0$ and $\beta_1$ the prior is based on a normal distribution with $\sigma = 2.5$
-  - $\sigma = 2.5$ is based on a **transformed** scale, using information about the variables in the model to convert to $z$-score units
-  - The intercept $\beta_0$ has $\mu$ based on the overall mean
+  - $\sigma = 2.5$ is based on a **transformed** scale, using information about the variables in the model to convert to $Z$-score units
+  - The intercept $\beta_0$ has $\mu$ based on the observed mean $\bar{y}$
   - The slope $\beta_1$ has $\mu = 0$
 - $\sigma$ is given a prior based on an *exponential* distribution
-  - Non-negative distribution, also scaled to $z$-score-like units
+  - Non-negative distribution, also scaled to $Z$-score-like units
+  
+
+## Prior Summary
   
 ```{r}
 #| echo: true
@@ -782,14 +975,22 @@ prior_summary(stan_lm1)
 
 ## `rstanarm` Results
 
-- Posterior mean of $\beta_1 = -0.12$
+```{r}
+summary(stan_lm1, digits = 2, probs = c(.025, .5, .975))
+```
+
+
+## Reading these Results
+
+- Posterior mean of $\beta_0 = 0.58$
 - Posterior median of $\beta_1 = -0.12$
-- 95% ETI credible interval = [-0.22, -0.02]
+  - 95% ETI credible interval = [-0.22, -0.02]
 
-Let's quickly look at
 
-- How to get the HDI credible interval
-- Use a Bayes factor to compare this model to an intercept-only model
+Let's briefly look at 
+
+- How to get the HDI interval
+- How to compute a Bayes factor comparing to an unconditional (intercept only) model
 
 ## HDI interval
 
@@ -802,6 +1003,8 @@ hdi(stan_lm1, component = "all")
 
 ## Bayes Factor
 
+::: {style="font-size: 0.85em;"}
+
 An intercept only model would treat the two groups as having equal means
 
 $$\text{percent}_i = \beta_0 + \epsilon_i$$
@@ -811,16 +1014,19 @@ $$\text{percent}_i = \beta_0 + \epsilon_i$$
 #| cache: true
 #| echo: true
 stan_lm0 <- stan_glm(percent ~ 1, dat, family = "gaussian",
-                     diagnostic_file = "df0.csv")
+                     diagnostic_file = "df0.csv", #for Bayes factor,
+                     seed = 312)
 
 (bfs1 <- bayesfactor_models(stan_lm0, stan_lm1))
 ```
 
-**Interpretation:** The original model is only 70% as likely as the intercept only model
+**Interpretation:** The original model is only 69% as likely as the intercept only model
 
-- The intercept only model is $\frac{1}{.70} = 1.43$ times as likely as the original model
+- The intercept only model is $\frac{1}{.69} = 1.45$ times as likely as the original model
 - Assumes one of these models is **the model**
+
+:::
 
 ## APA Writeup
 
-Using a Bayesian model, the posterior mean of the difference between control and treatment was $\beta_1 = -0.12$, $95\% \text{ CI} = [-0.22, -0.02]$. Compared to an intercept-only model, this model had $BF = 0.70$, indicating it was only 70% as likely as the model that allows for differences in means between the two groups. 
+Using a Bayesian model, the posterior mean of the difference between control and treatment was $\beta_1 = -0.12$, $95\% \text{ CI} = [-0.22, -0.02]$. Compared to an intercept-only model, this model had $BF = 0.69$, indicating it was only 69% as likely as the model that allows for differences in means between the two groups. 

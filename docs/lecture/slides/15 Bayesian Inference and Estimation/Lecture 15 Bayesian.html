@@ -6,8 +6,8 @@
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.9.38">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
 
   <meta name="author" content="Mark Himmelstein">
   <title>PSYC 6019 – Lecture 15: Bayesian Inference and Estimation</title>
@@ -20,10 +20,13 @@
     /* Default styles provided by pandoc.
     ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
     */
-    code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
     ul.task-list li input[type="checkbox"] {
@@ -98,7 +101,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-310ee64b8d902485d7066f18a434f318.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-15d324c2aafc27a03d2c3a1c4b493f27.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -211,31 +214,32 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Mark Himmelstein 
+Mark Himmelstein
 </div>
 </div>
 </div>
 
 </section>
-<section id="what-is-bayesian-inference" class="slide level2">
-<h2>What is Bayesian Inference</h2>
+<section id="bayesian-inference" class="slide level2">
+<h2>Bayesian Inference</h2>
 <p>NHST is a decision rule framework for how we make a categorical choice: do we decide to reject the null hypothesis?</p>
 <ul>
 <li><p>Bayesian inference is also a kind of decision rule, but it is not discrete, it is continuous.</p></li>
 <li><p>Way of defining how we can use new data to updating our existing beliefs about what a population parameter is likely to be.</p></li>
 </ul>
 </section>
-<section id="the-elements-of-bayes-rule" class="slide level2">
-<h2>The Elements of Bayes’ Rule</h2>
+<section id="elements-of-bayes-rule" class="slide level2">
+<h2>Elements of Bayes’ Rule</h2>
 <p>Let’s imagine we have a coin, we want to determine the true proportion of times that the coin will land on heads (vs.&nbsp;tails).</p>
 <ul>
 <li>We will call the coin’s true proportion of landing on heads (which is unknown) <span class="math inline">\(\pi\)</span>.</li>
 <li>We then flip the coin 10 times, and observe 7 heads and 3 tails, which is our “data,” which we will call <span class="math inline">\(\boldsymbol{D}\)</span>.</li>
 </ul>
 </section>
-<section id="the-elements-of-bayes-rule-1" class="slide level2">
-<h2>The Elements of Bayes’ Rule</h2>
-<p><span class="math display">\[P(\theta|D) = \frac{P(D|\theta)P(\theta)}{P(D)}\]</span></p>
+<section id="more-elements" class="slide level2">
+<h2>More Elements</h2>
+<div style="font-size: 0.8em;">
+<p><span class="math display">\[P(\pi|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\pi)P(\pi)}{P(\boldsymbol{D})}\]</span></p>
 <ul>
 <li><span class="math inline">\(P(\pi)\)</span> - our <strong>prior</strong> belief about the proportion of times the coin will lands heads
 <ul>
@@ -244,15 +248,18 @@ Mark Himmelstein
 <li><span class="math inline">\(P(\boldsymbol{D}|\pi)\)</span> - The <em>likelihood</em> of observing 7 heads and 3 tails, given the (unknown) true <span class="math inline">\(\pi\)</span>.</li>
 <li><span class="math inline">\(P(\boldsymbol{D})\)</span> - The probability of observing 7 heads and 3 tails <em>unconditionally</em>
 <ul>
-<li><span class="fragment">One way to define this: <span class="math inline">\(P(\boldsymbol{D}) = \sum P(\boldsymbol{D}|\theta)P(\theta)\)</span></span></li>
-<li><span class="fragment">Really we typically need calculus for this: <span class="math inline">\(P(\boldsymbol{D}) = \int P(\boldsymbol{D}|\theta)P(\theta)\,d\theta\)</span></span></li>
+<li><span class="fragment">One way to define this: <span class="math inline">\(P(\boldsymbol{D}) = \sum P(\boldsymbol{D}|\pi)P(\pi)\)</span></span></li>
 </ul></li>
-<li><span class="math inline">\(P(\theta | \boldsymbol{D})\)</span> - the posterior belief about the proportion of times the coin will land on heads, incorporating both the prior and the data.</li>
+<li><span class="math inline">\(P(\pi | \boldsymbol{D})\)</span> - the posterior belief about the proportion of times the coin will land on heads, incorporating both the prior and the data.</li>
 </ul>
+</div>
 </section>
 <section id="probabilities-of-probabilities" class="slide level2">
 <h2>Probabilities of Probabilities</h2>
-<p>Notice that our prior is a probability statement about not about how likely the coin is to land on heads, but our <strong>confidence</strong> in the true proportion of times the coin will land on heads <span class="math inline">\(\pi\)</span>. If we are very confident, our prior might look something like this.</p>
+<p>Notice that our prior is a probability statement about not about how likely the coin is to land on heads, but our <strong>confidence</strong> in the true proportion of times the coin will land on heads <span class="math inline">\(\pi\)</span>. If we are very confident, our prior might look something like:</p>
+</section>
+<section id="prior-1" class="slide level2">
+<h2>Prior 1</h2>
 
 <img data-src="Lecture-15-Bayesian_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:85.0%"><p>This plot suggests we think it’s very likely the coin is fair, though there’s some possibiliy is is weighted more heavily towards heads or tails.</p>
 </section>
@@ -305,6 +312,7 @@ Mark Himmelstein
 <img data-src="Lecture-15-Bayesian_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:85.0%"></section>
 <section id="how-to-specify-your-prior" class="slide level2">
 <h2>How to Specify your Prior</h2>
+<div style="font-size: 0.95em;">
 <p>In practice, priors are specified as probability distributions.</p>
 <p>For example, if I am very confident the coin is likely to be fair, my prior might be a normal distribution with <span class="math inline">\(\mu = 0.5\)</span> and <span class="math inline">\(\sigma = 0.1\)</span>.</p>
 <ul>
@@ -318,6 +326,7 @@ Mark Himmelstein
 <li>Because 98% of the values in a normal distribution are within 2 SD of the mean</li>
 </ul></li>
 </ul>
+</div>
 </section>
 <section id="how-to-specify-your-prior-1" class="slide level2">
 <h2>How to Specify your Prior</h2>
@@ -326,8 +335,8 @@ Mark Himmelstein
 <p><span class="answer fragment" data-unless-meta="params.v0">This is one of the reasons Bayesian Statsitics is more complex to learn.</span></p>
 <p>You can use improper priors, but in general, proper priors are going to allow us to do more and more interesting things.</p>
 </section>
-<section id="how-to-incorportate-data" class="slide level2">
-<h2>How to Incorportate Data</h2>
+<section id="how-to-incorporate-data" class="slide level2">
+<h2>How to Incorporate Data</h2>
 <p>How does data move us from prior to posterior?</p>
 <p><span class="answer fragment" data-unless-meta="params.v0">Through the <strong>likelihood function</strong></span></p>
 <p><span class="math display">\[P(\pi|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\pi)P(\pi)}{P(\boldsymbol{D})}\]</span></p>
@@ -347,18 +356,48 @@ Mark Himmelstein
 <p>Recall: To find the maximum likelihood, we find the highest point on the hill</p>
 
 <img data-src="Lecture-15-Bayesian_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="back-to-bayesics" class="slide level2">
+<h2>Back to Bayesics</h2>
+<p>In our running coin flip example, we said we are trying to figure out a posterior belief about the true probability of heads <span class="math inline">\(\pi\)</span></p>
+<p><span class="math display">\[P(\pi|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\pi)P(\pi)}{P(\boldsymbol{D})}\]</span></p>
+<ul>
+<li><strong>Prior:</strong> <span class="math inline">\(P(\pi)\)</span></li>
+<li><strong>Likelihood:</strong> <span class="math inline">\(P(\boldsymbol{D}|\pi)\)</span></li>
+<li><strong>Scaling term:</strong> <span class="math inline">\(P(\boldsymbol{D})\)</span></li>
+<li><strong>Posterior:</strong> <span class="math inline">\(P(\pi|\boldsymbol{D})\)</span></li>
+</ul>
+</section>
+<section id="problems-with-scale" class="slide level2">
+<h2>Problems with Scale</h2>
+<p>We sort of glossed over the scaling term by saying</p>
+<ul>
+<li>One way to define this: <span class="math inline">\(P(\boldsymbol{D}) = \sum P(\boldsymbol{D}|\pi)P(\pi)\)</span></li>
+</ul>
+<p>But really what we’re summing over is all possible values of <span class="math inline">\(\pi\)</span></p>
+<ul>
+<li>This really needs to be an <strong>integral:</strong> <span class="math inline">\(P(\boldsymbol{D}) = \int P(\boldsymbol{D}|\pi)P(\pi)d\pi\)</span></li>
+<li>This integral is often not going to be analytically solvable, making it a cbig computational challenge</li>
+</ul>
+</section>
 <section id="map-estimation" class="slide level2">
 <h2>MAP Estimation</h2>
-<p>One approach to Bayesian estimation is very similar to Maximum Likelihood. It is known as Maximum <strong>A Posteriori</strong> estimation (MAP). Under MAP, we aren’t necessarily interested in the actual probability distribution <span class="math inline">\(P(\pi |\boldsymbol{D})\)</span>, just the value of <span class="math inline">\(\pi\)</span> that maximizes this function.</p>
+<p>One approach to Bayesian estimation is very similar to Maximum Likelihood, and lets us ignore this problem. It is known as Maximum <strong>A Posteriori</strong> estimation (MAP). Under MAP, we aren’t necessarily interested in the actual probability distribution <span class="math inline">\(P(\pi |\boldsymbol{D})\)</span>, just the value of <span class="math inline">\(\pi\)</span> that maximizes this function.</p>
 <p>Notice what this allows us to do with Bayes’ rule:</p>
 <p><span class="math display">\[P(\theta|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\theta)P(\theta)}{P(\boldsymbol{D})} = \frac{P(\boldsymbol{D}|\theta)P(\theta)}{\int P(\boldsymbol{D}|\theta)P(\theta)\,d\theta}\]</span></p>
+</section>
+<section id="proportionality-over-equality" class="slide level2">
+<h2>Proportionality over Equality</h2>
 <p>Because we don’t care about the equality, only the maximum point, we can drop out the denominator, and instead say</p>
 <p><span class="math display">\[P(\theta|\boldsymbol{D}) \propto P(\boldsymbol{D}|\theta)P(\theta)\]</span></p>
 <p>Where <span class="math inline">\(\propto\)</span> means “is proportional to”.</p>
-<p>This is a common approach when the primary goal is making predictions, rather than making a confidence statement about parameter values.</p>
+<p>This is a common approach when the primary goal finding the single most likely parameter values, rather than making a confidence statement about parameter values.</p>
+<ul>
+<li>Often useful for making predictions</li>
+</ul>
 </section>
 <section id="general-form" class="slide level2">
 <h2>General Form</h2>
+<div style="font-size: 0.95em;">
 <p>The coin flip was a motivating example, but not very practice. Our general version of Bayes’ rule is:</p>
 <p><span class="math display">\[P(\boldsymbol{\theta}|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{P(\boldsymbol{D})}\]</span></p>
 <ul>
@@ -368,9 +407,11 @@ Mark Himmelstein
 <li><strong>Posterior:</strong> <span class="math inline">\(P(\boldsymbol{\theta}|\boldsymbol{D})\)</span></li>
 </ul>
 <p>This allows us to consider our confidence in multiple parameters simultaneously, represented generically as <span class="math inline">\(\boldsymbol{\theta}\)</span></p>
+</div>
 </section>
 <section id="general-linear-model" class="slide level2">
 <h2>General Linear Model</h2>
+<div style="font-size: 0.8em;">
 <p>For example, recall that we can rewrite a <span class="math inline">\(t\)</span>-test in the form of a simple linear model</p>
 <p><span class="math display">\[y_i = \beta_0 + \beta_1 \text{Group}_i + \epsilon_i\]</span></p>
 <p>Our <strong>parameter space</strong> here is <span class="math inline">\(\boldsymbol{\theta} = [\beta_0, \beta_1, \sigma_\epsilon]\)</span></p>
@@ -381,10 +422,11 @@ Mark Himmelstein
 </ul>
 <p>We want to estimate Bayes’ rule <strong>without</strong> losing the denominator, complex integral and all</p>
 <p><span class="math display">\[P(\boldsymbol{\theta}|\boldsymbol{D})  = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{P(\boldsymbol{D})} = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{\sum P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})} = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{\int P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})\,d\boldsymbol{\theta}}\]</span></p>
+</div>
 </section>
-<section id="markov-chain-monte-carlo" class="slide level2">
+<section id="markov-chain-monte-carlo" class="slide level2" style="font-size: .8em;">
 <h2>Markov Chain Monte Carlo</h2>
-<p>Markov Chain Monte Carlo (MCMC) is a simulation-based procedure for determining the <strong>goint</strong> of posterior distribution of all parameters <span class="math inline">\(\boldsymbol{\theta}\)</span> when it’s too complicated to figure out numerically.</p>
+<p>Markov Chain Monte Carlo (MCMC) is a simulation-based procedure for determining the <strong>joint</strong> of posterior distribution of all parameters <span class="math inline">\(\boldsymbol{\theta}\)</span> when it’s too complicated to figure out numerically.</p>
 <p>There are many different MCMC based algorithms. In a very general/intuitive sense, the way MCMC works is as follows:</p>
 <ul>
 <li>We draw random values from <span class="math inline">\(\boldsymbol{\theta}\)</span> based on our prior, and check how well those values “fit” our likelihood</li>
@@ -406,6 +448,7 @@ Mark Himmelstein
 </section>
 <section id="mcmc-more-detail-ii" class="slide level2">
 <h2>MCMC: More Detail II</h2>
+<div style="font-size: 0.77em;">
 <p><strong>Step 4:</strong> If</p>
 <ul>
 <li><p><span class="math inline">\(\mathcal{L}(\beta_{0_2}, \beta_{1_1}, \sigma_{\epsilon_1} ; \boldsymbol{D}) \geq \mathcal{L}(\beta_{0_1}, \beta_{1_1}, \sigma_{\epsilon_1} ; \boldsymbol{D})\)</span>, keep the proposed value <span class="math inline">\(\beta_{0_2}\)</span> for sure.</p></li>
@@ -415,7 +458,8 @@ Mark Himmelstein
 <p><strong>Step 6:</strong> Draw a new random value for <span class="math inline">\(\beta_{1}\)</span> from its prior distribution. Call this <span class="math inline">\(\beta_{1_2}\)</span>.</p>
 <p><strong>Step 7:</strong> Repeat steps 3-5, but for <span class="math inline">\(\beta_{1_2}\)</span> rather than <span class="math inline">\(\beta_{0_2}\)</span>, and using <span class="math inline">\(\beta_{0_2}\)</span> if it was accepted as a proposal, and <span class="math inline">\(\beta_{0_1}\)</span> if it was not.</p>
 <p><strong>Step 8:</strong> Repeat steps 3-5 for <span class="math inline">\(\sigma_{\epsilon}\)</span> using <span class="math inline">\(\beta_{0_2}\)</span> and <span class="math inline">\(\beta_{1_2}\)</span> if they were accepted as as a proposals, otherwise <span class="math inline">\(\beta_{0_1}\)</span> and/or <span class="math inline">\(\beta_{0_1}\)</span></p>
-<p>Repeat this entire process a pre=specified number of times. Eventually, the random draws should “converge” on a stable distribution that represents the posterior.</p>
+<p>Repeat this entire process a pre-specified number of times. Eventually, the random draws should “converge” on a stable distribution that represents the posterior.</p>
+</div>
 </section>
 <section id="gibbs-sampling-and-the-metropolis-hastings-algorithm" class="slide level2">
 <h2>Gibbs Sampling and the Metropolis Hastings Algorithm</h2>
@@ -482,7 +526,7 @@ Mark Himmelstein
 <section id="point-estimates" class="slide level2">
 <h2>Point Estimates</h2>
 <p>The posterior distributions of each parameter can directly provide us inferential information.</p>
-<p>Point estimates about parameters can be made using measures of central tendency</p>
+<p>Point estimates about (most likely values of) parameters can be made using measures of central tendency</p>
 <ul>
 <li>Mean: the posterior mean for a parameter is the value that will minimize squared error</li>
 <li>Median: the posterior median for a parameter is the value that will minimize absolute error</li>
@@ -491,6 +535,7 @@ Mark Himmelstein
 </section>
 <section id="credible-intervals" class="slide level2">
 <h2>Credible Intervals</h2>
+<div style="font-size: 0.85em;">
 <p>The spread of the distributions quantify confidence in parameter estimates, or plausible values parameters might take</p>
 <ul>
 <li>Posterior SDs are a measure of confidence</li>
@@ -509,9 +554,10 @@ Mark Himmelstein
 </ul></li>
 </ul></li>
 </ul>
+</div>
 </section>
-<section id="types-of-credible-intervals" class="slide level2">
-<h2>Types of Credible Intervals</h2>
+<section id="types-of-cis" class="slide level2">
+<h2>Types of CIs</h2>
 <p>Equal Tailed Intervals (ETI):</p>
 <ul>
 <li>Simply based on the symmetric quantiles of the distribution</li>
@@ -527,9 +573,10 @@ Mark Himmelstein
 <section id="section-13" class="slide level2">
 <h2></h2>
 
-<img data-src="../../Figs/etihdi.png" class="r-stretch"></section>
+<img data-src="Lecture-15-Bayesian_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="bayes-factors" class="slide level2">
 <h2>Bayes Factors</h2>
+<div style="font-size: 0.85em;">
 <p>Bayes Factors are a way of comparing the support for different models in a Bayesian framework.</p>
 <p>They are ratios of posterior likelihoods between competing models. If we have two possible models for the same data, <span class="math inline">\(M_1\)</span> and <span class="math inline">\(M_2\)</span>.</p>
 <p><span class="math display">\[BF = \frac{P(\boldsymbol{D}|M_1)}{P(\boldsymbol{D}|M_2)}\]</span></p>
@@ -544,9 +591,11 @@ Mark Himmelstein
 <li>When <span class="math inline">\(BF = \frac{1}{3}\)</span>, <span class="math inline">\(M_2\)</span> is three times as likely to be the “true” model as <span class="math inline">\(M_1\)</span></li>
 </ul></li>
 </ul>
+</div>
 </section>
 <section id="advantages-and-disadvantages" class="slide level2">
 <h2>Advantages and Disadvantages</h2>
+<div style="font-size: 0.85em;">
 <p>Advantages:</p>
 <ul>
 <li>Intuitive way to compare two (or more) models to one another</li>
@@ -563,25 +612,39 @@ Mark Himmelstein
 <li><span class="math inline">\(BF\)</span> of 3 (or <span class="math inline">\(\frac{1}{3}\)</span>) have been proposed as “cutoff” values. This is just as arbitrary as <span class="math inline">\(\alpha = .05\)</span>, and even sillier since Bayes Factors have a much more intuitive interpretation than <span class="math inline">\(p\)</span>-values</li>
 </ul></li>
 </ul>
+</div>
 </section>
 <section id="bayes-factors-and-support-intervals" class="slide level2">
 <h2>Bayes Factors and Support Intervals</h2>
 <p><strong>Support Interval:</strong> Region of the posterior distribution of a parameter that is taller than the prior distribution.</p>
 <p><strong>Interpretation:</strong> Data added evidentiary support for this region over our prior.</p>
+<p>In the following figure:</p>
+<ul>
+<li>Dashed outline is prior</li>
+<li>Shaded orange is posterior</li>
+<li>Support interval is region where posterior is taller than prior</li>
+</ul>
 </section>
 <section id="support-intervals" class="slide level2">
 <h2>Support Intervals</h2>
 
-<img data-src="Lecture-15-Bayesian_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:75.0%"><p>Figure from <a href="https://easystats.github.io/bayestestR/articles/credible_interval.html">https://easystats.github.io/bayestestR/articles/credible_interval.html</a></p>
+<img data-src="Lecture-15-Bayesian_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:75.0%"><p>Figure from <a href="https://easystats.github.io/bayestestR/articles/credible_interval.html">https://easystats.github.io/bayestestR/articles/credible_interval.html</a></p>
 </section>
 <section id="cross-validation" class="slide level2">
 <h2>Cross Validation</h2>
-<p>Cross validation (CV) methods slice data up into sections.</p>
-<p>They use one part of data as a “training” sample, and another as a “testing” sample.</p>
+<div style="font-size: 0.85em;">
+<p>We briefly discussed cross-validation based methods a few lectures ago</p>
+<ul>
+<li><p>Slice data up into sections.</p></li>
+<li><p>Use one part of data as a “training” sample, and another as a “testing” sample.</p></li>
+</ul>
 <p>The downside to this is the loss of precision/power.</p>
-<p><strong>Leave one out (LOO)</strong> cross-validation takes all possible combinations of <span class="math inline">\(N-1\)</span> observations, leaving one row out a time, and cross validates on that single observation.</p>
-<p>Pareto Smoothed Importance Sampling (PSIS) provides a method for estimating LOO-CV in a tractable way, and can be quite useful (though not always feasible).</p>
+<ul>
+<li><p><strong>Leave one out (LOO)</strong> cross-validation takes all possible combinations of <span class="math inline">\(N-1\)</span> observations, leaving one row out a time, and cross validates on that single observation.</p></li>
+<li><p>Pareto Smoothed Importance Sampling (PSIS) provides a method for estimating LOO-CV in a tractable way, and can be quite useful (though not always feasible).</p></li>
+</ul>
 <p>This is a great method when available though, since models are validated on data that wasn’t in the sample on which they were fit, which is a huge bonus for generalizability and avoiding overfit.</p>
+</div>
 </section>
 <section id="stan-and-rstanarm" class="slide level2">
 <h2><code>Stan</code> and <code>rstanarm</code></h2>
@@ -624,73 +687,74 @@ Mark Himmelstein
 <h2>Model Review</h2>
 <p><span class="math display">\[\text{percent}_i = \beta_0 + \beta_1 \text{Cond} + \epsilon_i\]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> Cond, dat)</span>
-<span id="cb1-2"><a></a><span class="fu">summary</span>(lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-label="1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(percent <span class="sc">~</span> Cond, dat)</span>
+<span id="cb1-2"><a aria-label="2"></a><span class="fu">summary</span>(lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a></a></span>
-<span id="cb2-2"><a></a><span class="ex">Call:</span></span>
-<span id="cb2-3"><a></a><span class="ex">lm</span><span class="er">(</span><span class="ex">formula</span> = percent ~ Cond, data = dat<span class="kw">)</span></span>
-<span id="cb2-4"><a></a></span>
-<span id="cb2-5"><a></a><span class="ex">Residuals:</span></span>
-<span id="cb2-6"><a></a>     <span class="ex">Min</span>       1Q   Median       3Q      Max </span>
-<span id="cb2-7"><a></a><span class="ex">-0.38347</span> <span class="at">-0.18347</span>  0.03382  0.13382  0.41653 </span>
-<span id="cb2-8"><a></a></span>
-<span id="cb2-9"><a></a><span class="ex">Coefficients:</span></span>
-<span id="cb2-10"><a></a>                  <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span>    </span>
-<span id="cb2-11"><a></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>        <span class="ex">0.58347</span>    0.03653  15.972   <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
-<span id="cb2-12"><a></a><span class="ex">Condself-handicap</span> <span class="at">-0.11729</span>    0.05044  <span class="at">-2.325</span>   0.0235 <span class="pp">*</span>  </span>
-<span id="cb2-13"><a></a><span class="ex">---</span></span>
-<span id="cb2-14"><a></a><span class="ex">Signif.</span> codes:  </span>
-<span id="cb2-15"><a></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span>
-<span id="cb2-16"><a></a></span>
-<span id="cb2-17"><a></a><span class="ex">Residual</span> standard error: 0.1967 on 59 degrees of freedom</span>
-<span id="cb2-18"><a></a><span class="ex">Multiple</span> R-squared:  0.08396,   Adjusted R-squared:  0.06844 </span>
-<span id="cb2-19"><a></a><span class="ex">F-statistic:</span> 5.408 on 1 and 59 DF,  p-value: 0.02351</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-label="1"></a></span>
+<span id="cb2-2"><a aria-label="2"></a><span class="ex">Call:</span></span>
+<span id="cb2-3"><a aria-label="3"></a><span class="ex">lm</span><span class="er">(</span><span class="ex">formula</span> = percent ~ Cond, data = dat<span class="kw">)</span></span>
+<span id="cb2-4"><a aria-label="4"></a></span>
+<span id="cb2-5"><a aria-label="5"></a><span class="ex">Residuals:</span></span>
+<span id="cb2-6"><a aria-label="6"></a>     <span class="ex">Min</span>       1Q   Median       3Q      Max </span>
+<span id="cb2-7"><a aria-label="7"></a><span class="ex">-0.38347</span> <span class="at">-0.18347</span>  0.03382  0.13382  0.41653 </span>
+<span id="cb2-8"><a aria-label="8"></a></span>
+<span id="cb2-9"><a aria-label="9"></a><span class="ex">Coefficients:</span></span>
+<span id="cb2-10"><a aria-label="10"></a>                  <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span>    </span>
+<span id="cb2-11"><a aria-label="11"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>        <span class="ex">0.58347</span>    0.03653  15.972   <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
+<span id="cb2-12"><a aria-label="12"></a><span class="ex">Condself-handicap</span> <span class="at">-0.11729</span>    0.05044  <span class="at">-2.325</span>   0.0235 <span class="pp">*</span>  </span>
+<span id="cb2-13"><a aria-label="13"></a><span class="ex">---</span></span>
+<span id="cb2-14"><a aria-label="14"></a><span class="ex">Signif.</span> codes:  </span>
+<span id="cb2-15"><a aria-label="15"></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span>
+<span id="cb2-16"><a aria-label="16"></a></span>
+<span id="cb2-17"><a aria-label="17"></a><span class="ex">Residual</span> standard error: 0.1967 on 59 degrees of freedom</span>
+<span id="cb2-18"><a aria-label="18"></a><span class="ex">Multiple</span> R-squared:  0.08396,   Adjusted R-squared:  0.06844 </span>
+<span id="cb2-19"><a aria-label="19"></a><span class="ex">F-statistic:</span> 5.408 on 1 and 59 DF,  p-value: 0.02351</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="in-rstanarm" class="slide level2">
 <h2>In <code>rstanarm</code></h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">library</span>(rstanarm)</span>
-<span id="cb3-2"><a></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span>
-<span id="cb3-3"><a></a></span>
-<span id="cb3-4"><a></a>stan_lm1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(percent <span class="sc">~</span> Cond, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
-<span id="cb3-5"><a></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df1.csv"</span>)</span>
-<span id="cb3-6"><a></a><span class="fu">summary</span>(stan_lm1, <span class="at">digits =</span> <span class="dv">2</span>, <span class="at">probs =</span> <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-label="1"></a><span class="fu">library</span>(rstanarm)</span>
+<span id="cb3-2"><a aria-label="2"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span>
+<span id="cb3-3"><a aria-label="3"></a></span>
+<span id="cb3-4"><a aria-label="4"></a>stan_lm1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(percent <span class="sc">~</span> Cond, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb3-5"><a aria-label="5"></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df1.csv"</span>, <span class="co">#for Bayes factor</span></span>
+<span id="cb3-6"><a aria-label="6"></a>                     <span class="at">seed =</span> <span class="dv">1224</span>)</span>
+<span id="cb3-7"><a aria-label="7"></a><span class="fu">summary</span>(stan_lm1, <span class="at">digits =</span> <span class="dv">2</span>, <span class="at">probs =</span> <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a></a></span>
-<span id="cb4-2"><a></a><span class="ex">Model</span> Info:</span>
-<span id="cb4-3"><a></a> <span class="ex">function:</span>     stan_glm</span>
-<span id="cb4-4"><a></a> <span class="ex">family:</span>       gaussian <span class="pp">[</span><span class="ss">identity</span><span class="pp">]</span></span>
-<span id="cb4-5"><a></a> <span class="ex">formula:</span>      percent ~ Cond</span>
-<span id="cb4-6"><a></a> <span class="ex">algorithm:</span>    sampling</span>
-<span id="cb4-7"><a></a> <span class="ex">sample:</span>       4000 <span class="er">(</span><span class="ex">posterior</span> sample size<span class="kw">)</span></span>
-<span id="cb4-8"><a></a> <span class="ex">priors:</span>       see help<span class="er">(</span><span class="st">'prior_summary'</span><span class="kw">)</span></span>
-<span id="cb4-9"><a></a> <span class="ex">observations:</span> 61</span>
-<span id="cb4-10"><a></a> <span class="ex">predictors:</span>   2</span>
-<span id="cb4-11"><a></a></span>
-<span id="cb4-12"><a></a><span class="ex">Estimates:</span></span>
-<span id="cb4-13"><a></a>                    <span class="ex">mean</span>   sd    2.5%   50%   97.5%</span>
-<span id="cb4-14"><a></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>        <span class="ex">0.58</span>   0.04  0.51   0.58  0.66  </span>
-<span id="cb4-15"><a></a><span class="ex">Condself-handicap</span> <span class="at">-0.12</span>   0.05 <span class="at">-0.22</span>  <span class="at">-0.12</span> <span class="at">-0.02</span>  </span>
-<span id="cb4-16"><a></a><span class="ex">sigma</span>              0.20   0.02  0.17   0.20  0.24  </span>
-<span id="cb4-17"><a></a></span>
-<span id="cb4-18"><a></a><span class="ex">Fit</span> Diagnostics:</span>
-<span id="cb4-19"><a></a>           <span class="ex">mean</span>   sd   2.5%   50%   97.5%</span>
-<span id="cb4-20"><a></a><span class="ex">mean_PPD</span> 0.52   0.04 0.45   0.52  0.59   </span>
-<span id="cb4-21"><a></a></span>
-<span id="cb4-22"><a></a><span class="ex">The</span> mean_ppd is the sample average posterior predictive distribution of the outcome variable <span class="er">(</span><span class="cf">for</span> details <span class="ex">see</span> help<span class="er">(</span><span class="st">'summary.stanreg'</span><span class="kw">))</span><span class="bu">.</span></span>
-<span id="cb4-23"><a></a></span>
-<span id="cb4-24"><a></a><span class="ex">MCMC</span> diagnostics</span>
-<span id="cb4-25"><a></a>                  <span class="ex">mcse</span> Rhat n_eff</span>
-<span id="cb4-26"><a></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>       <span class="ex">0.00</span> 1.00 3970 </span>
-<span id="cb4-27"><a></a><span class="ex">Condself-handicap</span> 0.00 1.00 3850 </span>
-<span id="cb4-28"><a></a><span class="ex">sigma</span>             0.00 1.00 3475 </span>
-<span id="cb4-29"><a></a><span class="ex">mean_PPD</span>          0.00 1.00 4169 </span>
-<span id="cb4-30"><a></a><span class="ex">log-posterior</span>     0.03 1.00 1671 </span>
-<span id="cb4-31"><a></a></span>
-<span id="cb4-32"><a></a><span class="ex">For</span> each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains <span class="er">(</span><span class="ex">at</span> convergence Rhat=1<span class="kw">)</span><span class="bu">.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-label="1"></a></span>
+<span id="cb4-2"><a aria-label="2"></a><span class="ex">Model</span> Info:</span>
+<span id="cb4-3"><a aria-label="3"></a> <span class="ex">function:</span>     stan_glm</span>
+<span id="cb4-4"><a aria-label="4"></a> <span class="ex">family:</span>       gaussian <span class="pp">[</span><span class="ss">identity</span><span class="pp">]</span></span>
+<span id="cb4-5"><a aria-label="5"></a> <span class="ex">formula:</span>      percent ~ Cond</span>
+<span id="cb4-6"><a aria-label="6"></a> <span class="ex">algorithm:</span>    sampling</span>
+<span id="cb4-7"><a aria-label="7"></a> <span class="ex">sample:</span>       4000 <span class="er">(</span><span class="ex">posterior</span> sample size<span class="kw">)</span></span>
+<span id="cb4-8"><a aria-label="8"></a> <span class="ex">priors:</span>       see help<span class="er">(</span><span class="st">'prior_summary'</span><span class="kw">)</span></span>
+<span id="cb4-9"><a aria-label="9"></a> <span class="ex">observations:</span> 61</span>
+<span id="cb4-10"><a aria-label="10"></a> <span class="ex">predictors:</span>   2</span>
+<span id="cb4-11"><a aria-label="11"></a></span>
+<span id="cb4-12"><a aria-label="12"></a><span class="ex">Estimates:</span></span>
+<span id="cb4-13"><a aria-label="13"></a>                    <span class="ex">mean</span>   sd    2.5%   50%   97.5%</span>
+<span id="cb4-14"><a aria-label="14"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>        <span class="ex">0.58</span>   0.04  0.51   0.58  0.66  </span>
+<span id="cb4-15"><a aria-label="15"></a><span class="ex">Condself-handicap</span> <span class="at">-0.12</span>   0.05 <span class="at">-0.22</span>  <span class="at">-0.12</span> <span class="at">-0.01</span>  </span>
+<span id="cb4-16"><a aria-label="16"></a><span class="ex">sigma</span>              0.20   0.02  0.17   0.20  0.24  </span>
+<span id="cb4-17"><a aria-label="17"></a></span>
+<span id="cb4-18"><a aria-label="18"></a><span class="ex">Fit</span> Diagnostics:</span>
+<span id="cb4-19"><a aria-label="19"></a>           <span class="ex">mean</span>   sd   2.5%   50%   97.5%</span>
+<span id="cb4-20"><a aria-label="20"></a><span class="ex">mean_PPD</span> 0.52   0.04 0.45   0.52  0.59   </span>
+<span id="cb4-21"><a aria-label="21"></a></span>
+<span id="cb4-22"><a aria-label="22"></a><span class="ex">The</span> mean_ppd is the sample average posterior predictive distribution of the outcome variable <span class="er">(</span><span class="cf">for</span> details <span class="ex">see</span> help<span class="er">(</span><span class="st">'summary.stanreg'</span><span class="kw">))</span><span class="bu">.</span></span>
+<span id="cb4-23"><a aria-label="23"></a></span>
+<span id="cb4-24"><a aria-label="24"></a><span class="ex">MCMC</span> diagnostics</span>
+<span id="cb4-25"><a aria-label="25"></a>                  <span class="ex">mcse</span> Rhat n_eff</span>
+<span id="cb4-26"><a aria-label="26"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>       <span class="ex">0.00</span> 1.00 3537 </span>
+<span id="cb4-27"><a aria-label="27"></a><span class="ex">Condself-handicap</span> 0.00 1.00 3859 </span>
+<span id="cb4-28"><a aria-label="28"></a><span class="ex">sigma</span>             0.00 1.00 3399 </span>
+<span id="cb4-29"><a aria-label="29"></a><span class="ex">mean_PPD</span>          0.00 1.00 3948 </span>
+<span id="cb4-30"><a aria-label="30"></a><span class="ex">log-posterior</span>     0.03 1.00 1585 </span>
+<span id="cb4-31"><a aria-label="31"></a></span>
+<span id="cb4-32"><a aria-label="32"></a><span class="ex">For</span> each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains <span class="er">(</span><span class="ex">at</span> convergence Rhat=1<span class="kw">)</span><span class="bu">.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -700,104 +764,151 @@ Mark Himmelstein
 <ul>
 <li>For <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> the prior is based on a normal distribution with <span class="math inline">\(\sigma = 2.5\)</span>
 <ul>
-<li><span class="math inline">\(\sigma = 2.5\)</span> is based on a <strong>transformed</strong> scale, using information about the variables in the model to convert to <span class="math inline">\(z\)</span>-score units</li>
-<li>The intercept <span class="math inline">\(\beta_0\)</span> has <span class="math inline">\(\mu\)</span> based on the overall mean</li>
+<li><span class="math inline">\(\sigma = 2.5\)</span> is based on a <strong>transformed</strong> scale, using information about the variables in the model to convert to <span class="math inline">\(Z\)</span>-score units</li>
+<li>The intercept <span class="math inline">\(\beta_0\)</span> has <span class="math inline">\(\mu\)</span> based on the observed mean <span class="math inline">\(\bar{y}\)</span></li>
 <li>The slope <span class="math inline">\(\beta_1\)</span> has <span class="math inline">\(\mu = 0\)</span></li>
 </ul></li>
 <li><span class="math inline">\(\sigma\)</span> is given a prior based on an <em>exponential</em> distribution
 <ul>
-<li>Non-negative distribution, also scaled to <span class="math inline">\(z\)</span>-score-like units</li>
+<li>Non-negative distribution, also scaled to <span class="math inline">\(Z\)</span>-score-like units</li>
 </ul></li>
 </ul>
+</section>
+<section id="prior-summary" class="slide level2">
+<h2>Prior Summary</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">prior_summary</span>(stan_lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-label="1"></a><span class="fu">prior_summary</span>(stan_lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a></a><span class="ex">Priors</span> for model <span class="st">'stan_lm1'</span> </span>
-<span id="cb6-2"><a></a><span class="ex">------</span></span>
-<span id="cb6-3"><a></a><span class="ex">Intercept</span> <span class="er">(</span><span class="ex">after</span> predictors centered<span class="kw">)</span></span>
-<span id="cb6-4"><a></a>  <span class="ex">Specified</span> prior:</span>
-<span id="cb6-5"><a></a>    <span class="ex">~</span> normal<span class="er">(</span><span class="ex">location</span> = 0.52, scale = 2.5<span class="kw">)</span></span>
-<span id="cb6-6"><a></a>  <span class="ex">Adjusted</span> prior:</span>
-<span id="cb6-7"><a></a>    <span class="ex">~</span> normal<span class="er">(</span><span class="ex">location</span> = 0.52, scale = 0.51<span class="kw">)</span></span>
-<span id="cb6-8"><a></a></span>
-<span id="cb6-9"><a></a><span class="ex">Coefficients</span></span>
-<span id="cb6-10"><a></a>  <span class="ex">Specified</span> prior:</span>
-<span id="cb6-11"><a></a>    <span class="ex">~</span> normal<span class="er">(</span><span class="ex">location</span> = 0, scale = 2.5<span class="kw">)</span></span>
-<span id="cb6-12"><a></a>  <span class="ex">Adjusted</span> prior:</span>
-<span id="cb6-13"><a></a>    <span class="ex">~</span> normal<span class="er">(</span><span class="ex">location</span> = 0, scale = 1<span class="kw">)</span></span>
-<span id="cb6-14"><a></a></span>
-<span id="cb6-15"><a></a><span class="ex">Auxiliary</span> <span class="er">(</span><span class="ex">sigma</span><span class="kw">)</span></span>
-<span id="cb6-16"><a></a>  <span class="ex">Specified</span> prior:</span>
-<span id="cb6-17"><a></a>    <span class="ex">~</span> exponential<span class="er">(</span><span class="ex">rate</span> = 1<span class="kw">)</span></span>
-<span id="cb6-18"><a></a>  <span class="ex">Adjusted</span> prior:</span>
-<span id="cb6-19"><a></a>    <span class="ex">~</span> exponential<span class="er">(</span><span class="ex">rate</span> = 4.9<span class="kw">)</span></span>
-<span id="cb6-20"><a></a><span class="ex">------</span></span>
-<span id="cb6-21"><a></a><span class="ex">See</span> help<span class="er">(</span><span class="st">'prior_summary.stanreg'</span><span class="kw">)</span> <span class="cf">for</span> more <span class="ex">details</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-label="1"></a><span class="ex">Priors</span> for model <span class="st">'stan_lm1'</span> </span>
+<span id="cb6-2"><a aria-label="2"></a><span class="ex">------</span></span>
+<span id="cb6-3"><a aria-label="3"></a><span class="ex">Intercept</span> <span class="er">(</span><span class="ex">after</span> predictors centered<span class="kw">)</span></span>
+<span id="cb6-4"><a aria-label="4"></a>  <span class="ex">Specified</span> prior:</span>
+<span id="cb6-5"><a aria-label="5"></a>    <span class="ex">~</span> normal<span class="er">(</span><span class="ex">location</span> = 0.52, scale = 2.5<span class="kw">)</span></span>
+<span id="cb6-6"><a aria-label="6"></a>  <span class="ex">Adjusted</span> prior:</span>
+<span id="cb6-7"><a aria-label="7"></a>    <span class="ex">~</span> normal<span class="er">(</span><span class="ex">location</span> = 0.52, scale = 0.51<span class="kw">)</span></span>
+<span id="cb6-8"><a aria-label="8"></a></span>
+<span id="cb6-9"><a aria-label="9"></a><span class="ex">Coefficients</span></span>
+<span id="cb6-10"><a aria-label="10"></a>  <span class="ex">Specified</span> prior:</span>
+<span id="cb6-11"><a aria-label="11"></a>    <span class="ex">~</span> normal<span class="er">(</span><span class="ex">location</span> = 0, scale = 2.5<span class="kw">)</span></span>
+<span id="cb6-12"><a aria-label="12"></a>  <span class="ex">Adjusted</span> prior:</span>
+<span id="cb6-13"><a aria-label="13"></a>    <span class="ex">~</span> normal<span class="er">(</span><span class="ex">location</span> = 0, scale = 1<span class="kw">)</span></span>
+<span id="cb6-14"><a aria-label="14"></a></span>
+<span id="cb6-15"><a aria-label="15"></a><span class="ex">Auxiliary</span> <span class="er">(</span><span class="ex">sigma</span><span class="kw">)</span></span>
+<span id="cb6-16"><a aria-label="16"></a>  <span class="ex">Specified</span> prior:</span>
+<span id="cb6-17"><a aria-label="17"></a>    <span class="ex">~</span> exponential<span class="er">(</span><span class="ex">rate</span> = 1<span class="kw">)</span></span>
+<span id="cb6-18"><a aria-label="18"></a>  <span class="ex">Adjusted</span> prior:</span>
+<span id="cb6-19"><a aria-label="19"></a>    <span class="ex">~</span> exponential<span class="er">(</span><span class="ex">rate</span> = 4.9<span class="kw">)</span></span>
+<span id="cb6-20"><a aria-label="20"></a><span class="ex">------</span></span>
+<span id="cb6-21"><a aria-label="21"></a><span class="ex">See</span> help<span class="er">(</span><span class="st">'prior_summary.stanreg'</span><span class="kw">)</span> <span class="cf">for</span> more <span class="ex">details</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="rstanarm-results" class="slide level2">
 <h2><code>rstanarm</code> Results</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-label="1"></a></span>
+<span id="cb7-2"><a aria-label="2"></a><span class="ex">Model</span> Info:</span>
+<span id="cb7-3"><a aria-label="3"></a> <span class="ex">function:</span>     stan_glm</span>
+<span id="cb7-4"><a aria-label="4"></a> <span class="ex">family:</span>       gaussian <span class="pp">[</span><span class="ss">identity</span><span class="pp">]</span></span>
+<span id="cb7-5"><a aria-label="5"></a> <span class="ex">formula:</span>      percent ~ Cond</span>
+<span id="cb7-6"><a aria-label="6"></a> <span class="ex">algorithm:</span>    sampling</span>
+<span id="cb7-7"><a aria-label="7"></a> <span class="ex">sample:</span>       4000 <span class="er">(</span><span class="ex">posterior</span> sample size<span class="kw">)</span></span>
+<span id="cb7-8"><a aria-label="8"></a> <span class="ex">priors:</span>       see help<span class="er">(</span><span class="st">'prior_summary'</span><span class="kw">)</span></span>
+<span id="cb7-9"><a aria-label="9"></a> <span class="ex">observations:</span> 61</span>
+<span id="cb7-10"><a aria-label="10"></a> <span class="ex">predictors:</span>   2</span>
+<span id="cb7-11"><a aria-label="11"></a></span>
+<span id="cb7-12"><a aria-label="12"></a><span class="ex">Estimates:</span></span>
+<span id="cb7-13"><a aria-label="13"></a>                    <span class="ex">mean</span>   sd    2.5%   50%   97.5%</span>
+<span id="cb7-14"><a aria-label="14"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>        <span class="ex">0.58</span>   0.04  0.51   0.58  0.66  </span>
+<span id="cb7-15"><a aria-label="15"></a><span class="ex">Condself-handicap</span> <span class="at">-0.12</span>   0.05 <span class="at">-0.22</span>  <span class="at">-0.12</span> <span class="at">-0.01</span>  </span>
+<span id="cb7-16"><a aria-label="16"></a><span class="ex">sigma</span>              0.20   0.02  0.17   0.20  0.24  </span>
+<span id="cb7-17"><a aria-label="17"></a></span>
+<span id="cb7-18"><a aria-label="18"></a><span class="ex">Fit</span> Diagnostics:</span>
+<span id="cb7-19"><a aria-label="19"></a>           <span class="ex">mean</span>   sd   2.5%   50%   97.5%</span>
+<span id="cb7-20"><a aria-label="20"></a><span class="ex">mean_PPD</span> 0.52   0.04 0.45   0.52  0.59   </span>
+<span id="cb7-21"><a aria-label="21"></a></span>
+<span id="cb7-22"><a aria-label="22"></a><span class="ex">The</span> mean_ppd is the sample average posterior predictive distribution of the outcome variable <span class="er">(</span><span class="cf">for</span> details <span class="ex">see</span> help<span class="er">(</span><span class="st">'summary.stanreg'</span><span class="kw">))</span><span class="bu">.</span></span>
+<span id="cb7-23"><a aria-label="23"></a></span>
+<span id="cb7-24"><a aria-label="24"></a><span class="ex">MCMC</span> diagnostics</span>
+<span id="cb7-25"><a aria-label="25"></a>                  <span class="ex">mcse</span> Rhat n_eff</span>
+<span id="cb7-26"><a aria-label="26"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>       <span class="ex">0.00</span> 1.00 3537 </span>
+<span id="cb7-27"><a aria-label="27"></a><span class="ex">Condself-handicap</span> 0.00 1.00 3859 </span>
+<span id="cb7-28"><a aria-label="28"></a><span class="ex">sigma</span>             0.00 1.00 3399 </span>
+<span id="cb7-29"><a aria-label="29"></a><span class="ex">mean_PPD</span>          0.00 1.00 3948 </span>
+<span id="cb7-30"><a aria-label="30"></a><span class="ex">log-posterior</span>     0.03 1.00 1585 </span>
+<span id="cb7-31"><a aria-label="31"></a></span>
+<span id="cb7-32"><a aria-label="32"></a><span class="ex">For</span> each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains <span class="er">(</span><span class="ex">at</span> convergence Rhat=1<span class="kw">)</span><span class="bu">.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="reading-these-results" class="slide level2">
+<h2>Reading these Results</h2>
 <ul>
-<li>Posterior mean of <span class="math inline">\(\beta_1 = -0.12\)</span></li>
-<li>Posterior median of <span class="math inline">\(\beta_1 = -0.12\)</span></li>
+<li>Posterior mean of <span class="math inline">\(\beta_0 = 0.58\)</span></li>
+<li>Posterior median of <span class="math inline">\(\beta_1 = -0.12\)</span>
+<ul>
 <li>95% ETI credible interval = [-0.22, -0.02]</li>
+</ul></li>
 </ul>
-<p>Let’s quickly look at</p>
+<p>Let’s briefly look at</p>
 <ul>
-<li>How to get the HDI credible interval</li>
-<li>Use a Bayes factor to compare this model to an intercept-only model</li>
+<li>How to get the HDI interval</li>
+<li>How to compute a Bayes factor comparing to an unconditional (intercept only) model</li>
 </ul>
 </section>
 <section id="hdi-interval" class="slide level2">
 <h2>HDI interval</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">library</span>(bayestestR)</span>
-<span id="cb7-2"><a></a><span class="fu">hdi</span>(stan_lm1, <span class="at">component =</span> <span class="st">"all"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-label="1"></a><span class="fu">library</span>(bayestestR)</span>
+<span id="cb8-2"><a aria-label="2"></a><span class="fu">hdi</span>(stan_lm1, <span class="at">component =</span> <span class="st">"all"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a></a><span class="ex">Highest</span> Density Interval</span>
-<span id="cb8-2"><a></a></span>
-<span id="cb8-3"><a></a><span class="ex">Parameter</span>         <span class="kw">|</span>        <span class="ex">95%</span> HDI</span>
-<span id="cb8-4"><a></a><span class="ex">----------------------------------</span></span>
-<span id="cb8-5"><a></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>       <span class="kw">|</span> <span class="bu">[</span> 0.51,  0.65]</span>
-<span id="cb8-6"><a></a>Condself-handicap <span class="er">|</span> <span class="er">[-0.21,</span> <span class="ex">-0.02]</span></span>
-<span id="cb8-7"><a></a></span>
-<span id="cb8-8"><a></a><span class="co"># Fixed effects (sigma)</span></span>
-<span id="cb8-9"><a></a></span>
-<span id="cb8-10"><a></a><span class="ex">Parameter</span> <span class="kw">|</span>        <span class="ex">95%</span> HDI</span>
-<span id="cb8-11"><a></a><span class="ex">--------------------------</span></span>
-<span id="cb8-12"><a></a><span class="ex">sigma</span>     <span class="kw">|</span> <span class="bu">[</span> 0.16,  0.24]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-label="1"></a><span class="ex">Highest</span> Density Interval</span>
+<span id="cb9-2"><a aria-label="2"></a></span>
+<span id="cb9-3"><a aria-label="3"></a><span class="ex">Parameter</span>         <span class="kw">|</span>        <span class="ex">95%</span> HDI</span>
+<span id="cb9-4"><a aria-label="4"></a><span class="ex">----------------------------------</span></span>
+<span id="cb9-5"><a aria-label="5"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>       <span class="kw">|</span> <span class="bu">[</span> 0.51,  0.65]</span>
+<span id="cb9-6"><a aria-label="6"></a>Condself-handicap <span class="er">|</span> <span class="er">[-0.22,</span> <span class="ex">-0.02]</span></span>
+<span id="cb9-7"><a aria-label="7"></a></span>
+<span id="cb9-8"><a aria-label="8"></a><span class="co"># Fixed effects (sigma)</span></span>
+<span id="cb9-9"><a aria-label="9"></a></span>
+<span id="cb9-10"><a aria-label="10"></a><span class="ex">Parameter</span> <span class="kw">|</span>        <span class="ex">95%</span> HDI</span>
+<span id="cb9-11"><a aria-label="11"></a><span class="ex">--------------------------</span></span>
+<span id="cb9-12"><a aria-label="12"></a><span class="ex">sigma</span>     <span class="kw">|</span> <span class="bu">[</span> 0.16,  0.24]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="bayes-factor" class="slide level2">
 <h2>Bayes Factor</h2>
+<div style="font-size: 0.85em;">
 <p>An intercept only model would treat the two groups as having equal means</p>
 <p><span class="math display">\[\text{percent}_i = \beta_0 + \epsilon_i\]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>stan_lm0 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(percent <span class="sc">~</span> <span class="dv">1</span>, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
-<span id="cb9-2"><a></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df0.csv"</span>)</span>
-<span id="cb9-3"><a></a></span>
-<span id="cb9-4"><a></a>(bfs1 <span class="ot">&lt;-</span> <span class="fu">bayesfactor_models</span>(stan_lm0, stan_lm1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-label="1"></a>stan_lm0 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(percent <span class="sc">~</span> <span class="dv">1</span>, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb10-2"><a aria-label="2"></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df0.csv"</span>, <span class="co">#for Bayes factor,</span></span>
+<span id="cb10-3"><a aria-label="3"></a>                     <span class="at">seed =</span> <span class="dv">312</span>)</span>
+<span id="cb10-4"><a aria-label="4"></a></span>
+<span id="cb10-5"><a aria-label="5"></a>(bfs1 <span class="ot">&lt;-</span> <span class="fu">bayesfactor_models</span>(stan_lm0, stan_lm1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a></a><span class="ex">Bayes</span> Factors for Model Comparison</span>
-<span id="cb10-2"><a></a></span>
-<span id="cb10-3"><a></a>    <span class="ex">Model</span>    BF</span>
-<span id="cb10-4"><a></a><span class="ex">[2]</span> Cond  0.691</span>
-<span id="cb10-5"><a></a></span>
-<span id="cb10-6"><a></a><span class="ex">*</span> Against Denominator: <span class="pp">[</span><span class="ss">1</span><span class="pp">]</span> <span class="er">(</span><span class="ex">Intercept</span> only<span class="kw">)</span></span>
-<span id="cb10-7"><a></a><span class="ex">*</span>   Bayes Factor Type: marginal likelihoods <span class="er">(</span><span class="ex">bridgesampling</span><span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-label="1"></a><span class="ex">Bayes</span> Factors for Model Comparison</span>
+<span id="cb11-2"><a aria-label="2"></a></span>
+<span id="cb11-3"><a aria-label="3"></a>    <span class="ex">Model</span>    BF</span>
+<span id="cb11-4"><a aria-label="4"></a><span class="ex">[2]</span> Cond  0.687</span>
+<span id="cb11-5"><a aria-label="5"></a></span>
+<span id="cb11-6"><a aria-label="6"></a><span class="ex">*</span> Against Denominator: <span class="pp">[</span><span class="ss">1</span><span class="pp">]</span> <span class="er">(</span><span class="ex">Intercept</span> only<span class="kw">)</span></span>
+<span id="cb11-7"><a aria-label="7"></a><span class="ex">*</span>   Bayes Factor Type: marginal likelihoods <span class="er">(</span><span class="ex">bridgesampling</span><span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<p><strong>Interpretation:</strong> The original model is only 70% as likely as the intercept only model</p>
+<p><strong>Interpretation:</strong> The original model is only 69% as likely as the intercept only model</p>
 <ul>
-<li>The intercept only model is <span class="math inline">\(\frac{1}{.70} = 1.43\)</span> times as likely as the original model</li>
+<li>The intercept only model is <span class="math inline">\(\frac{1}{.69} = 1.45\)</span> times as likely as the original model</li>
 <li>Assumes one of these models is <strong>the model</strong></li>
 </ul>
+</div>
 </section>
 <section id="apa-writeup" class="slide level2">
 <h2>APA Writeup</h2>
-<p>Using a Bayesian model, the posterior mean of the difference between control and treatment was <span class="math inline">\(\beta_1 = -0.12\)</span>, <span class="math inline">\(95\% \text{ CI} = [-0.22, -0.02]\)</span>. Compared to an intercept-only model, this model had <span class="math inline">\(BF = 0.70\)</span>, indicating it was only 70% as likely as the model that allows for differences in means between the two groups.</p>
+<p>Using a Bayesian model, the posterior mean of the difference between control and treatment was <span class="math inline">\(\beta_1 = -0.12\)</span>, <span class="math inline">\(95\% \text{ CI} = [-0.22, -0.02]\)</span>. Compared to an intercept-only model, this model had <span class="math inline">\(BF = 0.69\)</span>, indicating it was only 69% as likely as the model that allows for differences in means between the two groups.</p>
 
 
 </section>
@@ -990,7 +1101,7 @@ Mark Himmelstein
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],

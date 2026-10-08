@@ -1,0 +1,1032 @@
+---
+title: "Lecture 15: Bayesian Inference and Estimation"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: true 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+```
+
+
+
+
+
+## Bayesian Inference
+
+NHST is a decision rule framework for how we make a categorical choice: do we decide to reject the null hypothesis?
+
+- Bayesian inference is also a kind of decision rule, but it is not discrete, it is continuous.
+
+- Way of defining how we can use new data to updating our existing beliefs about what a population parameter is likely to be.
+
+## Elements of Bayes' Rule
+
+Let's imagine we have a coin, we want to determine the true proportion of times that the coin will land on heads (vs. tails).
+
+* We will call the coin's true proportion of landing on heads (which is unknown) $\pi$. 
+* We then flip the coin 10 times, and observe 7 heads and 3 tails, which is our "data," which we will call $\boldsymbol{D}$.
+
+## More Elements
+
+::: {style="font-size: 0.8em;"}
+
+$$P(\pi|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\pi)P(\pi)}{P(\boldsymbol{D})}$$ 
+
+- $P(\pi)$ - our **prior** belief about the proportion of times the coin will lands heads
+  - [Notice: The true $\pi$ is unknown. This is a statement about our **confidence** it might take on certain values. So we might think it is very likely 50%, but there is some chance it is not, and is an unfair coin]{.fragment}
+- $P(\boldsymbol{D}|\pi)$ - The *likelihood* of observing 7 heads and 3 tails, given the (unknown) true $\pi$.
+- $P(\boldsymbol{D})$ - The probability of observing 7 heads and 3 tails *unconditionally*
+  - [One way to define this: $P(\boldsymbol{D}) = \sum P(\boldsymbol{D}|\pi)P(\pi)$]{.fragment}
+- $P(\pi | \boldsymbol{D})$ - the posterior belief about the proportion of times the coin will land on heads, incorporating both the prior and the data. 
+  
+  
+:::
+
+## Probabilities of Probabilities
+  
+Notice that our prior is a probability statement about not about how likely the coin is to land on heads, but our **confidence** in the true proportion of times the coin will land on heads $\pi$. If we are very confident, our prior might look something like:
+
+## Prior 1
+
+```{r out.width = "85%", warning = FALSE, message = FALSE}
+library(ggplot2)
+
+# Define parameters of the beta distribution
+alpha <- 100  # shape parameter
+beta <- 100    # shape parameter
+
+# Generate a sequence of x values
+x <- seq(0, 1, length.out = 100)
+
+# Calculate the probability density function (PDF) of the beta distribution
+pdf <- dbeta(x, shape1 = alpha, shape2 = beta)
+
+# Create a data frame for plotting
+data <- data.frame(x = x, pdf = pdf)
+
+# Plot the beta distribution using ggplot
+ggplot(data, aes(x = x, y = pdf)) +
+  geom_line(color = "blue", size = 1) +
+  labs(x = "Prior Belief: True Proportion Heads",
+       y = NULL) +
+  geom_vline(xintercept = 0.5, linetype = 3) + 
+  theme_minimal() + theme(axis.text.y = element_blank())
+
+```
+
+
+This plot suggests we think it's very likely the coin is fair, though there's some possibiliy is is weighted more heavily towards heads or tails.
+
+## Frequentists HATE him
+
+This is the part frequentists object to. For a frequentist:
+
+- Only "random variables" can be represented by a probability distribution
+- The true proportion of heads is not a random variable
+- It is a single number, a cold hard fact, just one that we don't know
+
+For a Bayesian
+
+- Probability refers to what is **known**, not just what is true or not true
+
+**Bayseians** treat probability as a psychological phenomenon
+
+
+**Frequentists** treat probability as a metaphysical phenomenon
+
+
+## Two Takes on Probability
+
+```{r}
+#| fig.width: 6
+#| fig.height: 2
+#| out.width: "100%"
+
+# Zero out standard plot margins
+par(mar = c(0, 0, 0, 0))
+
+# Initialize empty canvas
+plot(0, 0, col = "white", xlim = c(0, 5), ylim = c(0, 3.5),
+     bty = "n", xlab = "", ylab = "", xaxt = "n", yaxt = "n")
+
+# --- Left Box (Population) ---
+polygon(x = c(0.2, 1.7, 1.7, 0.2), y = c(2, 2, 3, 3), border = my_blue, lwd = 2)
+
+# --- Right Box (Sample) ---
+polygon(x = c(3.3, 4.8, 4.8, 3.3), y = c(.5, .5, 1.5, 1.5), border = my_purple, lwd = 2)
+
+# --- Top Curve (Probability) ---
+x_top <- seq(0.95, 4.05, length = 30)
+y_top <- -0.478 * x_top^2 + 1.905 * x_top + 1.621
+points(x_top, y_top, type = 'l', col = my_blue, lwd = 2)
+
+# Top Arrow (pointing to Sample)
+arrows(x0 = x_top[28], x1 = x_top[30], 
+       y0 = y_top[28], y1 = y_top[30], 
+       col = my_blue, lwd = 2)
+
+# --- Bottom Curve (Statistics) ---
+x_bot <- seq(0.95, 4.05, length = 30)
+y_bot <- 0.435 * x_bot^2 - 2.656 * x_bot + 4.132
+points(x_bot, y_bot, type = 'l', col = my_purple, lwd = 2)
+
+# Bottom Arrow (pointing to Population)
+arrows(x0 = x_bot[3], x1 = x_bot[1], 
+       y0 = y_bot[3], y1 = y_bot[1], 
+       col = my_purple, lwd = 2)
+
+# --- Text Labels ---
+text(x = 0.95, y = 2.65, "Population", col = my_blue)
+text(x = 0.95, y = 2.35, "(Parameter)", col = my_blue)
+
+text(x = 4.05, y = 1.15, "Sample", col = my_purple)
+text(x = 4.05, y = 0.85, "(Data)", col = my_purple)
+
+text(x = 3.1, y = 3.3, "Probability", col = my_blue)
+text(x = 1.9, y = 0.3, "Statistics", col = my_purple)
+```
+
+
+::: {style="font-size: 0.75em;"}
+
+- **Frequentists:** Parameters are facts about the world that are constant and can only actually be single values. The only things that are random are the data. We can't reverse the [probability arrow population $\rightarrow$ sample]{style="color: #377EB8;"}
+- **Bayesians:** The only constants we can actually know are the facts we observe (data). Based on our limited knowledge, we need to a way to quantify how likely different possible parameters are. [Probability is a general use language we use to describe the likelihood of different unknowns (parameters) based on our knowledge (data)]{style="color: ##984EA3;"}
+
+[Which philosophical position do you take?]{.fragment}
+    
+:::
+
+
+
+
+
+## Posterior Belief
+
+::: {style="font-size: 0.75em;"}
+
+If we have a strong prior belief, seeing 7 heads and 3 tails should make us think if our coin happens to be unfair, it's more likely to be weighted towards heads than tails. But seven heads and three tails aren't that surprising for a fair coin, so our belief won't change that much. 
+
+:::
+
+
+```{r out.width = "85%", warning = FALSE, message = FALSE}
+# Define parameters of the beta distribution
+alpha <- 100  # shape parameter
+beta <- 95   # shape parameter
+
+# Generate a sequence of x values
+x <- seq(0, 1, length.out = 100)
+
+# Calculate the probability density function (PDF) of the beta distribution
+pdf <- dbeta(x, shape1 = alpha, shape2 = beta)
+
+# Create a data frame for plotting
+data <- data.frame(x = x, pdf = pdf)
+
+# Plot the beta distribution using ggplot
+ggplot(data, aes(x = x, y = pdf)) +
+  geom_line(color = "blue", size = 1) +
+  labs(x = "Posterior Belief: True Proportion Heads",
+       y = NULL) +
+   geom_vline(xintercept = 0.5, linetype = 3) +
+  theme_minimal() + theme(axis.text.y = element_blank())
+
+```
+
+
+
+
+## A Different Prior
+
+::: {style="font-size: 0.75em;"}
+
+What if an alien came to earth with no knowledge about how coins worked? They might have no idea the true proportion of times most coins land on heads, and think all possible values of $\pi$ are equally likely
+
+:::
+
+```{r out.width = "85%", warning = FALSE, message = FALSE}
+# Define parameters of the beta distribution
+alpha <- 1 # shape parameter
+beta <- 1   # shape parameter
+
+# Generate a sequence of x values
+x <- seq(0, 1, length.out = 100)
+
+# Calculate the probability density function (PDF) of the beta distribution
+pdf <- dbeta(x, shape1 = alpha, shape2 = beta)
+
+# Create a data frame for plotting
+data <- data.frame(x = x, pdf = pdf)
+
+# Plot the beta distribution using ggplot
+ggplot(data, aes(x = x, y = pdf)) +
+  geom_line(color = "blue", size = 1) +
+  labs(x = "Prior Belief: True Proportion Heads",
+       y = NULL) +
+   geom_vline(xintercept = 0.5, linetype = 3) +
+  theme_minimal() + theme(axis.text.y = element_blank())
+
+```
+
+## Alien's Posterior Belief 
+
+::: {style="font-size: 0.75em;"}
+
+In this case, the data might be quite persuasive! After seeing 7 heads and 3 tails, the alien might be fairly convinced that the coin was weighted towards heads.
+
+
+:::
+
+```{r out.width = "85%", warning = FALSE, message = FALSE}
+# Define parameters of the beta distribution
+alpha <- 7 # shape parameter
+beta <- 3   # shape parameter
+
+# Generate a sequence of x values
+x <- seq(0, 1, length.out = 100)
+
+# Calculate the probability density function (PDF) of the beta distribution
+pdf <- dbeta(x, shape1 = alpha, shape2 = beta)
+
+# Create a data frame for plotting
+data <- data.frame(x = x, pdf = pdf)
+
+# Plot the beta distribution using ggplot
+ggplot(data, aes(x = x, y = pdf)) +
+  geom_line(color = "blue", size = 1) +
+  labs(x = "Posterior Belief: True Proportion Heads",
+       y = NULL) +
+   geom_vline(xintercept = 0.5, linetype = 3) +
+  theme_minimal() + theme(axis.text.y = element_blank())
+
+```
+
+
+
+## How to Specify your Prior
+
+::: {style="font-size: 0.95em;"}
+
+In practice, priors are specified as probability distributions.
+
+For example, if I am very confident the coin is likely to be fair, my prior might be a normal distribution with $\mu = 0.5$ and $\sigma = 0.1$. 
+
+* $\mu = 0.5$ means I think the true proportion of heads is most likely to be $0.5$, 
+* $\sigma = 0.1$ means that in my mind, I am around 68% certain that the true proportion is between $0.4$ and $0.6$ 
+    + Because 68% of the values in a normal distribution are within 1 SD of the mean
+* Likewise, I am around 98% certain the true proportion is between $0.3$ and $0.7$
+    + Because 98% of the values in a normal distribution are within 2 SD of the mean
+
+:::
+
+## How to Specify your Prior
+
+
+This prior would technically be improper. Can anyone see why?
+
+[A normal distribution can have values from $-\infty$ to $\infty$, but a proportion can only be between 0 and 1]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+[This is one of the reasons Bayesian Statsitics is more complex to learn.]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+You can use improper priors, but in general, proper priors are going to allow us to do more and more interesting things.
+
+
+
+## How to Incorporate Data
+
+How does data move us from prior to posterior? 
+
+[Through the **likelihood function**]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+$$P(\pi|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\pi)P(\pi)}{P(\boldsymbol{D})}$$
+
+- **Prior:** $P(\pi)$
+- **Likelihood:** $P(\boldsymbol{D}|\pi)$
+- **Scaling term:** $P(\boldsymbol{D})$
+- **Posterior:** $P(\pi|\boldsymbol{D})$
+
+
+
+## Likelihood Function of our Data
+
+```{r}
+
+# Define the number of successes and failures
+successes <- 7
+failures <- 3
+
+# Define the values of the probability parameter (p) for the binomial distribution
+p_values <- seq(0, 1, by = 0.01)
+
+# Calculate the likelihood function for each value of p
+likelihood <- dbinom(successes, size = successes + failures, prob = p_values)
+
+# Create a data frame to store the results
+likelihood_df <- data.frame(p = p_values, likelihood = likelihood)
+
+# Plot the likelihood function
+ggplot(likelihood_df, aes(x = p, y = likelihood)) +
+   geom_line(color = "blue", size = 1) +
+  labs(x = "Possible True Proportion Values",
+       y = NULL) +
+  theme_minimal() + theme(axis.text.y = element_blank())
+```
+
+
+## Maximum Likelihood
+
+Recall: To find the maximum likelihood, we find the highest point on the hill
+
+```{r}
+
+
+# Define the number of successes and failures
+successes <- 7
+failures <- 3
+
+# Define the values of the probability parameter (p) for the binomial distribution
+p_values <- seq(0, 1, by = 0.01)
+
+# Calculate the likelihood function for each value of p
+likelihood <- dbinom(successes, size = successes + failures, prob = p_values)
+
+# Create a data frame to store the results
+likelihood_df <- data.frame(p = p_values, likelihood = likelihood)
+
+# Plot the likelihood function
+ggplot(likelihood_df, aes(x = p, y = likelihood)) +
+   geom_line(color = "blue", size = 1) +
+  labs(x = "Possible True Proportion Values",
+       y = NULL) +
+   geom_vline(xintercept = 0.7, linetype = 3, color = "blue") +
+  geom_hline(yintercept = max(likelihood_df$likelihood), linetype = 3, color = "blue") + 
+  annotate("text", x = 0.665, y = 0.22, label = "P = .7", color = "blue") +
+  theme_minimal() + theme(axis.text.y = element_blank())
+```
+
+
+## Back to Bayesics
+
+
+
+In our running coin flip example, we said we are trying to figure out a posterior belief about the true probability of heads $\pi$
+
+$$P(\pi|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\pi)P(\pi)}{P(\boldsymbol{D})}$$
+
+- **Prior:** $P(\pi)$
+- **Likelihood:** $P(\boldsymbol{D}|\pi)$
+- **Scaling term:** $P(\boldsymbol{D})$
+- **Posterior:** $P(\pi|\boldsymbol{D})$
+
+## Problems with Scale
+
+We sort of glossed over the scaling term by saying
+
+- One way to define this: $P(\boldsymbol{D}) = \sum P(\boldsymbol{D}|\pi)P(\pi)$
+
+But really what we're summing over is all possible values of $\pi$
+
+- This really needs to be an **integral:** $P(\boldsymbol{D}) = \int P(\boldsymbol{D}|\pi)P(\pi)d\pi$
+- This integral is often not going to be analytically solvable, making it a cbig computational challenge
+
+
+
+## MAP Estimation
+
+
+
+One approach to Bayesian estimation is very similar to Maximum Likelihood, and lets us ignore this problem. It is known as Maximum **A Posteriori** estimation (MAP). Under MAP, we aren't necessarily interested in the actual probability distribution $P(\pi |\boldsymbol{D})$, just the value of $\pi$ that maximizes this function.
+
+Notice what this allows us to do with Bayes' rule:
+
+$$P(\theta|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\theta)P(\theta)}{P(\boldsymbol{D})} = \frac{P(\boldsymbol{D}|\theta)P(\theta)}{\int P(\boldsymbol{D}|\theta)P(\theta)\,d\theta}$$ 
+
+
+## Proportionality over Equality
+
+Because we don't care about the equality, only the maximum point, we can drop out the denominator, and instead say
+
+$$P(\theta|\boldsymbol{D}) \propto P(\boldsymbol{D}|\theta)P(\theta)$$ 
+
+
+
+Where $\propto$ means "is proportional to".
+
+This is a common approach when the primary goal finding the single most likely parameter values, rather than making a confidence statement about parameter values. 
+
+- Often useful for making predictions
+
+
+
+## General Form
+
+::: {style="font-size: 0.95em;"}
+
+The coin flip was a motivating example, but not very practice. Our general version of Bayes' rule is:
+
+$$P(\boldsymbol{\theta}|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{P(\boldsymbol{D})}$$
+
+- **Prior:** $P(\boldsymbol{\theta})$
+- **Likelihood:** $P(\boldsymbol{D}|\boldsymbol{\theta})$
+- **Scaling term:** $P(\boldsymbol{D})$
+- **Posterior:** $P(\boldsymbol{\theta}|\boldsymbol{D})$
+
+This allows us to consider our confidence in multiple parameters simultaneously, represented generically as $\boldsymbol{\theta}$
+
+:::
+
+## General Linear Model
+
+::: {style="font-size: 0.8em;"}
+
+For example, recall that we can rewrite a $t$-test in the form of a simple linear model
+
+$$y_i = \beta_0 + \beta_1 \text{Group}_i + \epsilon_i$$
+
+Our **parameter space** here is $\boldsymbol{\theta} = [\beta_0, \beta_1, \sigma_\epsilon]$
+
+- $\beta_0 =$ sample mean when $\text{Group}_i = 0$
+- $\beta_0 + \beta_1 =$ sample mean when $\text{Group}_i = 1$
+- $\sigma_\epsilon =$ shared standard deviation for each group (residual SD)
+
+We want to estimate Bayes' rule **without** losing the denominator, complex integral and all
+
+
+$$P(\boldsymbol{\theta}|\boldsymbol{D})  = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{P(\boldsymbol{D})} = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{\sum P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})} = \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{\int P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})\,d\boldsymbol{\theta}}$$
+
+:::
+
+## Markov Chain Monte Carlo {style="font-size: .8em;"}
+
+Markov Chain Monte Carlo (MCMC) is a simulation-based procedure for determining the **joint** of posterior distribution of all parameters $\boldsymbol{\theta}$ when it's too complicated to figure out numerically.
+
+There are many different MCMC based algorithms. In a very general/intuitive sense, the way MCMC works is as follows:
+
+- We draw random values from $\boldsymbol{\theta}$ based on our prior, and check how well those values "fit" our likelihood
+- If the fit is not good enough we (might) throw away that draw (probabilistically) and make another one
+- If it is good enough, we keep it, and update our parameter estimates based on this value
+- We repeat this process many times, until we have a large "synthetic sample" of values that represent the combination of our prior and the likelihood
+- We use the simulated values that we kept as a representation of the posterior distribution $P(\boldsymbol{\theta} | \boldsymbol{D})$
+
+
+## MCMC: More Detail I
+
+In our example, where $\boldsymbol{\theta} = [\beta_0, \beta_1, \sigma_\epsilon]$
+
+**Step 1:** Choose starting values for each parameter as draws from their prior distributions. Call them $\beta_{0_1}$, $\beta_{1_1}$ and $\sigma_{\epsilon_1}$.
+
+**Step 2:** Draw a new random value for $\beta_{0}$ from its prior distribution. Call this $\beta_{0_2}$. 
+
+**Step 3:** Determine whether $\beta_{0_1}$ or $\beta_{0_2}$ is at a higher point on the likelihood function (data given parameters), with $\beta_{1}$ assumed to be $\beta_{1_1}$ and $\sigma_{\epsilon}$ assumed to be $\sigma_{\epsilon_1}$. 
+
+- That is: Check whether $\mathcal{L}(\beta_{0_2}, \beta_{1_1}, \sigma_{\epsilon_1} ; \boldsymbol{D}) \geq \mathcal{L}(\beta_{0_1}, \beta_{1_1}, \sigma_{\epsilon_1} ; \boldsymbol{D})$
+    
+## MCMC: More Detail II
+
+::: {style="font-size: 0.77em;"}
+
+**Step 4:** If 
+
+-  $\mathcal{L}(\beta_{0_2}, \beta_{1_1}, \sigma_{\epsilon_1} ; \boldsymbol{D}) \geq \mathcal{L}(\beta_{0_1}, \beta_{1_1}, \sigma_{\epsilon_1} ; \boldsymbol{D})$, keep the proposed value $\beta_{0_2}$ for sure. 
+
+- $\mathcal{L}(\beta_{0_2}, \beta_{1_1}, \sigma_{\epsilon_1} ; \boldsymbol{D}) < \mathcal{L}(\beta_{0_1}, \beta_{1_1}, \sigma_{\epsilon_1} ; \boldsymbol{D})$ only keep $\beta_{0_2}$ with probability based on the ratio $\frac{\mathcal{L}(\beta_{0_2}, \beta_{1_1}, \sigma_{\epsilon_1}; \boldsymbol{D})}{\mathcal{L}(\beta_{0_1}, \beta_{1_1}, \sigma_{\epsilon_1} ; \boldsymbol{D})}$
+
+**Step 5:** if $\beta_{0_2}$ was kept, save it as a viable element of the posterior distribution of $\beta_{0}$. Otherwise, throw it away.
+
+**Step 6:** Draw a new random value for $\beta_{1}$ from its prior distribution. Call this $\beta_{1_2}$. 
+
+**Step 7:** Repeat steps 3-5, but for $\beta_{1_2}$ rather than $\beta_{0_2}$, and using $\beta_{0_2}$ if it was accepted as a proposal, and $\beta_{0_1}$ if it was not.
+
+**Step 8:** Repeat steps 3-5 for $\sigma_{\epsilon}$ using $\beta_{0_2}$ and $\beta_{1_2}$ if they were accepted as as a proposals, otherwise $\beta_{0_1}$ and/or $\beta_{0_1}$
+
+
+Repeat this entire process a pre-specified number of times. Eventually, the random draws should "converge" on a stable distribution that represents the posterior.
+
+:::
+
+## Gibbs Sampling and the Metropolis Hastings Algorithm
+
+This explanation is loosely based on Gibbs Sampling and the Metropolis-Hastings algorithm, which are fundamental (though somewhat dated) methods for MCMC.
+
+I found the following explanations useful for better understanding these
+
+- [Gibbs Sampling](https://stephens999.github.io/fiveMinuteStats/gibbs1.html)
+- [Metropolis Hastings Algorithm](https://www.y1zhou.com/series/bayesian-stat/bayesian-stat-metropolis-hastings-algorithms/)
+
+
+
+##
+
+![](../../Figs/1.png)
+
+##
+
+![](../../Figs/2.png)
+
+##
+
+![](../../Figs/3.png)
+
+##
+
+![](../../Figs/4.png)
+
+##
+
+![](../../Figs/5.png)
+
+##
+
+![](../../Figs/6.png)
+
+##
+
+![](../../Figs/7.png)
+
+##
+
+![](../../Figs/8.png)
+
+##
+
+![](../../Figs/9.png)
+##
+
+![](../../Figs/10.png)
+
+##
+
+![](../../Figs/11.png)
+
+##
+
+![](../../Figs/12.png)
+
+##
+
+![](../../Figs/13.png)
+
+##
+
+![](../../Figs/14.png)
+
+
+## Point Estimates
+
+The posterior distributions of each parameter can directly provide us inferential information.
+
+Point estimates about (most likely values of) parameters can be made using measures of central tendency
+
+- Mean: the posterior mean for a parameter is the value that will minimize squared error
+- Median: the posterior median for a parameter is the value that will minimize absolute error
+- Mode: "single" most likely parameter value
+
+
+## Credible Intervals
+
+::: {style="font-size: 0.85em;"}
+
+The spread of the distributions quantify confidence in parameter estimates, or plausible values parameters might take
+
+- Posterior SDs are a measure of confidence
+- Credible intervals are everything we wish confidence intervals were
+    - It is correct to say a we are 95% certain the population value falls within a 95% credible interval
+    - This is based on the likelihood (data) and prior (existing knowledge and confidence). 
+        - Important: if our prior wasn't true or was poorly chosen this result will not hold! 
+        - Prior should represent true report of one's prior belief
+    - Contrast this with our earlier definitions of frequentist confidence intervals!
+      - In 95% of samples, true parameter will fall inside interval
+      - Range of values we cannot reject if treated as null hypothesis
+
+:::
+    
+## Types of CIs
+
+Equal Tailed Intervals (ETI):
+
+- Simply based on the symmetric quantiles of the distribution
+- E.g., for a 95% credible interval, 2.5% is outside in each of the upper and lower tails
+
+Highest Posterior Density Intervals (HPD):
+
+- Proportion of the distribution such that all values outside of this range have less support than values inside
+- Not necessarily symmetrical in the tails
+
+The two types will be equal in symmetric distributions, but will not be in asymmetric distributions. HPD is a better representation of the range best supported by the posterior (recommended)
+
+##
+
+```{r}
+
+
+# --- 1. Model Posterior Distribution for Residual SD (sigma) ---
+shape_param <- 2.5
+scale_param <- 1.0
+
+x_grid <- seq(0.001, 8, length.out = 1000)
+df_post <- data.frame(
+  sigma = x_grid,
+  density = dgamma(x_grid, shape = shape_param, scale = scale_param)
+)
+
+# --- 2. Calculate Interval Boundaries ---
+# ETI Bounds
+eti_lower <- qgamma(0.025, shape = shape_param, scale = scale_param)
+eti_upper <- qgamma(0.975, shape = shape_param, scale = scale_param)
+
+# HPD Bounds (Shortest width containing 95% mass)
+hpd_width <- function(a) {
+  b <- qgamma(pgamma(a, shape = shape_param, scale = scale_param) + 0.95, 
+              shape = shape_param, scale = scale_param)
+  return(b - a)
+}
+opt <- optimize(hpd_width, interval = c(0.0001, qgamma(0.05, shape = shape_param, scale = scale_param)))
+hpd_lower <- opt$minimum
+hpd_upper <- qgamma(pgamma(hpd_lower, shape = shape_param, scale = scale_param) + 0.95, 
+                    shape = shape_param, scale = scale_param)
+
+# --- 3. Compute Tail Percentages ---
+eti_left_pct  <- round(pgamma(eti_lower, shape_param, scale_param) * 100, 2)
+eti_right_pct <- round((1 - pgamma(eti_upper, shape_param, scale_param)) * 100, 2)
+
+hpd_left_pct  <- round(pgamma(hpd_lower, shape_param, scale_param) * 100, 2)
+hpd_right_pct <- round((1 - pgamma(hpd_upper, shape_param, scale_param)) * 100, 2)
+
+# --- 4. Build Faceted Data for Side-by-Side Tail Comparison ---
+df_eti <- df_post
+df_eti$type <- "Equal-Tailed Interval (ETI)"
+df_eti$region <- ifelse(df_eti$sigma < eti_lower, "Left Tail",
+                 ifelse(df_eti$sigma > eti_upper, "Right Tail", "95% Interval"))
+
+df_hpd <- df_post
+df_hpd$type <- "Highest Posterior Density (HPD)"
+df_hpd$region <- ifelse(df_hpd$sigma < hpd_lower, "Left Tail",
+                 ifelse(df_hpd$sigma > hpd_upper, "Right Tail", "95% Interval"))
+
+df_combined <- rbind(df_eti, df_hpd)
+df_combined$type <- factor(df_combined$type, levels = c("Equal-Tailed Interval (ETI)", "Highest Posterior Density (HPD)"))
+
+# Tail label annotations dataframe
+df_text <- data.frame(
+  type = factor(c("Equal-Tailed Interval (ETI)", "Equal-Tailed Interval (ETI)",
+                  "Highest Posterior Density (HPD)", "Highest Posterior Density (HPD)"),
+                levels = c("Equal-Tailed Interval (ETI)", "Highest Posterior Density (HPD)")),
+  sigma = c(0.20, 7.1, 0.08, 6.8),
+  density = c(0.08, 0.08, 0.08, 0.08),
+  label = c(paste0("Left Tail:\n", eti_left_pct, "%"),
+            paste0("Right Tail:\n", eti_right_pct, "%"),
+            paste0("Left Tail:\n", hpd_left_pct, "%"),
+            paste0("Right Tail:\n", hpd_right_pct, "%"))
+)
+
+# --- 5. Generate Plot ---
+ggplot(df_combined, aes(x = sigma, y = density)) +
+  # Shaded regions for tails and intervals
+  geom_ribbon(aes(ymin = 0, ymax = density, fill = region), alpha = 0.5) +
+  geom_line(color = "black", size = 0.8) +
+  
+  # Facet by interval method
+  facet_wrap(~ type, ncol = 1) +
+  
+  # Tail Percentage Labels
+  geom_label(data = df_text, aes(x = sigma, y = density, label = label),
+             fill = "white", color = "grey10", fontface = "bold", size = 3.5, label.size = 0.3) +
+  
+  # Vertical Cutoff Lines
+  geom_vline(data = data.frame(type = factor("Equal-Tailed Interval (ETI)", levels = levels(df_combined$type)), 
+                               x = c(eti_lower, eti_upper)),
+             aes(xintercept = x), linetype = "dashed", color = "#2b5c8f", size = 0.8) +
+  geom_vline(data = data.frame(type = factor("Highest Posterior Density (HPD)", levels = levels(df_combined$type)), 
+                               x = c(hpd_lower, hpd_upper)),
+             aes(xintercept = x), linetype = "dashed", color = "#d95f02", size = 0.8) +
+  
+  # Color Palette and Formatting
+  scale_fill_manual(
+    name = "Posterior Region",
+    values = c("95% Interval" = "#b3cde3", "Left Tail" = "#e41a1c", "Right Tail" = "#377eb8")
+  ) +
+  scale_x_continuous(breaks = seq(0, 8, by = 1)) +
+  labs(
+    title = "Tail Mass Comparison: 95% ETI vs. 95% HPD for Residual SD (\u03c3)",
+    subtitle = "ETI explicitly balances 2.5% mass per tail; HPD shifts left to maximize density, leaving asymmetric tails",
+    x = "Residual SD (\u03c3)",
+    y = "Posterior Density"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "bottom",
+    strip.text = element_text(face = "bold", size = 11),
+    plot.title = element_text(face = "bold", size = 13),
+    plot.subtitle = element_text(color = "grey30", size = 10),
+    panel.grid.minor = element_blank()
+  )
+```
+
+
+
+## Bayes Factors
+
+::: {style="font-size: 0.85em;"}
+
+Bayes Factors are a way of comparing the support for different models in a Bayesian framework.
+
+They are ratios of posterior likelihoods between competing models. If we have two possible models for the same data, $M_1$ and $M_2$.
+
+$$BF = \frac{P(\boldsymbol{D}|M_1)}{P(\boldsymbol{D}|M_2)}$$
+
+- When $BF = 1$ the two models are equally likely
+- When $BF > 1$ then $M_1$ is more likely than $M_2$
+  - When $BF = 3$, $M_1$ is three times as likely to be the "true" model as $M_2$
+- When $BF < 1$, $M_2$ is more likely than $M_1$
+    - When $BF = \frac{1}{3}$, $M_2$ is three times as likely to be the "true" model as $M_1$
+
+::: 
+
+## Advantages and Disadvantages
+
+::: {style="font-size: 0.85em;"}
+
+Advantages:
+
+- Intuitive way to compare two (or more) models to one another
+- Fairly straightforward interpretation
+
+Disadvantages:
+
+- Assume that the models being compared are THE models
+    - No model is the "true" model!
+- Can lead to similar pitfalls as frequentist analysis
+    - $BF$ of 3 (or $\frac{1}{3}$) have been proposed as "cutoff" values. This is just as arbitrary as $\alpha = .05$, and even sillier since Bayes Factors have a much more intuitive interpretation than $p$-values
+    
+:::
+
+## Bayes Factors and Support Intervals
+
+**Support Interval:** Region of the posterior distribution of a parameter that is taller than the prior distribution.
+
+**Interpretation:** Data added evidentiary support for this region over our prior.
+
+In the following figure:
+
+- Dashed outline is prior
+- Shaded orange is posterior
+- Support interval is region where posterior is taller than prior
+
+## Support Intervals
+
+```{r echo = F, out.width="75%"}
+
+library(bayestestR)
+
+
+prior <- distribution_normal(40000, mean = 0, sd = 1)
+posterior <- distribution_normal(40000, mean = 0.5, sd = 0.3)
+
+si_1 <- si(posterior, prior, BF = 1)
+si_3 <- si(posterior, prior, BF = 3)
+
+ggplot(mapping = aes(x = x, y = y)) +
+  theme_classic() +
+  # The posterior
+  geom_area(
+    fill = "orange",
+    data = estimate_density(posterior, extend = TRUE)
+  ) +
+  # The prior
+  geom_area(
+    color = "black", fill = NA, linewidth = 1, linetype = "dashed",
+    data = estimate_density(prior, extend = TRUE)
+  ) +
+  # BF = 1 SI in blue
+  geom_vline(xintercept = si_1$CI_low, color = "royalblue", linewidth = 1) +
+  geom_vline(xintercept = si_1$CI_high, color = "royalblue", linewidth = 1)
+```
+
+
+Figure from [https://easystats.github.io/bayestestR/articles/credible_interval.html](https://easystats.github.io/bayestestR/articles/credible_interval.html)
+
+## Cross Validation
+
+
+::: {style="font-size: 0.85em;"}
+
+We briefly discussed cross-validation based methods a few lectures ago
+
+- Slice data up into sections.
+
+- Use one part of data as a "training" sample, and another as a "testing" sample.
+
+The downside to this is the loss of precision/power.
+
+- **Leave one out (LOO)** cross-validation takes all possible combinations of $N-1$ observations, leaving one row out a time, and cross validates on that single observation.
+
+- Pareto Smoothed Importance Sampling (PSIS) provides a method for estimating LOO-CV in a tractable way, and can be quite useful (though not always feasible).
+
+This is a great method when available though, since models are validated on data that wasn't in the sample on which they were fit, which is a huge bonus for generalizability and avoiding overfit. 
+
+::: 
+
+## `Stan` and `rstanarm`
+
+- `Stan` is free general purpose, `C++` based [software for estimating Bayesian models](https://mc-stan.org/)
+  - Uses "Hamiltonian" Monte Carlo
+    - More sophisticated version of MCMC than Gibbs
+- `rstanarm` is a user friendly `R` package that implements several common statistical models in `Stan` using R syntax 
+  - Very smart default priors
+  - Limited to specific set of common statistical models
+  - We will only cover `rstanarm`
+- Slightly more advanced\flexible: `brms`
+- Even more advanced: `cmdstanr` and `RStan`
+
+
+## McCrea Revisited
+
+**Original Study**:
+
+::: {style="font-size: 0.6em;"}
+McCrea, S. M. (2008). Self-handicapping, excuse making, and counterfactual thinking: Consequences for self-esteem and future motivation. *Journal of Personality and Social Psychology*, *2*, 274-292.
+:::
+
+::: {style="font-size: 0.95em;"}
+**Replication study link**: <https://osf.io/2kjgz>
+
+**Step 1**: Subject took a math exam and were told that they scored in the 35th percentile of university students
+
+**Step 2**: Subjects saw statements supposedly written by previous participants
+
+-   Self-handicap group: half of statements indicated that more practice would have improved their performance, half of statements were neutral
+
+-   Control group: all statements were neutral
+
+**Step 3**: Subjects took a second surprise math exam
+:::
+
+
+
+```{r}
+dat <- read.csv("../../data/McCrea.csv") |> 
+  mutate(Cond = recode(as_factor(Cond), 
+                       "1" = "self-handicap", 
+                       "2" = "control"))
+
+dat$Cond <- factor(dat$Cond, levels = c("control","self-handicap"))
+```
+
+## Model Review
+
+$$\text{percent}_i = \beta_0 + \beta_1 \text{Cond} + \epsilon_i$$
+
+
+```{r}
+#| echo: true
+
+lm1 <- lm(percent ~ Cond, dat)
+summary(lm1)
+```
+
+
+## In `rstanarm`
+
+```{r}
+library(rstanarm)
+```
+
+```{r}
+#| echo: true
+#| cache: true
+library(rstanarm)
+options(mc.cores = parallel::detectCores())
+
+stan_lm1 <- stan_glm(percent ~ Cond, dat, family = "gaussian",
+                     diagnostic_file = "df1.csv", #for Bayes factor
+                     seed = 1224)
+summary(stan_lm1, digits = 2, probs = c(.025, .5, .975))
+
+```
+
+
+## Priors
+
+By default, `rstanarm` uses the following priors
+
+- For $\beta_0$ and $\beta_1$ the prior is based on a normal distribution with $\sigma = 2.5$
+  - $\sigma = 2.5$ is based on a **transformed** scale, using information about the variables in the model to convert to $Z$-score units
+  - The intercept $\beta_0$ has $\mu$ based on the observed mean $\bar{y}$
+  - The slope $\beta_1$ has $\mu = 0$
+- $\sigma$ is given a prior based on an *exponential* distribution
+  - Non-negative distribution, also scaled to $Z$-score-like units
+  
+
+## Prior Summary
+  
+```{r}
+#| echo: true
+prior_summary(stan_lm1)
+```
+
+## `rstanarm` Results
+
+```{r}
+summary(stan_lm1, digits = 2, probs = c(.025, .5, .975))
+```
+
+
+## Reading these Results
+
+- Posterior mean of $\beta_0 = 0.58$
+- Posterior median of $\beta_1 = -0.12$
+  - 95% ETI credible interval = [-0.22, -0.02]
+
+
+Let's briefly look at 
+
+- How to get the HDI interval
+- How to compute a Bayes factor comparing to an unconditional (intercept only) model
+
+## HDI interval
+
+```{r}
+#| echo: true
+library(bayestestR)
+hdi(stan_lm1, component = "all")
+```
+
+
+## Bayes Factor
+
+::: {style="font-size: 0.85em;"}
+
+An intercept only model would treat the two groups as having equal means
+
+$$\text{percent}_i = \beta_0 + \epsilon_i$$
+
+
+```{r}
+#| cache: true
+#| echo: true
+stan_lm0 <- stan_glm(percent ~ 1, dat, family = "gaussian",
+                     diagnostic_file = "df0.csv", #for Bayes factor,
+                     seed = 312)
+
+(bfs1 <- bayesfactor_models(stan_lm0, stan_lm1))
+```
+
+**Interpretation:** The original model is only 69% as likely as the intercept only model
+
+- The intercept only model is $\frac{1}{.69} = 1.45$ times as likely as the original model
+- Assumes one of these models is **the model**
+
+:::
+
+## APA Writeup
+
+Using a Bayesian model, the posterior mean of the difference between control and treatment was $\beta_1 = -0.12$, $95\% \text{ CI} = [-0.22, -0.02]$. Compared to an intercept-only model, this model had $BF = 0.69$, indicating it was only 69% as likely as the model that allows for differences in means between the two groups. 
