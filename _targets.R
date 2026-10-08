@@ -31,6 +31,15 @@ list(
     qmd_out(lab_08_slides_qmd)
   }, format = "file"),
   
+  tar_target(lab_08_activity_key_qmd, 
+             "lab/activities/activity-keys/lab_08_activity_key.qmd", 
+             format = "file"),
+  tar_target(lab_08_activity_key, {
+    pumpkin_prices_data_file
+    quarto::quarto_render(lab_08_activity_key_qmd)
+    qmd_out(lab_08_activity_key_qmd)
+  }, format = "file"),
+  
   ## lab 07
   tar_target(where_ffmpeg, Sys.which("ffmpeg")),
   tar_file(posterior_samples_plt, plt_posterior_samples(), packages = c("tidyverse", "gganimate", "av")),
@@ -56,15 +65,6 @@ list(
     quarto::quarto_render(lab_07_activity_key_qmd)
     qmd_out(lab_07_activity_key_qmd)
   }, format = "file"),
-  # tar_target(lab_07_activity_key_qmd, 
-  #            "lab/activities/activity-keys/lab_07_activity_key.qmd", 
-  #            format = "file"),
-  # tar_target(lab_07_activity_key, {
-  #   leaves_data_file
-  #   quarto::quarto_render(lab_07_activity_key_qmd)
-  #   qmd_out(lab_07_activity_key_qmd)
-  # }, format = "file"),
-  
   
   ## lab 06
   tar_target(chick_data, make_chick_data()),
@@ -129,21 +129,21 @@ list(
   
   ## lab 03
 
-  # tar_target(lab_03_slides_qmd, 
-  #            "lab/slides/lab_03.qmd", 
-  #            format = "file"),
-  # tar_target(lab_03_slides, {
-  #   world_cup_player_stats_file
-  #   quarto::quarto_render(lab_03_slides_qmd)
-  #   qmd_out(lab_03_slides_qmd)
-  # }, format = "file"),
-  # tar_target(lab_03_activity_key_qmd, 
-  #            "lab/activities/activity-keys/lab_03_activity_key.qmd", 
-  #            format = "file"),
-  # tar_target(lab_03_activity_key, {
-  #   quarto::quarto_render(lab_03_activity_key_qmd)
-  #   qmd_out(lab_03_activity_key_qmd)
-  # }, format = "file"),
+  tar_target(lab_03_slides_qmd,
+             "lab/slides/lab_03.qmd",
+             format = "file"),
+  tar_target(lab_03_slides, {
+    world_cup_player_stats_file
+    quarto::quarto_render(lab_03_slides_qmd)
+    qmd_out(lab_03_slides_qmd)
+  }, format = "file"),
+  tar_target(lab_03_activity_key_qmd,
+             "lab/activities/activity-keys/lab_03_activity_key.qmd",
+             format = "file"),
+  tar_target(lab_03_activity_key, {
+    quarto::quarto_render(lab_03_activity_key_qmd)
+    qmd_out(lab_03_activity_key_qmd)
+  }, format = "file"),
   
   ## lab 02
   tar_target(world_cup_player_stats_file, "lab/raw-data/world_cup_player_stats.csv", format = "file"),

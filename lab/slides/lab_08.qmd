@@ -733,14 +733,14 @@ library(palmerpenguins)
 ```
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column width="33%"}
 ```{r}
 glimpse(penguins)
 ```
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="66%"}
 ```{r}
 penguins
 ```
@@ -815,8 +815,12 @@ effectsize::omega_squared(flipper_model)
 :::
 ::::
 
+[In this case, $\eta_2$ and $\omega^2$ happen to be the same.]{.fragment}
 
-## Assumptions: Normality and Outliers
+
+## Assumptions
+
+Visualize the distributions to check for normality, outliers, and homogeniety of variance.
 
 ::: {.panel-tabset}
 ### Plot
@@ -936,109 +940,109 @@ bayesplot::mcmc_rank_overlay(flipper_model_bayes)
 ::::
 
 
-## Look at Posterior Predictive
+<!-- ## Look at Posterior Predictive -->
 
-:::: {.columns}
-::: {.column width="50%"}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 8
-#| fig-height: 3
-#| fig-align: center
-bayesplot::ppc_dens_overlay_grouped(
-  y = penguins_cleaned$flipper_length_mm,
-  yrep = posterior_predict(flipper_model_bayes, draws = 50),
-  group = penguins_cleaned$species
-)
-```
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 8 -->
+<!-- #| fig-height: 3 -->
+<!-- #| fig-align: center -->
+<!-- bayesplot::ppc_dens_overlay_grouped( -->
+<!--   y = penguins_cleaned$flipper_length_mm, -->
+<!--   yrep = posterior_predict(flipper_model_bayes, draws = 50), -->
+<!--   group = penguins_cleaned$species -->
+<!-- ) -->
+<!-- ``` -->
 
-### Code
-```{r}
-#| eval: false
-bayesplot::ppc_dens_overlay_grouped(
-  y = penguins_cleaned$flipper_length_mm,
-  yrep = posterior_predict(flipper_model_bayes, draws = 50),
-  group = penguins_cleaned$species
-)
-```
-:::
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- bayesplot::ppc_dens_overlay_grouped( -->
+<!--   y = penguins_cleaned$flipper_length_mm, -->
+<!--   yrep = posterior_predict(flipper_model_bayes, draws = 50), -->
+<!--   group = penguins_cleaned$species -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ::: -->
 
-:::
-
-
-::: {.column width="50%"}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-posterior_predictive_data <- bayesplot::ppc_data(
-  y = penguins_cleaned$flipper_length_mm,
-  yrep = posterior_predict(flipper_model_bayes, draws = 50),
-  group = penguins_cleaned$species
-)
-
-original_data <- posterior_predictive_data |>
-  filter(is_y)
-model_draws <- posterior_predictive_data |>
-  filter_out(is_y)
-
-model_draws |>
-  ggplot() +
-  ggridges::geom_density_ridges(
-    aes(x = value, y = group, group = interaction(group, rep_id)),
-    fill = NA, color = "steelblue", alpha = 0.5, linewidth = 0.25,
-    scale = 1, rel_min_height = 0
-  ) +
-  ggridges::geom_density_ridges(
-    data = original_data,
-    aes(x = value, y = group),
-    fill = NA, color = "black", linewidth = 0.8,
-    scale = 1, rel_min_height = 0
-  ) +
-  labs(x = "Flipper length (mm)", y = NULL) +
-  ggridges::theme_ridges()
-```
-
-### Code
-```{r}
-#| eval: false
-posterior_predictive_data <- bayesplot::ppc_data(
-  y = penguins_cleaned$flipper_length_mm,
-  yrep = posterior_predict(flipper_model_bayes, draws = 50),
-  group = penguins_cleaned$species
-)
-
-original_data <- posterior_predictive_data |>
-  filter(is_y)
-model_draws <- posterior_predictive_data |>
-  filter_out(is_y)
-
-model_draws |>
-  ggplot() +
-  ggridges::geom_density_ridges(
-    aes(x = value, y = group, group = interaction(group, rep_id)),
-    fill = NA, color = "steelblue", alpha = 0.5, linewidth = 0.25,
-    scale = 1, rel_min_height = 0
-  ) +
-  ggridges::geom_density_ridges(
-    data = original_data,
-    aes(x = value, y = group),
-    fill = NA, color = "black", linewidth = 0.8,
-    scale = 1, rel_min_height = 0
-  ) +
-  labs(x = "Flipper length (mm)", y = NULL) +
-  ggridges::theme_ridges()
-```
-:::
+<!-- ::: -->
 
 
-:::
-::::
+<!-- ::: {.column width="50%"} -->
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 5 -->
+<!-- #| fig-height: 4 -->
+<!-- #| fig-align: center -->
+<!-- posterior_predictive_data <- bayesplot::ppc_data( -->
+<!--   y = penguins_cleaned$flipper_length_mm, -->
+<!--   yrep = posterior_predict(flipper_model_bayes, draws = 50), -->
+<!--   group = penguins_cleaned$species -->
+<!-- ) -->
+
+<!-- original_data <- posterior_predictive_data |> -->
+<!--   filter(is_y) -->
+<!-- model_draws <- posterior_predictive_data |> -->
+<!--   filter_out(is_y) -->
+
+<!-- model_draws |> -->
+<!--   ggplot() + -->
+<!--   ggridges::geom_density_ridges( -->
+<!--     aes(x = value, y = group, group = interaction(group, rep_id)), -->
+<!--     fill = NA, color = "steelblue", alpha = 0.5, linewidth = 0.25, -->
+<!--     scale = 1, rel_min_height = 0 -->
+<!--   ) + -->
+<!--   ggridges::geom_density_ridges( -->
+<!--     data = original_data, -->
+<!--     aes(x = value, y = group), -->
+<!--     fill = NA, color = "black", linewidth = 0.8, -->
+<!--     scale = 1, rel_min_height = 0 -->
+<!--   ) + -->
+<!--   labs(x = "Flipper length (mm)", y = NULL) + -->
+<!--   ggridges::theme_ridges() -->
+<!-- ``` -->
+
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- posterior_predictive_data <- bayesplot::ppc_data( -->
+<!--   y = penguins_cleaned$flipper_length_mm, -->
+<!--   yrep = posterior_predict(flipper_model_bayes, draws = 50), -->
+<!--   group = penguins_cleaned$species -->
+<!-- ) -->
+
+<!-- original_data <- posterior_predictive_data |> -->
+<!--   filter(is_y) -->
+<!-- model_draws <- posterior_predictive_data |> -->
+<!--   filter_out(is_y) -->
+
+<!-- model_draws |> -->
+<!--   ggplot() + -->
+<!--   ggridges::geom_density_ridges( -->
+<!--     aes(x = value, y = group, group = interaction(group, rep_id)), -->
+<!--     fill = NA, color = "steelblue", alpha = 0.5, linewidth = 0.25, -->
+<!--     scale = 1, rel_min_height = 0 -->
+<!--   ) + -->
+<!--   ggridges::geom_density_ridges( -->
+<!--     data = original_data, -->
+<!--     aes(x = value, y = group), -->
+<!--     fill = NA, color = "black", linewidth = 0.8, -->
+<!--     scale = 1, rel_min_height = 0 -->
+<!--   ) + -->
+<!--   labs(x = "Flipper length (mm)", y = NULL) + -->
+<!--   ggridges::theme_ridges() -->
+<!-- ``` -->
+<!-- ::: -->
+
+
+<!-- ::: -->
+<!-- :::: -->
 
 
 ## Comparison
@@ -1060,11 +1064,105 @@ summary(flipper_model_bayes)
 ::::
 
 
+## Effect Coding
+
+:::: {.columns}
+::: {.column width="50%"}
+Dummy coding compares $g-1$ groups to $\beta_0 =$ **reference group mean**:
+
+| Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| $x_1$ | 1 | 0 | $\cdots$ | 0 | 0 |
+| $x_2$ | 0 | 1 | $\cdots$ | 0 | 0 |
+| $\vdots$ | $\vdots$ | $\vdots$ | $\ddots$ | $\vdots$ | $\vdots$ |
+| $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | 0 |
+:::
+
+::: {.column width="50%"}
+**Dummy coding:**
+
+- $\beta_0: = \mu_3$
+- $\beta_1: = \mu_{1} - \mu_3$
+- $\beta_2: = \mu_{2} - \mu_3$
+:::
+::::
+
+:::: {.columns}
+::: {.column width="50%"}
+Effects or contrast coding compares $g-1$ groups to $\beta_0 =$ **grand mean**:
+
+| Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| $x_1$ | 1 | 0 | $\cdots$ | 0 | -1 |
+| $x_2$ | 0 | 1 | $\cdots$ | 0 | -1 |
+| $\vdots$ | $\vdots$ | $\vdots$ | $\ddots$ | $\vdots$ | $\vdots$ |
+| $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | -1 |
+:::
+
+::: {.column width="50%"}
+**Contrast/Effects coding:**
+
+- $\beta_0: = \mu$
+- $\beta_1: = \mu_{1} - \mu$
+- $\beta_2: = \mu_{2} - \mu$
+
+Compares groups to **grand mean**
+:::
+::::
 
 
+::: footer
+[Stolen from Mark's slides](https://jhelmer3.github.io/PSYC6019-2026/lecture/lecture-index.html)
+:::
 
 
+## Changing to Effect Coding in R
+
+We can tell R we want to use effect coding instead of dummy coding; we don't have to manually create the effect coding columns ourselves.
+
+We need to set the `contrasts` setting of our grouping variable to `contr.sum`. Everything you run after that will use effect coding.
+
+If you ever need to change it back to dummy coding, set it to `contr.treatment`.
+
+```{r}
+contrasts(penguins_cleaned$species) <- contr.sum
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+flipper_model_effect <- aov(
+  flipper_length_mm ~ species, 
+  data = penguins_cleaned
+)
+summary(flipper_model)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| eval: false
+flipper_model_bayes_effect <- stan_glm(
+  flipper_length_mm ~ species, 
+  data = penguins_cleaned, 
+  family = "gaussian"
+) 
+summary(flipper_model_bayes_effect)
+```
+
+```{r}
+#| echo: false
+flipper_model_bayes_effect <- stan_glm(
+  flipper_length_mm ~ species, 
+  data = penguins_cleaned, 
+  family = "gaussian",
+  refresh = 0
+) 
+summary(flipper_model_bayes_effect)
+```
+:::
+::::
 
 
-
+## Lab 08 Assignment
 

@@ -297,7 +297,7 @@ Jess Helmer
 <img data-src="lab_07_files/figure-revealjs/unnamed-chunk-5-1.svg" class="quarto-figure quarto-figure-center r-stretch" width="480"></section><section id="getting-to-the-posterior-5" class="slide level2"><h2>Getting to the Posterior</h2>
 <p>Our goal in Bayes is to estimate <span class="math inline">\(P(\theta | D) = \frac{P(\theta) P(D | \theta)}{P(D)}\)</span>.</p>
 <!-- {{ video ../media/lab_07/samples.mp4 }} -->
-<div class="absolute" style="top: 30%; left: 18%; width: 880px; height: 522px; ">
+<div class="absolute" style="left: 15.1%; bottom: -2%; width: 880px; height: 528px; ">
 <video src="../media/lab_07/samples.mp4" style="width:100%; height:100%; object-fit:contain; display:block; background:white;" controls=""></video>
 </div>
 </section><section id="getting-to-the-posterior-6" class="slide level2"><h2>Getting to the Posterior</h2>
@@ -307,25 +307,25 @@ Jess Helmer
 <p><img data-src="https://mc-stan.org/docs/img/logo_tm.png"></p>
 </div><div class="column" style="width:66%;">
 <p><em>Stan</em> is an open-source probabalistic programming language that’s widely used to write Bayesian models.</p>
-<p>It has a well-developed, user-friendly R interface called <code>rstanarm</code>, which we will use!</p>
+<p>It has a well-developed, user-friendly R interface called <a href="https://mc-stan.org/rstanarm/">rstanarm</a>, which we will use!</p>
 <div class="subpoint-narrow">
 <p>○ Means we can start to work with Bayesian models without having to lean the Stan language itself</p>
 </div>
 </div></div>
 </section><section id="bayesian-t-tests-1" class="slide level2"><h2>Bayesian <em>t</em>-Tests</h2>
-<p>A very user-friendly interface to Bayesian models with <code>Stan</code> is the <code>rstanarm</code> R package!</p>
+<p>A very user-friendly interface to Bayesian models with <code>Stan</code> is the <a href="https://mc-stan.org/rstanarm/">rstanarm</a> R package!</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("rstanarm")</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/rstanarm/">rstanarm</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html">detectCores</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># options(mc.cores = parallel::detectCores())</span></span>
 <span></span>
 <span><span class="va">filtered_mpg</span> <span class="op">&lt;-</span> <span class="va">mpg</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu">when_any</span><span class="op">(</span><span class="va">cyl</span> <span class="op">==</span> <span class="fl">4</span>, <span class="va">cyl</span> <span class="op">==</span> <span class="fl">8</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>cyl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section><section id="bayesian-t-tests-2" class="slide level2"><h2>Bayesian <em>t</em>-Tests</h2>
-<p>A very user-friendly interface to Bayesian models with <code>Stan</code> is the <code>rstanarm</code> R package!</p>
+<p>A very user-friendly interface to Bayesian models with <code>Stan</code> is the <a href="https://mc-stan.org/rstanarm/">rstanarm</a> R package!</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
@@ -366,7 +366,7 @@ Model Info:
 
 Estimates:
               mean   sd    10%   50%   90%
-(Intercept)  28.8    0.5  28.2  28.8  29.4
+(Intercept)  28.8    0.4  28.2  28.8  29.4
 cyl8        -11.2    0.7 -12.0 -11.2 -10.3
 sigma         4.0    0.2   3.7   4.0   4.3
 
@@ -378,18 +378,18 @@ The mean_ppd is the sample average posterior predictive distribution of the outc
 
 MCMC diagnostics
               mcse Rhat n_eff
-(Intercept)   0.0  1.0  3842 
-cyl8          0.0  1.0  3981 
-sigma         0.0  1.0  3619 
-mean_PPD      0.0  1.0  3947 
-log-posterior 0.0  1.0  1759 
+(Intercept)   0.0  1.0  3794 
+cyl8          0.0  1.0  3909 
+sigma         0.0  1.0  3197 
+mean_PPD      0.0  1.0  3413 
+log-posterior 0.0  1.0  1719 
 
 For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
 </div>
 </div></div>
 </section><section id="bayesian-t-tests-3" class="slide level2"><h2>Bayesian <em>t</em>-Tests</h2>
-<p>A very user-friendly interface to Bayesian models with <code>Stan</code> is the <code>rstanarm</code> R package!</p>
+<p>A very user-friendly interface to Bayesian models with <code>Stan</code> is the <a href="https://mc-stan.org/rstanarm/">rstanarm</a> R package!</p>
 <div class="columns" style="font-size:80%">
 <div class="column" style="width:50%;">
 <p><code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> function contains lots of information about the model:</p>
@@ -425,7 +425,7 @@ Estimates:
               mean   sd    5%    50%   95%
 (Intercept)  28.8    0.4  28.1  28.8  29.5
 cyl8        -11.2    0.7 -12.3 -11.2 -10.1
-sigma         4.0    0.2   3.6   4.0   4.4
+sigma         4.0    0.2   3.7   4.0   4.4
 
 Fit Diagnostics:
            mean   sd   5%   50%   95%
@@ -435,11 +435,11 @@ The mean_ppd is the sample average posterior predictive distribution of the outc
 
 MCMC diagnostics
               mcse Rhat n_eff
-(Intercept)   0.0  1.0  3925 
-cyl8          0.0  1.0  4078 
-sigma         0.0  1.0  3987 
-mean_PPD      0.0  1.0  3919 
-log-posterior 0.0  1.0  1701 
+(Intercept)   0.0  1.0  3501 
+cyl8          0.0  1.0  4114 
+sigma         0.0  1.0  3671 
+mean_PPD      0.0  1.0  3861 
+log-posterior 0.0  1.0  1793 
 
 For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
@@ -475,7 +475,7 @@ See help('prior_summary.stanreg') for more details</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
-<p><code>\{rstanarm\}</code> generally defines priors on the <em>z</em>-scale (“specified prior”) and then transforms them to the scale of our variables (“adjusted prior”) to actually run the model.</p>
+<p><a href="https://mc-stan.org/rstanarm/">rstanarm</a> generally defines priors on the <em>z</em>-scale (“specified prior”) and then transforms them to the scale of our variables (“adjusted prior”) to actually run the model.</p>
 <p>The “adjusted prior” is what was actually used.</p>
 </div></div>
 </section><section id="full-model" class="slide level2"><h2>Full Model</h2>
@@ -493,7 +493,57 @@ See help('prior_summary.stanreg') for more details</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("bayesplot")</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/bayesplot/">bayesplot</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<!-- ## Visualizing Results -->
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 5 -->
+<!-- #| fig-height: 4 -->
+<!-- #| fig-align: center -->
+<!-- ppc_dens_overlay( -->
+<!--   y = filtered_mpg$hwy, -->
+<!--   yrep = posterior_predict(bayes_t_test, draws = 50) -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- ppc_dens_overlay( -->
+<!--   y = filtered_mpg$hwy, -->
+<!--   yrep = posterior_predict(bayes_t_test, draws = 50) -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ## Visualizing Results -->
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 9 -->
+<!-- #| fig-height: 4 -->
+<!-- #| fig-align: center -->
+<!-- bayesplot::ppc_dens_overlay_grouped( -->
+<!--   y = filtered_mpg$hwy, -->
+<!--   yrep = posterior_predict(bayes_t_test, draws = 50), -->
+<!--   group = filtered_mpg$cyl -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- bayesplot::ppc_dens_overlay_grouped( -->
+<!--   y = filtered_mpg$hwy, -->
+<!--   yrep = posterior_predict(bayes_t_test, draws = 50), -->
+<!--   group = filtered_mpg$cyl -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ::: -->
 </section><section id="visualizing-results-1" class="slide level2"><h2>Visualizing Results</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>We can check how well our observed data (<span class="math inline">\(y\)</span>) compare to the fitted model’s predictions (<span class="math inline">\(y_{rep}\)</span>).</p>
+</div><div class="column" style="width:50%;">
 <div class="panel-tabset">
 <ul id="tabset-1" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-1-1">Plot</a></li>
@@ -512,15 +562,22 @@ See help('prior_summary.stanreg') for more details</code></pre>
 </div>
 <div id="tabset-1-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/PPC-distributions.html">ppc_dens_overlay</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/PPC-distributions.html">ppc_violin_grouped</a></span><span class="op">(</span></span>
 <span>  y <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">hwy</span>,</span>
-<span>  yrep <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">bayes_t_test</span>, draws <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span>  yrep <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">bayes_t_test</span>, draws <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span>
+<span>  group <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">cyl</span></span>
 <span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </div>
+</div></div>
 </section><section id="visualizing-results-2" class="slide level2"><h2>Visualizing Results</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>We can check how well our observed data (<span class="math inline">\(y\)</span>) compare to the fitted model’s predictions (<span class="math inline">\(y_{rep}\)</span>).</p>
+<p>And layer on <code>geom</code>s like a regular <code>ggplot</code>.</p>
+</div><div class="column" style="width:50%;">
 <div class="panel-tabset">
 <ul id="tabset-2" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-2-1">Plot</a></li>
@@ -531,7 +588,7 @@ See help('prior_summary.stanreg') for more details</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-16-1.svg" class="quarto-figure quarto-figure-center" width="864"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-16-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -539,68 +596,12 @@ See help('prior_summary.stanreg') for more details</code></pre>
 </div>
 <div id="tabset-2-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/PPC-distributions.html">ppc_dens_overlay_grouped</a></span><span class="op">(</span></span>
-<span>  y <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">hwy</span>,</span>
-<span>  yrep <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">bayes_t_test</span>, draws <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span>
-<span>  group <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">cyl</span></span>
-<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</section><section id="visualizing-results-3" class="slide level2"><h2>Visualizing Results</h2>
-<div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-3-1">Plot</a></li>
-<li><a href="#tabset-3-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-3-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-18-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-3-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/PPC-distributions.html">ppc_violin_grouped</a></span><span class="op">(</span></span>
-<span>  y <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">hwy</span>,</span>
-<span>  yrep <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">bayes_t_test</span>, draws <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span>
-<span>  group <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">cyl</span></span>
-<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</section><section id="visualizing-results-4" class="slide level2"><h2>Visualizing Results</h2>
-<div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-4-1">Plot</a></li>
-<li><a href="#tabset-4-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-4-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-20-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-4-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/PPC-distributions.html">ppc_violin_grouped</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/PPC-distributions.html">ppc_violin_grouped</a></span><span class="op">(</span></span>
 <span>  y <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">hwy</span>,</span>
 <span>  yrep <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">bayes_t_test</span>, draws <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span>
 <span>  group <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">cyl</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_jitter</span><span class="op">(</span>data <span class="op">=</span> <span class="va">filtered_mpg</span>, </span>
+<span>  <span class="fu">geom_jitter</span><span class="op">(</span>data <span class="op">=</span> <span class="va">filtered_mpg</span>,</span>
 <span>              <span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="va">hwy</span>, x <span class="op">=</span> <span class="va">cyl</span><span class="op">)</span>,</span>
 <span>              alpha <span class="op">=</span> <span class="fl">0.3</span>,</span>
 <span>              color <span class="op">=</span> <span class="st">"#011f4b"</span>,</span>
@@ -609,51 +610,55 @@ See help('prior_summary.stanreg') for more details</code></pre>
 </div>
 </div>
 </div>
-</section><section id="prior-implications" class="slide level2"><h2>Prior Implications</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Given that the distribution of the outcome following just the priors includes negative values for highway MPG, maybe we can afford to narrow them a bit!</p>
-<p>And maybe we want to be a little more skeptical of large effects, so we can narrow the prior on the slope, too.</p>
-</div><div class="column" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-5" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-5-1">Plot</a></li>
-<li><a href="#tabset-5-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-5-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-22-1.svg" class="quarto-figure quarto-figure-center" width="528"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-5-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">t_test_from_prior_only</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span></span>
-<span>  <span class="va">hwy</span> <span class="op">~</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">filtered_mpg</span>,</span>
-<span>  family <span class="op">=</span> <span class="st">"gaussian"</span>, refresh <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  prior_PD <span class="op">=</span> <span class="cn">T</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/PPC-distributions.html">ppc_dens_overlay_grouped</a></span><span class="op">(</span></span>
-<span>  y <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">hwy</span>, </span>
-<span>  yrep <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">t_test_from_prior_only</span>, draws <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span>
-<span>  group <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">cyl</span></span>
-<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
 </div></div>
+<!-- ## Prior Implications -->
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- Given that the distribution of the outcome following just the priors includes negative values for highway MPG, maybe we can afford to narrow them a bit! -->
+<!-- And maybe we want to be a little more skeptical of large effects, so we can narrow the prior on the slope, too. -->
+<!-- ::: -->
+<!-- ::: {.column width="50%"} -->
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 5.5 -->
+<!-- #| fig-height: 2.5 -->
+<!-- #| fig-align: center -->
+<!-- t_test_from_prior_only <- stan_glm( -->
+<!--   hwy ~ cyl, data = filtered_mpg, -->
+<!--   family = "gaussian", refresh = 0, -->
+<!--   prior_PD = T -->
+<!-- ) -->
+<!-- ppc_dens_overlay_grouped( -->
+<!--   y = filtered_mpg$hwy,  -->
+<!--   yrep = posterior_predict(t_test_from_prior_only, draws = 50), -->
+<!--   group = filtered_mpg$cyl -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- t_test_from_prior_only <- stan_glm( -->
+<!--   hwy ~ cyl, data = filtered_mpg, -->
+<!--   family = "gaussian", refresh = 0, -->
+<!--   prior_PD = T -->
+<!-- ) -->
+<!-- ppc_dens_overlay_grouped( -->
+<!--   y = filtered_mpg$hwy,  -->
+<!--   yrep = posterior_predict(t_test_from_prior_only, draws = 50), -->
+<!--   group = filtered_mpg$cyl -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- :::: -->
 </section><section id="changing-priors" class="slide level2"><h2>Changing Priors</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p><strong>Original Model</strong></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/rstantools/reference/prior_summary.html">prior_summary</a></span><span class="op">(</span><span class="va">bayes_t_test</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/rstantools/reference/prior_summary.html">prior_summary</a></span><span class="op">(</span><span class="va">bayes_t_test</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Priors for model 'bayes_t_test' 
 ------
@@ -679,7 +684,8 @@ See help('prior_summary.stanreg') for more details</code></pre>
 </div>
 </div>
 </div><div class="column" style="font-size:80%">
-<p><code>\{{rstanarm}\}</code> generally defines priors on the <em>z</em>-scale (“specified prior”) and then transforms them to the scale of our variables (“adjusted prior”) to actually run the model.</p>
+<p><strong>Changing Priors</strong></p>
+<p><a href="https://mc-stan.org/rstanarm/">rstanarm</a> generally defines priors on the <em>z</em>-scale (“specified prior”) and then transforms them to the scale of our variables (“adjusted prior”) to actually run the model.</p>
 <p>The “adjusted prior” is what was actually used.</p>
 <p>We can choose to specify a prior on the <em>z</em>-scale (<code>autoscale = T</code>) or as-is (default) (example on next slide).</p>
 </div></div>
@@ -688,7 +694,7 @@ See help('prior_summary.stanreg') for more details</code></pre>
 <div class="column" style="width:50%;">
 <p><strong>Original Model</strong></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/rstantools/reference/prior_summary.html">prior_summary</a></span><span class="op">(</span><span class="va">bayes_t_test</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/rstantools/reference/prior_summary.html">prior_summary</a></span><span class="op">(</span><span class="va">bayes_t_test</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Priors for model 'bayes_t_test' 
 ------
@@ -714,8 +720,9 @@ See help('prior_summary.stanreg') for more details</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
+<p><strong>Changing Priors</strong></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bayes_t_test_v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bayes_t_test_v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span></span>
 <span>  <span class="va">hwy</span> <span class="op">~</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">filtered_mpg</span>,</span>
 <span>  prior <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/priors.html">normal</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.5</span>, autoscale <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
 <span>  prior_intercept <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/priors.html">normal</a></span><span class="op">(</span><span class="fl">24</span>, <span class="fl">15</span><span class="op">)</span>,</span>
@@ -724,6 +731,108 @@ See help('prior_summary.stanreg') for more details</code></pre>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.5</span>, <span class="fl">0.95</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 1.6e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 0.039 seconds (Warm-up)
+Chain 1:                0.065 seconds (Sampling)
+Chain 1:                0.104 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 1e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.1 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 0.069 seconds (Warm-up)
+Chain 2:                0.06 seconds (Sampling)
+Chain 2:                0.129 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 1e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.1 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 0.038 seconds (Warm-up)
+Chain 3:                0.076 seconds (Sampling)
+Chain 3:                0.114 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 1.4e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.14 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 0.055 seconds (Warm-up)
+Chain 4:                0.061 seconds (Sampling)
+Chain 4:                0.116 seconds (Total)
+Chain 4: </code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
@@ -738,100 +847,105 @@ Model Info:
 
 Estimates:
               mean   sd    5%    50%   95%
-(Intercept)  28.8    0.4  28.1  28.8  29.5
-cyl8        -11.2    0.7 -12.3 -11.2 -10.0
+(Intercept)  28.8    0.5  28.0  28.8  29.5
+cyl8        -11.2    0.7 -12.2 -11.2 -10.1
 sigma         4.0    0.2   3.6   4.0   4.4
 
 Fit Diagnostics:
            mean   sd   5%   50%   95%
-mean_PPD 23.6    0.4 22.9 23.6  24.4 
+mean_PPD 23.6    0.5 22.8 23.6  24.4 
 
 The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
 
 MCMC diagnostics
               mcse Rhat n_eff
-(Intercept)   0.0  1.0  4061 
-cyl8          0.0  1.0  4029 
-sigma         0.0  1.0  3856 
-mean_PPD      0.0  1.0  3933 
-log-posterior 0.0  1.0  1894 
+(Intercept)   0.0  1.0  3469 
+cyl8          0.0  1.0  3757 
+sigma         0.0  1.0  3676 
+mean_PPD      0.0  1.0  3932 
+log-posterior 0.0  1.0  1879 
 
 For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
 </div>
 </div></div>
-</section><section id="prior-implications-1" class="slide level2"><h2>Prior Implications</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Implications of our new priors.</p>
-</div><div class="column" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-6" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-6-1">Plot</a></li>
-<li><a href="#tabset-6-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-6-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-28-1.svg" class="quarto-figure quarto-figure-center" width="528"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-6-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">t_test_from_prior_only_v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span></span>
-<span>  <span class="va">hwy</span> <span class="op">~</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">filtered_mpg</span>,</span>
-<span>  family <span class="op">=</span> <span class="st">"gaussian"</span>, refresh <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  prior <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/priors.html">normal</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, autoscale <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
-<span>  prior_intercept <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/priors.html">normal</a></span><span class="op">(</span><span class="fl">24</span>, <span class="fl">4</span><span class="op">)</span>,</span>
-<span>  prior_PD <span class="op">=</span> <span class="cn">T</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/PPC-distributions.html">ppc_dens_overlay_grouped</a></span><span class="op">(</span></span>
-<span>  y <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">hwy</span>, </span>
-<span>  yrep <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_predict.html">posterior_predict</a></span><span class="op">(</span><span class="va">t_test_from_prior_only_v2</span>, draws <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span>
-<span>  group <span class="op">=</span> <span class="va">filtered_mpg</span><span class="op">$</span><span class="va">cyl</span></span>
-<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
+<!-- ## Prior Implications -->
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- Implications of our new priors. -->
+<!-- ::: -->
+<!-- ::: {.column width="50%"} -->
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 5.5 -->
+<!-- #| fig-height: 2.5 -->
+<!-- #| fig-align: center -->
+<!-- t_test_from_prior_only_v2 <- stan_glm( -->
+<!--   hwy ~ cyl, data = filtered_mpg, -->
+<!--   family = "gaussian", refresh = 0, -->
+<!--   prior = normal(0, 1, autoscale = T), -->
+<!--   prior_intercept = normal(24, 4), -->
+<!--   prior_PD = T -->
+<!-- ) -->
+<!-- ppc_dens_overlay_grouped( -->
+<!--   y = filtered_mpg$hwy,  -->
+<!--   yrep = posterior_predict(t_test_from_prior_only_v2, draws = 50), -->
+<!--   group = filtered_mpg$cyl -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- t_test_from_prior_only_v2 <- stan_glm( -->
+<!--   hwy ~ cyl, data = filtered_mpg, -->
+<!--   family = "gaussian", refresh = 0, -->
+<!--   prior = normal(0, 1, autoscale = T), -->
+<!--   prior_intercept = normal(24, 4), -->
+<!--   prior_PD = T -->
+<!-- ) -->
+<!-- ppc_dens_overlay_grouped( -->
+<!--   y = filtered_mpg$hwy,  -->
+<!--   yrep = posterior_predict(t_test_from_prior_only_v2, draws = 50), -->
+<!--   group = filtered_mpg$cyl -->
+<!-- ) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- :::: -->
 </section><section id="credible-intervals" class="slide level2"><h2>Credible Intervals</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p><strong>Equal Tailed Interval</strong></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_interval.html">posterior_interval</a></span><span class="op">(</span><span class="va">bayes_t_test</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_interval.html">posterior_interval</a></span><span class="op">(</span><span class="va">bayes_t_test</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                    5%        95%
-(Intercept)  28.051405  29.520887
-cyl8        -12.280455 -10.117885
-sigma         3.649137   4.404204</code></pre>
+<pre><code>                   5%        95%
+(Intercept)  28.09314  29.524566
+cyl8        -12.26172 -10.129312
+sigma         3.66012   4.383342</code></pre>
 </div>
 </div>
 <p>Can also get ETIs from the <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> function, as before.</p>
 </div><div class="column" style="width:50%;">
 <p><strong>Highest Density Interval</strong></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("bayestestR")</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("bayestestR")</span></span>
 <span><span class="fu">bayestestR</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/bayestestR/reference/hdi.html">hdi</a></span><span class="op">(</span><span class="va">bayes_t_test</span>, component <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Highest Density Interval
 
 Parameter   |         95% HDI
 -----------------------------
-(Intercept) | [ 27.89, 29.63]
-cyl8        | [-12.44, -9.88]
+(Intercept) | [ 27.98, 29.69]
+cyl8        | [-12.44, -9.90]
 
 # Fixed effects (sigma)
 
 Parameter |         95% HDI
 ---------------------------
-sigma     | [  3.56,  4.46]</code></pre>
+sigma     | [  3.60,  4.48]</code></pre>
 </div>
 </div>
 </div></div>
@@ -858,12 +972,12 @@ sigma     | [  3.56,  4.46]</code></pre>
 <p>Our goal in Bayes is to estimate <span class="math inline">\(P(\theta | D) = \frac{P(\theta) P(D | \theta)}{P(D)} = \frac{\text{prior} \times \text{likelihood}}{\text{scaling term}}\)</span>.</p>
 <p>But most of the time, <span class="math inline">\(P(\theta | D)\)</span> is too complex to solve analytically. So, we estimate Bayesian models by drawing <strong>samples</strong> from the posterior with Markov Chain Monte Carlo (MCMC).</p>
 
-<img data-src="lab_07_files/figure-revealjs/unnamed-chunk-32-1.svg" class="quarto-figure quarto-figure-center r-stretch" width="480"></section><section id="diagnostics-with-bayes" class="slide level2"><h2>Diagnostics with Bayes</h2>
+<img data-src="lab_07_files/figure-revealjs/unnamed-chunk-24-1.svg" class="quarto-figure quarto-figure-center r-stretch" width="480"></section><section id="diagnostics-with-bayes" class="slide level2"><h2>Diagnostics with Bayes</h2>
 <p>But most of the time, <span class="math inline">\(P(\theta | D)\)</span> is too complex to solve analytically. So, we estimate Bayesian models with Markov Chain Monte Carlo (MCMC).</p>
 <p><span class="fragment">The job of MCMC is to explore and sample from the posterior probability distribution <span class="math inline">\(P(\theta | D)\)</span> for all <span class="math inline">\(\theta\)</span> at a rate proportional to each probability.</span></p>
 <p><span class="fragment">So, after many MCMC samples, we end up with a density distribution of samples with height matching <span class="math inline">\(P(\theta | D)\)</span>, and we can use those samples to make inferences about our parameters and outcomes!</span></p>
 <div class="subpoint fragment">
-<p>○ E.g., we believe there is a 90% chance the difference in highway MPG between four- and eight-cylinder cars is within the interval [-12.28, -10.12].</p>
+<p>○ E.g., we believe there is a 90% chance the difference in highway MPG between four- and eight-cylinder cars is within the interval [-12.26, -10.13].</p>
 </div>
 <p><span class="fragment">But, all this hinges on the MCMC sampler—we have to check it for evidence that it <em>sampled well</em>.</span></p>
 </section><section id="looking-at-the-samples" class="slide level2"><h2>Looking at the Samples</h2>
@@ -874,24 +988,24 @@ sigma     | [  3.56,  4.46]</code></pre>
 </div><div class="column" style="width:50%;">
 <div class="fragment" data-fragment-index="1">
 <div class="panel-tabset">
-<ul id="tabset-7" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-7-1">Plot</a></li>
-<li><a href="#tabset-7-2">Code</a></li>
+<ul id="tabset-3" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-3-1">Plot</a></li>
+<li><a href="#tabset-3-2">Code</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-7-1">
+<div id="tabset-3-1">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-33-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-25-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-7-2">
+<div id="tabset-3-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">scale_colors</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"steelblue"</span>, <span class="st">"#D98282"</span>, <span class="st">"#6BAE9D"</span>, <span class="st">"#8C7AAE"</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">scale_colors</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"steelblue"</span>, <span class="st">"#D98282"</span>, <span class="st">"#6BAE9D"</span>, <span class="st">"#8C7AAE"</span><span class="op">)</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/example-data.html">example_mcmc_draws</a></span><span class="op">(</span>chains <span class="op">=</span> <span class="fl">1</span>, params <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_trace</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">scale_colors</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -908,24 +1022,24 @@ sigma     | [  3.56,  4.46]</code></pre>
 <p>What if I told you we ran another, completely separate run, and its samples looked like this?</p>
 </div><div class="column" style="width:50%;">
 <div class="panel-tabset">
-<ul id="tabset-8" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-8-1">Plot</a></li>
-<li><a href="#tabset-8-2">Code</a></li>
+<ul id="tabset-4" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-4-1">Plot</a></li>
+<li><a href="#tabset-4-2">Code</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-8-1">
+<div id="tabset-4-1">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-35-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-27-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-8-2">
+<div id="tabset-4-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/example-data.html">example_mcmc_draws</a></span><span class="op">(</span>chains <span class="op">=</span> <span class="fl">2</span>, params <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/example-data.html">example_mcmc_draws</a></span><span class="op">(</span>chains <span class="op">=</span> <span class="fl">2</span>, params <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_trace</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">scale_colors</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">guides</span><span class="op">(</span>color <span class="op">=</span> <span class="fu">guide_none</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -941,24 +1055,24 @@ sigma     | [  3.56,  4.46]</code></pre>
 <p>Or a third?</p>
 </div><div class="column" style="width:50%;">
 <div class="panel-tabset">
-<ul id="tabset-9" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-9-1">Plot</a></li>
-<li><a href="#tabset-9-2">Code</a></li>
+<ul id="tabset-5" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-5-1">Plot</a></li>
+<li><a href="#tabset-5-2">Code</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-9-1">
+<div id="tabset-5-1">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-37-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-29-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-9-2">
+<div id="tabset-5-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/example-data.html">example_mcmc_draws</a></span><span class="op">(</span>chains <span class="op">=</span> <span class="fl">3</span>, params <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/example-data.html">example_mcmc_draws</a></span><span class="op">(</span>chains <span class="op">=</span> <span class="fl">3</span>, params <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_trace</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">scale_colors</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">guides</span><span class="op">(</span>color <span class="op">=</span> <span class="fu">guide_none</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -975,24 +1089,24 @@ sigma     | [  3.56,  4.46]</code></pre>
 <p><span class="fragment">Looking at traceplots cannot guarantee the sampler is <strong>correctly</strong> sampling from the distribution, but if we run multiple <em>chains</em> (separate runs of MCMC, each doing their own thing independently), we can at least check if the sampler is sampling <strong>consistently</strong>.</span></p>
 </div><div class="column" style="width:50%;">
 <div class="panel-tabset">
-<ul id="tabset-10" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-10-1">Plot</a></li>
-<li><a href="#tabset-10-2">Code</a></li>
+<ul id="tabset-6" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-6-1">Plot</a></li>
+<li><a href="#tabset-6-2">Code</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-10-1">
+<div id="tabset-6-1">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-39-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-31-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-10-2">
+<div id="tabset-6-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/example-data.html">example_mcmc_draws</a></span><span class="op">(</span>chains <span class="op">=</span> <span class="fl">4</span>, params <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/example-data.html">example_mcmc_draws</a></span><span class="op">(</span>chains <span class="op">=</span> <span class="fl">4</span>, params <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_trace</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">scale_colors</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">guides</span><span class="op">(</span>color <span class="op">=</span> <span class="fu">guide_none</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1004,47 +1118,150 @@ sigma     | [  3.56,  4.46]</code></pre>
 </section><section id="looking-at-the-samples-4" class="slide level2"><h2>Looking at the Samples</h2>
 <p>Our example’s trace plots! Also from <code>bayesplot</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_trace</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_trace</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
-<img data-src="lab_07_files/figure-revealjs/unnamed-chunk-41-1.svg" width="1152" class="r-stretch"><p><span class="fragment">Good! They look like “fuzzy caterpillars”.</span></p>
-</section><section id="trace-rank-plots" class="slide level2"><h2>Trace Rank Plots</h2>
-<p>These are called “trace rank” plots. They’re very similar to trace plots, except they <em>order</em> the samples in magnitude. Want to see all chains (colors) equally represented across the x-axis.</p>
-<p>It’s mostly personal preference, but these are sometimes easier to see bad chains.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_rank_overlay</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="lab_07_files/figure-revealjs/unnamed-chunk-42-1.svg" width="1152" class="r-stretch"><p><span class="fragment">What does a bad chain look like?</span></p>
+<img data-src="lab_07_files/figure-revealjs/unnamed-chunk-33-1.svg" width="1152" class="r-stretch"><p><span class="fragment">Good! They look like “fuzzy caterpillars.”</span> <span class="fragment">What does a bad chain look like?</span></p>
+<!-- ## Trace Rank Plots -->
+<!-- These are called "trace rank" plots. They're very similar to trace plots, except they *order* the samples in magnitude. Want to see all chains (colors) equally represented across the x-axis. -->
+<!-- It's mostly personal preference, but these are sometimes easier to see bad chains. -->
+<!-- ```{r} -->
+<!-- #| fig-height: 3 -->
+<!-- #| fig-width: 12 -->
+<!-- mcmc_rank_overlay(bayes_t_test_v2) -->
+<!-- ``` -->
 </section><section id="bad-sampling-example" class="slide level2"><h2>Bad Sampling Example</h2>
 <p>Messing with the algorithm on purpose to make it sample poorly…</p>
 <div class="columns">
-<div class="column" style="width:45%;">
+<div class="column" style="width:90%;">
 <div class="panel-tabset">
-<ul id="tabset-11" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-11-1">Plot</a></li>
-<li><a href="#tabset-11-2">Code</a></li>
+<ul id="tabset-7" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-7-1">Plot</a></li>
+<li><a href="#tabset-7-2">Code</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-11-1">
+<div id="tabset-7-1">
 <div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 2.3e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 1200 [  0%]  (Warmup)
+Chain 1: Iteration:  120 / 1200 [ 10%]  (Warmup)
+Chain 1: Iteration:  201 / 1200 [ 16%]  (Sampling)
+Chain 1: Iteration:  320 / 1200 [ 26%]  (Sampling)
+Chain 1: Iteration:  440 / 1200 [ 36%]  (Sampling)
+Chain 1: Iteration:  560 / 1200 [ 46%]  (Sampling)
+Chain 1: Iteration:  680 / 1200 [ 56%]  (Sampling)
+Chain 1: Iteration:  800 / 1200 [ 66%]  (Sampling)
+Chain 1: Iteration:  920 / 1200 [ 76%]  (Sampling)
+Chain 1: Iteration: 1040 / 1200 [ 86%]  (Sampling)
+Chain 1: Iteration: 1160 / 1200 [ 96%]  (Sampling)
+Chain 1: Iteration: 1200 / 1200 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 0.007 seconds (Warm-up)
+Chain 1:                0.058 seconds (Sampling)
+Chain 1:                0.065 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 2.1e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 1200 [  0%]  (Warmup)
+Chain 2: Iteration:  120 / 1200 [ 10%]  (Warmup)
+Chain 2: Iteration:  201 / 1200 [ 16%]  (Sampling)
+Chain 2: Iteration:  320 / 1200 [ 26%]  (Sampling)
+Chain 2: Iteration:  440 / 1200 [ 36%]  (Sampling)
+Chain 2: Iteration:  560 / 1200 [ 46%]  (Sampling)
+Chain 2: Iteration:  680 / 1200 [ 56%]  (Sampling)
+Chain 2: Iteration:  800 / 1200 [ 66%]  (Sampling)
+Chain 2: Iteration:  920 / 1200 [ 76%]  (Sampling)
+Chain 2: Iteration: 1040 / 1200 [ 86%]  (Sampling)
+Chain 2: Iteration: 1160 / 1200 [ 96%]  (Sampling)
+Chain 2: Iteration: 1200 / 1200 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 0.003 seconds (Warm-up)
+Chain 2:                0.044 seconds (Sampling)
+Chain 2:                0.047 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 1.2e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.12 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 1200 [  0%]  (Warmup)
+Chain 3: Iteration:  120 / 1200 [ 10%]  (Warmup)
+Chain 3: Iteration:  201 / 1200 [ 16%]  (Sampling)
+Chain 3: Iteration:  320 / 1200 [ 26%]  (Sampling)
+Chain 3: Iteration:  440 / 1200 [ 36%]  (Sampling)
+Chain 3: Iteration:  560 / 1200 [ 46%]  (Sampling)
+Chain 3: Iteration:  680 / 1200 [ 56%]  (Sampling)
+Chain 3: Iteration:  800 / 1200 [ 66%]  (Sampling)
+Chain 3: Iteration:  920 / 1200 [ 76%]  (Sampling)
+Chain 3: Iteration: 1040 / 1200 [ 86%]  (Sampling)
+Chain 3: Iteration: 1160 / 1200 [ 96%]  (Sampling)
+Chain 3: Iteration: 1200 / 1200 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 0.003 seconds (Warm-up)
+Chain 3:                0.038 seconds (Sampling)
+Chain 3:                0.041 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 1.5e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.15 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 1200 [  0%]  (Warmup)
+Chain 4: Iteration:  120 / 1200 [ 10%]  (Warmup)
+Chain 4: Iteration:  201 / 1200 [ 16%]  (Sampling)
+Chain 4: Iteration:  320 / 1200 [ 26%]  (Sampling)
+Chain 4: Iteration:  440 / 1200 [ 36%]  (Sampling)
+Chain 4: Iteration:  560 / 1200 [ 46%]  (Sampling)
+Chain 4: Iteration:  680 / 1200 [ 56%]  (Sampling)
+Chain 4: Iteration:  800 / 1200 [ 66%]  (Sampling)
+Chain 4: Iteration:  920 / 1200 [ 76%]  (Sampling)
+Chain 4: Iteration: 1040 / 1200 [ 86%]  (Sampling)
+Chain 4: Iteration: 1160 / 1200 [ 96%]  (Sampling)
+Chain 4: Iteration: 1200 / 1200 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 0.006 seconds (Warm-up)
+Chain 4:                0.06 seconds (Sampling)
+Chain 4:                0.066 seconds (Total)
+Chain 4: </code></pre>
+</div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-43-1.svg" class="quarto-figure quarto-figure-center" width="1152"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-34-1.svg" class="quarto-figure quarto-figure-center" width="1152"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-11-2">
+<div id="tabset-7-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bad_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bad_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span></span>
 <span>  <span class="va">hwy</span> <span class="op">~</span> <span class="va">cyl</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">filtered_mpg</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">12345</span>,</span>
 <span>  chains <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  iter <span class="op">=</span> <span class="fl">1200</span>,</span>
-<span>  warmup <span class="op">=</span> <span class="fl">200</span> ,</span>
+<span>  warmup <span class="op">=</span> <span class="fl">200</span>,</span>
+<span>  adapt_delta <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
 <span>    max_treedepth <span class="op">=</span> <span class="fl">2</span></span>
 <span>  <span class="op">)</span></span>
@@ -1055,32 +1272,7 @@ sigma     | [  3.56,  4.46]</code></pre>
 </div>
 </div>
 </div>
-</div><div class="column" style="width:45%;">
-<div class="panel-tabset">
-<ul id="tabset-12" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-12-1">Plot</a></li>
-<li><a href="#tabset-12-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-12-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-45-1.svg" class="quarto-figure quarto-figure-center" width="1152"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-12-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_rank_overlay</a></span><span class="op">(</span><span class="va">bad_example</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">scale_colors</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:5%;">
+</div><!-- ::: {.column width="45%"} --><!-- ::: {.panel-tabset} --><!-- ### Plot --><!-- ```{r} --><!-- #| echo: false --><!-- #| fig-height: 3 --><!-- #| fig-width: 12 --><!-- #| fig-align: center --><!-- mcmc_rank_overlay(bad_example) + --><!--   scale_color_manual(values = scale_colors) --><!-- ``` --><!-- ### Code --><!-- ```{r} --><!-- #| eval: false --><!-- mcmc_rank_overlay(bad_example) + --><!--   scale_color_manual(values = scale_colors) --><!-- ``` --><!-- ::: --><!-- ::: --><div class="column" style="width:10%;">
 <p><span class="fragment">Ick!</span></p>
 </div></div>
 </section><section id="rhat" class="slide level2"><h2>Rhat</h2>
@@ -1094,7 +1286,7 @@ sigma     | [  3.56,  4.46]</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-47-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-36-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -1109,7 +1301,7 @@ sigma     | [  3.56,  4.46]</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-48-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-37-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -1124,7 +1316,7 @@ sigma     | [  3.56,  4.46]</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-49-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-38-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -1139,7 +1331,7 @@ sigma     | [  3.56,  4.46]</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-50-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-39-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -1154,7 +1346,7 @@ sigma     | [  3.56,  4.46]</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-51-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-40-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -1169,7 +1361,7 @@ sigma     | [  3.56,  4.46]</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-52-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-41-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -1184,7 +1376,7 @@ sigma     | [  3.56,  4.46]</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-53-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-42-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
@@ -1197,7 +1389,7 @@ sigma     | [  3.56,  4.46]</code></pre>
 <div class="columns">
 <div class="column" style="width:40%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
@@ -1212,23 +1404,23 @@ Model Info:
 
 Estimates:
               mean   sd    10%   50%   90%
-(Intercept)  28.8    0.4  28.2  28.8  29.4
+(Intercept)  28.8    0.5  28.2  28.8  29.4
 cyl8        -11.2    0.7 -12.0 -11.2 -10.3
 sigma         4.0    0.2   3.7   4.0   4.3
 
 Fit Diagnostics:
            mean   sd   10%   50%   90%
-mean_PPD 23.6    0.4 23.0  23.6  24.2 
+mean_PPD 23.6    0.5 23.0  23.6  24.2 
 
 The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
 
 MCMC diagnostics
               mcse Rhat n_eff
-(Intercept)   0.0  1.0  4061 
-cyl8          0.0  1.0  4029 
-sigma         0.0  1.0  3856 
-mean_PPD      0.0  1.0  3933 
-log-posterior 0.0  1.0  1894 
+(Intercept)   0.0  1.0  3469 
+cyl8          0.0  1.0  3757 
+sigma         0.0  1.0  3676 
+mean_PPD      0.0  1.0  3932 
+log-posterior 0.0  1.0  1879 
 
 For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
@@ -1236,10 +1428,10 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div><div class="column" style="width:60%;">
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span><span class="op">)</span><span class="op">[</span>, <span class="st">"Rhat"</span><span class="op">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span><span class="op">)</span><span class="op">[</span>, <span class="st">"Rhat"</span><span class="op">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  (Intercept)          cyl8         sigma      mean_PPD log-posterior 
-    1.0002263     0.9997811     1.0000078     1.0007192     1.0006277 </code></pre>
+    0.9998975     0.9994758     0.9995274     1.0007799     0.9999540 </code></pre>
 </div>
 </div>
 </div>
@@ -1250,24 +1442,24 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <div class="columns">
 <div class="column" style="width:33%;">
 <div class="panel-tabset">
-<ul id="tabset-13" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-13-1">Plot</a></li>
-<li><a href="#tabset-13-2">Code</a></li>
+<ul id="tabset-8" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-8-1">Plot</a></li>
+<li><a href="#tabset-8-2">Code</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-13-1">
+<div id="tabset-8-1">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-56-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-45-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-13-2">
+<div id="tabset-8-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/example-data.html">example_mcmc_draws</a></span><span class="op">(</span>chains <span class="op">=</span> <span class="fl">1</span>, params <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/example-data.html">example_mcmc_draws</a></span><span class="op">(</span>chains <span class="op">=</span> <span class="fl">1</span>, params <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_trace</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">scale_colors</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1276,14 +1468,14 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 </div><div class="column" style="width:66%;">
 <p>Do you see how they follow each other around?</p>
-<p>ESS accounts for that <em>autocorrelation</em>. No hard and fast rule, but might be concerned if ESS is lower than 200 or lower than 10% of your total samples.</p>
+<p>ESS accounts for that <em>autocorrelation</em>. No hard and fast rule, but might be concerned if ESS is lower than 400 or lower than 10% of your total samples.</p>
 </div></div>
 </section><section id="effective-sample-size-ess-1" class="slide level2"><h2>Effective Sample Size (ESS)</h2>
 <p>Let’s check our ESS values.</p>
 <div class="columns">
 <div class="column" style="width:40%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
@@ -1298,23 +1490,23 @@ Model Info:
 
 Estimates:
               mean   sd    10%   50%   90%
-(Intercept)  28.8    0.4  28.2  28.8  29.4
+(Intercept)  28.8    0.5  28.2  28.8  29.4
 cyl8        -11.2    0.7 -12.0 -11.2 -10.3
 sigma         4.0    0.2   3.7   4.0   4.3
 
 Fit Diagnostics:
            mean   sd   10%   50%   90%
-mean_PPD 23.6    0.4 23.0  23.6  24.2 
+mean_PPD 23.6    0.5 23.0  23.6  24.2 
 
 The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
 
 MCMC diagnostics
               mcse Rhat n_eff
-(Intercept)   0.0  1.0  4061 
-cyl8          0.0  1.0  4029 
-sigma         0.0  1.0  3856 
-mean_PPD      0.0  1.0  3933 
-log-posterior 0.0  1.0  1894 
+(Intercept)   0.0  1.0  3469 
+cyl8          0.0  1.0  3757 
+sigma         0.0  1.0  3676 
+mean_PPD      0.0  1.0  3932 
+log-posterior 0.0  1.0  1879 
 
 For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
@@ -1322,77 +1514,120 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div><div class="column" style="width:60%;">
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span><span class="op">)</span><span class="op">[</span>, <span class="st">"n_eff"</span><span class="op">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span><span class="op">)</span><span class="op">[</span>, <span class="st">"n_eff"</span><span class="op">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  (Intercept)          cyl8         sigma      mean_PPD log-posterior 
-         4061          4029          3856          3933          1894 </code></pre>
+         3469          3757          3676          3932          1879 </code></pre>
 </div>
 </div>
 </div>
 </div></div>
-</section><section id="effective-sample-size-ess-2" class="slide level2"><h2>Effective Sample Size (ESS)</h2>
-<p>Bulk and Tail ESS tell you about your effective sample size in the center (bulk) of the distribution and the tails of the distribution.</p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-60-1.svg" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("posterior")</span></span>
-<span><span class="fu">posterior</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/posterior/reference/draws_summary.html">summarise_draws</a></span><span class="op">(</span><span class="va">bayes_t_test_v2</span>, </span>
-<span>                           <span class="st">"mean"</span>, <span class="st">"sd"</span>, </span>
-<span>                           <span class="st">"ess_bulk"</span>, <span class="st">"ess_tail"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 5
-  variable      mean    sd ess_bulk ess_tail
-  &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 (Intercept)  28.8  0.446    4003.    2843.
-2 cyl8        -11.2  0.668    4001.    2564.
-3 sigma         4.01 0.230    3855.    2609.</code></pre>
-</div>
-</div>
-</div></div>
+<!-- ## Effective Sample Size (ESS) -->
+<!-- Bulk and Tail ESS tell you about your effective sample size in the center (bulk) of the distribution and the tails of the distribution.  -->
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 5 -->
+<!-- #| fig-height: 3 -->
+<!-- post_col  <- "#8C7AAE" -->
+<!-- annot_col <- scales::col_darker(post_col, 30) -->
+<!-- # Posterior quantiles for placing the annotations -->
+<!-- tail_x <- qbeta(0.99, a + k, b + n - k) -->
+<!-- tail_y <- dbeta(tail_x, a + k, b + n - k) -->
+<!-- base_plot <- just_prior_and_likelihood |> -->
+<!--   ggplot(aes(x, y, label = curve, linetype = curve)) + -->
+<!--   geomtextpath::geom_textline( -->
+<!--     aes(color = curve), -->
+<!--     linewidth = 1, -->
+<!--     hjust = just_prior_and_likelihood$hjust, -->
+<!--     vjust = -0.2, -->
+<!--     size = 5 -->
+<!--   ) + -->
+<!--   # Bulk annotation -->
+<!--   annotate("curve", -->
+<!--            x = post_mode - 0.15, xend = post_mode - 0.1, -->
+<!--            y = post_peak * 0.76, yend = post_peak * 0.68, -->
+<!--            curvature = -0.25, -->
+<!--            arrow = arrow(length = unit(0.25, "cm"), type = "closed"), -->
+<!--            linewidth = 0.6, color = annot_col) + -->
+<!--   annotate("text", -->
+<!--            x = post_mode - 0.34, y = post_peak * 0.75, -->
+<!--            label = str_wrap("Do I have enough samples of the posterior here?", 22), -->
+<!--            hjust = 0, vjust = 0, size = 4.5, lineheight = 0.9, -->
+<!--            color = annot_col) + -->
+<!--   # Tail annotation -->
+<!--   annotate("curve", -->
+<!--            x = tail_x + 0.12, xend = tail_x + 0.005, -->
+<!--            y = 1.5, yend = tail_y + 0.05, -->
+<!--            curvature = 0.25, -->
+<!--            arrow = arrow(length = unit(0.25, "cm"), type = "closed"), -->
+<!--            linewidth = 0.6, color = annot_col) + -->
+<!--   annotate("text", -->
+<!--            x = tail_x + 0.13, y = 1.55, -->
+<!--            label = "How about here?", -->
+<!--            hjust = 0, vjust = 0, size = 4.5, lineheight = 0.9, -->
+<!--            color = annot_col) + -->
+<!--   scale_linetype_manual(values = c(Prior = "dotted", Likelihood = "dashed", Posterior = "solid")) + -->
+<!--   scale_color_manual(values = c(Prior = "steelblue", Likelihood = "#D98282", Posterior = "#8C7AAE")) + -->
+<!--   coord_cartesian(xlim = c(0, 1), ylim = c(0, 4.1), clip = "off") + -->
+<!--   theme_void() + -->
+<!--   theme(legend.position = "none") -->
+<!-- base_plot + -->
+<!--   geom_density( -->
+<!--     data = posterior_samples, -->
+<!--     aes(x = x), -->
+<!--     inherit.aes = FALSE, -->
+<!--     fill = post_col, color = post_col, alpha = 0.3, linewidth = 1 -->
+<!--   ) + -->
+<!--   geom_segment( -->
+<!--     data = posterior_samples, -->
+<!--     aes(x = x, xend = x, y = 0, yend = 0.2), -->
+<!--     inherit.aes = FALSE, -->
+<!--     color = scales::col_darker(post_col, 30), linewidth = 0.7, alpha = 0.35 -->
+<!--   ) + -->
+<!--   guides(color = guide_none(), alpha = guide_none()) + -->
+<!--   theme_void() + -->
+<!--   theme(plot.title = element_text(size = 14, color = "grey40", hjust = 0.02), -->
+<!--         legend.position = "none") -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: {.column width="50%"} -->
+<!-- ```{r} -->
+<!-- # install.packages("posterior") -->
+<!-- posterior::summarise_draws(bayes_t_test_v2,  -->
+<!--                            "mean", "sd",  -->
+<!--                            "ess_bulk", "ess_tail") -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- :::: -->
 </section><section id="warnings" class="slide level2"><h2>Warnings</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bad_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span><span class="va">hwy</span> <span class="op">~</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">filtered_mpg</span>, seed <span class="op">=</span> <span class="fl">12345</span>, iter <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bad_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span><span class="va">hwy</span> <span class="op">~</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">filtered_mpg</span>, seed <span class="op">=</span> <span class="fl">12345</span>, iter <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="panel-tabset">
-<ul id="tabset-14" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-14-1">Plot</a></li>
-<li><a href="#tabset-14-2">Code</a></li>
+<ul id="tabset-9" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-9-1">Plot</a></li>
+<li><a href="#tabset-9-2">Code</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-14-1">
+<div id="tabset-9-1">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-63-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-63-2.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+<figure><p><img data-src="lab_07_files/figure-revealjs/unnamed-chunk-50-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-14-2">
+<div id="tabset-9-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bad_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span><span class="va">hwy</span> <span class="op">~</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">filtered_mpg</span>, seed <span class="op">=</span> <span class="fl">12345</span>, iter <span class="op">=</span> <span class="fl">40</span>, refresh <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bad_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span><span class="va">hwy</span> <span class="op">~</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">filtered_mpg</span>, seed <span class="op">=</span> <span class="fl">12345</span>, iter <span class="op">=</span> <span class="fl">40</span>, refresh <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_trace</a></span><span class="op">(</span><span class="va">bad_example</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">scale_colors</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_rank_overlay</a></span><span class="op">(</span><span class="va">bad_example</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">scale_colors</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -1400,12 +1635,148 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 </div>
 </div><div class="column" style="width:50%;">
 <p><strong>Output</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 2.1e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: WARNING: There aren't enough warmup iterations to fit the
+Chain 1:          three stages of adaptation as currently configured.
+Chain 1:          Reducing each adaptation stage to 15%/75%/10% of
+Chain 1:          the given number of warmup iterations:
+Chain 1:            init_buffer = 3
+Chain 1:            adapt_window = 15
+Chain 1:            term_buffer = 2
+Chain 1: 
+Chain 1: Iteration:  1 / 40 [  2%]  (Warmup)
+Chain 1: Iteration:  4 / 40 [ 10%]  (Warmup)
+Chain 1: Iteration:  8 / 40 [ 20%]  (Warmup)
+Chain 1: Iteration: 12 / 40 [ 30%]  (Warmup)
+Chain 1: Iteration: 16 / 40 [ 40%]  (Warmup)
+Chain 1: Iteration: 20 / 40 [ 50%]  (Warmup)
+Chain 1: Iteration: 21 / 40 [ 52%]  (Sampling)
+Chain 1: Iteration: 24 / 40 [ 60%]  (Sampling)
+Chain 1: Iteration: 28 / 40 [ 70%]  (Sampling)
+Chain 1: Iteration: 32 / 40 [ 80%]  (Sampling)
+Chain 1: Iteration: 36 / 40 [ 90%]  (Sampling)
+Chain 1: Iteration: 40 / 40 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 0.001 seconds (Warm-up)
+Chain 1:                0.006 seconds (Sampling)
+Chain 1:                0.007 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 1.1e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.11 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: WARNING: There aren't enough warmup iterations to fit the
+Chain 2:          three stages of adaptation as currently configured.
+Chain 2:          Reducing each adaptation stage to 15%/75%/10% of
+Chain 2:          the given number of warmup iterations:
+Chain 2:            init_buffer = 3
+Chain 2:            adapt_window = 15
+Chain 2:            term_buffer = 2
+Chain 2: 
+Chain 2: Iteration:  1 / 40 [  2%]  (Warmup)
+Chain 2: Iteration:  4 / 40 [ 10%]  (Warmup)
+Chain 2: Iteration:  8 / 40 [ 20%]  (Warmup)
+Chain 2: Iteration: 12 / 40 [ 30%]  (Warmup)
+Chain 2: Iteration: 16 / 40 [ 40%]  (Warmup)
+Chain 2: Iteration: 20 / 40 [ 50%]  (Warmup)
+Chain 2: Iteration: 21 / 40 [ 52%]  (Sampling)
+Chain 2: Iteration: 24 / 40 [ 60%]  (Sampling)
+Chain 2: Iteration: 28 / 40 [ 70%]  (Sampling)
+Chain 2: Iteration: 32 / 40 [ 80%]  (Sampling)
+Chain 2: Iteration: 36 / 40 [ 90%]  (Sampling)
+Chain 2: Iteration: 40 / 40 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 0.001 seconds (Warm-up)
+Chain 2:                0.001 seconds (Sampling)
+Chain 2:                0.002 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 1e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.1 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: WARNING: There aren't enough warmup iterations to fit the
+Chain 3:          three stages of adaptation as currently configured.
+Chain 3:          Reducing each adaptation stage to 15%/75%/10% of
+Chain 3:          the given number of warmup iterations:
+Chain 3:            init_buffer = 3
+Chain 3:            adapt_window = 15
+Chain 3:            term_buffer = 2
+Chain 3: 
+Chain 3: Iteration:  1 / 40 [  2%]  (Warmup)
+Chain 3: Iteration:  4 / 40 [ 10%]  (Warmup)
+Chain 3: Iteration:  8 / 40 [ 20%]  (Warmup)
+Chain 3: Iteration: 12 / 40 [ 30%]  (Warmup)
+Chain 3: Iteration: 16 / 40 [ 40%]  (Warmup)
+Chain 3: Iteration: 20 / 40 [ 50%]  (Warmup)
+Chain 3: Iteration: 21 / 40 [ 52%]  (Sampling)
+Chain 3: Iteration: 24 / 40 [ 60%]  (Sampling)
+Chain 3: Iteration: 28 / 40 [ 70%]  (Sampling)
+Chain 3: Iteration: 32 / 40 [ 80%]  (Sampling)
+Chain 3: Iteration: 36 / 40 [ 90%]  (Sampling)
+Chain 3: Iteration: 40 / 40 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 0 seconds (Warm-up)
+Chain 3:                0.007 seconds (Sampling)
+Chain 3:                0.007 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 1.6e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: WARNING: There aren't enough warmup iterations to fit the
+Chain 4:          three stages of adaptation as currently configured.
+Chain 4:          Reducing each adaptation stage to 15%/75%/10% of
+Chain 4:          the given number of warmup iterations:
+Chain 4:            init_buffer = 3
+Chain 4:            adapt_window = 15
+Chain 4:            term_buffer = 2
+Chain 4: 
+Chain 4: Iteration:  1 / 40 [  2%]  (Warmup)
+Chain 4: Iteration:  4 / 40 [ 10%]  (Warmup)
+Chain 4: Iteration:  8 / 40 [ 20%]  (Warmup)
+Chain 4: Iteration: 12 / 40 [ 30%]  (Warmup)
+Chain 4: Iteration: 16 / 40 [ 40%]  (Warmup)
+Chain 4: Iteration: 20 / 40 [ 50%]  (Warmup)
+Chain 4: Iteration: 21 / 40 [ 52%]  (Sampling)
+Chain 4: Iteration: 24 / 40 [ 60%]  (Sampling)
+Chain 4: Iteration: 28 / 40 [ 70%]  (Sampling)
+Chain 4: Iteration: 32 / 40 [ 80%]  (Sampling)
+Chain 4: Iteration: 36 / 40 [ 90%]  (Sampling)
+Chain 4: Iteration: 40 / 40 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 0.001 seconds (Warm-up)
+Chain 4:                0.006 seconds (Sampling)
+Chain 4:                0.007 seconds (Total)
+Chain 4: </code></pre>
+</div>
+</div>
 </div></div>
 </section><section id="warnings-1" class="slide level2"><h2>Warnings</h2>
 <p><a href="https://mc-stan.org/learn-stan/diagnostics-warnings.html">Stan documentation on warnings</a></p>
 <p><a href="https://mc-stan.org/rstanarm/articles/rstanarm.html#troubleshooting" data-preview-link="&quot;"><code>{rstanarm}</code> documentation on troubleshooting`</a></p>
 <p>Things to try…</p>
-<div class="columns">
+<div class="columns" style="font-size:80%">
 <div class="column" style="width:33%;">
 <p><strong>Rhat or ESS too low?</strong></p>
 <p>Try increasing the number of samples (<code>iter</code>, default is 1000 for each of four chains).</p>
@@ -1416,40 +1787,263 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <p><strong>Max treedepth exceeded?</strong></p>
 <p>If everything else is good, probably fine. Otherwise, try increasing <code>max_treedepth</code> (default is 15). Add to <code>control</code> argument (<code>control = list(max_treedepth = 16)</code>).</p>
 </div></div>
+</section><section id="diagnostics-tldr" class="slide level2"><h2>Diagnostics TLDR</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Rhat</strong></p>
+<p>Want <span class="math inline">\(\hat{R} &lt; 1.01\)</span> for all parameters.</p>
+<p><br></p>
+</div><div class="column" style="width:50%;">
+<p><strong>ESS</strong></p>
+<p>Want ESS &gt; 400ish for all parameters.</p>
+<p><br></p>
+</div></div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Trace Plots</strong></p>
+<p>Want trace plots to look like “fuzzy caterpillars” for all parameters. All overlapping, none of the chains higher or lower on average than others.</p>
+</div><div class="column" style="width:50%;">
+<p><strong>Warnings</strong></p>
+<p>Try to adjust the sampler if you encounter any warnings. Check for bugs in your formula syntax, increase <code>iter</code>, etc. If you can’t get the warning to go away, make sure to mention it in your writeup.</p>
+</div></div>
 </section><section id="bayes-factors" class="slide level2"><h2>Bayes Factors</h2>
 <p>Comparing models to each other. Here, an intercept-only model to a slope-and-intercept model.</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("bayestestR")</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("bayestestR")</span></span>
 <span><span class="co"># install.packages("bridgesampling")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://easystats.github.io/bayestestR/">bayestestR</a></span><span class="op">)</span></span>
 <span><span class="va">bayes_t_test_v0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span></span>
 <span>  <span class="va">hwy</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">filtered_mpg</span>,</span>
 <span>  prior_intercept <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/priors.html">normal</a></span><span class="op">(</span><span class="fl">24</span>, <span class="fl">15</span><span class="op">)</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
-<span>  diagnostic_file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"model-diagnostics"</span>, </span>
+<span>  diagnostic_file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"model-diagnostics"</span>,</span>
 <span>                               <span class="st">"bayes_t_test_v0.csv"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">bayes_t_test_v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 1.9e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.19 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 0.029 seconds (Warm-up)
+Chain 1:                0.088 seconds (Sampling)
+Chain 1:                0.117 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 1.5e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.15 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 0.037 seconds (Warm-up)
+Chain 2:                0.08 seconds (Sampling)
+Chain 2:                0.117 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 1.3e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.13 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 0.044 seconds (Warm-up)
+Chain 3:                0.09 seconds (Sampling)
+Chain 3:                0.134 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 1.1e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.11 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 0.041 seconds (Warm-up)
+Chain 4:                0.096 seconds (Sampling)
+Chain 4:                0.137 seconds (Total)
+Chain 4: </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bayes_t_test_v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span></span>
 <span>  <span class="va">hwy</span> <span class="op">~</span> <span class="va">cyl</span>, data <span class="op">=</span> <span class="va">filtered_mpg</span>,</span>
 <span>  prior <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/priors.html">normal</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.5</span>, autoscale <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
 <span>  prior_intercept <span class="op">=</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/priors.html">normal</a></span><span class="op">(</span><span class="fl">24</span>, <span class="fl">15</span><span class="op">)</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
-<span>  diagnostic_file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"model-diagnostics"</span>, </span>
+<span>  diagnostic_file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span><span class="op">(</span><span class="st">"lab"</span>, <span class="st">"model-diagnostics"</span>,</span>
 <span>                               <span class="st">"bayes_t_test_v2.csv"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">bayes_factor</span> <span class="op">&lt;-</span> <span class="fu">bayestestR</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/bayestestR/reference/bayesfactor_models.html">bayesfactor_models</a></span><span class="op">(</span><span class="va">bayes_t_test_v0</span>, </span>
-<span>                                               <span class="va">bayes_t_test_v2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 2.1e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 0.058 seconds (Warm-up)
+Chain 1:                0.115 seconds (Sampling)
+Chain 1:                0.173 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 1.6e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 0.057 seconds (Warm-up)
+Chain 2:                0.082 seconds (Sampling)
+Chain 2:                0.139 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 2.1e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 0.055 seconds (Warm-up)
+Chain 3:                0.112 seconds (Sampling)
+Chain 3:                0.167 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL 'continuous' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 1.5e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.15 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 0.059 seconds (Warm-up)
+Chain 4:                0.107 seconds (Sampling)
+Chain 4:                0.166 seconds (Total)
+Chain 4: </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bayes_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://easystats.github.io/bayestestR/reference/bayesfactor_models.html">bayesfactor_models</a></span><span class="op">(</span><span class="va">bayes_t_test_v0</span>,</span>
+<span>                                   <span class="va">bayes_t_test_v2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bayes_factor</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bayes_factor</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Bayes Factors for Model Comparison
 
     Model       BF
-[2] cyl   9.44e+33
+[2] cyl   9.45e+33
 
 * Against Denominator: [1] (Intercept only)
 *   Bayes Factor Type: marginal likelihoods (bridgesampling)</code></pre>
