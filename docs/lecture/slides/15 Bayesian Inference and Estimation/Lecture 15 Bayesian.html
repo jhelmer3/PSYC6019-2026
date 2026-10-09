@@ -376,23 +376,24 @@ Mark Himmelstein
 <p>But really what we’re summing over is all possible values of <span class="math inline">\(\pi\)</span></p>
 <ul>
 <li>This really needs to be an <strong>integral:</strong> <span class="math inline">\(P(\boldsymbol{D}) = \int P(\boldsymbol{D}|\pi)P(\pi)d\pi\)</span></li>
-<li>This integral is often not going to be analytically solvable, making it a cbig computational challenge</li>
+<li>This integral is often not going to be analytically solvable, making it a big computational challenge</li>
 </ul>
 </section>
 <section id="map-estimation" class="slide level2">
 <h2>MAP Estimation</h2>
 <p>One approach to Bayesian estimation is very similar to Maximum Likelihood, and lets us ignore this problem. It is known as Maximum <strong>A Posteriori</strong> estimation (MAP). Under MAP, we aren’t necessarily interested in the actual probability distribution <span class="math inline">\(P(\pi |\boldsymbol{D})\)</span>, just the value of <span class="math inline">\(\pi\)</span> that maximizes this function.</p>
 <p>Notice what this allows us to do with Bayes’ rule:</p>
-<p><span class="math display">\[P(\theta|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\theta)P(\theta)}{P(\boldsymbol{D})} = \frac{P(\boldsymbol{D}|\theta)P(\theta)}{\int P(\boldsymbol{D}|\theta)P(\theta)\,d\theta}\]</span></p>
+<p><span class="math display">\[P(\pi|\boldsymbol{D}) = \frac{P(\boldsymbol{D}|\pi)P(\pi)}{P(\boldsymbol{D})} = \frac{P(\boldsymbol{D}|\pi)P(\pi)}{\int P(\boldsymbol{D}|\pi)P(\pi)\,d\pi}\]</span></p>
 </section>
 <section id="proportionality-over-equality" class="slide level2">
 <h2>Proportionality over Equality</h2>
 <p>Because we don’t care about the equality, only the maximum point, we can drop out the denominator, and instead say</p>
-<p><span class="math display">\[P(\theta|\boldsymbol{D}) \propto P(\boldsymbol{D}|\theta)P(\theta)\]</span></p>
+<p><span class="math display">\[P(\pi|\boldsymbol{D}) \propto P(\boldsymbol{D}|\pi)P(\pi)\]</span></p>
 <p>Where <span class="math inline">\(\propto\)</span> means “is proportional to”.</p>
 <p>This is a common approach when the primary goal finding the single most likely parameter values, rather than making a confidence statement about parameter values.</p>
 <ul>
 <li>Often useful for making predictions</li>
+<li>Machine learning alternative to maximum likelihood that incorporates prior</li>
 </ul>
 </section>
 <section id="general-form" class="slide level2">
@@ -416,8 +417,8 @@ Mark Himmelstein
 <p><span class="math display">\[y_i = \beta_0 + \beta_1 \text{Group}_i + \epsilon_i\]</span></p>
 <p>Our <strong>parameter space</strong> here is <span class="math inline">\(\boldsymbol{\theta} = [\beta_0, \beta_1, \sigma_\epsilon]\)</span></p>
 <ul>
-<li><span class="math inline">\(\beta_0 =\)</span> sample mean when <span class="math inline">\(\text{Group}_i = 0\)</span></li>
-<li><span class="math inline">\(\beta_0 + \beta_1 =\)</span> sample mean when <span class="math inline">\(\text{Group}_i = 1\)</span></li>
+<li><span class="math inline">\(\beta_0 =\)</span> estimate of population mean when <span class="math inline">\(\text{Group}_i = 0\)</span></li>
+<li><span class="math inline">\(\beta_0 + \beta_1 =\)</span> estimate of population mean when <span class="math inline">\(\text{Group}_i = 1\)</span></li>
 <li><span class="math inline">\(\sigma_\epsilon =\)</span> shared standard deviation for each group (residual SD)</li>
 </ul>
 <p>We want to estimate Bayes’ rule <strong>without</strong> losing the denominator, complex integral and all</p>
@@ -528,9 +529,9 @@ Mark Himmelstein
 <p>The posterior distributions of each parameter can directly provide us inferential information.</p>
 <p>Point estimates about (most likely values of) parameters can be made using measures of central tendency</p>
 <ul>
-<li>Mean: the posterior mean for a parameter is the value that will minimize squared error</li>
-<li>Median: the posterior median for a parameter is the value that will minimize absolute error</li>
-<li>Mode: “single” most likely parameter value</li>
+<li><strong>Mean:</strong> the posterior mean for a parameter is the value that will minimize squared error</li>
+<li><strong>Median:</strong> the posterior median for a parameter is the value that will minimize absolute error</li>
+<li><strong>Mode:</strong> “single” most likely parameter value</li>
 </ul>
 </section>
 <section id="credible-intervals" class="slide level2">
@@ -544,7 +545,7 @@ Mark Himmelstein
 <li>It is correct to say a we are 95% certain the population value falls within a 95% credible interval</li>
 <li>This is based on the likelihood (data) and prior (existing knowledge and confidence).
 <ul>
-<li>Important: if our prior wasn’t true or was poorly chosen this result will not hold!</li>
+<li><strong>Important:</strong> if our prior wasn’t true or was poorly chosen this result will not hold!</li>
 <li>Prior should represent true report of one’s prior belief</li>
 </ul></li>
 <li>Contrast this with our earlier definitions of frequentist confidence intervals!
@@ -901,7 +902,7 @@ Mark Himmelstein
 </div>
 <p><strong>Interpretation:</strong> The original model is only 69% as likely as the intercept only model</p>
 <ul>
-<li>The intercept only model is <span class="math inline">\(\frac{1}{.69} = 1.45\)</span> times as likely as the original model</li>
+<li>The intercept only model is <span class="math inline">\(\frac{1}{0.69} = 1.45\)</span> times as likely as the original model</li>
 <li>Assumes one of these models is <strong>the model</strong></li>
 </ul>
 </div>
