@@ -1,0 +1,197 @@
+---
+title: "Lecture 20: Unbalanced Sample Sizes"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+```
+
+
+
+## Review
+
+
+- Independent Sample $t$-tests let us compare the means of two different groups
+- One way ANOVA lets us compare the means of more than two different groups
+- Factorial ANOVA lets us compare the means of more than two crossed factors
+
+Put another way
+
+- Independent Sample $t$-tests let us test one between subjects factor with exactly two levels
+- One way ANOVA lets us test one between subjects factor with more than two levels
+- Factorial ANOVA lets us test more than one between subjects factor
+
+## Between vs. Within 
+
+Examples of between subjects factors
+
+- Randomizing participants into **exactly one** experimental condition
+- Mutually exclusive demographic categories at a given time point
+- Comparing students between different sections of the same course
+
+Examples of within subjects factors
+
+- Having all participants go through all experimental conditions in a random order
+- Measurements from the same person collected at various time points
+- Comparing a group of students who each took the same courses
+
+## Assumption Violations
+
+Which of our assumptions do within subjects designs violate?
+
+- [Independence of observations]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+Where have we seen a method for handling this violation already?
+
+- [Paired sample $t$-test]{.answer .fragment .content-visible unless-meta="params.v0"}
+  - [We simplified things by using a **difference** score so we only had one variable instead of two dependent variables]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [When we have more than two variables, this solution will no longer work]{.answer .fragment .content-visible unless-meta="params.v0"}
+    
+
+## Stroop Effect
+
+
+::: {style="font-size: 0.8em;"}
+
+**Traditional task**: 
+
+<div style="text-align: center;">
+[**BLUE**]{style="color: #984EA3;"} &nbsp;&nbsp;&nbsp;&nbsp; [**GREEN**]{style="color: #FF7F00;"} &nbsp;&nbsp;&nbsp;&nbsp; [**RED**]{style="color: #377EB8;"} &nbsp;&nbsp;&nbsp;&nbsp; [**ORANGE**]{style="color: #4DAF4A;"}
+</div>
+
+- Difficult to correctly identify the text color of each word
+
+**Idea**: maybe the Stroop effect has to do with contingency rather than congruency
+
+- i.e., Stroop task is hard because we have learned the correspondence between the word "blue" and the color "blue"
+- To test this hypothesis, manipulate contingencies between colors and neutral words
+
+<div style="text-align: center;">
+[**MEET**]{style="color: #984EA3;"} &nbsp;&nbsp;&nbsp;&nbsp; [**LOOP**]{style="color: #FF7F00;"} &nbsp;&nbsp;&nbsp;&nbsp; [**CALL**]{style="color: #E41A1C;"} &nbsp;&nbsp;&nbsp;&nbsp; [**MEET**]{style="color: #984EA3;"}
+
+
+
+[**MEET**]{style="color: #984EA3;"} &nbsp;&nbsp;&nbsp;&nbsp; [**MEET**]{style="color: #984EA3;"} &nbsp;&nbsp;&nbsp;&nbsp; [**SLID**]{style="color: #377EB8;"} &nbsp;&nbsp;&nbsp;&nbsp; [**CALL**]{style="color: #4DAF4A;"}
+
+
+[**FINS**]{style="color: #377EB8;"} &nbsp;&nbsp;&nbsp;&nbsp; [**MEET**]{style="color: #E41A1C;"} &nbsp;&nbsp;&nbsp;&nbsp; [**LOOP**]{style="color: #4DAF4A;"} &nbsp;&nbsp;&nbsp;&nbsp; [**FINS**]{style="color: #FF7F00;"}
+</div>
+
+According to the contingency hypothesis, it should be difficult to correctly indicate "red" for [**MEET**]{style="color: #E41A1C;"}
+
+::: 
+
+## Stroop Replication
+
+::: {style="font-size: 0.6em;"}
+
+**Original study**: Schmidt, J. R., & Besner, D. (2008). The Stroop effect: Why proportion congruent has nothing to do with congruency and everything to do with contingency. *Journal of Experimental Psychology: Learning Memory, and Cognition*, *34*, 514--523.
+  
+**OSF link**: [https://osf.io/x5b6d](https://osf.io/x5b6d)
+
+:::
+
+::: {style="font-size: 0.8em;"}
+
+**Study design**:
+
+* 432 trials, including 6 blocks of 72 trials, 6 words repeated 12 times per block
+* Each subject exposed to each type of trial
+* Subjects forced to respond quickly
+  
+**IV**: Contingency level: high, medium, low
+
+**DV**: Proportion of trials where color was identified incorrectly
+
+**Key finding to replicate**: Low contingency trials generate higher performance errors than medium contingency trials
+
+:::
+
+
+## The Structural Model
+
+**Simplest model**: 
+
+$$y_{ij} = \mu + \pi_i + \tau_j + \epsilon_{ij}$$
+
+- $\mu$: grand mean (overall average score)
+- $\pi_{i}$: person's $i$'s deviation from the average person
+- $\tau_{j}$: treatment $j$'s deviation from the average treatment mean
+- $\epsilon_{ij}$: error associated with person $i$ and treatment $j$
+
+
+## With Interaction
+
+$$y_{ij} = \mu + \pi_i + \tau_j + (\tau\pi)_{ij} + \epsilon_{ij}$$
+
+- $(\pi\tau)_{ij}$: allows different subjects to change differently over treatments
+- Can only be estimated if there are multiple measurements per person + condition combo
+- May not be the case in within-subjects designs
+
+
+## Notation
+
+::: {style="font-size: 0.85em;"}
+
+$$y_{ij} = \mu + \pi_i + \tau_j + (\tau\pi)_{ij} + \epsilon_{ij}$$
+
+- $\mu$: overall average proportion of errors
+- $\pi_i$: person $i$'s average deviation from the average person mean, across contingency levels
+- $\tau_j$: sound condition $j$'s average deviation from the average sound condition mean
+- $(\tau\pi)_{ij}$: interaction of person with contingency level
+  - If only one observation per cell, no way to distinguish interaction effect and error term
+  - There is a $(\tau\pi)_{ij}$ corresponding to every observation, so $\epsilon_{ij} = 0$
+  - Can describe every data point exactly
+
+In such cases we instead work with the simpler model.
+
+:::

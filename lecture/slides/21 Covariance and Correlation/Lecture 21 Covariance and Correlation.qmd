@@ -1,0 +1,566 @@
+---
+title: "Lecture 20: Unbalanced Sample Sizes"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+```
+
+
+
+## Review
+
+- $\chi$-square tests of association let us test for the (in)dependence of two categorical variables.
+  - Another way to think of this is that they let us test the **correlations** between two *categorical* variables.
+
+- Methods like $t$-tests and ANOVA let us compare the means of different groups based on **factors**
+  - Another way to think of this is that they let us test the **correlations** between *categorical* and *continuous* variables
+  
+Today we are going to look at correlations between **two** continuous variables.
+
+
+## Scatterplots
+
+Scatterplots are used to visualize the relationship between two variables
+
+- $x$-axis: predictor ($x$)
+- $y$-axis: criterion ($y$)
+
+We might also impose regression lines onto the scatterplot 
+
+- Linear
+- Quadratic
+- Cubic
+- Nonparametric
+
+Example: year a home was built vs. square footage
+
+## Scatterplot Example
+
+```{r}
+#| message: false
+
+dat <- readxl::read_xls("../../data/woodard.xls")
+
+ggplot(dat, aes(`Year Built`, `Sq. Ft.`)) + geom_point(na.rm = TRUE) + 
+  theme_light() + 
+  geom_smooth(method = lm, se = FALSE, col = my_blue)
+```
+
+
+## Covariance
+
+Recall:
+
+**Variance** is the **[average]{style="color: #377EB8;"} [squared]{style="color: #984EA3;"} [deviation score]{style="color: #4DAF4A;"}**
+
+$$s^2_x = \frac{{\color{#377EB8}\sum_{i=1}^N} {\color{#4DAF4A}(x_i - \bar{x})}{\color{#984EA3}^2}}{{\color{#377EB8}N-1}}$$
+
+**Covariance** is the **[average]{style="color: #377EB8;"} [cross-product]{style="color: #984EA3;"} [of deviation scores]{style="color: #4DAF4A;"}**
+
+$$s_{xy} = \frac{{\color{#377EB8}\sum_{i=1}^N} {\color{#4DAF4A}(x_i - \bar{x})} {\color{#984EA3}\times} {\color{#4DAF4A}(y_i - \bar{y})}}{{\color{#377EB8}N-1}}$$
+
+## Variance vs. Covariance
+
+The covariance of $x$ with $x$ is identical to the variance of $x$
+
+- Covariance is a generalization of variance
+  - Unlike variance, covariance **can** be negative. Why?
+  - [Numerator of variance is guaranteed to be positive because it is a sum of squares. Covariance is not!]{.answer .fragment .content-visible unless-meta="params.v0"}
+- Covariance is the **unstandardized** linear relationship between two variables
+- Unstandardized: in terms of the original variable units
+
+
+
+## Covariance
+
+
+::: {style="font-size: 0.85em;"}
+
+
+Sample covariance: 
+
+  $$s_{xy} = \frac{\sum_{i=1}^N[(x_i - \bar{x})(y_i - \bar{y})]}{N-1}$$
+
+Population covariance:
+
+
+  $$\sigma_{xy} = \frac{\sum_{i=1}^N[(x_i - \mu_x)(y_i - \mu_y)]}{N}$$
+
+::: {.columns}
+
+::: {.column width="50%"}
+- $\bar{x}$: sample mean of $x$
+- $\bar{y}$: sample mean of $y$
+:::
+
+::: {.column width="50%"}
+- $\mu_x$: population mean of $x$
+- $\mu_y$: population mean of $y$
+:::
+
+:::
+
+- $N$: sample size
+
+$s_{xy}$, computed as above, is an unbiased estimator of $\sigma_{xy}$
+
+
+::: 
+
+
+## Covariance
+
+```{r}
+dat$Quadrant <- sign(scale(dat$`Year Built`) * scale(dat$`Sq. Ft.`))
+
+ggplot(dat, aes(`Year Built`, `Sq. Ft.`, color = factor(Quadrant))) + 
+  geom_point(na.rm = TRUE) +
+  geom_hline(yintercept = mean(dat$`Sq. Ft.`), color = my_orange, size = 1) + 
+  geom_vline(xintercept = mean(dat$`Year Built`), color = my_green, size = 1) +
+  theme_light() + 
+  guides(color = "none") + 
+  scale_color_manual(values = c(my_red, my_blue)) + 
+  scale_fill_manual(values = c(my_red, "black", my_blue)) +
+  ylim(300, 4500) +
+  # 1. Top-left formula
+  annotate("text", x = 1938, y = 4250, 
+           label = "s[xy] == frac(sum((x[i] - bar(x))*(y[i] - bar(y)), i==1, N), N - 1) ~ '=' ~ 3598", 
+           parse = TRUE, color = my_purple, size = 6) +
+  # 2. Mean x
+  annotate("text", x = 1983, y = 4250, 
+           label = "bar(x) == 1976", 
+           parse = TRUE, color = my_green, size = 6) +
+  # 3. Mean y
+  annotate("text", x = 1918, y = 2050, 
+           label = "bar(y) == 1730", 
+           parse = TRUE, color = my_orange, size = 6) +
+  # 4. Top-left quadrant label (red)
+  annotate("text", x = 1942, y = 3200, 
+           label = "Negative ~ (x[i] - bar(x))*(y[i] - bar(y))", 
+           parse = TRUE, color = my_red, size = 5) +
+  # 5. Top-right quadrant label (blue)
+  annotate("text", x = 1992, y = 4000, label = "Positive", 
+           color = my_blue, size = 5) +
+  annotate("text", x = 1992, y = 3700, 
+           label = "(x[i] - bar(x))*(y[i] - bar(y))", 
+           parse = TRUE, color = my_blue, size = 5) +
+  # 6. Bottom-left quadrant label (blue)
+  annotate("text", x = 1938, y = 400, 
+           label = "Positive ~ (x[i] - bar(x))*(y[i] - bar(y))", 
+           parse = TRUE, color = my_blue, size = 5) +
+  # 7. Bottom-right quadrant label (red)
+  annotate("text", x = 1992, y = 1000, label = "Negative", 
+           color = my_red, size = 5) +
+  annotate("text", x = 1992, y = 650, 
+           label = "(x[i] - bar(x))*(y[i] - bar(y))", 
+           parse = TRUE, color = my_red, size = 5)
+```
+
+
+
+
+## Covariance
+
+How to interpret the covariance:
+
+- $s_{xy} > 0$: Linear relationship between $x$ and $y$ is positive
+- $s_{xy} < 0$: Linear relationship between $x$ and $y$ is negative
+- $s_{xy} = 0$: No linear relationship between $x$ and $y$
+- $s_{xy}$ is in $x \times y$ units, cannot be interpreted easily
+  - similar to how variance is in **squared** units
+- Magnitude of $s_{xy}$ depends on the magnitude of $s^2_{x}$ and $s^2_{y}$
+
+
+## Correlation
+
+Pearson Product Moment (PPM) correlation is a standardized covariance:
+
+$$r_{xy} = \frac{s_{xy}}{s_x s_y} = \frac{\sum_{i=1}^N(x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^N(x_i - \bar{x})^2}\sqrt{\sum_{i=1}^N(y_i - \bar{y})^2}}$$
+
+
+- $s_{xy}$ is the sample covariance
+- $s_x s_y$ is the product of the sample variances
+
+## PPM Correlation
+
+- The PPM is the most common type of correlation
+- If not specified, safe to assume that a correlation is a PPM
+- Equals the degree to which to variables co-vary in terms of their $SD$s
+- Scale-free
+- Correlations range from -1 to 1
+- Correlations of 0 indicate no linear relationship
+- The sign of a correlation is the same as the sign of the covariance
+
+## Example 1
+
+```{r}
+#| message: false
+
+
+ggplot(dat, aes(`Year Built`, `Sq. Ft.`)) + 
+  geom_point(na.rm = TRUE) + 
+  theme_light() + 
+  geom_smooth(method = lm, se = FALSE, col = my_blue) +
+  annotate("text", x = 1925, y = 3800, label = "s[xy] == 3598", 
+           parse = TRUE, color = my_purple, size = 6, hjust = 0) +
+  annotate("text", x = 1925, y = 3500, label = "r[xy] == 0.30", 
+           parse = TRUE, color = my_purple, size = 6, hjust = 0)
+
+```
+
+## Example 2
+
+```{r}
+#| message: false
+
+set.seed(143)
+d <- tibble(x = runif(50, 60, 90))
+d <- d %>% mutate(y = 100 - .6 * x + rnorm(n(), sd = 5))
+
+ggplot(d, aes(x, y)) + 
+  geom_point() + 
+  theme_light() + 
+  geom_smooth(method = "lm", se = FALSE, color = my_blue) +
+  annotate("text", x = 62, y = 50, label = "s[xy] == -52.95", 
+           parse = TRUE, color = my_purple, size = 6, hjust = 0) +
+  annotate("text", x = 62, y = 47, label = "r[xy] == -0.74", 
+           parse = TRUE, color = my_purple, size = 6, hjust = 0)
+```
+
+
+## Example 3
+
+```{r}
+#| message: false
+
+set.seed(143)
+d <- tibble(x = runif(50, 60, 90))
+d <- d %>% mutate(y = -5400 + 150 * x - x^2 + rnorm(n(), sd = 20))
+
+ggplot(d, aes(x, y)) +
+  geom_point() + 
+  theme_light() +
+  geom_smooth(method = "lm", se = FALSE, color = my_blue) +
+  annotate("text", x = 71, y = 50, label = "s[xy] == -141.50", 
+           parse = TRUE, color = my_purple, size = 6, hjust = 0) +
+  annotate("text", x = 71, y = 25, label = "r[xy] == -0.20", 
+           parse = TRUE, color = my_purple, size = 6, hjust = 0)
+```
+
+
+## Linearity
+
+Last plot highlights important limitation
+
+- Correlation (and covariance) represent **linear** relationships
+- Was the relationship in the last plot linear?
+- Possible solutions to non-linearity
+    - Transform one or more variables
+    - Transform combinations of variables
+    - Break correlation into separate sections
+    
+
+More later!
+
+## Covariance Matrices
+
+
+We can summarize the relationships among many variables with a **covariance matrix**
+
+- Square symmetrical table where each row and column represents one variable
+- Cells represent $\text{cov(row variabe, column variable)}$
+    - Row 1, column 2 = covariance between variable 1 and 2
+      - ALSO row 2, column 1
+    - What will row 2, column 2 be?
+        - [The **variance** of variable 2]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - We refer to elements where row # = column # as the diagonal
+    
+
+
+## Covariance Matrix
+
+
+<table style="width: 100%; border-collapse: collapse; font-size: 1.1em; margin-top: 20px;">
+  <thead>
+    <tr style="border-bottom: 2px solid #333;">
+      <th style="padding: 10px; text-align: left;"></th>
+      <th style="padding: 10px; text-align: right;">Year Built</th>
+      <th style="padding: 10px; text-align: right;">Sq. Ft.</th>
+      <th style="padding: 10px; text-align: right;">Story</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding: 12px; text-align: left; font-weight: bold;">Year Built</td>
+      <!-- Diagonal: Variance -->
+      <td style="padding: 12px; text-align: right; background-color: #f0f0f0; font-weight: bold;">273.72</td>
+      <!-- Covariance Pair 1 -->
+      <td style="padding: 12px; text-align: right; color: #377EB8; font-weight: bold;">3,597.92</td>
+      <!-- Covariance Pair 2 -->
+      <td style="padding: 12px; text-align: right; color: #FF7F00; font-weight: bold;">2.50</td>
+    </tr>
+    <tr>
+      <td style="padding: 12px; text-align: left; font-weight: bold;">Sq. Ft.</td>
+      <!-- Covariance Pair 1 -->
+      <td style="padding: 12px; text-align: right; color: #377EB8; font-weight: bold;">3,597.92</td>
+      <!-- Diagonal: Variance -->
+      <td style="padding: 12px; text-align: right; background-color: #f0f0f0; font-weight: bold;">517,543.42</td>
+      <!-- Covariance Pair 3 -->
+      <td style="padding: 12px; text-align: right; color: #4DAF4A; font-weight: bold;">154.79</td>
+    </tr>
+    <tr style="border-bottom: 2px solid #333;">
+      <td style="padding: 12px; text-align: left; font-weight: bold;">Story</td>
+      <!-- Covariance Pair 2 -->
+      <td style="padding: 12px; text-align: right; color: #FF7F00; font-weight: bold;">2.50</td>
+      <!-- Covariance Pair 3 -->
+      <td style="padding: 12px; text-align: right; color: #4DAF4A; font-weight: bold;">154.79</td>
+      <!-- Diagonal: Variance -->
+      <td style="padding: 12px; text-align: right; background-color: #f0f0f0; font-weight: bold;">0.20</td>
+    </tr>
+  </tbody>
+</table>
+
+
+::: {style="font-size: 0.8em;"}
+
+- **Diagonal (Grey Highlight):** Variances of individual variables ($s^2_{\text{Year Built}} = 273.72$, $s^2_{\text{Sq. Ft.}} = 517,543.42$, $s^2_{\text{Story}} = 0.20$).
+- **Off-Diagonal (Color Pairs):** Covariances between variable pairs ($s_{xy} = s_{yx}$)
+- Covariances are hard to interpret!
+    - What are $\text{year built} \times \text{square feet}$ units??
+
+:::
+
+## Correlation Matrix
+
+
+
+A correlation matrix standardizes everything into correlations
+
+
+<table style="width: 100%; border-collapse: collapse; font-size: 1.1em; margin-top: 20px;">
+  <thead>
+    <tr style="border-bottom: 2px solid #333;">
+      <th style="padding: 10px; text-align: left;"></th>
+      <th style="padding: 10px; text-align: right;">Year Built</th>
+      <th style="padding: 10px; text-align: right;">Sq. Ft.</th>
+      <th style="padding: 10px; text-align: right;">Story</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding: 12px; text-align: left; font-weight: bold;">Year Built</td>
+      <!-- Diagonal: Perfect Self-Correlation -->
+      <td style="padding: 12px; text-align: right; background-color: #f0f0f0; font-weight: bold;">1.00</td>
+      <!-- Correlation Pair 1 -->
+      <td style="padding: 12px; text-align: right; color: #377EB8; font-weight: bold;">0.30</td>
+      <!-- Correlation Pair 2 -->
+      <td style="padding: 12px; text-align: right; color: #FF7F00; font-weight: bold;">0.34</td>
+    </tr>
+    <tr>
+      <td style="padding: 12px; text-align: left; font-weight: bold;">Sq. Ft.</td>
+      <!-- Correlation Pair 1 -->
+      <td style="padding: 12px; text-align: right; color: #377EB8; font-weight: bold;">0.30</td>
+      <!-- Diagonal: Perfect Self-Correlation -->
+      <td style="padding: 12px; text-align: right; background-color: #f0f0f0; font-weight: bold;">1.00</td>
+      <!-- Correlation Pair 3 -->
+      <td style="padding: 12px; text-align: right; color: #4DAF4A; font-weight: bold;">0.48</td>
+    </tr>
+    <tr style="border-bottom: 2px solid #333;">
+      <td style="padding: 12px; text-align: left; font-weight: bold;">Story</td>
+      <!-- Correlation Pair 2 -->
+      <td style="padding: 12px; text-align: right; color: #FF7F00; font-weight: bold;">0.34</td>
+      <!-- Correlation Pair 3 -->
+      <td style="padding: 12px; text-align: right; color: #4DAF4A; font-weight: bold;">0.48</td>
+      <!-- Diagonal: Perfect Self-Correlation -->
+      <td style="padding: 12px; text-align: right; background-color: #f0f0f0; font-weight: bold;">1.00</td>
+    </tr>
+  </tbody>
+</table>
+
+
+    
+- **Diagonal (Grey Highlight):** Correlation of variable with itself is always 1
+- **Off-Diagonal (Color Pairs):** Correlations between variable pairs ($r_{xy} = r_{yx}$)
+
+## Other Types of PPM
+
+$\phi$ correlation
+
+- PPM between two categorical variables
+- For a $2 \times 2$ contingency table, $\phi^2 = \frac{\chi^2}{N}$
+
+Point-biserial correlation
+
+- PPM between one continuous and one categorical variable
+- Statistically equivalent to an independent sample $t$-test!
+  - $y$ = continuous variable
+  - group = categorical variable
+  
+## Ordinal Correlations
+
+
+Spearman's rho ($\rho$):
+
+1. Assign ranks to each variable
+2. Compute the PPM between ranks
+
+Kendall's tau ($\tau$):
+
+- Consider all possible pairs of values
+- Do $x$ and $y$ order values in the same way?
+
+
+  $$\tau = \frac{(\# \text{concordant pairs}) - (\# \text{discordant pairs})}{\binom{n}{2}}$$
+
+$$\binom{n}{2} = \frac{n(n-1)}{2} = \# \text{ of pairs to compare}$$
+
+## $\rho$ and $\tau$
+
+| Subject | $x$ | $y$ | rank($x$) | rank($y$) | Comparison | Result |
+|---|---|---|---|---|---|---|
+| **A** | 1 | 4 | 1 | 2 | A, B | Concordant |
+| **B** | 2 | 5 | 2 | 3 | A, C | Discordant |
+| **C** | 3 | 2 | 3 | 1 | B, C | Discordant |
+
+Spearman:
+
+
+$$\rho = \text{cor}\left(\text{rank}(x), \text{rank}(y)\right) = -0.5$$
+
+Kendall:
+
+
+$$\tau = \frac{1 - 2}{3 \times 2 / 2} = -0.33$$
+
+## Woodward Data
+
+Examples I have been using involve relationship among buildings built at different times
+
+
+```{r}
+#| echo: true
+
+dat <- readxl::read_xls("../../data/woodard.xls") |> 
+  mutate(has_fireplace = Fireplaces > 0,
+         multi_bath = `No. Baths` > 1)
+
+
+```
+
+
+
+## Covariance and Matrix
+
+Single covariance using `cov()`
+
+```{r}
+#| echo: true
+cov(dat$`Year Built`, dat$`Sq. Ft.`)
+```
+
+Covariance matrix using `cov()`
+
+```{r}
+#| echo: true
+round(cov(dat |> select(`Year Built`, `Sq. Ft.`, Story)), 2)
+```
+
+
+## Correlation and Matrix
+
+Single correlation using `cor()`
+
+
+```{r}
+#| echo: true
+cor(dat$`Year Built`, dat$`Sq. Ft.`)
+```
+
+Covariance matrix using `cov()`
+
+```{r}
+#| echo: true
+round(cor(dat |> select(`Year Built`, `Sq. Ft.`, Story)), 2)
+```
+
+## Categorical Variables
+
+$\phi$ using `cor()` with `use = "pairwise.complete.obs"` to ignore missing values
+
+```{r}
+#| echo: true
+round(cor(dat$has_fireplace, dat$multi_bath, use = "pairwise.complete.obs"), 2)
+```
+
+Point biserial using `cor()`
+
+```{r}
+#| echo: true
+round(cor(dat$has_fireplace, dat$`Year Built`, use = "pairwise.complete.obs"), 2)
+```
+
+
+## Ordinal Correlations
+
+$\rho$ using `cor()`
+
+```{r}
+#| echo: true
+round(cor(dat$`Year Built`, dat$`Sq. Ft.`, method = "spearman"), 2)
+```
+
+$\tau$ using `cor()`
+
+```{r}
+#| echo: true
+round(cor(dat$`Year Built`, dat$`Sq. Ft.`, method = "kendall"), 2)
+```
