@@ -232,7 +232,7 @@ Mark Himmelstein
 </section>
 <section id="analysis-of-variance" class="slide level2">
 <h2>Analysis of Variance</h2>
-<div style="font-size: 0.95em;">
+<div style="font-size: 0.875em;">
 <p>Analysis of variance (ANOVA) is one of the most popular statistical tests.</p>
 <p>Today, we’ll learn about the simplest case of ANOVA (one-way ANOVA):</p>
 <ul>
@@ -282,7 +282,7 @@ Mark Himmelstein
 <section id="the-traditional-model" class="slide level2">
 <h2>The Traditional Model</h2>
 <p>Suppose subject <span class="math inline">\(i\)</span> belongs to group <span class="math inline">\(g\)</span>. The observed response is <span class="math inline">\(y_{ig}\)</span>.</p>
-<p>The <strong>structural model</strong> decomposes observations into different sources of variability (hence Analysis of <strong>Variance</strong>):</p>
+<p>The <strong>traditional model</strong> structure decomposes observations into different sources of variability (hence Analysis of <strong>Variance</strong>):</p>
 <p><span class="math display">\[\begin{align*}
 y_{ig} &amp;= \color{#377EB8}{\mu} + \color{#4DAF4A}{(\mu_g - \mu)} + \color{#984EA3}{(y_{ig} - \mu_g)} \\
 y_{ig} &amp;= \color{#377EB8}{\mu} + \color{#4DAF4A}{\tau_g} + \color{#984EA3}{\epsilon_{ig}}
@@ -334,13 +334,13 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 </ul>
 </div><div class="column" style="width:70%;">
 <div style="font-size: 0.75em;">
-<p><span class="fragment">What about <span class="math inline">\(\mu_{3}\)</span>?</span></p>
+<p><span class="fragment">What about <span class="math inline">\(g_{3}\)</span>?</span></p>
 <p><span class="answer fragment" data-unless-meta="params.v0">Let’s say <span class="math inline">\(\mu = 2\)</span>, <span class="math inline">\(\mu_{1} = 1\)</span>, and <span class="math inline">\(\mu_{2} = 3\)</span> (equal sample sizes in each group). What is <span class="math inline">\(\mu_3?\)</span></span></p>
 <div class="answer fragment">
 <p><span class="math inline">\(\mu_{3} = \mu - (\mu_{1} - \mu) - (\mu_{2} - \mu) =\)</span> <span class="math inline">\(2 - (1 - 2) - (2 - 2) = 3\)</span></p>
 </div>
 <div class="answer fragment">
-<p><span class="math inline">\(\mu_{3} = \mu - (\mu_{1} - \mu) - (\mu_{2} - \mu) =\)</span> <span class="math inline">\(\beta_0 - \beta_1 - \beta_2\)</span></p>
+<p><span class="math inline">\(\beta_0 + \beta_1(-1)+- \beta_2(-1)  = \mu - (\mu_{1} - \mu) - (\mu_{2} - \mu) = \mu_3\)</span></p>
 </div>
 <p><span class="answer fragment" data-unless-meta="params.v0">Coding <span class="math inline">\(g - 1\)</span> <span class="math inline">\(x\)</span>’s give us all the info about <span class="math inline">\(g\)</span> group means</span></p>
 </div>
@@ -488,7 +488,7 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <img data-src="Lecture-16-One-Way-ANOVA_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="variance-of-means" class="slide level2">
 <h2>Variance of Means</h2>
-<div style="font-size: 0.8em;">
+<div style="font-size: 0.75em;">
 <p>In the one-way ANOVA, the null hypothesis for <span class="math inline">\(G\)</span> groups is</p>
 <p><span class="math display">\[H_0: \mu_1 = \mu_2 = \cdots = \mu_G\]</span></p>
 <p>An equivalent way to express this is:</p>
@@ -819,6 +819,7 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <img data-src="Lecture-16-One-Way-ANOVA_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="hypothesis-testing" class="slide level2">
 <h2>Hypothesis Testing</h2>
+<div style="font-size: .9em;">
 <ul>
 <li><span class="math inline">\(H_0: \mu_1 = \mu_2 = \cdots = \mu_G\)</span></li>
 <li><span class="math inline">\(H_1\)</span>: at least one population mean is different</li>
@@ -831,6 +832,7 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 </ul>
 <p>When <span class="math inline">\(H_0\)</span> is true, <span class="math inline">\(F\)</span> test statistic follows the <span class="math inline">\(F\)</span> distribution with <span class="math inline">\(dfB\)</span> numerator and <span class="math inline">\(dfW\)</span> denominator degrees of freedom.</p>
 <p>These calculations work for any number of groups and any group sizes.</p>
+</div>
 </section>
 <section id="anova-table-and-test" class="slide level2">
 <h2>ANOVA Table and Test</h2>
@@ -876,13 +878,19 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 </div>
 <p><strong>Interpretation:</strong> Were the null hypothesis true, there is only a 2% chance we would have observed variance between group means at least this large.</p>
 </section>
-<section id="effect-size" class="slide level2">
-<h2>Effect Size</h2>
-</section>
 <section id="effect-sizes" class="slide level2">
 <h2>Effect Sizes</h2>
-<p><strong><span class="math inline">\(d\)</span>-family</strong>: standardized <strong>difference</strong> between groups - Cohen’s <span class="math inline">\(d\)</span>: standardized mean differences between pairs of groups - Will come back to this more next time</p>
-<p><strong><span class="math inline">\(r\)</span>-family</strong>: standardized <strong>association</strong> between two variables - <span class="math inline">\(\eta^2\)</span> aka <span class="math inline">\(R^2\)</span>: proportion of variance of outcome accounted for by predictor (group membership) - <span class="math inline">\(\omega^2\)</span>: adjusted <span class="math inline">\(\eta^2\)</span> - <span class="math inline">\(f^2\)</span>: used for statistical power analysis</p>
+<p><strong><span class="math inline">\(d\)</span>-family</strong>: standardized <strong>difference</strong> between groups</p>
+<ul>
+<li>Cohen’s <span class="math inline">\(d\)</span>: standardized mean differences between pairs of groups</li>
+<li>Will come back to this more next time</li>
+</ul>
+<p><strong><span class="math inline">\(r\)</span>-family</strong>: standardized <strong>association</strong> between two variables</p>
+<ul>
+<li><span class="math inline">\(\eta^2\)</span> aka <span class="math inline">\(R^2\)</span>: proportion of variance of outcome accounted for by predictor (group membership)</li>
+<li><span class="math inline">\(\omega^2\)</span>: adjusted <span class="math inline">\(\eta^2\)</span></li>
+<li><span class="math inline">\(f^2\)</span>: used for statistical power analysis</li>
+</ul>
 </section>
 <section id="eta2-effect-size" class="slide level2">
 <h2><span class="math inline">\(\eta^2\)</span> Effect Size</h2>
@@ -901,6 +909,7 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 </section>
 <section id="f2-effect-size" class="slide level2">
 <h2><span class="math inline">\(f^2\)</span> Effect Size</h2>
+<div style="font-size: .9em;">
 <p><span class="math inline">\(r\)</span>-family effect size measure, mostly used for conducting power analyses.</p>
 <p><span class="math display">\[f^2 = \frac{\eta^2}{1 - \eta^2} = \frac{SSB}{SSW}\]</span></p>
 <p><strong>Interpretation:</strong> Ratio of between-group variability to within-group variability.</p>
@@ -911,6 +920,7 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <li><span class="math inline">\(f = 0.40, f^2 = 0.1600, \eta^2 = 0.138\)</span>: large effect</li>
 </ul>
 <p>In practice, you may want to report effect size in terms of <span class="math inline">\(\eta^2\)</span> instead of <span class="math inline">\(f^2\)</span> because it is easier to interpret.</p>
+</div>
 </section>
 <section id="omega2-effect-size" class="slide level2">
 <h2><span class="math inline">\(\omega^2\)</span> Effect Size</h2>
@@ -918,8 +928,9 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <p><span class="math display">\[\omega^2 = \frac{SSB - (G - 1)\times MSW}{SST + MSW}\]</span></p>
 <ul>
 <li><span class="math inline">\(G\)</span>: number of groups</li>
+<li>Extra terms (over <span class="math inline">\(\eta^2\)</span>) penalize so <span class="math inline">\(\omega^2 \leq \eta^2\)</span></li>
 <li>Similar (but not identical to) to adjusted <span class="math inline">\(R^2\)</span> in regression (more later)</li>
-<li><span class="math inline">\(\omega^2\)</span> is not completely unbiased)</li>
+<li><span class="math inline">\(\omega^2\)</span> is not completely unbiased</li>
 </ul>
 <p><strong>Interpretation:</strong> Same interpretation as <span class="math inline">\(\eta^2\)</span> (proportion of variation accounted for by group differences).</p>
 </section>
@@ -932,14 +943,15 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <li>Equivalently, normally distributed residuals within each group</li>
 </ul></li>
 <li><strong>No outliers in any group</strong></li>
-<li><strong>Homogeneity of variance</strong>
-<ul>
-<li>Population variance is equal in every group</li>
-</ul></li>
+<li><strong>Random Sampling within each group</strong></li>
 <li><strong>Independence of observations</strong>
 <ul>
 <li>All groups are independent of each other</li>
 <li>If not independent, <strong>repeated measures ANOVA</strong> may be a more appropriate procedure</li>
+</ul></li>
+<li><strong>Homogeneity of variance</strong>
+<ul>
+<li>Population variance is equal in every group</li>
 </ul></li>
 </ol>
 </section>
@@ -1029,12 +1041,10 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 </section>
 <section id="whites-adjustment" class="slide level2">
 <h2>White’s Adjustment</h2>
-<p>White’s adjustment uses a different formula to find a <span class="math inline">\(MSW\)</span> estimate that is robust to heteroscedasticity:</p>
+<p>White’s adjustment uses a different formula to find a <span class="math inline">\(MSW\)</span> estimate that is robust to heterogeneous variances:</p>
 <ul>
 <li>Same <span class="math inline">\(dfB\)</span>, <span class="math inline">\(dfW\)</span></li>
 <li>Different <span class="math inline">\(MSW\)</span>, <span class="math inline">\(F\)</span>, <span class="math inline">\(p\)</span></li>
-<li>Many options possible</li>
-<li>Recommended to try several adjustment methods (they should agree)</li>
 </ul>
 </section>
 <section id="weighted-least-squares" class="slide level2">
@@ -1051,8 +1061,8 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <li><strong>Interpretation:</strong> Participants in the group with larger variance are downweighted; participants in smaller variance groups are upweighted.</li>
 </ul>
 </section>
-<section id="heterogeneity-suggestions" class="slide level2">
-<h2>Heterogeneity Suggestions</h2>
+<section id="suggestions" class="slide level2">
+<h2>Suggestions</h2>
 <p><strong>“Traditional” procedure:</strong></p>
 <ul>
 <li>Conduct hypothesis tests of whether all population variances are equal (e.g., Levene’s test)</li>
@@ -1089,6 +1099,7 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 </section>
 <section id="bayes-factor-refresher" class="slide level2">
 <h2>Bayes Factor Refresher</h2>
+<div style="font-size: 0.9em;">
 <p>Bayes Factors are a way of comparing the support for different models in a Bayesian framework.</p>
 <p>They are ratios of posterior likelihoods between competing models. If we have two possible models for the same data, <span class="math inline">\(M_1\)</span> and <span class="math inline">\(M_2\)</span>.</p>
 <p><span class="math display">\[BF = \frac{P(\boldsymbol{D}|M_1)}{P(\boldsymbol{D}|M_2)}\]</span></p>
@@ -1103,6 +1114,7 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <li>When <span class="math inline">\(BF = \frac{1}{3}\)</span>, <span class="math inline">\(M_2\)</span> is three times as likely to be the “true” model as <span class="math inline">\(M_1\)</span></li>
 </ul></li>
 </ul>
+</div>
 </section>
 <section id="bayes-factor-setup" class="slide level2">
 <h2>Bayes Factor Setup</h2>
@@ -1243,7 +1255,7 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 </div>
 </div>
 <p>What do you think <code>ges</code> might be?</p>
-<p><span class="answer fragment" data-unless-meta="params.v0">Stands for <strong>generalized</strong> <span class="math inline">\(\eta^2\)</span> (same as our <span class="math inline">\(\eta^2\)</span>) so far, slightly different in some other cases</span></p>
+<p><span class="answer fragment" data-unless-meta="params.v0">Stands for <strong>generalized</strong> <span class="math inline">\(\eta^2\)</span> (same as our <span class="math inline">\(\eta^2\)</span> so far, slightly different in some other cases)</span></p>
 </section>
 <section id="eta2-example" class="slide level2">
 <h2><span class="math inline">\(\eta^2\)</span> Example</h2>
@@ -1340,7 +1352,7 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 <h2>Weighted Least Squares in R</h2>
 <div style="font-size: 0.85em;">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-label="1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(condition) <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-label="1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">group_by</span>(condition) <span class="sc">|&gt;</span> </span>
 <span id="cb19-2"><a aria-label="2"></a>  <span class="fu">mutate</span>(<span class="at">weight =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">var</span>(average_bond))</span>
 <span id="cb19-3"><a aria-label="3"></a></span>
 <span id="cb19-4"><a aria-label="4"></a>a1_wt <span class="ot">&lt;-</span> <span class="fu">aov</span>(average_bond <span class="sc">~</span> condition, dat, <span class="at">weights =</span> weight)</span>
@@ -1472,6 +1484,13 @@ y_{ig} &amp;= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_
 </div>
 </div>
 <p>Bayes factor now says the full model is about as likely than the null model!</p>
+</section>
+<section id="apa-writeup" class="slide level2">
+<h2>APA Writeup</h2>
+<p><strong>Frequentist</strong></p>
+<p>We conducted a one-way ANOVA to test the effect of priming subjects with numbers of varying closeness on their perception of closeness to family members. Results indicated the priming effect produced no significant difference between groups, <span class="math inline">\(F(2, 122) = 0.24, p = 0.79, \omega^2 &lt; .001\)</span>.</p>
+<p><strong>Bayesian</strong></p>
+<p>We used Bayes factors to compare a model that allowed for differences in the means of perception of closeness with family members for groups primed with numbers of varying closeness to one that did not allow for differences in the means by group. We found that <span class="math inline">\(BF = 0.002\)</span>, indicating the model that allowed for differences was only 0.2% as likely as the model that did not.</p>
 
 
 </section>

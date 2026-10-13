@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.10.18">
 
   <meta name="author" content="Mark Himmelstein">
-  <title>PSYC 6019 – Lecture 12: The Model Based Perspective</title>
+  <title>PSYC 6019 – Lecture 19: Simple Main Effects</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -209,7 +209,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Lecture 12: The Model Based Perspective</h1>
+  <h1 class="title">Lecture 19: Simple Main Effects</h1>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -727,16 +727,17 @@ Mark Himmelstein
 <h2>Example</h2>
 <p>We can calculate <span class="math inline">\(d\)</span> for the difference between <code>a</code> and <code>control</code> on the east side of the hill. The <code>emmeans</code> object we saved before can give us the cell means</p>
 <div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a aria-label="1"></a>e1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a aria-label="1"></a> <span class="ex">hill</span> method  emmean    SE  df lower.CL upper.CL</span>
-<span id="cb26-2"><a aria-label="2"></a> <span class="ex">east</span> control   85.4 0.525 294     84.4     86.5</span>
-<span id="cb26-3"><a aria-label="3"></a> <span class="ex">west</span> control   81.8 0.525 294     80.8     82.9</span>
-<span id="cb26-4"><a aria-label="4"></a> <span class="ex">east</span> a         91.1 0.525 294     90.1     92.2</span>
-<span id="cb26-5"><a aria-label="5"></a> <span class="ex">west</span> a         88.0 0.525 294     86.9     89.0</span>
-<span id="cb26-6"><a aria-label="6"></a> <span class="ex">east</span> b         89.5 0.525 294     88.5     90.6</span>
-<span id="cb26-7"><a aria-label="7"></a> <span class="ex">west</span> b         90.0 0.525 294     88.9     91.0</span>
-<span id="cb26-8"><a aria-label="8"></a></span>
-<span id="cb26-9"><a aria-label="9"></a><span class="ex">Confidence</span> level used: 0.95 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a aria-label="1"></a> <span class="ex">hill</span> method  emmean    SE  df lower.CL upper.CL</span>
+<span id="cb27-2"><a aria-label="2"></a> <span class="ex">east</span> control   85.4 0.525 294     84.4     86.5</span>
+<span id="cb27-3"><a aria-label="3"></a> <span class="ex">west</span> control   81.8 0.525 294     80.8     82.9</span>
+<span id="cb27-4"><a aria-label="4"></a> <span class="ex">east</span> a         91.1 0.525 294     90.1     92.2</span>
+<span id="cb27-5"><a aria-label="5"></a> <span class="ex">west</span> a         88.0 0.525 294     86.9     89.0</span>
+<span id="cb27-6"><a aria-label="6"></a> <span class="ex">east</span> b         89.5 0.525 294     88.5     90.6</span>
+<span id="cb27-7"><a aria-label="7"></a> <span class="ex">west</span> b         90.0 0.525 294     88.9     91.0</span>
+<span id="cb27-8"><a aria-label="8"></a></span>
+<span id="cb27-9"><a aria-label="9"></a><span class="ex">Confidence</span> level used: 0.95 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>I’ll use <span class="math inline">\(\sqrt{MS_W} = \sqrt{13.8}\)</span> as my denominator</p>
@@ -750,13 +751,22 @@ Mark Himmelstein
 <section id="setting-up-contrasts" class="slide level2">
 <h2>Setting Up Contrasts</h2>
 <p>First we need to set up the relevant contrasts for both factors as separate lists (you can have several different contrasts for each factor)</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a aria-label="1"></a>hill_contrast <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">"East vs West"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="at">east =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">west =</span> <span class="dv">1</span>))</span>
+<span id="cb28-2"><a aria-label="2"></a></span>
+<span id="cb28-3"><a aria-label="3"></a>condition_contrasts <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">"Method A vs Method B"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="at">control =</span> <span class="dv">0</span>, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="sc">-</span><span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <p>Then we use <code>contrast()</code> and specify the interaction as a list with both of our lists</p>
 <div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a aria-label="1"></a>interaction_results <span class="ot">&lt;-</span> <span class="fu">contrast</span>(e1, </span>
+<span id="cb29-2"><a aria-label="2"></a>  <span class="at">interaction =</span> <span class="fu">list</span>(<span class="at">hill =</span> hill_contrast, <span class="at">condition =</span> condition_contrasts))</span>
+<span id="cb29-3"><a aria-label="3"></a></span>
+<span id="cb29-4"><a aria-label="4"></a><span class="fu">summary</span>(interaction_results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a aria-label="1"></a> <span class="ex">hill_custom</span>  method_custom        estimate   SE  df</span>
-<span id="cb27-2"><a aria-label="2"></a> <span class="ex">East</span> vs West Method A vs Method B    <span class="at">-3.58</span> 1.05 294</span>
-<span id="cb27-3"><a aria-label="3"></a> <span class="ex">t.ratio</span> p.value</span>
-<span id="cb27-4"><a aria-label="4"></a>  <span class="ex">-3.412</span>  0.0007</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a aria-label="1"></a> <span class="ex">hill_custom</span>  method_custom        estimate   SE  df</span>
+<span id="cb30-2"><a aria-label="2"></a> <span class="ex">East</span> vs West Method A vs Method B    <span class="at">-3.58</span> 1.05 294</span>
+<span id="cb30-3"><a aria-label="3"></a> <span class="ex">t.ratio</span> p.value</span>
+<span id="cb30-4"><a aria-label="4"></a>  <span class="ex">-3.412</span>  0.0007</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>The difference <span class="math inline">\((\mu_{A,east} - \mu_{B,east}) - (\mu_{A,west} - \mu_{B,west})\)</span> was significantly different from 0</p>
@@ -765,142 +775,151 @@ Mark Himmelstein
 <h2>Bayesian Versions</h2>
 <p>All of this stuff generalizes to Bayes-world! You can use <code>emmeans()</code> with <code>rstanarm</code> objects and do parallel analyses for everything we’ve talked about</p>
 <div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a aria-label="1"></a><span class="fu">library</span>(rstanarm)</span>
+<span id="cb31-2"><a aria-label="2"></a>stan_a1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(rating <span class="sc">~</span> hill <span class="sc">*</span> method, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a aria-label="1"></a></span>
-<span id="cb28-2"><a aria-label="2"></a><span class="ex">SAMPLING</span> FOR MODEL <span class="st">'continuous'</span> NOW <span class="er">(</span><span class="ex">CHAIN</span> 1<span class="kw">)</span><span class="bu">.</span></span>
-<span id="cb28-3"><a aria-label="3"></a><span class="ex">Chain</span> 1: </span>
-<span id="cb28-4"><a aria-label="4"></a><span class="ex">Chain</span> 1: Gradient evaluation took 5e-05 seconds</span>
-<span id="cb28-5"><a aria-label="5"></a><span class="ex">Chain</span> 1: 1000 transitions using 10 leapfrog steps per transition would take 0.5 seconds.</span>
-<span id="cb28-6"><a aria-label="6"></a><span class="ex">Chain</span> 1: Adjust your expectations accordingly!</span>
-<span id="cb28-7"><a aria-label="7"></a><span class="ex">Chain</span> 1: </span>
-<span id="cb28-8"><a aria-label="8"></a><span class="ex">Chain</span> 1: </span>
-<span id="cb28-9"><a aria-label="9"></a><span class="ex">Chain</span> 1: Iteration:    1 / 2000 [  0%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-10"><a aria-label="10"></a><span class="ex">Chain</span> 1: Iteration:  200 / 2000 [ 10%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-11"><a aria-label="11"></a><span class="ex">Chain</span> 1: Iteration:  400 / 2000 [ 20%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-12"><a aria-label="12"></a><span class="ex">Chain</span> 1: Iteration:  600 / 2000 [ 30%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-13"><a aria-label="13"></a><span class="ex">Chain</span> 1: Iteration:  800 / 2000 [ 40%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-14"><a aria-label="14"></a><span class="ex">Chain</span> 1: Iteration: 1000 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-15"><a aria-label="15"></a><span class="ex">Chain</span> 1: Iteration: 1001 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-16"><a aria-label="16"></a><span class="ex">Chain</span> 1: Iteration: 1200 / 2000 [ 60%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-17"><a aria-label="17"></a><span class="ex">Chain</span> 1: Iteration: 1400 / 2000 [ 70%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-18"><a aria-label="18"></a><span class="ex">Chain</span> 1: Iteration: 1600 / 2000 [ 80%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-19"><a aria-label="19"></a><span class="ex">Chain</span> 1: Iteration: 1800 / 2000 [ 90%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-20"><a aria-label="20"></a><span class="ex">Chain</span> 1: Iteration: 2000 / 2000 <span class="pp">[</span><span class="ss">100%</span><span class="pp">]</span>  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-21"><a aria-label="21"></a><span class="ex">Chain</span> 1: </span>
-<span id="cb28-22"><a aria-label="22"></a><span class="ex">Chain</span> 1:  Elapsed Time: 0.058 seconds <span class="er">(</span><span class="ex">Warm-up</span><span class="kw">)</span></span>
-<span id="cb28-23"><a aria-label="23"></a><span class="ex">Chain</span> 1:                0.069 seconds <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-24"><a aria-label="24"></a><span class="ex">Chain</span> 1:                0.127 seconds <span class="er">(</span><span class="ex">Total</span><span class="kw">)</span></span>
-<span id="cb28-25"><a aria-label="25"></a><span class="ex">Chain</span> 1: </span>
-<span id="cb28-26"><a aria-label="26"></a></span>
-<span id="cb28-27"><a aria-label="27"></a><span class="ex">SAMPLING</span> FOR MODEL <span class="st">'continuous'</span> NOW <span class="er">(</span><span class="ex">CHAIN</span> 2<span class="kw">)</span><span class="bu">.</span></span>
-<span id="cb28-28"><a aria-label="28"></a><span class="ex">Chain</span> 2: </span>
-<span id="cb28-29"><a aria-label="29"></a><span class="ex">Chain</span> 2: Gradient evaluation took 8e-06 seconds</span>
-<span id="cb28-30"><a aria-label="30"></a><span class="ex">Chain</span> 2: 1000 transitions using 10 leapfrog steps per transition would take 0.08 seconds.</span>
-<span id="cb28-31"><a aria-label="31"></a><span class="ex">Chain</span> 2: Adjust your expectations accordingly!</span>
-<span id="cb28-32"><a aria-label="32"></a><span class="ex">Chain</span> 2: </span>
-<span id="cb28-33"><a aria-label="33"></a><span class="ex">Chain</span> 2: </span>
-<span id="cb28-34"><a aria-label="34"></a><span class="ex">Chain</span> 2: Iteration:    1 / 2000 [  0%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-35"><a aria-label="35"></a><span class="ex">Chain</span> 2: Iteration:  200 / 2000 [ 10%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-36"><a aria-label="36"></a><span class="ex">Chain</span> 2: Iteration:  400 / 2000 [ 20%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-37"><a aria-label="37"></a><span class="ex">Chain</span> 2: Iteration:  600 / 2000 [ 30%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-38"><a aria-label="38"></a><span class="ex">Chain</span> 2: Iteration:  800 / 2000 [ 40%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-39"><a aria-label="39"></a><span class="ex">Chain</span> 2: Iteration: 1000 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-40"><a aria-label="40"></a><span class="ex">Chain</span> 2: Iteration: 1001 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-41"><a aria-label="41"></a><span class="ex">Chain</span> 2: Iteration: 1200 / 2000 [ 60%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-42"><a aria-label="42"></a><span class="ex">Chain</span> 2: Iteration: 1400 / 2000 [ 70%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-43"><a aria-label="43"></a><span class="ex">Chain</span> 2: Iteration: 1600 / 2000 [ 80%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-44"><a aria-label="44"></a><span class="ex">Chain</span> 2: Iteration: 1800 / 2000 [ 90%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-45"><a aria-label="45"></a><span class="ex">Chain</span> 2: Iteration: 2000 / 2000 <span class="pp">[</span><span class="ss">100%</span><span class="pp">]</span>  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-46"><a aria-label="46"></a><span class="ex">Chain</span> 2: </span>
-<span id="cb28-47"><a aria-label="47"></a><span class="ex">Chain</span> 2:  Elapsed Time: 0.053 seconds <span class="er">(</span><span class="ex">Warm-up</span><span class="kw">)</span></span>
-<span id="cb28-48"><a aria-label="48"></a><span class="ex">Chain</span> 2:                0.062 seconds <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-49"><a aria-label="49"></a><span class="ex">Chain</span> 2:                0.115 seconds <span class="er">(</span><span class="ex">Total</span><span class="kw">)</span></span>
-<span id="cb28-50"><a aria-label="50"></a><span class="ex">Chain</span> 2: </span>
-<span id="cb28-51"><a aria-label="51"></a></span>
-<span id="cb28-52"><a aria-label="52"></a><span class="ex">SAMPLING</span> FOR MODEL <span class="st">'continuous'</span> NOW <span class="er">(</span><span class="ex">CHAIN</span> 3<span class="kw">)</span><span class="bu">.</span></span>
-<span id="cb28-53"><a aria-label="53"></a><span class="ex">Chain</span> 3: </span>
-<span id="cb28-54"><a aria-label="54"></a><span class="ex">Chain</span> 3: Gradient evaluation took 9e-06 seconds</span>
-<span id="cb28-55"><a aria-label="55"></a><span class="ex">Chain</span> 3: 1000 transitions using 10 leapfrog steps per transition would take 0.09 seconds.</span>
-<span id="cb28-56"><a aria-label="56"></a><span class="ex">Chain</span> 3: Adjust your expectations accordingly!</span>
-<span id="cb28-57"><a aria-label="57"></a><span class="ex">Chain</span> 3: </span>
-<span id="cb28-58"><a aria-label="58"></a><span class="ex">Chain</span> 3: </span>
-<span id="cb28-59"><a aria-label="59"></a><span class="ex">Chain</span> 3: Iteration:    1 / 2000 [  0%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-60"><a aria-label="60"></a><span class="ex">Chain</span> 3: Iteration:  200 / 2000 [ 10%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-61"><a aria-label="61"></a><span class="ex">Chain</span> 3: Iteration:  400 / 2000 [ 20%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-62"><a aria-label="62"></a><span class="ex">Chain</span> 3: Iteration:  600 / 2000 [ 30%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-63"><a aria-label="63"></a><span class="ex">Chain</span> 3: Iteration:  800 / 2000 [ 40%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-64"><a aria-label="64"></a><span class="ex">Chain</span> 3: Iteration: 1000 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-65"><a aria-label="65"></a><span class="ex">Chain</span> 3: Iteration: 1001 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-66"><a aria-label="66"></a><span class="ex">Chain</span> 3: Iteration: 1200 / 2000 [ 60%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-67"><a aria-label="67"></a><span class="ex">Chain</span> 3: Iteration: 1400 / 2000 [ 70%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-68"><a aria-label="68"></a><span class="ex">Chain</span> 3: Iteration: 1600 / 2000 [ 80%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-69"><a aria-label="69"></a><span class="ex">Chain</span> 3: Iteration: 1800 / 2000 [ 90%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-70"><a aria-label="70"></a><span class="ex">Chain</span> 3: Iteration: 2000 / 2000 <span class="pp">[</span><span class="ss">100%</span><span class="pp">]</span>  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-71"><a aria-label="71"></a><span class="ex">Chain</span> 3: </span>
-<span id="cb28-72"><a aria-label="72"></a><span class="ex">Chain</span> 3:  Elapsed Time: 0.057 seconds <span class="er">(</span><span class="ex">Warm-up</span><span class="kw">)</span></span>
-<span id="cb28-73"><a aria-label="73"></a><span class="ex">Chain</span> 3:                0.059 seconds <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-74"><a aria-label="74"></a><span class="ex">Chain</span> 3:                0.116 seconds <span class="er">(</span><span class="ex">Total</span><span class="kw">)</span></span>
-<span id="cb28-75"><a aria-label="75"></a><span class="ex">Chain</span> 3: </span>
-<span id="cb28-76"><a aria-label="76"></a></span>
-<span id="cb28-77"><a aria-label="77"></a><span class="ex">SAMPLING</span> FOR MODEL <span class="st">'continuous'</span> NOW <span class="er">(</span><span class="ex">CHAIN</span> 4<span class="kw">)</span><span class="bu">.</span></span>
-<span id="cb28-78"><a aria-label="78"></a><span class="ex">Chain</span> 4: </span>
-<span id="cb28-79"><a aria-label="79"></a><span class="ex">Chain</span> 4: Gradient evaluation took 1e-05 seconds</span>
-<span id="cb28-80"><a aria-label="80"></a><span class="ex">Chain</span> 4: 1000 transitions using 10 leapfrog steps per transition would take 0.1 seconds.</span>
-<span id="cb28-81"><a aria-label="81"></a><span class="ex">Chain</span> 4: Adjust your expectations accordingly!</span>
-<span id="cb28-82"><a aria-label="82"></a><span class="ex">Chain</span> 4: </span>
-<span id="cb28-83"><a aria-label="83"></a><span class="ex">Chain</span> 4: </span>
-<span id="cb28-84"><a aria-label="84"></a><span class="ex">Chain</span> 4: Iteration:    1 / 2000 [  0%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-85"><a aria-label="85"></a><span class="ex">Chain</span> 4: Iteration:  200 / 2000 [ 10%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-86"><a aria-label="86"></a><span class="ex">Chain</span> 4: Iteration:  400 / 2000 [ 20%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-87"><a aria-label="87"></a><span class="ex">Chain</span> 4: Iteration:  600 / 2000 [ 30%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-88"><a aria-label="88"></a><span class="ex">Chain</span> 4: Iteration:  800 / 2000 [ 40%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-89"><a aria-label="89"></a><span class="ex">Chain</span> 4: Iteration: 1000 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
-<span id="cb28-90"><a aria-label="90"></a><span class="ex">Chain</span> 4: Iteration: 1001 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-91"><a aria-label="91"></a><span class="ex">Chain</span> 4: Iteration: 1200 / 2000 [ 60%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-92"><a aria-label="92"></a><span class="ex">Chain</span> 4: Iteration: 1400 / 2000 [ 70%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-93"><a aria-label="93"></a><span class="ex">Chain</span> 4: Iteration: 1600 / 2000 [ 80%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-94"><a aria-label="94"></a><span class="ex">Chain</span> 4: Iteration: 1800 / 2000 [ 90%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-95"><a aria-label="95"></a><span class="ex">Chain</span> 4: Iteration: 2000 / 2000 <span class="pp">[</span><span class="ss">100%</span><span class="pp">]</span>  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-96"><a aria-label="96"></a><span class="ex">Chain</span> 4: </span>
-<span id="cb28-97"><a aria-label="97"></a><span class="ex">Chain</span> 4:  Elapsed Time: 0.051 seconds <span class="er">(</span><span class="ex">Warm-up</span><span class="kw">)</span></span>
-<span id="cb28-98"><a aria-label="98"></a><span class="ex">Chain</span> 4:                0.06 seconds <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
-<span id="cb28-99"><a aria-label="99"></a><span class="ex">Chain</span> 4:                0.111 seconds <span class="er">(</span><span class="ex">Total</span><span class="kw">)</span></span>
-<span id="cb28-100"><a aria-label="100"></a><span class="ex">Chain</span> 4: </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a aria-label="1"></a></span>
+<span id="cb32-2"><a aria-label="2"></a><span class="ex">SAMPLING</span> FOR MODEL <span class="st">'continuous'</span> NOW <span class="er">(</span><span class="ex">CHAIN</span> 1<span class="kw">)</span><span class="bu">.</span></span>
+<span id="cb32-3"><a aria-label="3"></a><span class="ex">Chain</span> 1: </span>
+<span id="cb32-4"><a aria-label="4"></a><span class="ex">Chain</span> 1: Gradient evaluation took 0.001405 seconds</span>
+<span id="cb32-5"><a aria-label="5"></a><span class="ex">Chain</span> 1: 1000 transitions using 10 leapfrog steps per transition would take 14.05 seconds.</span>
+<span id="cb32-6"><a aria-label="6"></a><span class="ex">Chain</span> 1: Adjust your expectations accordingly!</span>
+<span id="cb32-7"><a aria-label="7"></a><span class="ex">Chain</span> 1: </span>
+<span id="cb32-8"><a aria-label="8"></a><span class="ex">Chain</span> 1: </span>
+<span id="cb32-9"><a aria-label="9"></a><span class="ex">Chain</span> 1: Iteration:    1 / 2000 [  0%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-10"><a aria-label="10"></a><span class="ex">Chain</span> 1: Iteration:  200 / 2000 [ 10%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-11"><a aria-label="11"></a><span class="ex">Chain</span> 1: Iteration:  400 / 2000 [ 20%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-12"><a aria-label="12"></a><span class="ex">Chain</span> 1: Iteration:  600 / 2000 [ 30%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-13"><a aria-label="13"></a><span class="ex">Chain</span> 1: Iteration:  800 / 2000 [ 40%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-14"><a aria-label="14"></a><span class="ex">Chain</span> 1: Iteration: 1000 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-15"><a aria-label="15"></a><span class="ex">Chain</span> 1: Iteration: 1001 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-16"><a aria-label="16"></a><span class="ex">Chain</span> 1: Iteration: 1200 / 2000 [ 60%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-17"><a aria-label="17"></a><span class="ex">Chain</span> 1: Iteration: 1400 / 2000 [ 70%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-18"><a aria-label="18"></a><span class="ex">Chain</span> 1: Iteration: 1600 / 2000 [ 80%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-19"><a aria-label="19"></a><span class="ex">Chain</span> 1: Iteration: 1800 / 2000 [ 90%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-20"><a aria-label="20"></a><span class="ex">Chain</span> 1: Iteration: 2000 / 2000 <span class="pp">[</span><span class="ss">100%</span><span class="pp">]</span>  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-21"><a aria-label="21"></a><span class="ex">Chain</span> 1: </span>
+<span id="cb32-22"><a aria-label="22"></a><span class="ex">Chain</span> 1:  Elapsed Time: 0.05 seconds <span class="er">(</span><span class="ex">Warm-up</span><span class="kw">)</span></span>
+<span id="cb32-23"><a aria-label="23"></a><span class="ex">Chain</span> 1:                0.058 seconds <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-24"><a aria-label="24"></a><span class="ex">Chain</span> 1:                0.108 seconds <span class="er">(</span><span class="ex">Total</span><span class="kw">)</span></span>
+<span id="cb32-25"><a aria-label="25"></a><span class="ex">Chain</span> 1: </span>
+<span id="cb32-26"><a aria-label="26"></a></span>
+<span id="cb32-27"><a aria-label="27"></a><span class="ex">SAMPLING</span> FOR MODEL <span class="st">'continuous'</span> NOW <span class="er">(</span><span class="ex">CHAIN</span> 2<span class="kw">)</span><span class="bu">.</span></span>
+<span id="cb32-28"><a aria-label="28"></a><span class="ex">Chain</span> 2: </span>
+<span id="cb32-29"><a aria-label="29"></a><span class="ex">Chain</span> 2: Gradient evaluation took 1.3e-05 seconds</span>
+<span id="cb32-30"><a aria-label="30"></a><span class="ex">Chain</span> 2: 1000 transitions using 10 leapfrog steps per transition would take 0.13 seconds.</span>
+<span id="cb32-31"><a aria-label="31"></a><span class="ex">Chain</span> 2: Adjust your expectations accordingly!</span>
+<span id="cb32-32"><a aria-label="32"></a><span class="ex">Chain</span> 2: </span>
+<span id="cb32-33"><a aria-label="33"></a><span class="ex">Chain</span> 2: </span>
+<span id="cb32-34"><a aria-label="34"></a><span class="ex">Chain</span> 2: Iteration:    1 / 2000 [  0%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-35"><a aria-label="35"></a><span class="ex">Chain</span> 2: Iteration:  200 / 2000 [ 10%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-36"><a aria-label="36"></a><span class="ex">Chain</span> 2: Iteration:  400 / 2000 [ 20%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-37"><a aria-label="37"></a><span class="ex">Chain</span> 2: Iteration:  600 / 2000 [ 30%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-38"><a aria-label="38"></a><span class="ex">Chain</span> 2: Iteration:  800 / 2000 [ 40%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-39"><a aria-label="39"></a><span class="ex">Chain</span> 2: Iteration: 1000 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-40"><a aria-label="40"></a><span class="ex">Chain</span> 2: Iteration: 1001 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-41"><a aria-label="41"></a><span class="ex">Chain</span> 2: Iteration: 1200 / 2000 [ 60%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-42"><a aria-label="42"></a><span class="ex">Chain</span> 2: Iteration: 1400 / 2000 [ 70%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-43"><a aria-label="43"></a><span class="ex">Chain</span> 2: Iteration: 1600 / 2000 [ 80%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-44"><a aria-label="44"></a><span class="ex">Chain</span> 2: Iteration: 1800 / 2000 [ 90%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-45"><a aria-label="45"></a><span class="ex">Chain</span> 2: Iteration: 2000 / 2000 <span class="pp">[</span><span class="ss">100%</span><span class="pp">]</span>  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-46"><a aria-label="46"></a><span class="ex">Chain</span> 2: </span>
+<span id="cb32-47"><a aria-label="47"></a><span class="ex">Chain</span> 2:  Elapsed Time: 0.053 seconds <span class="er">(</span><span class="ex">Warm-up</span><span class="kw">)</span></span>
+<span id="cb32-48"><a aria-label="48"></a><span class="ex">Chain</span> 2:                0.059 seconds <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-49"><a aria-label="49"></a><span class="ex">Chain</span> 2:                0.112 seconds <span class="er">(</span><span class="ex">Total</span><span class="kw">)</span></span>
+<span id="cb32-50"><a aria-label="50"></a><span class="ex">Chain</span> 2: </span>
+<span id="cb32-51"><a aria-label="51"></a></span>
+<span id="cb32-52"><a aria-label="52"></a><span class="ex">SAMPLING</span> FOR MODEL <span class="st">'continuous'</span> NOW <span class="er">(</span><span class="ex">CHAIN</span> 3<span class="kw">)</span><span class="bu">.</span></span>
+<span id="cb32-53"><a aria-label="53"></a><span class="ex">Chain</span> 3: </span>
+<span id="cb32-54"><a aria-label="54"></a><span class="ex">Chain</span> 3: Gradient evaluation took 9e-06 seconds</span>
+<span id="cb32-55"><a aria-label="55"></a><span class="ex">Chain</span> 3: 1000 transitions using 10 leapfrog steps per transition would take 0.09 seconds.</span>
+<span id="cb32-56"><a aria-label="56"></a><span class="ex">Chain</span> 3: Adjust your expectations accordingly!</span>
+<span id="cb32-57"><a aria-label="57"></a><span class="ex">Chain</span> 3: </span>
+<span id="cb32-58"><a aria-label="58"></a><span class="ex">Chain</span> 3: </span>
+<span id="cb32-59"><a aria-label="59"></a><span class="ex">Chain</span> 3: Iteration:    1 / 2000 [  0%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-60"><a aria-label="60"></a><span class="ex">Chain</span> 3: Iteration:  200 / 2000 [ 10%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-61"><a aria-label="61"></a><span class="ex">Chain</span> 3: Iteration:  400 / 2000 [ 20%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-62"><a aria-label="62"></a><span class="ex">Chain</span> 3: Iteration:  600 / 2000 [ 30%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-63"><a aria-label="63"></a><span class="ex">Chain</span> 3: Iteration:  800 / 2000 [ 40%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-64"><a aria-label="64"></a><span class="ex">Chain</span> 3: Iteration: 1000 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-65"><a aria-label="65"></a><span class="ex">Chain</span> 3: Iteration: 1001 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-66"><a aria-label="66"></a><span class="ex">Chain</span> 3: Iteration: 1200 / 2000 [ 60%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-67"><a aria-label="67"></a><span class="ex">Chain</span> 3: Iteration: 1400 / 2000 [ 70%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-68"><a aria-label="68"></a><span class="ex">Chain</span> 3: Iteration: 1600 / 2000 [ 80%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-69"><a aria-label="69"></a><span class="ex">Chain</span> 3: Iteration: 1800 / 2000 [ 90%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-70"><a aria-label="70"></a><span class="ex">Chain</span> 3: Iteration: 2000 / 2000 <span class="pp">[</span><span class="ss">100%</span><span class="pp">]</span>  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-71"><a aria-label="71"></a><span class="ex">Chain</span> 3: </span>
+<span id="cb32-72"><a aria-label="72"></a><span class="ex">Chain</span> 3:  Elapsed Time: 0.049 seconds <span class="er">(</span><span class="ex">Warm-up</span><span class="kw">)</span></span>
+<span id="cb32-73"><a aria-label="73"></a><span class="ex">Chain</span> 3:                0.056 seconds <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-74"><a aria-label="74"></a><span class="ex">Chain</span> 3:                0.105 seconds <span class="er">(</span><span class="ex">Total</span><span class="kw">)</span></span>
+<span id="cb32-75"><a aria-label="75"></a><span class="ex">Chain</span> 3: </span>
+<span id="cb32-76"><a aria-label="76"></a></span>
+<span id="cb32-77"><a aria-label="77"></a><span class="ex">SAMPLING</span> FOR MODEL <span class="st">'continuous'</span> NOW <span class="er">(</span><span class="ex">CHAIN</span> 4<span class="kw">)</span><span class="bu">.</span></span>
+<span id="cb32-78"><a aria-label="78"></a><span class="ex">Chain</span> 4: </span>
+<span id="cb32-79"><a aria-label="79"></a><span class="ex">Chain</span> 4: Gradient evaluation took 1.1e-05 seconds</span>
+<span id="cb32-80"><a aria-label="80"></a><span class="ex">Chain</span> 4: 1000 transitions using 10 leapfrog steps per transition would take 0.11 seconds.</span>
+<span id="cb32-81"><a aria-label="81"></a><span class="ex">Chain</span> 4: Adjust your expectations accordingly!</span>
+<span id="cb32-82"><a aria-label="82"></a><span class="ex">Chain</span> 4: </span>
+<span id="cb32-83"><a aria-label="83"></a><span class="ex">Chain</span> 4: </span>
+<span id="cb32-84"><a aria-label="84"></a><span class="ex">Chain</span> 4: Iteration:    1 / 2000 [  0%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-85"><a aria-label="85"></a><span class="ex">Chain</span> 4: Iteration:  200 / 2000 [ 10%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-86"><a aria-label="86"></a><span class="ex">Chain</span> 4: Iteration:  400 / 2000 [ 20%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-87"><a aria-label="87"></a><span class="ex">Chain</span> 4: Iteration:  600 / 2000 [ 30%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-88"><a aria-label="88"></a><span class="ex">Chain</span> 4: Iteration:  800 / 2000 [ 40%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-89"><a aria-label="89"></a><span class="ex">Chain</span> 4: Iteration: 1000 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Warmup</span><span class="kw">)</span></span>
+<span id="cb32-90"><a aria-label="90"></a><span class="ex">Chain</span> 4: Iteration: 1001 / 2000 [ 50%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-91"><a aria-label="91"></a><span class="ex">Chain</span> 4: Iteration: 1200 / 2000 [ 60%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-92"><a aria-label="92"></a><span class="ex">Chain</span> 4: Iteration: 1400 / 2000 [ 70%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-93"><a aria-label="93"></a><span class="ex">Chain</span> 4: Iteration: 1600 / 2000 [ 80%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-94"><a aria-label="94"></a><span class="ex">Chain</span> 4: Iteration: 1800 / 2000 [ 90%]  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-95"><a aria-label="95"></a><span class="ex">Chain</span> 4: Iteration: 2000 / 2000 <span class="pp">[</span><span class="ss">100%</span><span class="pp">]</span>  <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-96"><a aria-label="96"></a><span class="ex">Chain</span> 4: </span>
+<span id="cb32-97"><a aria-label="97"></a><span class="ex">Chain</span> 4:  Elapsed Time: 0.06 seconds <span class="er">(</span><span class="ex">Warm-up</span><span class="kw">)</span></span>
+<span id="cb32-98"><a aria-label="98"></a><span class="ex">Chain</span> 4:                0.059 seconds <span class="er">(</span><span class="ex">Sampling</span><span class="kw">)</span></span>
+<span id="cb32-99"><a aria-label="99"></a><span class="ex">Chain</span> 4:                0.119 seconds <span class="er">(</span><span class="ex">Total</span><span class="kw">)</span></span>
+<span id="cb32-100"><a aria-label="100"></a><span class="ex">Chain</span> 4: </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="simple-main-effects-4" class="slide level2">
 <h2>Simple Main Effects</h2>
 <div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a aria-label="1"></a>stan_e1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(stan_a1, <span class="sc">~</span> hill <span class="sc">*</span> method)</span>
+<span id="cb33-2"><a aria-label="2"></a><span class="fu">pairs</span>(stan_e1, <span class="at">by =</span> <span class="st">"hill"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a aria-label="1"></a><span class="ex">hill</span> = east:</span>
-<span id="cb29-2"><a aria-label="2"></a> <span class="ex">contrast</span>    estimate lower.HPD upper.HPD</span>
-<span id="cb29-3"><a aria-label="3"></a> <span class="ex">control</span> <span class="at">-</span> a    <span class="at">-5.68</span>    <span class="at">-7.188</span>    <span class="at">-4.305</span></span>
-<span id="cb29-4"><a aria-label="4"></a> <span class="ex">control</span> <span class="at">-</span> b    <span class="at">-4.11</span>    <span class="at">-5.554</span>    <span class="at">-2.662</span></span>
-<span id="cb29-5"><a aria-label="5"></a> <span class="ex">a</span> <span class="at">-</span> b           1.57     0.117     3.067</span>
-<span id="cb29-6"><a aria-label="6"></a></span>
-<span id="cb29-7"><a aria-label="7"></a><span class="ex">hill</span> = west:</span>
-<span id="cb29-8"><a aria-label="8"></a> <span class="ex">contrast</span>    estimate lower.HPD upper.HPD</span>
-<span id="cb29-9"><a aria-label="9"></a> <span class="ex">control</span> <span class="at">-</span> a    <span class="at">-6.15</span>    <span class="at">-7.629</span>    <span class="at">-4.728</span></span>
-<span id="cb29-10"><a aria-label="10"></a> <span class="ex">control</span> <span class="at">-</span> b    <span class="at">-8.17</span>    <span class="at">-9.620</span>    <span class="at">-6.742</span></span>
-<span id="cb29-11"><a aria-label="11"></a> <span class="ex">a</span> <span class="at">-</span> b          <span class="at">-2.04</span>    <span class="at">-3.414</span>    <span class="at">-0.525</span></span>
-<span id="cb29-12"><a aria-label="12"></a></span>
-<span id="cb29-13"><a aria-label="13"></a><span class="ex">Point</span> estimate displayed: median </span>
-<span id="cb29-14"><a aria-label="14"></a><span class="ex">HPD</span> interval probability: 0.95 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a aria-label="1"></a><span class="ex">hill</span> = east:</span>
+<span id="cb34-2"><a aria-label="2"></a> <span class="ex">contrast</span>    estimate lower.HPD upper.HPD</span>
+<span id="cb34-3"><a aria-label="3"></a> <span class="ex">control</span> <span class="at">-</span> a    <span class="at">-5.70</span>   <span class="at">-7.1403</span>    <span class="at">-4.183</span></span>
+<span id="cb34-4"><a aria-label="4"></a> <span class="ex">control</span> <span class="at">-</span> b    <span class="at">-4.10</span>   <span class="at">-5.5923</span>    <span class="at">-2.644</span></span>
+<span id="cb34-5"><a aria-label="5"></a> <span class="ex">a</span> <span class="at">-</span> b           1.59    0.0668     3.020</span>
+<span id="cb34-6"><a aria-label="6"></a></span>
+<span id="cb34-7"><a aria-label="7"></a><span class="ex">hill</span> = west:</span>
+<span id="cb34-8"><a aria-label="8"></a> <span class="ex">contrast</span>    estimate lower.HPD upper.HPD</span>
+<span id="cb34-9"><a aria-label="9"></a> <span class="ex">control</span> <span class="at">-</span> a    <span class="at">-6.13</span>   <span class="at">-7.6818</span>    <span class="at">-4.697</span></span>
+<span id="cb34-10"><a aria-label="10"></a> <span class="ex">control</span> <span class="at">-</span> b    <span class="at">-8.17</span>   <span class="at">-9.6274</span>    <span class="at">-6.671</span></span>
+<span id="cb34-11"><a aria-label="11"></a> <span class="ex">a</span> <span class="at">-</span> b          <span class="at">-2.03</span>   <span class="at">-3.4218</span>    <span class="at">-0.502</span></span>
+<span id="cb34-12"><a aria-label="12"></a></span>
+<span id="cb34-13"><a aria-label="13"></a><span class="ex">Point</span> estimate displayed: median </span>
+<span id="cb34-14"><a aria-label="14"></a><span class="ex">HPD</span> interval probability: 0.95 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
+<p>For inference, we get the 95% HPD credible intervals</p>
 </section>
 <section id="interaction-contrasts-1" class="slide level2">
 <h2>Interaction Contrasts</h2>
 <div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a aria-label="1"></a>interaction_results <span class="ot">&lt;-</span> <span class="fu">contrast</span>(stan_e1, </span>
+<span id="cb35-2"><a aria-label="2"></a>  <span class="at">interaction =</span> <span class="fu">list</span>(<span class="at">hill =</span> hill_contrast, <span class="at">condition =</span> condition_contrasts))</span>
+<span id="cb35-3"><a aria-label="3"></a></span>
+<span id="cb35-4"><a aria-label="4"></a><span class="fu">summary</span>(interaction_results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a aria-label="1"></a> <span class="ex">hill_custom</span>  method_custom        estimate lower.HPD</span>
-<span id="cb30-2"><a aria-label="2"></a> <span class="ex">East</span> vs West Method A vs Method B     <span class="at">-3.6</span>     <span class="at">-5.65</span></span>
-<span id="cb30-3"><a aria-label="3"></a> <span class="ex">upper.HPD</span></span>
-<span id="cb30-4"><a aria-label="4"></a>     <span class="ex">-1.48</span></span>
-<span id="cb30-5"><a aria-label="5"></a></span>
-<span id="cb30-6"><a aria-label="6"></a><span class="ex">Point</span> estimate displayed: median </span>
-<span id="cb30-7"><a aria-label="7"></a><span class="ex">HPD</span> interval probability: 0.95 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a aria-label="1"></a> <span class="ex">hill_custom</span>  method_custom        estimate lower.HPD</span>
+<span id="cb36-2"><a aria-label="2"></a> <span class="ex">East</span> vs West Method A vs Method B    <span class="at">-3.65</span>     <span class="at">-5.69</span></span>
+<span id="cb36-3"><a aria-label="3"></a> <span class="ex">upper.HPD</span></span>
+<span id="cb36-4"><a aria-label="4"></a>     <span class="ex">-1.57</span></span>
+<span id="cb36-5"><a aria-label="5"></a></span>
+<span id="cb36-6"><a aria-label="6"></a><span class="ex">Point</span> estimate displayed: median </span>
+<span id="cb36-7"><a aria-label="7"></a><span class="ex">HPD</span> interval probability: 0.95 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 

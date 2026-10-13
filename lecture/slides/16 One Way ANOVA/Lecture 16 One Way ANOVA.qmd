@@ -67,7 +67,7 @@ Today will give us a picture for how the rest of the course will go
 
 ## Analysis of Variance
 
-::: {style="font-size: 0.95em;"}
+::: {style="font-size: 0.875em;"}
 
 Analysis of variance (ANOVA) is one of the most popular statistical tests.
 
@@ -124,7 +124,7 @@ Are these means equal **in the population?**
 
 Suppose subject $i$ belongs to group $g$. The observed response is $y_{ig}$.
 
-The **structural model** decomposes observations into different sources of variability (hence Analysis of **Variance**):
+The **traditional model** structure decomposes observations into different sources of variability (hence Analysis of **Variance**):
 
 $$\begin{align*}
 y_{ig} &= \color{#377EB8}{\mu} + \color{#4DAF4A}{(\mu_g - \mu)} + \color{#984EA3}{(y_{ig} - \mu_g)} \\
@@ -166,7 +166,7 @@ And
 ::: {style="font-size: 0.75em;"}
 
 
-[What about $\mu_{3}$?]{.fragment}
+[What about $g_{3}$?]{.fragment}
 
 
 
@@ -183,8 +183,8 @@ $2 - (1 - 2) - (2 - 2) = 3$
 
 :::: {.content-visible unless-meta="params.v0"}
 ::: {.answer .fragment}
-$\mu_{3} = \mu - (\mu_{1} - \mu) - (\mu_{2} - \mu) =$
-$\beta_0 - \beta_1 - \beta_2$
+$\beta_0 + \beta_1(-1)+- \beta_2(-1)  = \mu - (\mu_{1} - \mu) - (\mu_{2} - \mu) = \mu_3$
+
 :::
 [Coding $g - 1$ $x$'s give us all the info about $g$ group means]{.answer .fragment .content-visible unless-meta="params.v0"}
 :::
@@ -288,7 +288,7 @@ p1 <- ggplot(PlantGrowth, aes(x = 1, y = weight, shape = group)) +
   labs(x = "") + facet_wrap(~"Total Variance") + geom_hline(yintercept = mn, 
                                                             linetype = 2, color = my_blue)
 
-p2 <- ggplot(PlantGrowth %>% group_by(group) %>% summarize(mean = mean(weight)),
+p2 <- ggplot(PlantGrowth |> group_by(group) |> summarize(mean = mean(weight)),
        aes(group, mean, shape = group)) + geom_point(size = 8, color = my_green) + theme_light() + 
     scale_shape_manual(values = c(8, 18, 16)) + 
   ylim(c(3.5,7)) + xlab(NULL) +
@@ -296,13 +296,13 @@ p2 <- ggplot(PlantGrowth %>% group_by(group) %>% summarize(mean = mean(weight)),
         strip.background = element_rect(fill=my_green))  + facet_wrap(~"Group Means")  + geom_hline(yintercept = mn, 
                                                             linetype = 2, color = my_blue)
 
-PlantGrowth <- PlantGrowth %>% group_by(group) %>% mutate(mean = mean(weight))
+PlantGrowth <- PlantGrowth |> group_by(group) |> mutate(mean = mean(weight))
 
-plantmns <- PlantGrowth %>% group_by(group) %>%
+plantmns <- PlantGrowth |> group_by(group) |>
   summarize(weight = 0)
 
-p3 <- PlantGrowth %>% group_by(group) %>% 
-  mutate(weight = weight - mean(weight)) %>% 
+p3 <- PlantGrowth |> group_by(group) |> 
+  mutate(weight = weight - mean(weight)) |> 
   ggplot(aes(group, weight, shape = group)) + 
   geom_point(size = 3, color = my_purple) + 
     geom_point(aes(group, weight, shape = group), data = plantmns, size = 8,
@@ -322,7 +322,7 @@ gridExtra::grid.arrange(p1, p2, p3, nrow = 1)
 
 ## Variance of Means
 
-::: {style="font-size: 0.8em;"}
+::: {style="font-size: 0.75em;"}
 
 In the one-way ANOVA, the null hypothesis for $G$ groups is
 
@@ -583,12 +583,12 @@ Properties of the $F$ distribution:
 
 ```{r}
 x <- tibble(x = seq(.3, 5, length = 100))
-x <- x %>% mutate("dfB = 1, dfW = 1" = df(x, 1, 1),
+x <- x |> mutate("dfB = 1, dfW = 1" = df(x, 1, 1),
            "dfB = 1, dfW = 3" = df(x, 1, 3),
            "dfB = 3, dfW = 10" = df(x, 3, 10),
            "dfB = 3, dfW = 20" = df(x, 3, 20),
            "dfB = 20, dfW = 20" = df(x, 20, 20))
-x <- x %>% pivot_longer("dfB = 1, dfW = 1":"dfB = 20, dfW = 20", 
+x <- x |> pivot_longer("dfB = 1, dfW = 1":"dfB = 20, dfW = 20", 
                         names_to = "type", values_to = "density")
 ggplot(x, aes(x, density, group = type, col = type)) + 
 geom_path(linewidth = 1.5) + theme_light() + 
@@ -598,6 +598,8 @@ theme(legend.title = element_blank())
 ```
 
 ## Hypothesis Testing
+
+::: {style="font-size: .9em;"}
 
 - $H_0: \mu_1 = \mu_2 = \cdots = \mu_G$
 - $H_1$: at least one population mean is different
@@ -613,6 +615,8 @@ When $H_0$ is true, $F$ test statistic follows the $F$ distribution with $dfB$ n
 
 These calculations work for any number of groups and any group sizes.
 
+:::
+
 ## ANOVA Table and Test
 
 ::: {style="font-size: 1.1em;"}
@@ -627,16 +631,16 @@ These calculations work for any number of groups and any group sizes.
 
 **Interpretation:** Were the null hypothesis true, there is only a 2% chance we would have observed variance between group means at least this large.
 
-## Effect Size
-
 
 ## Effect Sizes
 
 **$d$-family**: standardized **difference** between groups
+
 - Cohen's $d$: standardized mean differences between pairs of groups
 - Will come back to this more next time
 
 **$r$-family**: standardized **association** between two variables
+
 - $\eta^2$ aka $R^2$: proportion of variance of outcome accounted for by predictor (group membership)
 - $\omega^2$: adjusted $\eta^2$
 - $f^2$: used for statistical power analysis
@@ -660,6 +664,9 @@ $$\eta^2 = \frac{SSB}{SST} = \frac{SSB}{SSB + SSW} = R^2 = 1 - \frac{s^2_{\epsil
 
 ## $f^2$ Effect Size
 
+
+::: {style="font-size: .9em;"}
+
 $r$-family effect size measure, mostly used for conducting power analyses.
 
 $$f^2 = \frac{\eta^2}{1 - \eta^2} = \frac{SSB}{SSW}$$
@@ -674,6 +681,8 @@ Cohen's (1988, 1992) suggestions:
 
 In practice, you may want to report effect size in terms of $\eta^2$ instead of $f^2$ because it is easier to interpret.
 
+:::
+
 ## $\omega^2$ Effect Size
 
 $\omega^2$ is less biased than $\eta^2$:
@@ -681,8 +690,9 @@ $\omega^2$ is less biased than $\eta^2$:
 $$\omega^2 = \frac{SSB - (G - 1)\times MSW}{SST + MSW}$$
 
 - $G$: number of groups
+- Extra terms (over $\eta^2$) penalize so $\omega^2 \leq \eta^2$
 - Similar (but not identical to) to adjusted $R^2$ in regression (more later)
-- $\omega^2$ is not completely unbiased)
+- $\omega^2$ is not completely unbiased
 
 **Interpretation:** Same interpretation as $\eta^2$ (proportion of variation accounted for by group differences).
 
@@ -694,11 +704,12 @@ Assumptions of one-way ANOVA (same as independent samples $t$-test):
 1. **Normally distributed outcome in each group**
    - Equivalently, normally distributed residuals within each group
 2. **No outliers in any group**
-3. **Homogeneity of variance**
-   - Population variance is equal in every group
+3. **Random Sampling within each group**
 4. **Independence of observations**
    - All groups are independent of each other
    - If not independent, **repeated measures ANOVA** may be a more appropriate procedure
+5. **Homogeneity of variance**
+   - Population variance is equal in every group
 
 ## Normality
 
@@ -790,12 +801,10 @@ $$dfW = \frac{G^2 - 1}{3\times \sum_g\left[\left(\frac{1}{n_g - 1}\right)\left(1
 
 ## White's Adjustment
 
-White's adjustment uses a different formula to find a $MSW$ estimate that is robust to heteroscedasticity:
+White's adjustment uses a different formula to find a $MSW$ estimate that is robust to heterogeneous variances:
 
 - Same $dfB$, $dfW$
 - Different $MSW$, $F$, $p$
-- Many options possible
-- Recommended to try several adjustment methods (they should agree)
 
 
 ## Weighted Least Squares
@@ -813,7 +822,7 @@ Weighted least squares (WLS) can be useful to address problems with the heteroge
 
 
 
-## Heterogeneity Suggestions
+## Suggestions
 
 **"Traditional" procedure:**
 
@@ -844,6 +853,8 @@ Weighted least squares (WLS) can be useful to address problems with the heteroge
 
 ## Bayes Factor Refresher
 
+::: {style="font-size: 0.9em;"}
+
 Bayes Factors are a way of comparing the support for different models in a Bayesian framework.
 
 They are ratios of posterior likelihoods between competing models. If we have two possible models for the same data, $M_1$ and $M_2$.
@@ -856,6 +867,7 @@ $$BF = \frac{P(\boldsymbol{D}|M_1)}{P(\boldsymbol{D}|M_2)}$$
 - When $BF < 1$, $M_2$ is more likely than $M_1$
     - When $BF = \frac{1}{3}$, $M_2$ is three times as likely to be the "true" model as $M_1$
 
+:::
 
 ## Bayes Factor Setup
 
@@ -975,15 +987,15 @@ Does viewing objects that are close together affect your feelings of closeness t
 
 dat <- read_xls("../../data/Williams data.xls")
 
-dat <- dat %>% mutate(average_bond = (SIB_BOND + PAR_BOND + HOME_BOND) / 3) %>%
-  filter(!is.na(average_bond)) %>%
-  mutate(condition = recode(factor(COND), "1" = "close", "2" = "intermediate", "3" = "distant")) %>% dplyr::select(-COND)
+dat <- dat |> mutate(average_bond = (SIB_BOND + PAR_BOND + HOME_BOND) / 3) |>
+  filter(!is.na(average_bond)) |>
+  mutate(condition = recode(factor(COND), "1" = "close", "2" = "intermediate", "3" = "distant")) |> dplyr::select(-COND)
 
-dat2 <- dat %>% 
-  pivot_longer(c(SIB_BOND:HOME_BOND, average_bond), names_to = "type", values_to = "strength") %>%
+dat2 <- dat |> 
+  pivot_longer(c(SIB_BOND:HOME_BOND, average_bond), names_to = "type", values_to = "strength") |>
   mutate(type = recode(type, SIB_BOND = "Sibling", PAR_BOND = "Parent", HOME_BOND = "Home"))
 
-ggplot(dat2 %>% filter(type == "average_bond")) + 
+ggplot(dat2 |> filter(type == "average_bond")) + 
   geom_boxplot(aes(x = condition, y = strength, fill = condition)) + 
   scale_fill_manual(values = c(my_purple2, my_green2, my_blue2)) + 
   theme(legend.position = "bottom") + theme_light() + 
@@ -1023,7 +1035,7 @@ ez1$ANOVA
 
 What do you think `ges` might be?
 
-[Stands for **generalized** $\eta^2$ (same as our $\eta^2$) so far, slightly different in some other cases]{.answer .fragment .content-visible unless-meta="params.v0"}
+[Stands for **generalized** $\eta^2$ (same as our $\eta^2$ so far, slightly different in some other cases)]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 
 ## $\eta^2$ Example
@@ -1113,7 +1125,7 @@ car::Anova(a1, white.adjust = TRUE)
 
 ```{r}
 #| echo: true
-dat <- dat %>% group_by(condition) %>% 
+dat <- dat |> group_by(condition) |> 
   mutate(weight = 1 / var(average_bond))
 
 a1_wt <- aov(average_bond ~ condition, dat, weights = weight)
@@ -1198,3 +1210,12 @@ stan_lm1a <- stan_glm(average_bond ~ condition, dat, family = "gaussian",
 
 Bayes factor now says the full model is about as likely than the null model!
 
+## APA Writeup 
+
+**Frequentist**
+
+We conducted a one-way ANOVA to test the effect of priming subjects with numbers of varying closeness on their perception of closeness to family members. Results indicated the priming effect produced no significant difference between groups, $F(2, 122) = 0.24, p = 0.79, \omega^2 < .001$.
+
+**Bayesian**
+
+We used Bayes factors to compare a model that allowed for differences in the means of perception of closeness with family members for groups primed with numbers of varying closeness to one that did not allow for differences in the means by group. We found that $BF = 0.002$, indicating the model that allowed for differences was only 0.2% as likely as the model that did not.  
