@@ -1,5 +1,5 @@
 ---
-title: "Lecture 20: Unbalanced Sample Sizes"
+title: "Lecture 22: Repeated and Mixed ANOVA"
 author: "Mark Himmelstein"
 format: 
   revealjs:
@@ -195,3 +195,385 @@ $$y_{ij} = \mu + \pi_i + \tau_j + (\tau\pi)_{ij} + \epsilon_{ij}$$
 In such cases we instead work with the simpler model.
 
 :::
+
+
+
+
+## One-Way Repeated
+
+::: {style="font-size: 0.7em;"}
+
+Total sum of squares:
+
+$$SST = \sum_i\sum_j(y_{ij} - \bar{y})^2$$
+
+
+Sum of squares within subjects (treatment effect averaged across individuals):
+
+$$SSA = I\sum_j (\bar{y}_{\bullet j} - \bar{y})^2$$
+
+Sum of squares between subjects (variance in individual differences averaged across treatments):
+
+$$SSS = J\sum_i (\bar{y}_{i\bullet} - \bar{y})^2$$
+
+
+Sum of squares residual:
+
+$$SSR = SST - SSS - SSA$$
+
+::: {.columns}
+
+::: {.column width="50%"}
+* $I$: # subjects, $i = 1, \ldots, I$
+:::
+
+::: {.column width="50%"}
+* $J$: # treatment conditions, $j = 1, \ldots, J$
+:::
+
+:::
+
+:::
+
+## Refactor!
+
+::: {style="font-size: 0.7em;"}
+
+What if we wanted to test the effect of subject and condition? Then we would have a two-way ANOVA (without interaction) where we treat subjects as a second factor 
+
+
+Total sum of squares:
+
+$$SST = \sum_i\sum_j(y_{ij} - \bar{y})^2$$
+
+
+
+Sum of squares within subjects (treatment effect averaged across individuals):
+
+$$SSA = I\sum_j (\bar{y}_{\bullet j} - \bar{y})^2$$
+
+Sum of squares treating subjects as factor B:
+
+$$SSB = J\sum_i (\bar{y}_{i\bullet} - \bar{y})^2$$
+
+Sum of squares residual:
+
+$$SSR = SST - SSA - SSB$$
+
+::: {.columns}
+
+::: {.column width="50%"}
+* $I$: # subjects, $i = 1, \ldots, I$
+:::
+
+::: {.column width="50%"}
+* $J$: # treatment conditions, $j = 1, \ldots, J$
+:::
+
+:::
+
+
+:::
+
+
+
+## Fixed vs Random
+
+::: {style="font-size: 0.85em;"}
+
+**Question:** Do we care if the average error for one participant is different from the others? 
+
+- [We might, but probably not. We're more interested in the effect of **condition** averaged over participants]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [But we also need to account for how the participant average effects contribute to our errors]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Another way to think about this is that we need to estimate the **variance** in how people differ even if we aren't testing that factor]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [This is sometimes referred to as a "random effect"]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [**Fixed effects:** A complete factor for which we want to compare all levels]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [**Random effects:** A factor where we sample from a population to estimate the variance attributable to that factor, but don't care so much about the specific levels we sample from the population]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+:::
+
+## Repeated-Measures ANOVA Table
+
+For the Stroop example, $J = 3$ levels of the within-subject IV, and $I = 238$ subjects
+
+Mean squares are calculated as before
+
+For each source of variability, $MS = SS / df$
+
+| Source | $df$ | $SS$ | $MS$ |
+| :--- | :--- | :--- | :--- |
+| **Subject Effect** | 237 | 10.26 | .043 |
+| Contingency Level | 2 | .084 | .042 |
+| Residual | 474 | .852 | .002 |
+| **Total** | 713 | 11.196 | .016 |
+
+
+## ANOVA Table Comparisons
+
+::: {.columns}
+
+::: {.column width="50%"}
+**Between-Subjects ANOVA**  
+*(incorrectly ignoring repeated measures)*
+
+| Source | $df$ | $SS$ | $MS$ |
+| :--- | :--- | :--- | :--- |
+| Cont. Level | 2 | .084 | .042 |
+| Residual | 711 | 11.112 | .016 |
+| **Total** | **713** | **11.196** | |
+:::
+
+::: {.column width="50%"}
+**Repeated-Measures ANOVA**
+
+| Source | $df$ | $SS$ | $MS$ |
+| :--- | :--- | :--- | :--- |
+| Subj. Eff. | 237 | 10.26 | |
+| Cont. Level | 2 | .084 | .042 |
+| Residual | 474 | .852 | .002 |
+| **Total** | **713** | **11.196** | |
+:::
+
+:::
+
+
+
+## Hypothesis Test
+
+::: {style="font-size: 0.85em;"}
+
+The hypothesis test is conducted using the same logic as the between-subjects ANOVA, except for the different error term:
+
+$$F_{obs} = \frac{MSA}{MSR} = \frac{.042}{.002} = 23.42$$
+
+
+Under $H_0$ (all treatment means equal in the population): 
+
+$$F_{obs} \sim F(dfA, dfR)$$
+
+Like other ANOVA tests, compare $F_{obs}$ to the $F$ distribution
+
+- numerator $df$ = $dfA$ = # within-subject treatment conditions - 1
+- denominator $df$ = $dfR$ = (# within-subject treatment conditions - 1)$\times$(# subjects - 1)
+
+:::
+
+## Data Cleaning
+
+The raw data here is in wide format (one column per contingency level)
+
+```{r}
+#| echo: true
+library(readxl)
+dat <- read_xlsx("../../data/Schmidt data.xlsx", 
+                 sheet = 2, range = "B20:E257", 
+                 col_names = c("Subject", "High", "Medium", "Low"))
+
+head(dat)
+```
+
+
+## Data Lengthening
+
+I am going to pivot it to long format first (multiple rows per person, column indicating contingency level)
+
+
+```{r}
+#| echo: true
+
+dat_long <- dat %>% 
+  pivot_longer(High:Low, names_to = "Contingency", values_to = "PropError") %>%
+  mutate(Subject = factor(Subject), Contingency = factor(Contingency))
+
+head(dat_long)
+```
+
+
+
+## In `R` with `aov()`
+
+```{r}
+#| echo: true
+
+a1 <- aov(PropError ~ Contingency + Error(Subject / Contingency),
+            dat_long)
+
+summary(a1)
+```
+
+
+`Error(Subject / Contingency)` indicates `Contingency` is a within-subjects factor for `Subject`
+
+## In `R` with `ezANOVA()`
+
+```{r}
+#| echo: true
+#| warning: false
+
+library(ez)
+
+ezANOVA(data = dat_long, # dataset
+        dv = PropError, # dependent variable
+        wid = Subject, # ID's for within-subject variable
+        within = Contingency) # repeated-measures IV
+
+```
+
+
+## Assumptions
+
+::: {style="font-size: 0.85em;"}
+
+
+1. Independence
+    
+    - Individuals respond independently of each other
+    - Residuals between subjects are independent of each other
+
+2. Covariance structure for the within-subjects factor
+  
+    - Compound symmetry (stronger)
+      - Take the variance-covariance matrix of treatment effects
+      - Equal variances: same number on the diagonal of the matrix
+      - Equal covariances: same number on the off-diagonals
+    - Sphericity (weaker)
+      -  Equal variances for all within-subjects variables
+
+Violations of these assumptions can bias the $F$-statistic
+
+:::
+
+## Covariance Structure
+
+```{r}
+#| echo: true
+#| eval: false
+
+cov(dat[, -1])
+
+```
+
+```{r}
+round(cov(dat[, -1]), 5)
+```
+
+**Sphericity**: diagonal elements are equal (in the population)
+
+**Compound symmetry**: sphericity + off-diagonal elements are equal (in the population)
+
+
+## Mauchly's Test of Sphericity
+
+
+::: {style="font-size: 0.8em;"}
+
+If sphericity assumption is not met, $F$ is positively biased (Box, 1954)
+
+- Inflated Type I error rate
+
+How far does the covariance matrix deviate from sphericity?
+
+- Mauchly's test is a formal hypothesis test for sphericity
+- If sphericity is met, the expected test statistic equals 1
+- If $p<.05$, evidence against sphericity
+- Mauchly's test only reported for effects with >2 levels because sphericity necessarily holds for variables with 2 levels
+
+Adjustments for positive bias (both available in `ezANOVA`):
+
+- Greenhouse-Geisser
+- Huynh-Feldt
+
+Recommended to use adjustments instead of bothering with Mauchly's test
+
+- For reasons comparable to Levene's test in the context of the independent samples $t$-test
+
+:::
+
+## Adjustment for Non-Sphericity
+
+
+::: {style="font-size: 0.8em;"}
+
+Greenhouse-Geisser (GG) or Huynh-Feldt (HF) adjusted $F$-test:
+
+- Same numerator and denominator $MS$
+- Same $F$-statistic
+- Adjusted numerator and denominator $df$
+- Adjusted $p$-value
+- GG and HF use different formulas for $\hat{\epsilon}$ (not shown here)
+
+
+  $$df_{num, adj}  = \hat{\epsilon} \times df_{num} \\
+  df_{den, adj}  = \hat{\epsilon} \times df_{den}$$
+
+* If $\hat{\epsilon} = 1$, adjusted $df$ identical to usual $df$
+* If $\hat{\epsilon} > 1$, set $\hat{\epsilon} = 1$ (use original $p$-value)
+* If $\hat{\epsilon} > .75$, use Huynh-Feldt, otherwise use Greenhouse-Geisser
+
+::: 
+
+## Adjustment for Non-Sphericity
+
+```{r}
+#| echo: true
+
+ezANOVA(data = dat_long, # dataset
+        dv = PropError, # dependent variable
+        wid = Subject, # ID's for within-subject variable
+        within = Contingency) # repeated-measures IV
+```
+
+
+```{r}
+#| eval: false
+library(readxl)
+dat <- read_xlsx("../../data/Schmidt data.xlsx", 
+                 sheet = 2, range = "B20:E257", 
+                 col_names = c("Subject", "High", "Medium", "Low"))
+
+dat_long <- dat %>% 
+  pivot_longer(High:Low, names_to = "Contingency", values_to = "PropError") %>%
+  mutate(Subject = factor(Subject), Contingency = factor(Contingency))
+
+dat_long <- dat_long %>% 
+  mutate(ContingencyLevel = as.numeric(fct_relevel(Contingency, "Low", "Medium", "High"))) 
+
+dat_long2 <- dat_long %>%
+  add_row(Subject = "Average", Contingency = "Low", PropError = .331, ContingencyLevel = 1) %>%
+  add_row(Subject = "Average", Contingency = "Medium", PropError = .358, ContingencyLevel = 2) %>%
+  add_row(Subject = "Average", Contingency = "High", PropError = .345, ContingencyLevel = 3)
+
+summary(aov(PropError ~ Contingency + Error(Subject), dat_long))
+summary(aov(PropError ~ Subject + Contingency, dat_long))
+```
+
+
+```{r}
+#| eval: false
+library(tidyverse)
+library(rstatix)
+library(datarium)
+
+# Load dataset and reshape to long format
+data("anxiety", package = "datarium")
+anxiety_long <- anxiety %>%
+  gather(key = "time", value = "score", t1, t2, t3)
+
+# Run Mixed ANOVA
+res.aov <- anova_test(
+  data = anxiety_long, 
+  dv = score, 
+  wid = id, 
+  between = group, 
+  within = time
+)
+
+get_anova_table(res.aov)
+
+
+summary(aov(score ~ group * factor(time) + Error(factor(id)/factor(time)),
+          data = anxiety_long))
+
+
+summary(aov(score ~ group * factor(time) + factor(id), anxiety_long))
+```
