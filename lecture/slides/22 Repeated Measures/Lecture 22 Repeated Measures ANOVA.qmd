@@ -365,9 +365,11 @@ The raw data here is in wide format (one column per contingency level)
 ```{r}
 #| echo: true
 library(readxl)
+
 dat <- read_xlsx("../../data/Schmidt data.xlsx", 
                  sheet = 2, range = "B20:E257", 
                  col_names = c("Subject", "High", "Medium", "Low"))
+
 
 head(dat)
 ```
@@ -506,16 +508,19 @@ Greenhouse-Geisser (GG) or Huynh-Feldt (HF) adjusted $F$-test:
   $$df_{num, adj}  = \hat{\epsilon} \times df_{num} \\
   df_{den, adj}  = \hat{\epsilon} \times df_{den}$$
 
-* If $\hat{\epsilon} = 1$, adjusted $df$ identical to usual $df$
-* If $\hat{\epsilon} > 1$, set $\hat{\epsilon} = 1$ (use original $p$-value)
-* If $\hat{\epsilon} > .75$, use Huynh-Feldt, otherwise use Greenhouse-Geisser
+- If $\hat{\epsilon} = 1$, adjusted $df$ identical to usual $df$
+- If $\hat{\epsilon} > 1$, set $\hat{\epsilon} = 1$ (use original $p$-value)
+- If $\hat{\epsilon} > .75$, use Huynh-Feldt, otherwise use Greenhouse-Geisser
 
 ::: 
 
-## Adjustment for Non-Sphericity
+## Adjustment
+
 
 ```{r}
 #| echo: true
+
+options(width = 120)
 
 ezANOVA(data = dat_long, # dataset
         dv = PropError, # dependent variable
@@ -523,6 +528,10 @@ ezANOVA(data = dat_long, # dataset
         within = Contingency) # repeated-measures IV
 ```
 
+
+- `GGe` is Greenhouse-Geisser $\hat{\epsilon}$
+- `HFe` is Hyunh-Feldt $\hat{\epsilon}$
+    - Both are $> .75$ so use Hyunh-Feldt, round down to 1
 
 ```{r}
 #| eval: false

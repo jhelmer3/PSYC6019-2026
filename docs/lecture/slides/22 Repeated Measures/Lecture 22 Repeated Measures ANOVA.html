@@ -545,11 +545,13 @@ Mark Himmelstein
 <p>The raw data here is in wide format (one column per contingency level)</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-label="1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-2"><a aria-label="2"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"../../data/Schmidt data.xlsx"</span>, </span>
-<span id="cb1-3"><a aria-label="3"></a>                 <span class="at">sheet =</span> <span class="dv">2</span>, <span class="at">range =</span> <span class="st">"B20:E257"</span>, </span>
-<span id="cb1-4"><a aria-label="4"></a>                 <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"Subject"</span>, <span class="st">"High"</span>, <span class="st">"Medium"</span>, <span class="st">"Low"</span>))</span>
-<span id="cb1-5"><a aria-label="5"></a></span>
-<span id="cb1-6"><a aria-label="6"></a><span class="fu">head</span>(dat)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-2"><a aria-label="2"></a></span>
+<span id="cb1-3"><a aria-label="3"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"../../data/Schmidt data.xlsx"</span>, </span>
+<span id="cb1-4"><a aria-label="4"></a>                 <span class="at">sheet =</span> <span class="dv">2</span>, <span class="at">range =</span> <span class="st">"B20:E257"</span>, </span>
+<span id="cb1-5"><a aria-label="5"></a>                 <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"Subject"</span>, <span class="st">"High"</span>, <span class="st">"Medium"</span>, <span class="st">"Low"</span>))</span>
+<span id="cb1-6"><a aria-label="6"></a></span>
+<span id="cb1-7"><a aria-label="7"></a></span>
+<span id="cb1-8"><a aria-label="8"></a><span class="fu">head</span>(dat)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-label="1"></a><span class="co"># A tibble: 6 × 4</span></span>
 <span id="cb2-2"><a aria-label="2"></a>  <span class="ex">Subject</span>   High Medium   Low</span>
@@ -637,8 +639,8 @@ Mark Himmelstein
 </div>
 </div>
 </section>
-<section id="assumptions-one-within-factor" class="slide level2">
-<h2>Assumptions: One Within Factor</h2>
+<section id="assumptions" class="slide level2">
+<h2>Assumptions</h2>
 <div style="font-size: 0.85em;">
 <ol type="1">
 <li><p>Independence</p>
@@ -662,6 +664,96 @@ Mark Himmelstein
 </ol>
 <p>Violations of these assumptions can bias the <span class="math inline">\(F\)</span>-statistic</p>
 </div>
+</section>
+<section id="covariance-structure" class="slide level2">
+<h2>Covariance Structure</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-label="1"></a><span class="fu">cov</span>(dat[, <span class="sc">-</span><span class="dv">1</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-label="1"></a>          <span class="ex">High</span>  Medium     Low</span>
+<span id="cb10-2"><a aria-label="2"></a><span class="ex">High</span>   0.01718 0.01419 0.01410</span>
+<span id="cb10-3"><a aria-label="3"></a><span class="ex">Medium</span> 0.01419 0.01507 0.01320</span>
+<span id="cb10-4"><a aria-label="4"></a><span class="ex">Low</span>    0.01410 0.01320 0.01464</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p><strong>Sphericity</strong>: diagonal elements are equal (in the population)</p>
+<p><strong>Compound symmetry</strong>: sphericity + off-diagonal elements are equal (in the population)</p>
+</section>
+<section id="mauchlys-test-of-sphericity" class="slide level2">
+<h2>Mauchly’s Test of Sphericity</h2>
+<div style="font-size: 0.8em;">
+<p>If sphericity assumption is not met, <span class="math inline">\(F\)</span> is positively biased (Box, 1954)</p>
+<ul>
+<li>Inflated Type I error rate</li>
+</ul>
+<p>How far does the covariance matrix deviate from sphericity?</p>
+<ul>
+<li>Mauchly’s test is a formal hypothesis test for sphericity</li>
+<li>If sphericity is met, the expected test statistic equals 1</li>
+<li>If <span class="math inline">\(p&lt;.05\)</span>, evidence against sphericity</li>
+<li>Mauchly’s test only reported for effects with &gt;2 levels because sphericity necessarily holds for variables with 2 levels</li>
+</ul>
+<p>Adjustments for positive bias (both available in <code>ezANOVA</code>):</p>
+<ul>
+<li>Greenhouse-Geisser</li>
+<li>Huynh-Feldt</li>
+</ul>
+<p>Recommended to use adjustments instead of bothering with Mauchly’s test</p>
+<ul>
+<li>For reasons comparable to Levene’s test in the context of the independent samples <span class="math inline">\(t\)</span>-test</li>
+</ul>
+</div>
+</section>
+<section id="adjustment-for-non-sphericity" class="slide level2">
+<h2>Adjustment for Non-Sphericity</h2>
+<div style="font-size: 0.8em;">
+<p>Greenhouse-Geisser (GG) or Huynh-Feldt (HF) adjusted <span class="math inline">\(F\)</span>-test:</p>
+<ul>
+<li><p>Same numerator and denominator <span class="math inline">\(MS\)</span></p></li>
+<li><p>Same <span class="math inline">\(F\)</span>-statistic</p></li>
+<li><p>Adjusted numerator and denominator <span class="math inline">\(df\)</span></p></li>
+<li><p>Adjusted <span class="math inline">\(p\)</span>-value</p></li>
+<li><p>GG and HF use different formulas for <span class="math inline">\(\hat{\epsilon}\)</span> (not shown here)</p>
+<p><span class="math display">\[df_{num, adj}  = \hat{\epsilon} \times df_{num} \\
+df_{den, adj}  = \hat{\epsilon} \times df_{den}\]</span></p></li>
+<li><p>If <span class="math inline">\(\hat{\epsilon} = 1\)</span>, adjusted <span class="math inline">\(df\)</span> identical to usual <span class="math inline">\(df\)</span></p></li>
+<li><p>If <span class="math inline">\(\hat{\epsilon} &gt; 1\)</span>, set <span class="math inline">\(\hat{\epsilon} = 1\)</span> (use original <span class="math inline">\(p\)</span>-value)</p></li>
+<li><p>If <span class="math inline">\(\hat{\epsilon} &gt; .75\)</span>, use Huynh-Feldt, otherwise use Greenhouse-Geisser</p></li>
+</ul>
+</div>
+</section>
+<section id="adjustment" class="slide level2">
+<h2>Adjustment</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-label="1"></a><span class="fu">options</span>(<span class="at">width =</span> <span class="dv">120</span>)</span>
+<span id="cb11-2"><a aria-label="2"></a></span>
+<span id="cb11-3"><a aria-label="3"></a><span class="fu">ezANOVA</span>(<span class="at">data =</span> dat_long, <span class="co"># dataset</span></span>
+<span id="cb11-4"><a aria-label="4"></a>        <span class="at">dv =</span> PropError, <span class="co"># dependent variable</span></span>
+<span id="cb11-5"><a aria-label="5"></a>        <span class="at">wid =</span> Subject, <span class="co"># ID's for within-subject variable</span></span>
+<span id="cb11-6"><a aria-label="6"></a>        <span class="at">within =</span> Contingency) <span class="co"># repeated-measures IV</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a aria-label="1"></a><span class="va">$ANOVA</span></span>
+<span id="cb12-2"><a aria-label="2"></a>       <span class="ex">Effect</span> DFn DFd        F            p p<span class="op">&lt;</span>.05        ges</span>
+<span id="cb12-3"><a aria-label="3"></a><span class="ex">2</span> Contingency   2 474 23.41625 2.004569e-10     <span class="pp">*</span> 0.00751453</span>
+<span id="cb12-4"><a aria-label="4"></a></span>
+<span id="cb12-5"><a aria-label="5"></a><span class="ex">$</span><span class="kw">`</span><span class="ex">Mauchly</span><span class="st">'s Test for Sphericity`</span></span>
+<span id="cb12-6"><a aria-label="6"></a><span class="st">       Effect         W         p p&lt;.05</span></span>
+<span id="cb12-7"><a aria-label="7"></a><span class="st">2 Contingency 0.9920543 0.3901059      </span></span>
+<span id="cb12-8"><a aria-label="8"></a></span>
+<span id="cb12-9"><a aria-label="9"></a><span class="st">$`Sphericity Corrections`</span></span>
+<span id="cb12-10"><a aria-label="10"></a><span class="st">       Effect       GGe        p[GG] p[GG]&lt;.05     HFe        p[HF] p[HF]&lt;.05</span></span>
+<span id="cb12-11"><a aria-label="11"></a><span class="st">2 Contingency 0.9921169 2.322084e-10         * 1.00046 2.004569e-10         *</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<ul>
+<li><code>GGe</code> is Greenhouse-Geisser <span class="math inline">\(\hat{\epsilon}\)</span></li>
+<li><code>HFe</code> is Hyunh-Feldt <span class="math inline">\(\hat{\epsilon}\)</span>
+<ul>
+<li>Both are <span class="math inline">\(&gt; .75\)</span> so use Hyunh-Feldt, round down to 1</li>
+</ul></li>
+</ul>
 
 
 </section>
