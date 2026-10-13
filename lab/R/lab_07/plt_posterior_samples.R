@@ -25,11 +25,16 @@ plt_posterior_samples <- function() {
   post_peak <- dbeta(post_mode, a + k, b + n - k)
   
   just_prior_and_likelihood <- curves |>
-    filter(curve == "Prior" | curve == "Likelihood")
+    filter(curve == "Prior" | curve == "Likelihood") |>
+    mutate(hjust = recode_values(
+      curve,
+      "Prior" ~ 0.1,
+      "Likelihood" ~ 0.7
+    ))
   
   n_samples <- 4000
   
-  set.seed(2)
+  set.seed(3)
   posterior_samples <- tibble(
     t = 1:n_samples,
     x = rbeta(n_samples, a + k, b + n - k)
