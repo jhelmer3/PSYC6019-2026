@@ -21,6 +21,25 @@ list(
   ## lab index page
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
+  ## lab 09
+  tar_target(lab_09_slides_qmd, 
+             "lab/slides/lab_09.qmd", 
+             format = "file"),
+  tar_target(lab_09_slides, {
+    posterior_samples_plt
+    quarto::quarto_render(lab_09_slides_qmd, quiet = F)
+    qmd_out(lab_09_slides_qmd)
+  }, format = "file"),
+  
+  # tar_target(lab_08_activity_key_qmd, 
+  #            "lab/activities/activity-keys/lab_08_activity_key.qmd", 
+  #            format = "file"),
+  # tar_target(lab_08_activity_key, {
+  #   pumpkin_prices_data_file
+  #   quarto::quarto_render(lab_08_activity_key_qmd)
+  #   qmd_out(lab_08_activity_key_qmd)
+  # }, format = "file"),
+  
   ## lab 08
   tar_target(lab_08_slides_qmd, 
              "lab/slides/lab_08.qmd", 
