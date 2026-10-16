@@ -653,15 +653,15 @@ data.frame(i = seq(0, 15, length.out = i)) |>
 ```
 
 
-## Partitioning Variance
+<!-- ## Partitioning Variance -->
 
-Ratio of $SS_B$ to $SS_W$
+<!-- Ratio of $SS_B$ to $SS_W$ -->
 
-If $SS_B >> SS_W$, good model. Easy to predict differences based on groups.
+<!-- If $SS_B >> SS_W$, good model. Easy to predict differences based on groups. -->
 
-If $SS_B \approx SS_W$, less good model. Not easy to predict differences based on groups.
+<!-- If $SS_B \approx SS_W$, less good model. Not easy to predict differences based on groups. -->
 
-$$ F \propto \frac{\text{between-group variance}}{\text{within-group variance}} $$
+<!-- $$ F \propto \frac{\text{between-group variance}}{\text{within-group variance}} $$ -->
 
 
 ## ANOVA: $F$
@@ -687,65 +687,129 @@ $$ F = \frac{MS_B}{MS_W} $$
 
 ## ANOVA: Hypotheses
 
-$H_0$: $\sigma^2_B = 0$
-
-$H_1$: $\sigma^2_B \neq 0$
-
-::: fragment
-Equivalent to:
-
 $H_0$: $\mu_1 = \mu_2 = ... = \mu_J$
 
 $H_1$: not $H_0$
 
+::: fragment
+Equivalent to:
+
+$H_0$: $\sigma^2_B = 0$
+
+$H_1$: $\sigma^2_B \neq 0$
 :::
 
 
 ## Penguins ANOVA Example
 
-<!-- ![](https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png) -->
+![Dr. Kristen Gorman in the field, surrounded by penguins, at islands near Palmer Archipelago, Antarctica](https://apreshill.github.io/palmerpenguins-useR-2022/img/kristen.png){.fragment height=580}
+
+
+::: footer
+[The untold story of palmerpenguins](https://apreshill.github.io/palmerpenguins-useR-2022/#/title-slide), photo accessed on 2026-10-16.
+:::
+
+
+## Penguins ANOVA Example
 
 :::: {.columns}
 ::: {.column width="33%"}
 **Chinstrap**
 
-![](https://www.secretatlas.com/assets/handbook/antarctica-destination-micro-guide/half-moon-island/full-length-photograph-of-a-chinstrap-penguin-half-moon-island-south-shetland-islands-antarctica-shutterstock-secret-atlas.jpg)
+![](../media/lab_08/chinstrap-penguin.jpg)
 :::
 
 ::: {.column width="33%"}
 **Adelie**
 
-![](https://res.cloudinary.com/enchanting/q_70,f_auto,w_1024,h_683,c_fit/quark-web/2024/09/SamEdmonds20-20Adelie20closeup202.jpg)
+![](../media/lab_08/adelie-penguin.jpg)
 :::
 
 ::: {.column width="33%"}
 **Gentoo**
 
-![](https://upload.wikimedia.org/wikipedia/commons/c/c5/2020-11_Kerguelen_Islands_-_Gentoo_penguin_06_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original)
+![](../media/lab_08/gentoo-penguin.jpg)
 :::
 ::::
 
+::: footer
+[Chinstrap](https://www.secretatlas.com/assets/handbook/antarctica-destination-micro-guide/half-moon-island/full-length-photograph-of-a-chinstrap-penguin-half-moon-island-south-shetland-islands-antarctica-shutterstock-secret-atlas.jpg), [Adelie](https://res.cloudinary.com/enchanting/q_70,f_auto,w_1024,h_683,c_fit/quark-web/2024/09/SamEdmonds20-20Adelie20closeup202.jpg), and [Gentoo](https://upload.wikimedia.org/wikipedia/commons/c/c5/2020-11_Kerguelen_Islands_-_Gentoo_penguin_06_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original) penguin photos were accessed on 2026-10-15.
+:::
 
-## Penguins ANOVA Examples
+
+## Penguins ANOVA Example
 
 ```{r}
 library(palmerpenguins)
+penguins
 ```
+
+
+## Missing Some Penguins (Data)!
+
+::: {style="font-size:85%"}
+The `penguins` dataset has missing data, as do many real-life datasets. `R` represents these as `NA`s.
+
+This is something to definitively be aware of. While many functions will handle missing data in some way for you, which can be convenient, they often do so *silently* (without saying anything!). 
+
+Some functions will simply return `NA`, and these often have an `na.rm` (remove `NA`s) argument. For example,
 
 :::: {.columns}
 ::: {.column width="33%"}
 ```{r}
-glimpse(penguins)
+mean(penguins$flipper_length_mm)
+mean(penguins$flipper_length_mm, na.rm = T)
 ```
 
 :::
 
-::: {.column width="66%"}
+::: {.column width="33%"}
 ```{r}
-penguins
+sd(penguins$flipper_length_mm)
+sd(penguins$flipper_length_mm, na.rm = T)
+```
+
+:::
+
+::: {.column width="33%"}
+```{r}
+sum(penguins$flipper_length_mm) /
+  length(penguins$flipper_length_mm)
+
+sum(penguins$flipper_length_mm, na.rm = T) /
+  length(penguins$flipper_length_mm)
 ```
 :::
 ::::
+
+:::
+
+
+## Missing Some Penguins (Data)!
+
+Let's be proactive and remove the missing values ourselves. 
+
+```{r}
+penguins_cleaned <- penguins |>
+  filter_out(when_any(is.na(flipper_length_mm), is.na(species)))
+nrow(penguins); nrow(penguins_cleaned)
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+mean(penguins_cleaned$flipper_length_mm)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+sum(penguins_cleaned$flipper_length_mm) /
+  length(penguins_cleaned$flipper_length_mm)
+```
+:::
+::::
+
 
 
 # Frequentist ANOVA
@@ -767,20 +831,17 @@ penguins
 ○ `data` = dataframe that includes `grouping_var` and `y`
 :::
 
-Very similar syntax to `lm(y ~ predictor)` (and you can think of it similarly)
+Very similar syntax to `lm(y ~ predictor, data = data)`
 
 Uses dummy coding by default
 
-`summary(model)`
+`summary(model)` prints out results
 
 
 ## ANOVA: Example
 
 ::: fragment
 ```{r}
-penguins_cleaned <- penguins |>
-  filter_out(when_any(is.na(flipper_length_mm), is.na(species)))
-
 flipper_model <- aov(flipper_length_mm ~ species, data = penguins_cleaned)
 summary(flipper_model)
 ```
@@ -797,31 +858,38 @@ summary(flipper_model)
 ::: {.column .fragment width="50%"}
 $\eta^2$
 
+$\frac{SS_B}{SS_T} = \frac{SS_B}{SS_B \ + \ SS_W}$
+
 ::: fragment
 ```{r}
 effectsize::eta_squared(flipper_model)
+effectsize::eta_squared(flipper_model)$Eta2
 ```
 :::
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 $\omega^2$
+
+$\frac{SS_B \ - \ (J - 1)MS_w}{SS_T \ + \ MS_W}$
 
 ::: fragment
 ```{r}
 effectsize::omega_squared(flipper_model)
+effectsize::omega_squared(flipper_model)$Omega2
 ```
 :::
 :::
 ::::
 
-[In this case, $\eta_2$ and $\omega^2$ happen to be the same.]{.fragment}
+[In this case, $\eta^2$ and $\omega^2$ happen to be very close. Represent the proportion of variance in flipper length accounted for by differences in species.]{.fragment}
 
 
 ## Assumptions
 
-Visualize the distributions to check for normality, outliers, and homogeniety of variance.
+Visualize the distributions to check for normality, outliers, and homogeneity of variance.
 
+::: fragment
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -832,12 +900,12 @@ Visualize the distributions to check for normality, outliers, and homogeniety of
 penguins_cleaned |>
   ggplot(aes(x = species, y = flipper_length_mm, fill = species, color = species)) +
   geom_violin(alpha = 0.5, color = NA) +
-  geom_boxplot(width = 0.2, outliers = F) +
   geom_jitter(alpha = 0.4, shape = 16, size = 3) +
-  stat_summary(geom = "point", fun = mean, size = 2.5) +
-  scale_fill_manual(values = c("#b04c19", "#5a55fa", "#dfc127")) +
-  scale_color_manual(values = scales::col_darker(c("#b04c19", "#5a55fa", "#dfc127"), 15)) +
-  labs(x = "Species", y = "Flipper Length (mm)") +
+  geom_boxplot(width = 0.2, outliers = F) + 
+  stat_summary(geom = "point", fun = mean, size = 2.5, shape = 21) +
+  scale_fill_manual(values = scales::col_lighter(c("#b04c19", "#5a55fa", "#dfc127"), 20)) +
+  scale_color_manual(values = c("#b04c19", "#5a55fa", "#dfc127")) +
+  labs(x = "Species", y = "Flipper Length (mm)", caption = "Open circles represent means.") +
   guides(y = guide_axis(cap = "both"), x = guide_axis(cap = "both")) +
   coord_flip() +
   theme_classic(base_size = 14) +
@@ -850,25 +918,455 @@ penguins_cleaned |>
 penguins_cleaned |>
   ggplot(aes(x = species, y = flipper_length_mm, fill = species, color = species)) +
   geom_violin(alpha = 0.5, color = NA) +
-  geom_boxplot(width = 0.2, outliers = F) +
   geom_jitter(alpha = 0.4, shape = 16, size = 3) +
-  stat_summary(geom = "point", fun = mean, size = 2.5) +
-  scale_fill_manual(values = c("#b04c19", "#5a55fa", "#dfc127")) +
-  scale_color_manual(values = scales::col_darker(c("#b04c19", "#5a55fa", "#dfc127"), 15)) +
-  labs(x = "Species", y = "Flipper Length (mm)") +
+  geom_boxplot(width = 0.2, outliers = F) + 
+  stat_summary(geom = "point", fun = mean, size = 2.5, shape = 21) +
+  scale_fill_manual(values = scales::col_lighter(c("#b04c19", "#5a55fa", "#dfc127"), 20)) +
+  scale_color_manual(values = c("#b04c19", "#5a55fa", "#dfc127")) +
+  labs(x = "Species", y = "Flipper Length (mm)", caption = "Open circles represent means.") +
   guides(y = guide_axis(cap = "both"), x = guide_axis(cap = "both")) +
   coord_flip() +
   theme_classic(base_size = 14) +
   theme(legend.position = "none")
 ```
 :::
+:::
+
+
+
+# ANOVA as a Linear Model
+
+## ANOVA as a Linear Model
+
+Like *t*-tests, ANOVAs are just another phrasing of a linear model.
+
+Now, we have a slope term for each of our groups minus one ($J - 1$ for $J$ groups)
+
+::: subpoint
+○ Depending on the variable *coding*, the parameters present the information differently.
+
+○ But ultimately, conducting an ANOVA explicitly as a linear model provides all the same information as conducting it in the sums of squares framework.
+:::
+
+We are still interested in differences between means of groups, we just have more groups now (compared to *t*-test).
+
+Let's consider an example of an experiment where we have three groups: a control group, a treatment A group, and a treatment B group.
+
+
+## ANOVA as a Linear Model
+
+::: {style="font-size:90%"}
+
+With **dummy coding**, we use one group as a reference group and compare all others to it by using indicator variables representing belonging in each other group.
+
+$$y = \beta_0 + \beta_A \text{trt}_A + \beta_B \text{trt}_B + \epsilon$$
+
+where $\text{trt}_A = 1$ if the participant was in treatment A and is $0$ otherwise (and similarly for $\text{trt}_B$) 
+
+:::: {.columns}
+::: {.column width="50%"}
+**Slope Interpretations**
+
+::: subpoint
+○ $\beta_0 =$ mean of control group
+:::
+
+::: subpoint
+○ $\beta_A =$ difference in means between control group and treatment A group
+:::
+
+::: subpoint
+○ $\beta_B =$ difference in means between control group and treatment B group
+:::
+:::
+
+::: {.column width="50%"}
+**Accessing Group Means**
+
+::: subpoint
+○ $\beta_0 =$ mean of control group
+:::
+
+::: subpoint
+○ $\beta_0 + \beta_A =$ mean of treatment A group
+:::
+
+::: subpoint
+○ $\beta_0 + \beta_B =$ mean of treatment B group
+:::
+
+:::
+::::
+
+:::
+
+
+## ANOVA as a Linear Model
+
+::: {style="font-size:90%"}
+
+With **dummy coding**, we use one group as a reference group and compare all others to it by using indicator variables representing belonging in each other group.
+
+$$y = \beta_0 + \beta_A \text{trt}_A + \beta_B \text{trt}_B + \epsilon$$
+
+where $\text{trt}_A = 1$ if the participant was in treatment A and is $0$ otherwise (and similarly for $\text{trt}_B$) 
+:::
+
+```{r}
+#| echo: false
+set.seed(2026)
+n   <- 40
+z0  <- as.numeric(scale(rnorm(n)))
+zA  <- as.numeric(scale(rnorm(n)))
+zB  <- as.numeric(scale(rnorm(n)))
+
+b0 <- 5
+
+make_dummy_plot <- function(bA, bB, title) {
+  
+  grp <- c("control", "trtA", "trtB")
+  df <- tibble(
+    group = factor(rep(grp, each = n), levels = grp),
+    y     = c(b0 + z0, b0 + bA + zA, b0 + bB + zB)
+  )
+  
+  mA   <- b0 + bA
+  mB   <- b0 + bB
+  grey <- "grey25"
+  arr  <- arrow(length = unit(0.09, "inches"), type = "closed")
+  
+  bracket <- tibble(
+    x    = c(2.45, 3.45),
+    ymin = c(min(b0, mA), min(b0, mB)),
+    ymax = c(max(b0, mA), max(b0, mB))
+  )
+  
+  ggplot(df, aes(x = group, y = y, fill = group, color = group)) +
+    geom_violin(alpha = 0.3, color = NA, width = 0.7) +
+    geom_jitter(alpha = 0.6, shape = 16, size = 1.8, width = 0.1, height = 0) +
+    
+    # Reference line at the control mean, extended across to the brackets
+    annotate("segment", x = 1, xend = 3.45, y = b0, yend = b0,
+             linetype = "dashed", color = grey, linewidth = 0.4) +
+    
+    # Group means
+    stat_summary(fun = mean, geom = "point", color = "black", size = 3) +
+    
+    # beta_0: curved arrow + text pointing at the control mean
+    annotate("curve", x = 0.62, xend = 0.93, y = b0 + 1.8, yend = b0 + 0.2,
+             curvature = 0.35, arrow = arr, color = grey, linewidth = 0.5) +
+    annotate("text", x = 0.58, y = b0 + 2.2, label = "beta[0]",
+             parse = TRUE, color = grey, size = 4.5) +
+    
+    # beta_A and beta_B: errorbar-style brackets spanning each difference from control
+    geom_errorbar(data = bracket, aes(x = x, ymin = ymin, ymax = ymax),
+                  width = 0.08, color = grey, linewidth = 0.6,
+                  inherit.aes = FALSE) +
+    annotate("text", x = 2.52, y = (b0 + mA) / 2, label = "beta[A]",
+             parse = TRUE, hjust = 0, color = grey, size = 4.5) +
+    annotate("text", x = 3.52, y = (b0 + mB) / 2, label = "beta[B]",
+             parse = TRUE, hjust = 0, color = grey, size = 4.5) +
+    
+    scale_x_discrete(NULL, labels = expression(
+      atop("Control", beta[0]),
+      atop("Treatment A", beta[0] + beta[A]),
+      atop("Treatment B", beta[0] + beta[B])
+    )) +
+    scale_y_continuous("Outcome", breaks = seq(2, 10, 2)) +
+    scale_fill_manual(values = c("control" = "#7FA6C9",
+                                 "trtA"    = "#E8A07A",
+                                 "trtB"    = "#8FB8A8")) +
+    scale_color_manual(values = c("control" = "#3F6E94",
+                                  "trtA"    = "#C2623A",
+                                  "trtB"    = "#5E8F7D")) +
+    coord_cartesian(xlim = c(0.45, 3.85), ylim = c(0.5, 10.5)) +
+    guides(x = guide_axis(cap = TRUE),
+           y = guide_axis(cap = TRUE),
+           fill = "none", color = "none") +
+    labs(title = title) +
+    theme_classic() +
+    theme(axis.line.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.text.x  = element_text(size = 10, color = "black"),
+          plot.title   = element_text(hjust = 0.5, size = 11))
+}
+```
+
+```{r}
+#| layout-ncol: 2
+#| fig-width: 5
+#| fig-height: 3
+#| echo: false
+#| fig-align: center
+make_dummy_plot(bA = 1.5, bB = 3,  "Both treatments higher")
+make_dummy_plot(bA = 2,   bB = -2, "A higher, B lower")
+```
+
+
+## ANOVA as a Linear Model
+
+::: {style="font-size:90%"}
+
+With **effect coding**, we let the grand mean be the "reference" point and examine $J - 1$ groups as by their deviation from the grand mean.
+
+$$y = \beta_0 + \beta_A x_A + \beta_B x_B + \epsilon$$
+
+where $x_A = 1$ if the participant was in treatment A, $x_A = -1$ if the participant was in the control, and is $0$ otherwise. Similarly, $x_B = 1$ if the participant was in treatment B, $x_B = -1$ if the participant was in the control, and is $0$ otherwise.
+
+:::: {.columns}
+::: {.column width="50%"}
+**Slope Interpretations**
+
+::: subpoint
+○ $\beta_0 =$ overall grand mean
+:::
+
+::: subpoint
+○ $\beta_A =$ deviation of treatment A from grand mean
+:::
+
+::: subpoint
+○ $\beta_B =$ deviation of treatment B from grand mean
+:::
+:::
+
+::: {.column width="50%"}
+**Accessing Group Means**
+
+::: subpoint
+○ $\beta_0 =$ overall grand mean
+:::
+
+::: subpoint
+○ $\beta_0 + \beta_A =$ mean of treatment A group
+:::
+
+::: subpoint
+○ $\beta_0 + \beta_B =$ mean of treatment B group
+:::
+
+::: subpoint
+○ $\beta_0 + (-1)\beta_A + (-1)\beta_B =$ mean of control group
+:::
+
+:::
+::::
+
+:::
+
+
+## ANOVA as a Linear Model
+
+::: {style="font-size:90%"}
+
+With **effect coding**, we let the grand mean be the "reference" point and examine $J - 2$ groups by their deviation from the grand mean.
+
+$$y = \beta_0 + \beta_A x_A + \beta_B x_B + \epsilon$$
+
+where $x_A = 1$ if the participant was in treatment A, $x_A = -1$ if the participant was in the control, and is $0$ otherwise. Similarly, $x_B = 1$ if the participant was in treatment B, $x_B = -1$ if the participant was in the control, and is $0$ otherwise.
+
+:::
+
+```{r}
+#| echo: false
+set.seed(2026)
+n   <- 40
+z0  <- as.numeric(scale(rnorm(n)))
+zA  <- as.numeric(scale(rnorm(n)))
+zB  <- as.numeric(scale(rnorm(n)))
+
+b0 <- 5  # grand mean
+
+make_effect_plot <- function(bA, bB, title) {
+  
+  bC <- -(bA + bB)   # control's deviation: effects sum to zero
+  
+  grp <- c("control", "trtA", "trtB")
+  df <- tibble(
+    group = factor(rep(grp, each = n), levels = grp),
+    y     = c(b0 + bC + z0, b0 + bA + zA, b0 + bB + zB)
+  )
+  
+  grey <- "grey25"
+  
+  bracket <- tibble(
+    x    = c(0.6, 2.45, 3.45),
+    ymin = b0 + pmin(0, c(bC, bA, bB)),
+    ymax = b0 + pmax(0, c(bC, bA, bB))
+  )
+  
+  ggplot(df, aes(x = group, y = y, fill = group, color = group)) +
+    geom_violin(alpha = 0.3, color = NA, width = 0.7) +
+    geom_jitter(alpha = 0.6, shape = 16, size = 1.8, width = 0.1, height = 0) +
+    
+    # Grand mean reference line
+    annotate("segment", x = 0.6, xend = 3.85, y = b0, yend = b0,
+             linetype = "dashed", color = grey, linewidth = 0.4) +
+    annotate("text", x = 3.9, y = b0, label = "beta[0]",
+             parse = TRUE, hjust = 0, color = grey, size = 4.5) +
+    
+    # Group means
+    stat_summary(fun = mean, geom = "point", color = "black", size = 3) +
+    
+    # Brackets: deviation of each group from the grand mean
+    geom_errorbar(data = bracket, aes(x = x, ymin = ymin, ymax = ymax),
+                  width = 0.08, color = grey, linewidth = 0.6,
+                  inherit.aes = FALSE) +
+    annotate("text", x = 0.54, y = b0 + bC / 2, label = "-(beta[A]+beta[B])",
+             parse = TRUE, hjust = 1, color = grey, size = 4) +
+    annotate("text", x = 2.52, y = b0 + bA / 2, label = "beta[A]",
+             parse = TRUE, hjust = 0, color = grey, size = 4.5) +
+    annotate("text", x = 3.52, y = b0 + bB / 2, label = "beta[B]",
+             parse = TRUE, hjust = 0, color = grey, size = 4.5) +
+    
+    scale_x_discrete(NULL, labels = expression(
+      atop("Control", beta[0] - beta[A] - beta[B]),
+      atop("Treatment A", beta[0] + beta[A]),
+      atop("Treatment B", beta[0] + beta[B])
+    )) +
+    scale_y_continuous("Outcome", breaks = seq(2, 8, 2)) +
+    scale_fill_manual(values = c("control" = "#7FA6C9",
+                                 "trtA"    = "#E8A07A",
+                                 "trtB"    = "#8FB8A8")) +
+    scale_color_manual(values = c("control" = "#3F6E94",
+                                  "trtA"    = "#C2623A",
+                                  "trtB"    = "#5E8F7D")) +
+    coord_cartesian(xlim = c(-0.2, 4.25), ylim = c(0, 10)) +
+    guides(x = guide_axis(cap = TRUE),
+           y = guide_axis(cap = TRUE),
+           fill = "none", color = "none") +
+    labs(title = title) +
+    theme_classic() +
+    theme(axis.line.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.text.x  = element_text(size = 10, color = "black"),
+          plot.title   = element_text(hjust = 0.5, size = 11))
+}
+```
+
+```{r}
+#| layout-ncol: 2
+#| fig-width: 5
+#| fig-height: 3
+#| echo: false
+#| fig-align: center
+make_effect_plot(bA = 1.75, bB = -1, "A above, B below grand mean")
+make_effect_plot(bA = 2,   bB = 1,    "Both treatments above, control far below")
+```
+
+
+## ANOVA as a Linear Model in R
+
+We can conduct ANOVAs explicitly as linear models with `lm(outcome ~ grouping_variable, data = data)`. 
+
+:::: {.columns .fragment}
+::: {.column width="50%"}
+```{r}
+flipper_model_lm <- lm(flipper_length_mm ~ species, 
+                       data = penguins_cleaned)
+summary(flipper_model_lm)
+```
+:::
+
+::: {.column style="font-size:80%" width="50%"}
+With dummy coding, 
+
+::: subpoint
+○ `(Intercept)` = mean of reference group (here, $\mu_\text{Adelie}$)
+:::
+
+::: subpoint
+○ `speciesChinstrap` = difference between target group and reference group (here, $\mu_\text{Chinstrap} - \mu_\text{Adelie}$)
+:::
+
+::: subpoint
+○ `speciesGentoo` = difference between target group and reference group (here, $\mu_\text{Gentoo} - \mu_\text{Adelie}$)
+:::
+:::
+::::
+
+
+## Changing to Effect Coding
+
+We can tell `R` we want to use effect coding instead of dummy coding; we don't have to manually create the effect coding columns ourselves.
+
+We need to set the `contrasts` setting of our grouping variable to `contr.sum`. Everything you run after that will use effect coding.
+
+::: fragment
+:::: {.columns}
+::: {.column width="50%"}
+**Before (default)**
+```{r}
+contrasts(penguins_cleaned$species)
+```
+:::
+
+::: {.column width="50%"}
+**After**
+
+```{r}
+contrasts(penguins_cleaned$species) <- contr.sum
+contrasts(penguins_cleaned$species)
+```
+:::
+::::
+
+```{r}
+flipper_model_lm_effect <- lm(flipper_length_mm ~ species, data = penguins_cleaned)
+```
+:::
+
+[What two effects will we see in the slope parameters?]{.fragment} [Adelie and Chinstrap!]{.fragment}
+
+
+## Changing to Effect Coding
+
+We can tell `R` we want to use effect coding instead of dummy coding; we don't have to manually create the effect coding columns ourselves.
+
+We need to set the `contrasts` setting of our grouping variable to `contr.sum`. Everything you run after that will use effect coding.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+summary(flipper_model_lm)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+summary(flipper_model_lm_effect)
+```
+:::
+::::
+
+
+## Changing to Effect Coding
+
+By default, `R` switches the *last* level to be the one omitted from the slope paramters. To change, reorder the levels.
+
+```{r}
+penguins_cleaned$species_reordered <- factor(penguins_cleaned$species, levels = c("Chinstrap", "Gentoo", "Adelie"))
+contrasts(penguins_cleaned$species_reordered) <- contr.sum
+contrasts(penguins_cleaned$species_reordered)
+```
+
+
+## Changing to Dummy Coding
+
+Dummy coding is the default, but if you change it to effect coding and need to change it back to dummy coding, set it to `contr.treatment`.
+
+```{r}
+contrasts(penguins_cleaned$species) <- contr.treatment # back to dummy coding
+contrasts(penguins_cleaned$species)
+```
+
 
 
 # Bayesian ANOVA
 
 ## Bayesian ANOVA: Example
 
-Can use `stan_glm()` within `{rstanarm}` again.
+Can use `stan_glm()` within `{rstanarm}` and formula syntax again.
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -896,20 +1394,22 @@ summary(flipper_model_bayes)
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column style="font-size:80%" width="50%"}
 With dummy coding, 
 
-::: subpoint-narrow
-○ $\beta_0 = $ mean of reference group (here, $\mu_\text{Adelie}$)
+::: subpoint
+○ `(Intercept)` = mean of reference group (here, $\mu_\text{Adelie}$)
 :::
 
-::: subpoint-narrow
-○ $\beta_1 = $ difference between target group and reference group (here, $\mu_\text{Chinstrap} - \mu_\text{Adelie}$)
+::: subpoint
+○ `speciesChinstrap` = difference between target group and reference group (here, $\mu_\text{Chinstrap} - \mu_\text{Adelie}$)
 :::
 
-::: subpoint-narrow
-○ $\beta_2 = $ difference between target group and reference group (here, $\mu_\text{Gentoo} - \mu_\text{Adelie}$)
+::: subpoint
+○ `speciesGentoo` = difference between target group and reference group (here, $\mu_\text{Gentoo} - \mu_\text{Adelie}$)
 :::
+
+[Not shown here, but changing to effect coding with the same code as before works for `stan_glm()` too.]{.fragment}
 :::
 ::::
 
@@ -917,25 +1417,54 @@ With dummy coding,
 ## Check Diagnostics
 
 ```{r}
-posterior::summarise_draws(flipper_model_bayes, "mean", "sd", "rhat", "ess_bulk", "ess_tail")
+#| fig-width: 12
+#| fig-height: 2
+summary(flipper_model_bayes) |> as_tibble(rownames = "parameters")
+bayesplot::mcmc_trace(flipper_model_bayes, facet_args = list(nrow = 1)) # to show all on one row
 ```
 
+
+## What Priors Were Used?
+
+```{r}
+prior_summary(flipper_model_bayes)
+```
+
+
+## Visualizing Results
 
 :::: {.columns}
 ::: {.column width="50%"}
-```{r}
-#| fig-width: 6
-#| fig-height: 4
-bayesplot::mcmc_trace(flipper_model_bayes)
-```
+Plotting the *posterior predictive distribution* with the original data asks:
+
+How well does our observed data ($y$) compare to the fitted model's predictions ($y_{rep}$)?
 :::
 
 ::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
 ```{r}
-#| fig-width: 6
+#| echo: false
+#| fig-width: 5
 #| fig-height: 4
-bayesplot::mcmc_rank_overlay(flipper_model_bayes)
+#| fig-align: center
+bayesplot::ppc_violin_grouped(
+  y = penguins_cleaned$flipper_length_mm,
+  yrep = posterior_predict(flipper_model_bayes, draws = 50),
+  group = penguins_cleaned$species
+) 
 ```
+
+### Code
+```{r}
+#| eval: false
+bayesplot::ppc_violin_grouped(
+  y = penguins_cleaned$flipper_length_mm,
+  yrep = posterior_predict(flipper_model_bayes, draws = 50),
+  group = penguins_cleaned$species
+) 
+```
+:::
 :::
 ::::
 
@@ -1050,7 +1579,7 @@ bayesplot::mcmc_rank_overlay(flipper_model_bayes)
 :::: {.columns}
 ::: {.column width="50%"}
 ```{r}
-summary(flipper_model)
+summary(flipper_model_lm)
 ```
 
 :::
@@ -1059,109 +1588,109 @@ summary(flipper_model)
 ```{r}
 summary(flipper_model_bayes)
 ```
-
 :::
 ::::
 
 
-## Effect Coding
 
-:::: {.columns}
-::: {.column width="50%"}
-Dummy coding compares $g-1$ groups to $\beta_0 =$ **reference group mean**:
+<!-- ## Effect Coding -->
 
-| Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| $x_1$ | 1 | 0 | $\cdots$ | 0 | 0 |
-| $x_2$ | 0 | 1 | $\cdots$ | 0 | 0 |
-| $\vdots$ | $\vdots$ | $\vdots$ | $\ddots$ | $\vdots$ | $\vdots$ |
-| $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | 0 |
-:::
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- Dummy coding compares $g-1$ groups to $\beta_0 =$ **reference group mean**: -->
 
-::: {.column width="50%"}
-**Dummy coding:**
+<!-- | Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ | -->
+<!-- | :---: | :---: | :---: | :---: | :---: | :---: | -->
+<!-- | $x_1$ | 1 | 0 | $\cdots$ | 0 | 0 | -->
+<!-- | $x_2$ | 0 | 1 | $\cdots$ | 0 | 0 | -->
+<!-- | $\vdots$ | $\vdots$ | $\vdots$ | $\ddots$ | $\vdots$ | $\vdots$ | -->
+<!-- | $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | 0 | -->
+<!-- ::: -->
 
-- $\beta_0: = \mu_3$
-- $\beta_1: = \mu_{1} - \mu_3$
-- $\beta_2: = \mu_{2} - \mu_3$
-:::
-::::
+<!-- ::: {.column width="50%"} -->
+<!-- **Dummy coding:** -->
 
-:::: {.columns}
-::: {.column width="50%"}
-Effects or contrast coding compares $g-1$ groups to $\beta_0 =$ **grand mean**:
+<!-- - $\beta_0: = \mu_3$ -->
+<!-- - $\beta_1: = \mu_{1} - \mu_3$ -->
+<!-- - $\beta_2: = \mu_{2} - \mu_3$ -->
+<!-- ::: -->
+<!-- :::: -->
 
-| Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| $x_1$ | 1 | 0 | $\cdots$ | 0 | -1 |
-| $x_2$ | 0 | 1 | $\cdots$ | 0 | -1 |
-| $\vdots$ | $\vdots$ | $\vdots$ | $\ddots$ | $\vdots$ | $\vdots$ |
-| $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | -1 |
-:::
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- Effects or contrast coding compares $g-1$ groups to $\beta_0 =$ **grand mean**: -->
 
-::: {.column width="50%"}
-**Contrast/Effects coding:**
+<!-- | Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ | -->
+<!-- | :---: | :---: | :---: | :---: | :---: | :---: | -->
+<!-- | $x_1$ | 1 | 0 | $\cdots$ | 0 | -1 | -->
+<!-- | $x_2$ | 0 | 1 | $\cdots$ | 0 | -1 | -->
+<!-- | $\vdots$ | $\vdots$ | $\vdots$ | $\ddots$ | $\vdots$ | $\vdots$ | -->
+<!-- | $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | -1 | -->
+<!-- ::: -->
 
-- $\beta_0: = \mu$
-- $\beta_1: = \mu_{1} - \mu$
-- $\beta_2: = \mu_{2} - \mu$
+<!-- ::: {.column width="50%"} -->
+<!-- **Contrast/Effects coding:** -->
 
-Compares groups to **grand mean**
-:::
-::::
+<!-- - $\beta_0: = \mu$ -->
+<!-- - $\beta_1: = \mu_{1} - \mu$ -->
+<!-- - $\beta_2: = \mu_{2} - \mu$ -->
 
-
-::: footer
-[Stolen from Mark's slides](https://jhelmer3.github.io/PSYC6019-2026/lecture/lecture-index.html)
-:::
+<!-- Compares groups to **grand mean** -->
+<!-- ::: -->
+<!-- :::: -->
 
 
-## Changing to Effect Coding in R
+<!-- ::: footer -->
+<!-- [Stolen from Mark's slides](https://jhelmer3.github.io/PSYC6019-2026/lecture/lecture-index.html) -->
+<!-- ::: -->
 
-We can tell R we want to use effect coding instead of dummy coding; we don't have to manually create the effect coding columns ourselves.
 
-We need to set the `contrasts` setting of our grouping variable to `contr.sum`. Everything you run after that will use effect coding.
+<!-- ## Changing to Effect Coding in R -->
 
-If you ever need to change it back to dummy coding, set it to `contr.treatment`.
+<!-- We can tell R we want to use effect coding instead of dummy coding; we don't have to manually create the effect coding columns ourselves. -->
 
-```{r}
-contrasts(penguins_cleaned$species) <- contr.sum
-```
+<!-- We need to set the `contrasts` setting of our grouping variable to `contr.sum`. Everything you run after that will use effect coding. -->
 
-:::: {.columns}
-::: {.column width="50%"}
-```{r}
-flipper_model_effect <- aov(
-  flipper_length_mm ~ species, 
-  data = penguins_cleaned
-)
-summary(flipper_model)
-```
-:::
+<!-- If you ever need to change it back to dummy coding, set it to `contr.treatment`. -->
 
-::: {.column width="50%"}
-```{r}
-#| eval: false
-flipper_model_bayes_effect <- stan_glm(
-  flipper_length_mm ~ species, 
-  data = penguins_cleaned, 
-  family = "gaussian"
-) 
-summary(flipper_model_bayes_effect)
-```
+<!-- ```{r} -->
+<!-- contrasts(penguins_cleaned$species) <- contr.sum -->
+<!-- ``` -->
 
-```{r}
-#| echo: false
-flipper_model_bayes_effect <- stan_glm(
-  flipper_length_mm ~ species, 
-  data = penguins_cleaned, 
-  family = "gaussian",
-  refresh = 0
-) 
-summary(flipper_model_bayes_effect)
-```
-:::
-::::
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- ```{r} -->
+<!-- flipper_model_effect <- aov( -->
+<!--   flipper_length_mm ~ species,  -->
+<!--   data = penguins_cleaned -->
+<!-- ) -->
+<!-- summary(flipper_model) -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- flipper_model_bayes_effect <- stan_glm( -->
+<!--   flipper_length_mm ~ species,  -->
+<!--   data = penguins_cleaned,  -->
+<!--   family = "gaussian" -->
+<!-- )  -->
+<!-- summary(flipper_model_bayes_effect) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- flipper_model_bayes_effect <- stan_glm( -->
+<!--   flipper_length_mm ~ species,  -->
+<!--   data = penguins_cleaned,  -->
+<!--   family = "gaussian", -->
+<!--   refresh = 0 -->
+<!-- )  -->
+<!-- summary(flipper_model_bayes_effect) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- :::: -->
 
 
 ## Lab 08 Assignment
