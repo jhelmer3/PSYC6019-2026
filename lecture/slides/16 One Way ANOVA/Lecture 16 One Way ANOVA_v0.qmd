@@ -55,6 +55,59 @@ my_yellow2 <- "#FFFFCC"
 
 ```
 
+
+
+## Jargon Refresher
+
+**Linear Model:**
+
+$${\color{blue}y_i} = \beta_0 + \sum_{p=1}^P \beta_p {\color{red}x_{ip}} + \epsilon_i$$
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+
+[**Left side variable terms**]{style="color: blue;"}
+
+
+- $y$
+- Dependent variable (DV)
+- Outcome variable
+- Response variable
+
+:::
+
+::: {.column width="50%"}
+[**Right side variable terms**]{style="color: red;"}
+
+- $x$
+- Independent variable(s) (IVs)
+- Predictor variable(s)
+
+:::
+:::::
+
+## Tests We Will Cover {.scrollable}
+
+
+::: {style="font-size: 0.8em;"}
+
+| IV(s) | DV | IV Status | Model Structure |
+| :--- | :--- | :--- | :--- |
+| — | One categorical | — | $\chi^2$ Goodness of Fit |
+| One Categorical | One categorical | — | $\chi^2$ Test of Independence |
+| — | One Continuous | — | One Sample $t$-Test |
+| One Binary | One Continuous | Dependent Groups | Paired Sample $t$-Test |
+| One Binary | One Continuous | Independent Groups | Independent Sample $t$-Test |
+| **One Categorical** | **One Continuous** | **Independent Groups** | **One-Way ANOVA** |
+| More than One Categorical | One Continuous | Independent Groups | Factorial ANOVA |
+| One Categorical | One Continuous | Dependent Groups | One-Way Repeated Measures ANOVA |
+| More than One Categorical | One Continuous | Dependent Groups | Factorial Repeated Measures ANOVA |
+| More than One Categorical | One Continuous | Mixed Groups | Mixed ANOVA |
+| One Continuous | One Continuous | — | Correlation or Simple Regression |
+| More than One Continuous | One Continuous | — | Multiple Regression |
+
+::: 
+
 ## Frequentist and Bayesian
 
 Today will give us a picture for how the rest of the course will go
@@ -63,7 +116,6 @@ Today will give us a picture for how the rest of the course will go
 - Review the "traditional" frequentist perspective
 - Contrast this with the Bayesian approach
 - Emphasize the model based perspective
-
 
 ## Analysis of Variance
 
@@ -124,7 +176,7 @@ Are these means equal **in the population?**
 
 Suppose subject $i$ belongs to group $g$. The observed response is $y_{ig}$.
 
-The **traditional model** structure decomposes observations into different sources of variability (hence Analysis of **Variance**):
+The **traditional One-Way ANOVA model** structure decomposes observations into different sources of variability (hence Analysis of **Variance**):
 
 $$\begin{align*}
 y_{ig} &= \color{#377EB8}{\mu} + \color{#4DAF4A}{(\mu_g - \mu)} + \color{#984EA3}{(y_{ig} - \mu_g)} \\
@@ -170,7 +222,7 @@ And
 
 
 
-[Let's say $\mu = 2$, $\mu_{1} = 1$, and $\mu_{2} = 3$ (equal sample sizes in each group). What is $\mu_3?$]{.answer .fragment .content-visible unless-meta="params.v0"}
+[Let's say $\mu = 2$, $\mu_{1} = 1$, and $\mu_{2} = 2$ (equal sample sizes in each group). What is $\mu_3?$]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 
 
@@ -183,7 +235,7 @@ $2 - (1 - 2) - (2 - 2) = 3$
 
 :::: {.content-visible unless-meta="params.v0"}
 ::: {.answer .fragment}
-$\beta_0 + \beta_1(-1)+- \beta_2(-1)  = \mu - (\mu_{1} - \mu) - (\mu_{2} - \mu) = \mu_3$
+$\beta_0 + \beta_1(-1)+ \beta_2(-1)  = \mu - (\mu_{1} - \mu) - (\mu_{2} - \mu) = \mu_3$
 
 :::
 [Coding $g - 1$ $x$'s give us all the info about $g$ group means]{.answer .fragment .content-visible unless-meta="params.v0"}
@@ -198,7 +250,7 @@ $\beta_0 + \beta_1(-1)+- \beta_2(-1)  = \mu - (\mu_{1} - \mu) - (\mu_{2} - \mu) 
 
 ## Coding Options
 
-::: {style="font-size: 0.75em;"}
+::: {style="font-size: 0.725em;"}
 
 
 Effects or contrast coding compares $g-1$ groups to $\beta_0 =$ **grand mean**:
@@ -224,7 +276,7 @@ Coding scheme of choice **only matters for interpreting coefficients** ($\beta$'
 
 :::
 
-## Coding Scheme Comparison
+## Coding Comparison
 
 $$\begin{align*}
 y_{ig} &= \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\beta_1 x_{1i} + \beta_2 x_{2i}} + \color{#984EA3}{\epsilon_i} 
@@ -376,7 +428,7 @@ We want to separate the variability in data into:
 
 ## Sums of Squares III
 
-::: {style="font-size: 0.8em;"}
+::: {style="font-size: 0.7em;"}
 
 Individual scores $y_{ig}$:
 
@@ -384,6 +436,7 @@ Individual scores $y_{ig}$:
 - $g$: group indicator
 - $n_g$: number of observations in group $g$
 - $\bar{y}$: sample grand mean (of all scores)
+- $\bar{y}_g$: sample grand mean of group $g$
 
 Sample variation of $y = \sum_g\sum_i(y_{ig} - \bar{y})^2$
 
