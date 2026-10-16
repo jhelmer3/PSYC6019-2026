@@ -41,37 +41,92 @@ library(gt)
 
 EMMs, also known as "least-squares means"
 
-[EMMs theoretically]
+For a One-Way ANOVA, this is the same as just looking at the means of our groups.
+
+::: subpoint
+○ Will get a bit more complicated with more than just one factor...
+:::
+
+Useful to report with your ANOVA results to actually see the differences between means.
 
 
-## EMMs With One-Way ANOVA
+## Estimated Marginal Means
 
-[EMMs theoretically in conctext of one-way ANOVA]
+Remember those interpretations of slope parameters?
+
+:::: {.columns}
+::: {.column width="50%"}
+Dummy coding compares $g-1$ groups to $\beta_0 =$ **reference group mean**:
+
+| Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| $x_1$ | 1 | 0 | $\cdots$ | 0 | 0 |
+| $x_2$ | 0 | 1 | $\cdots$ | 0 | 0 |
+| $\vdots$ | $\vdots$ | $\vdots$ | $\ddots$ | $\vdots$ | $\vdots$ |
+| $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | 0 |
+:::
+
+::: {.column width="50%"}
+**Dummy coding:**
+
+- $\beta_0: = \mu_3$
+- $\beta_1: = \mu_{1} - \mu_3$
+- $\beta_2: = \mu_{2} - \mu_3$
+:::
+::::
+
+:::: {.columns}
+::: {.column width="50%"}
+Effects or contrast coding compares $g-1$ groups to $\beta_0 =$ **grand mean**:
+
+| Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| $x_1$ | 1 | 0 | $\cdots$ | 0 | -1 |
+| $x_2$ | 0 | 1 | $\cdots$ | 0 | -1 |
+| $\vdots$ | $\vdots$ | $\vdots$ | $\ddots$ | $\vdots$ | $\vdots$ |
+| $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | -1 |
+:::
+
+::: {.column width="50%"}
+**Contrast/Effects coding:**
+
+- $\beta_0: = \mu$
+- $\beta_1: = \mu_{1} - \mu$
+- $\beta_2: = \mu_{2} - \mu$
+
+Compares groups to **grand mean**
+:::
+::::
+
+The means calculated from the slope parameters are the Estimated Marginal Means (EMMs).
+
+
+::: footer
+[Stolen from Mark's slides](https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/16%20One%20Way%20ANOVA/Lecture%2016%20One%20Way%20ANOVA_v0.html#/coding-options)
+:::
 
 
 ## One-Way ANOVA
 
 Recall from last time...
 
-:::: {.columns}
-::: {.column width="50%"}
 ```{r}
+#| layout-ncol: 2
 library(palmerpenguins)
 penguins_cleaned <- penguins |>
-  filter_out(when_any(is.na(flipper_length_mm), is.na(species)))
+  filter_out(when_any(is.na(flipper_length_mm),
+                      is.na(species)))
 
 flipper_model <- aov(flipper_length_mm ~ species, data = penguins_cleaned)
-summary(flipper_model)
+flipper_model_lm <- lm(flipper_length_mm ~ species, data = penguins_cleaned)
+
+summary(flipper_model); summary(flipper_model_lm)
 ```
-:::
 
-::: {.column width="50%"}
 Let's get the estimated marginal means of penguin flipper length by species!
-:::
-::::
 
 
-## Estimated Marginal Means in R
+## EMMs in R
 
 To obtain the EMMs for some linear model:
 
@@ -84,6 +139,8 @@ To obtain the EMMs for some linear model:
 ::: subpoint
 ○ `specs` = predictors for which you want estimated marginal means
 :::
+
+<br>
 
 ::: {.callout-note style="font-size: 80%"}
 ### `emmeans` and pipes `|>`
@@ -103,11 +160,13 @@ emms_flipper
 ```
 
 
-## Plotting One-Way ANOVA `emmeans`
+## Plotting One-Way `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
-Super quick plotting method with `plot()`
+Super quick plotting method with `plot()`.
+
+Points are Estimated Marginal Means, and bars are confidence intervals for those EMMs.
 :::
 
 ::: {.column width="50%"}
@@ -131,13 +190,15 @@ plot(emms_flipper)
 ::::
 
 
-## Plotting One-Way ANOVA `emmeans`
+## Plotting One-Way `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
 Returns a `ggplot`, so you can work with it from there.
 
-But don't have much control over the geometries (`geom`s) or mapping (`mapping = aes()`).
+But don't have muchhh control over the geometries (`geom`s) or mapping (`mapping = aes()`).
+
+Feel free to check out the documentation at [rvlenth.github.io/emmeans/reference/plot.html](https://rvlenth.github.io/emmeans/reference/plot.html)
 :::
 
 ::: {.column width="50%"}
@@ -169,45 +230,9 @@ plot(emms_flipper) +
 ::::
 
 
-## Plotting One-Way ANOVA `emmeans`
-
-:::: {.columns}
-::: {.column width="50%"}
-Returns a `ggplot`, so you can work with it from there.
-
-But don't have much control over the geometries (`geom`s) or mapping (`mapping = aes()`).
-:::
-
-::: {.column width="50%"}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-plot(emms_flipper) +
-  scale_x_continuous("Estimated Marginal Mean of Flipper Length", limits = c(180, 230)) +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(NULL, cap = T)) +
-  theme_classic(base_size = 14)
-```
-
-### Code
-```{r}
-#| eval: false
-plot(emms_flipper) +
-  scale_x_continuous("Estimated Marginal Mean of Flipper Length", limits = c(180, 230)) +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(NULL, cap = T)) +
-  theme_classic(base_size = 14)
-```
-:::
-:::
-::::
 
 
-## Plotting One-Way ANOVA `emmeans`
+## Plotting One-Way `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -249,7 +274,7 @@ emms_flipper_df |>
 ::::
 
 
-## Plotting One-Way ANOVA `emmeans`
+## Plotting One-Way `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -290,7 +315,7 @@ emms_flipper_df |>
 ::::
 
 
-## Plotting One-Way ANOVA `emmeans`
+## Plotting One-Way `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -341,7 +366,7 @@ emms_flipper_df |>
 ::::
 
 
-## Plotting One-Way ANOVA `emmeans`
+## Plotting One-Way `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -404,7 +429,7 @@ emms_flipper_df |>
 ::::
 
 
-## Plotting One-Way ANOVA `emmeans`
+## Plotting One-Way `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
