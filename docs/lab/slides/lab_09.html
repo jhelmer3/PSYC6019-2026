@@ -102,6 +102,7 @@
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
 <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-15d324c2aafc27a03d2c3a1c4b493f27.css">
+<link rel="stylesheet" href="contrast-slide-styling.css">
 <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
 <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
 <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -226,8 +227,8 @@ Jess Helmer
 <p>Useful to report with your ANOVA results to actually see the differences between means.</p>
 </section><section id="estimated-marginal-means-1" class="slide level2"><h2>Estimated Marginal Means</h2>
 <p>Remember those interpretations of slope parameters?</p>
-<div class="columns">
-<div class="column" style="width:50%;">
+<div class="columns" style="font-size:90%">
+<div class="column" style="width:66%;">
 <p>Dummy coding compares <span class="math inline">\(g-1\)</span> groups to <span class="math inline">\(\beta_0 =\)</span> <strong>reference group mean</strong>:</p>
 <table class="caption-top">
 <thead><tr class="header">
@@ -273,7 +274,7 @@ Jess Helmer
 </tr>
 </tbody>
 </table>
-</div><div class="column" style="width:50%;">
+</div><div class="column" style="width:33%;">
 <p><strong>Dummy coding:</strong></p>
 <ul>
 <li><span class="math inline">\(\beta_0: = \mu_3\)</span></li>
@@ -281,8 +282,8 @@ Jess Helmer
 <li><span class="math inline">\(\beta_2: = \mu_{2} - \mu_3\)</span></li>
 </ul>
 </div></div>
-<div class="columns">
-<div class="column" style="width:50%;">
+<div class="columns" style="font-size:90%">
+<div class="column" style="width:66%;">
 <p>Effects or contrast coding compares <span class="math inline">\(g-1\)</span> groups to <span class="math inline">\(\beta_0 =\)</span> <strong>grand mean</strong>:</p>
 <table class="caption-top">
 <thead><tr class="header">
@@ -328,7 +329,7 @@ Jess Helmer
 </tr>
 </tbody>
 </table>
-</div><div class="column" style="width:50%;">
+</div><div class="column" style="width:33%;">
 <p><strong>Contrast/Effects coding:</strong></p>
 <ul>
 <li><span class="math inline">\(\beta_0: = \mu\)</span></li>
@@ -345,12 +346,10 @@ Jess Helmer
 <p>Recall from last time…</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://allisonhorst.github.io/palmerpenguins/">palmerpenguins</a></span><span class="op">)</span></span>
 <span><span class="va">penguins_cleaned</span> <span class="op">&lt;-</span> <span class="va">penguins</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">filter_out</span><span class="op">(</span><span class="fu">when_any</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">flipper_length_mm</span><span class="op">)</span>,</span>
-<span>                      <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">species</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">filter_out</span><span class="op">(</span><span class="fu">when_any</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">flipper_length_mm</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">species</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">flipper_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aov.html">aov</a></span><span class="op">(</span><span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">species</span>, data <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">)</span></span>
 <span><span class="va">flipper_model_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">species</span>, data <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">flipper_model</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">flipper_model_lm</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell quarto-layout-panel" data-layout-ncol="2">
 <div class="quarto-layout-row">
@@ -395,7 +394,7 @@ F-statistic: 594.8 on 2 and 339 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>○ <code>specs</code> = predictors for which you want estimated marginal means</p>
 </div>
 <p><br></p>
-<div style="font-size: 80%">
+<div style="font-size:85%">
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -590,6 +589,9 @@ $ upper.CL &lt;dbl&gt; 191.0168, 197.4077, 218.3649</code></pre>
 <div class="subpoint-narrow">
 <p>○ <code>geom_point</code> will need a <code>y</code> <code>aes</code> (or <code>x</code> if it’s flipped)</p>
 </div>
+<div class="fragment">
+<p>Plotting EMMs is one of those places where you’ll see some crunched-up scales that visually exaggerate the size of the effect. This is a good time to consider how you’ll set your axis limits!</p>
+</div>
 </div><div class="column" style="width:50%;">
 <div class="panel-tabset">
 <ul id="tabset-5" class="panel-tabset-tabby">
@@ -718,8 +720,7 @@ $ upper.CL &lt;dbl&gt; 191.0168, 197.4077, 218.3649</code></pre>
 </div>
 </div>
 </div></div>
-</section><section id="pairwise-comparisons-with-emmeans" class="slide level2"><h2>Pairwise Comparisons With <code>emmeans</code>
-</h2>
+</section><section id="pairwise-comparisons" class="slide level2"><h2>Pairwise Comparisons</h2>
 <p><code>pairs(emmeans_object, adjust = "tukey")</code></p>
 <div class="subpoint-narrow">
 <p>○ Equivalent to <code>emmeans::contrast(emmeans_object, method = "pairwise)</code></p>
@@ -764,315 +765,887 @@ P value adjustment: holm method for 3 tests </code></pre>
 </div>
 </div>
 </div></div>
-</section></section><section><section id="two-way-anova-emmeans" class="title-slide slide level1 center"><h1>Two-Way ANOVA <code>emmeans</code>
-</h1>
-
-</section><section id="two-way-anova-emmeans-1" class="slide level2"><h2>Two-Way ANOVA <code>emmeans</code>
-</h2>
-<p>[EMMs theoretically in context of two-way ANOVA]</p>
-</section><section id="two-way-anova" class="slide level2"><h2>Two-Way ANOVA</h2>
-<div class="columns">
-<div class="column" style="width:60%;">
-<p>So far we’ve looked at penguin species, but these penguin measurements were taken over multiple years.</p>
-<p>What if the year a penguin’s measurement was taken is in some way linked to the penguin’s flipper length?</p>
-</div><div class="column" style="width:40%;">
-<!-- Penguins in Palmer Archipelago -->
-<!-- Nesting islands from 2009 Palmer penguins research -->
-<p><img data-src="../media/lab_09/penguin-islands.png"></p>
-</div></div>
-<div class="footer">
-<p>Photo accessed at <a href="https://rpubs.com/mgsaavedraro/669873">rpubs.com/mgsaavedraro/669873</a> on 2026-10-15.</p>
+</section><section id="contrasts" class="slide level2"><h2>Contrasts</h2>
+<p>Contrasts are like custom pairwise comparisons. Can examine differences between two groups… or sets of groups.</p>
+<p>Typically specify <em>a priori</em> (planned before data collection), and often have some theoretical reason for doing that contrast</p>
+</section><section id="setting-up-a-linear-contrast-i" class="slide level2"><h2>Setting up a Linear Contrast I</h2>
+<p>Maybe you as a researcher are very interested in Gentoo penguins. You want to compare Gentoo penguins to all other penguin species.</p>
+</section><section id="setting-up-a-linear-contrast-i-1" class="slide level2 contrast-slide"><h2>Setting up a Linear Contrast I</h2>
+<div class="sub">
+<p>Species means from the <code>palmerpenguins</code> data</p>
 </div>
-</section><section id="two-way-anova-1" class="slide level2"><h2>Two-Way ANOVA</h2>
-<p>Let’s examine the effect of both penguin species and measurement year on penguin flipper length.</p>
-<p>Design: Two-Way 3x3 ANOVA</p>
-</section><section id="two-way-anova-2" class="slide level2"><h2>Two-Way ANOVA</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
+<div class="layout">
+<div class="diagram">
+<!-- Layer 1: all groups (visible from the start) -->
+<div class="row">
+<p><span class="cell big">Gentoo</span> <span class="cell big">Adelie</span> <span class="cell big">Chinstrap</span></p>
+</div>
+<!-- Layer 2: choose the sides -->
+<div class="row fragment fade-up" data-fragment-index="1">
+<div class="panel pos">
+<p><span class="sign">+</span> <span class="cell">Gentoo</span> <span class="eq ghost"></span> <span class="total ghost"></span></p>
+</div>
+<div class="panel neg">
+<p><span class="sign">−</span> <span class="cell">Adelie</span> <span class="op ghost"></span> <span class="cell">Chinstrap</span> <span class="eq ghost"></span> <span class="total ghost"></span></p>
+</div>
+</div>
+<!-- Layer 3: naive weights of 1 -->
+<div class="row fragment fade-up" data-fragment-index="2">
+<div class="panel pos">
+<p><span class="sign">+</span> <span class="cell"><span class="math inline">\(1\)</span></span> <span class="eq">=</span> <span class="total"><span class="math inline">\(1\)</span></span></p>
+</div>
+<div class="panel neg">
+<p><span class="sign">−</span> <span class="cell"><span class="math inline">\(1\)</span></span> <span class="op">+</span> <span class="cell"><span class="math inline">\(1\)</span></span> <span class="eq">=</span> <span class="total"><span class="math inline">\(-2\)</span></span></p>
+</div>
+</div>
+<!-- Layer 4: divide by the total -->
+<div class="row fragment fade-up" data-fragment-index="3">
+<div class="panel pos">
+<p><span class="sign">+</span> <span class="cell"><span class="math inline">\(\tfrac{1}{1}\)</span></span> <span class="eq">=</span> <span class="total"><span class="math inline">\(1\)</span></span></p>
+</div>
+<div class="panel neg">
+<p><span class="sign">−</span> <span class="cell"><span class="math inline">\(\tfrac{1}{2}\)</span></span> <span class="op">+</span> <span class="cell"><span class="math inline">\(\tfrac{1}{2}\)</span></span> <span class="eq">=</span> <span class="total"><span class="math inline">\(-1\)</span></span></p>
+</div>
+</div>
+<!-- Layer 5: the null hypothesis -->
+<div class="row final fragment fade-up" data-fragment-index="4">
+<p><span class="h0"><span class="math inline">\(H_0\)</span>:</span> <span class="cell"><span class="math inline">\((1)\,\mu_{\text{Gentoo}}\)</span></span> <span class="op">+</span> <span class="cell"><span class="math inline">\(\left(-\tfrac{1}{2}\right)\mu_{\text{Adelie}}\)</span></span> <span class="op">+</span> <span class="cell"><span class="math inline">\(\left(-\tfrac{1}{2}\right)\mu_{\text{Chinstrap}}\)</span></span> <span class="eq">=</span> <span class="zero"><span class="math inline">\(0\)</span></span></p>
+</div>
+</div>
+<div class="notes-col">
+<div class="note n1 fragment fade-out" data-fragment-index="1">
+<p>First, here are all of the groups laid out. These represent every we could include in our comparison.</p>
+</div>
+<div class="note n2 fragment fade-in-then-out" data-fragment-index="1">
+<p>Next, ask: <em>which group, or groups, do I want to compare?</em> If a side contains several groups, they are weighted equally within the comparison. Here, we plan to compare Gentoo penguins with the average of Adelie and Chinstrap penguins. Which side is positive and which is negative is arbitrary; it only affects interpretation.</p>
+</div>
+<div class="note n3 fragment fade-in-then-out" data-fragment-index="2">
+<p>Now we need the <em>weights</em> on each side to balance, so that everything sums to zero across the selected groups. Right now there is 1 mean on the positive side and 2 on the negative side. If we give every group a weight of 1, the positive side adds up to <span class="math inline">\(1\)</span> and the negative side to <span class="math inline">\(-2\)</span>.</p>
+</div>
+<div class="note n4 fragment fade-in-then-out" data-fragment-index="3">
+<p>If we divide each side by its total, each side sums to <span class="math inline">\(1\)</span> or <span class="math inline">\(-1\)</span>, so the two sides now balance.</p>
+</div>
+<div class="note n5 fragment fade-in-then-out" data-fragment-index="4">
+<p>Our null hypothesis is then that there is no difference between the two sides: the difference between them is zero.</p>
+</div>
+</div>
+</div>
+</section><section id="testing-a-linear-contrast-i" class="slide level2"><h2>Testing a Linear Contrast I</h2>
+<p><span class="math display">\[ \psi_1 = (1) \ \mu_\text{Gentoo} \ + \ (-\frac{1}{2}) \ \mu_\text{Adelie} \ + \ (-\frac{1}{2}) \ \mu_\text{Chinstrap}\]</span></p>
+<p><strong>Hypotheses</strong>:</p>
+<p><span class="math inline">\(H_0: \psi_1 = 0\)</span></p>
+<p><span class="math inline">\(H_A: \psi_1 \neq 0\)</span></p>
+</section><section id="testing-a-linear-contrast-i-1" class="slide level2"><h2>Testing a Linear Contrast I</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://allisonhorst.github.io/palmerpenguins/">palmerpenguins</a></span><span class="op">)</span></span>
-<span><span class="va">penguins_cleaned</span> <span class="op">&lt;-</span> <span class="va">penguins</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">filter_out</span><span class="op">(</span><span class="fu">when_any</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">flipper_length_mm</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">species</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">flipper_model_twoway</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aov.html">aov</a></span><span class="op">(</span><span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">year</span>, data <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>              Df Sum Sq Mean Sq F value   Pr(&gt;F)    
-species        2  52473   26237 651.974  &lt; 2e-16 ***
-year           2   1464     732  18.190 3.18e-08 ***
-species:year   4     89      22   0.551    0.698    
-Residuals    333  13401      40                     
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<p>Let’s get the estimated marginal means of penguin flipper length by species and year!</p>
-</div></div>
-</section><section id="one-way-anova-emmeans-2" class="slide level2"><h2>One-Way ANOVA <code>emmeans</code>
-</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"species"</span>, <span class="st">"year"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">emms_flipper_twoway</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> species   year emmean    SE  df lower.CL upper.CL
- Adelie    2007    187 0.906 333      185      188
- Chinstrap 2007    192 1.240 333      190      195
- Gentoo    2007    215 1.090 333      213      217
- Adelie    2008    191 0.897 333      189      193
- Chinstrap 2008    198 1.500 333      195      201
- Gentoo    2008    218 0.935 333      216      219
- Adelie    2009    192 0.880 333      190      194
- Chinstrap 2009    198 1.290 333      196      201
- Gentoo    2009    218 0.967 333      217      220
+<pre><code> species   emmean    SE  df lower.CL upper.CL
+ Adelie       190 0.540 339      189      191
+ Chinstrap    196 0.805 339      194      197
+ Gentoo       217 0.599 339      216      218
 
 Confidence level used: 0.95 </code></pre>
 </div>
-</div>
-</section><section id="plotting-one-way-anova-emmeans" class="slide level2"><h2>Plotting One-Way ANOVA <code>emmeans</code>
-</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Super quick plotting method with <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code></p>
-<p>Not so great with more than one factor…</p>
-</div><div class="column" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-8" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-8-1">Plot</a></li>
-<li><a href="#tabset-8-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-8-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_09_files/figure-revealjs/unnamed-chunk-23-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-8-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">emms_flipper_twoway</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
-</section><section id="plotting-one-way-anova-emmeans-1" class="slide level2"><h2>Plotting One-Way ANOVA <code>emmeans</code>
-</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Let’s build our own. The color on our last plot was just to make it look nice, but this time, let’s use color to represent the year.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">&lt;-</span> <span class="fu">as_tibble</span><span class="op">(</span><span class="va">emms_flipper_twoway</span><span class="op">)</span></span>
-<span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">glimpse</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html">contrast</a></span><span class="op">(</span></span>
+<span>  <span class="va">emms_flipper</span>, </span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>gentoo_vs_others <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">/</span><span class="fl">2</span>, <span class="op">-</span><span class="fl">1</span><span class="op">/</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 9
-Columns: 7
-$ species  &lt;fct&gt; Adelie, Chinstrap, Gentoo, Adelie, Chinstrap, Gentoo, Adelie,…
-$ year     &lt;fct&gt; 2007, 2007, 2007, 2008, 2008, 2008, 2009, 2009, 2009
-$ emmean   &lt;dbl&gt; 186.5918, 192.4231, 215.1176, 191.0400, 197.7222, 217.5652, 1…
-$ SE       &lt;dbl&gt; 0.9062353, 1.2440915, 1.0879265, 0.8971272, 1.4952119, 0.9353…
-$ df       &lt;dbl&gt; 333, 333, 333, 333, 333, 333, 333, 333, 333
-$ lower.CL &lt;dbl&gt; 184.8092, 189.9758, 212.9776, 189.2752, 194.7810, 215.7253, 1…
-$ upper.CL &lt;dbl&gt; 188.3745, 194.8703, 217.2577, 192.8048, 200.6635, 219.4051, 1…</code></pre>
+<pre><code> contrast         estimate    SE  df t.ratio p.value
+ gentoo_vs_others     24.3 0.771 339  31.532 &lt;0.0001</code></pre>
 </div>
 </div>
-<div class="fragment" data-fragment-index="2">
-<p>Like last time, we always want to include our uncertainty.</p>
+</section><section id="setting-up-a-linear-contrast-ii" class="slide level2"><h2>Setting up a Linear Contrast II</h2>
+<p>You don’t have to include all groups in a contrasts’ comparison.</p>
+<p>“Zero-out” a group in a contrast equation by setting its weight to zero.</p>
+<p>For example, let’s just compare Gentoo penguins to Adelie penguins.</p>
+</section><section id="setting-up-a-linear-contrast-ii-1" class="slide level2 contrast-slide"><h2>Setting up a Linear Contrast II</h2>
+<div class="sub">
+<p>Just comparing Gentoo and Adelie penguins.</p>
 </div>
-</div><div class="column fragment" data-fragment-index="1" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-9" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-9-1">Plot</a></li>
-<li><a href="#tabset-9-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-9-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_09_files/figure-revealjs/unnamed-chunk-26-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
+<div class="layout">
+<div class="diagram three">
+<!-- Layer 1: all groups (visible from the start) -->
+<div class="row">
+<p><span class="cell big">Gentoo</span> <span class="cell big">Adelie</span> <span class="cell big">Chinstrap</span></p>
+</div>
+<!-- Layer 2: choose the sides, and set one group aside -->
+<div class="row fragment fade-up" data-fragment-index="1">
+<div class="panel pos">
+<p><span class="sign">+</span> <span class="cell">Gentoo</span> <span class="eq ghost"></span> <span class="total ghost"></span></p>
+</div>
+<div class="panel neg">
+<p><span class="sign">−</span> <span class="cell">Adelie</span> <span class="eq ghost"></span> <span class="total ghost"></span></p>
+</div>
+<div class="panel nul">
+<p><span class="sign">0</span> <span class="cell">Chinstrap</span> <span class="eq ghost"></span> <span class="total ghost"></span></p>
+</div>
+</div>
+<!-- Layer 3: weights (the excluded group gets 0) -->
+<div class="row fragment fade-up" data-fragment-index="2">
+<div class="panel pos">
+<p><span class="sign">+</span> <span class="cell"><span class="math inline">\(1\)</span></span> <span class="eq">=</span> <span class="total"><span class="math inline">\(1\)</span></span></p>
+</div>
+<div class="panel neg">
+<p><span class="sign">−</span> <span class="cell"><span class="math inline">\(1\)</span></span> <span class="eq">=</span> <span class="total"><span class="math inline">\(-1\)</span></span></p>
+</div>
+<div class="panel nul">
+<p><span class="sign">0</span> <span class="cell"><span class="math inline">\(0\)</span></span> <span class="eq">=</span> <span class="total"><span class="math inline">\(0\)</span></span></p>
+</div>
+</div>
+<!-- Layer 4: the null hypothesis -->
+<div class="row final fragment fade-up" data-fragment-index="3">
+<p><span class="h0"><span class="math inline">\(H_0\)</span>:</span> <span class="cell"><span class="math inline">\((1)\,\mu_{\text{Gentoo}}\)</span></span> <span class="op">+</span> <span class="cell"><span class="math inline">\((-1)\,\mu_{\text{Adelie}}\)</span></span> <span class="op">+</span> <span class="cell"><span class="math inline">\((0)\,\mu_{\text{Chinstrap}}\)</span></span> <span class="eq">=</span> <span class="zero"><span class="math inline">\(0\)</span></span></p>
+</div>
+</div>
+<div class="notes-col">
+<div class="note n1 fragment fade-out" data-fragment-index="1">
+<p>[We still have all the groups available to us, but this time we only want to compare Gentoo and Adelie]</p>
+</div>
+<div class="note n2 fragment fade-in-then-out" data-fragment-index="1">
+<p>To do this, Chinstrap gets “zero-ed out”. We will assign it a weight of zero.</p>
+</div>
+<div class="note n3 fragment fade-in-then-out" data-fragment-index="2">
+<p>Since Chinstrap’s coefficient is zero, we don’t have to consider it in our “sum to zero” constraint.</p>
+</div>
+<div class="note n4 fragment fade-in-then-out" data-fragment-index="3">
+<p>We only have one group on each (positive / negative) side, so we don’t have to divide here. Implicitly, we are dividing each by one.</p>
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-9-2">
+</section><section id="testing-a-linear-contrast-ii" class="slide level2"><h2>Testing a Linear Contrast II</h2>
+<p><span class="math display">\[
+\begin{aligned}
+  \psi_2 &amp;= (1) \ \mu_\text{Gentoo} \ + \ (-1) \ \mu_\text{Adelie} \ + \ (0) \ \mu_\text{Chinstrap} \\
+         &amp;= (1) \ \mu_\text{Gentoo} \ + \ (-1) \ \mu_\text{Adelie} \\
+         &amp;= \mu_\text{Gentoo} - \mu_\text{Adelie}
+\end{aligned}
+\]</span></p>
+<p><strong>Hypotheses</strong>:</p>
+<p><span class="math inline">\(H_0: \psi_2 = 0\)</span></p>
+<p><span class="math inline">\(H_A: \psi_2 \neq 0\)</span></p>
+</section><section id="testing-a-linear-contrast-ii-1" class="slide level2"><h2>Testing a Linear Contrast II</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">species</span>, y <span class="op">=</span> <span class="va">emmean</span>, color <span class="op">=</span> <span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
-</section><section id="plotting-one-way-anova-emmeans-2" class="slide level2"><h2>Plotting One-Way ANOVA <code>emmeans</code>
-</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Let’s build our own.</p>
-</div><div class="column fragment" data-fragment-index="1" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-10" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-10-1">Plot</a></li>
-<li><a href="#tabset-10-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-10-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_09_files/figure-revealjs/unnamed-chunk-28-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-10-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">species</span>, y <span class="op">=</span> <span class="va">emmean</span>, color <span class="op">=</span> <span class="va">year</span>,</span>
-<span>             ymin <span class="op">=</span> <span class="va">lower.CL</span>, ymax <span class="op">=</span> <span class="va">upper.CL</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_errorbar</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
-</section><section id="plotting-one-way-anova-emmeans-3" class="slide level2"><h2>Plotting One-Way ANOVA <code>emmeans</code>
-</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Let’s build our own.</p>
-<p>And tidy it up.</p>
-</div><div class="column fragment" data-fragment-index="1" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-11" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-11-1">Plot</a></li>
-<li><a href="#tabset-11-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-11-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_09_files/figure-revealjs/unnamed-chunk-30-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-11-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">species</span>, y <span class="op">=</span> <span class="va">emmean</span>, color <span class="op">=</span> <span class="va">year</span>,</span>
-<span>             ymin <span class="op">=</span> <span class="va">lower.CL</span>, ymax <span class="op">=</span> <span class="va">upper.CL</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">0.3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_errorbar</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.1</span>, position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">0.3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="st">"EMM of Flipper Length"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">180</span>, <span class="fl">230</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span><span class="cn">NULL</span>, cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
-<span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
-</section><section id="plotting-one-way-anova-emmeans-4" class="slide level2"><h2>Plotting One-Way ANOVA <code>emmeans</code>
-</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Can add lines between points to look for interactions.</p>
-</div><div class="column fragment" data-fragment-index="1" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-12" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-12-1">Plot</a></li>
-<li><a href="#tabset-12-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-12-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_09_files/figure-revealjs/unnamed-chunk-32-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-12-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">species</span>, y <span class="op">=</span> <span class="va">emmean</span>, color <span class="op">=</span> <span class="va">year</span>,</span>
-<span>             group <span class="op">=</span> <span class="va">year</span>,</span>
-<span>             ymin <span class="op">=</span> <span class="va">lower.CL</span>, ymax <span class="op">=</span> <span class="va">upper.CL</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">0.3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_line</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">0.3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_errorbar</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.1</span>, position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">0.3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="st">"EMM of Flipper Length"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">180</span>, <span class="fl">230</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span><span class="cn">NULL</span>, cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
-<span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
-</section><section id="pairwise-comparisons-with-emmeans-1" class="slide level2"><h2>Pairwise Comparisons With <code>emmeans</code>
-</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html">pairs</a></span><span class="op">(</span><span class="va">emms_flipper_twoway</span><span class="op">)</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> contrast                                estimate   SE  df t.ratio p.value
- Adelie year2007 - Chinstrap year2007      -5.831 1.54 333  -3.789  0.0056
- Adelie year2007 - Gentoo year2007        -28.526 1.42 333 -20.146 &lt;0.0001
- Adelie year2007 - Adelie year2008         -4.448 1.28 333  -3.488  0.0159
- Adelie year2007 - Chinstrap year2008     -11.130 1.75 333  -6.366 &lt;0.0001
- Adelie year2007 - Gentoo year2008        -30.973 1.30 333 -23.783 &lt;0.0001
- Adelie year2007 - Adelie year2009         -5.485 1.26 333  -4.343  0.0006
- Adelie year2007 - Chinstrap year2009     -11.492 1.58 333  -7.271 &lt;0.0001
- Adelie year2007 - Gentoo year2009        -31.827 1.33 333 -24.010 &lt;0.0001
- Chinstrap year2007 - Gentoo year2007     -22.695 1.65 333 -13.732 &lt;0.0001
- Chinstrap year2007 - Adelie year2008       1.383 1.53 333   0.902  0.9928
- Chinstrap year2007 - Chinstrap year2008   -5.299 1.95 333  -2.724  0.1433
- Chinstrap year2007 - Gentoo year2008     -25.142 1.56 333 -16.153 &lt;0.0001
- Chinstrap year2007 - Adelie year2009       0.346 1.52 333   0.227  1.0000
- Chinstrap year2007 - Chinstrap year2009   -5.660 1.80 333  -3.152  0.0458
- Chinstrap year2007 - Gentoo year2009     -25.996 1.58 333 -16.495 &lt;0.0001
- Gentoo year2007 - Adelie year2008         24.078 1.41 333  17.075 &lt;0.0001
- Gentoo year2007 - Chinstrap year2008      17.395 1.85 333   9.407 &lt;0.0001
- Gentoo year2007 - Gentoo year2008         -2.448 1.43 333  -1.706  0.7426
- Gentoo year2007 - Adelie year2009         23.041 1.40 333  16.468 &lt;0.0001
- Gentoo year2007 - Chinstrap year2009      17.034 1.69 333  10.072 &lt;0.0001
- Gentoo year2007 - Gentoo year2009         -3.301 1.46 333  -2.267  0.3651
- Adelie year2008 - Chinstrap year2008      -6.682 1.74 333  -3.832  0.0047
- Adelie year2008 - Gentoo year2008        -26.525 1.30 333 -20.467 &lt;0.0001
- Adelie year2008 - Adelie year2009         -1.037 1.26 333  -0.825  0.9961
- Adelie year2008 - Chinstrap year2009      -7.043 1.58 333  -4.471  0.0004
- Adelie year2008 - Gentoo year2009        -27.379 1.32 333 -20.752 &lt;0.0001
- Chinstrap year2008 - Gentoo year2008     -19.843 1.76 333 -11.251 &lt;0.0001
- Chinstrap year2008 - Adelie year2009       5.645 1.73 333   3.254  0.0337
- Chinstrap year2008 - Chinstrap year2009   -0.361 1.98 333  -0.183  1.0000
- Chinstrap year2008 - Gentoo year2009     -20.696 1.78 333 -11.621 &lt;0.0001
- Gentoo year2008 - Adelie year2009         25.488 1.28 333  19.850 &lt;0.0001
- Gentoo year2008 - Chinstrap year2009      19.482 1.60 333  12.196 &lt;0.0001
- Gentoo year2008 - Gentoo year2009         -0.853 1.35 333  -0.634  0.9994
- Adelie year2009 - Chinstrap year2009      -6.006 1.57 333  -3.837  0.0047
- Adelie year2009 - Gentoo year2009        -26.342 1.31 333 -20.146 &lt;0.0001
- Chinstrap year2009 - Gentoo year2009     -20.335 1.62 333 -12.581 &lt;0.0001
+<pre><code> species   emmean    SE  df lower.CL upper.CL
+ Adelie       190 0.540 339      189      191
+ Chinstrap    196 0.805 339      194      197
+ Gentoo       217 0.599 339      216      218
 
-P value adjustment: tukey method for comparing a family of 9 estimates </code></pre>
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html">contrast</a></span><span class="op">(</span></span>
+<span>  <span class="va">emms_flipper</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>gentoo_vs_others <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast         estimate    SE  df t.ratio p.value
+ gentoo_vs_others     27.2 0.807 339  33.760 &lt;0.0001</code></pre>
 </div>
 </div>
+</section><section id="polynomial-contrasts" class="slide level2"><h2>Polynomial Contrasts</h2>
+<p>If your groups have some natural <em>ordering</em> and <em>equal intervals</em> between levels, you may also be interested in testing a polynomial contrast.</p>
+<p>Polynomial contrasts tests for polynomial relationships in the outcome. If you have <span class="math inline">\(J\)</span> groups, you can test for <span class="math inline">\(J-1\)</span> polynomial contrasts, e.g.,</p>
+<div class="columns">
+<div class="column" style="width:33%;">
+<p><strong>Linear</strong> (<span class="math inline">\(J \geq2\)</span>)</p>
+<p><span class="math inline">\(y = \beta_0 + \beta_1x\)</span></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_09_files/figure-revealjs/unnamed-chunk-23-1.svg" width="192"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:33%;">
+<p><strong>Quadratic</strong> (<span class="math inline">\(J \geq 3\)</span>)</p>
+<p><span class="math inline">\(y = \beta_0 + \beta_1x + \beta_2x^2\)</span></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_09_files/figure-revealjs/unnamed-chunk-24-1.svg" width="192"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:33%;">
+<p><strong>Cubic</strong> (<span class="math inline">\(J \geq 4\)</span>)</p>
+<p><span class="math inline">\(y = \beta_0 + \beta_1x + \beta_2x^2 + \beta_3x^3\)</span></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure><p><img data-src="lab_09_files/figure-revealjs/unnamed-chunk-25-1.svg" width="192"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="polynomial-contrasts-1" class="slide level2"><h2>Polynomial Contrasts</h2>
+<p>Polynomial contrasts use pre-specified weights for each term (<span class="math inline">\(x\)</span>, <span class="math inline">\(x^2\)</span>, <span class="math inline">\(x^3\)</span>, etc.), e.g.,</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="uoiytitlft" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#uoiytitlft table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#uoiytitlft thead, #uoiytitlft tbody, #uoiytitlft tfoot, #uoiytitlft tr, #uoiytitlft td, #uoiytitlft th {
+  border-style: none;
+}
+
+#uoiytitlft p {
+  margin: 0;
+  padding: 0;
+}
+
+#uoiytitlft .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 18px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#uoiytitlft .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#uoiytitlft .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#uoiytitlft .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#uoiytitlft .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#uoiytitlft .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uoiytitlft .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#uoiytitlft .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#uoiytitlft .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#uoiytitlft .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#uoiytitlft .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#uoiytitlft .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#uoiytitlft .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#uoiytitlft .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#uoiytitlft .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#uoiytitlft .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#uoiytitlft .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#uoiytitlft .gt_row {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#uoiytitlft .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uoiytitlft .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#uoiytitlft .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#uoiytitlft .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#uoiytitlft .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uoiytitlft .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#uoiytitlft .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#uoiytitlft .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uoiytitlft .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uoiytitlft .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#uoiytitlft .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uoiytitlft .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#uoiytitlft .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uoiytitlft .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#uoiytitlft .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uoiytitlft .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#uoiytitlft .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uoiytitlft .gt_left {
+  text-align: left;
+}
+
+#uoiytitlft .gt_center {
+  text-align: center;
+}
+
+#uoiytitlft .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#uoiytitlft .gt_font_normal {
+  font-weight: normal;
+}
+
+#uoiytitlft .gt_font_bold {
+  font-weight: bold;
+}
+
+#uoiytitlft .gt_font_italic {
+  font-style: italic;
+}
+
+#uoiytitlft .gt_super {
+  font-size: 65%;
+}
+
+#uoiytitlft .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#uoiytitlft .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#uoiytitlft .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#uoiytitlft .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#uoiytitlft .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#uoiytitlft .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#uoiytitlft .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#uoiytitlft .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#uoiytitlft div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table caption-top" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="gt_heading header">
+<td colspan="9" class="gt_heading gt_title gt_font_normal gt_bottom_border">Polynomial Contrast Weights</td>
+</tr>
+<tr class="gt_col_headings gt_spanner_row even">
+<th rowspan="2" id="a::stub" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Number of treatments</th>
+<th rowspan="2" id="degree" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="font-weight: bold" scope="col">Degree of polynomial</th>
+<th colspan="6" id="Treatment totals" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th" scope="colgroup"><div class="gt_column_spanner">
+Treatment totals
+</div></th>
+<th rowspan="2" id="k" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="font-weight: bold" scope="col">Divisor<br>
+\(k = \sum \text{weight}_i^2\)</th>
+</tr>
+<tr class="gt_col_headings header">
+<th id="T1" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="font-weight: bold" scope="col">T1</th>
+<th id="T2" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="font-weight: bold" scope="col">T2</th>
+<th id="T3" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="font-weight: bold" scope="col">T3</th>
+<th id="T4" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="font-weight: bold" scope="col">T4</th>
+<th id="T5" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="font-weight: bold" scope="col">T5</th>
+<th id="T6" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="font-weight: bold" scope="col">T6</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="gt_row_group_first odd">
+<td class="gt_row gt_left gt_stub_row_group" headers="2 stub_2_1 stub_1">2</td>
+<td class="gt_row gt_center" headers="2 stub_2_1 degree">1</td>
+<td class="gt_row gt_center" headers="2 stub_2_1 T1">−1</td>
+<td class="gt_row gt_center" headers="2 stub_2_1 T2">+1</td>
+<td class="gt_row gt_center" headers="2 stub_2_1 T3"><br></td>
+<td class="gt_row gt_center" headers="2 stub_2_1 T4"><br></td>
+<td class="gt_row gt_center" headers="2 stub_2_1 T5"><br></td>
+<td class="gt_row gt_center" headers="2 stub_2_1 T6"><br></td>
+<td class="gt_row gt_center" headers="2 stub_2_1 k">2</td>
+</tr>
+<tr class="gt_row_group_first even">
+<td rowspan="2" class="gt_row gt_left gt_stub_row_group" headers="3 stub_2_2 stub_1">3</td>
+<td class="gt_row gt_center" headers="3 stub_2_2 degree">1</td>
+<td class="gt_row gt_center" headers="3 stub_2_2 T1">−1</td>
+<td class="gt_row gt_center" headers="3 stub_2_2 T2">0</td>
+<td class="gt_row gt_center" headers="3 stub_2_2 T3">+1</td>
+<td class="gt_row gt_center" headers="3 stub_2_2 T4"><br></td>
+<td class="gt_row gt_center" headers="3 stub_2_2 T5"><br></td>
+<td class="gt_row gt_center" headers="3 stub_2_2 T6"><br></td>
+<td class="gt_row gt_center" headers="3 stub_2_2 k">2</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="3 stub_2_3 degree">2</td>
+<td class="gt_row gt_center" headers="3 stub_2_3 T1">+1</td>
+<td class="gt_row gt_center" headers="3 stub_2_3 T2">−2</td>
+<td class="gt_row gt_center" headers="3 stub_2_3 T3">+1</td>
+<td class="gt_row gt_center" headers="3 stub_2_3 T4"><br></td>
+<td class="gt_row gt_center" headers="3 stub_2_3 T5"><br></td>
+<td class="gt_row gt_center" headers="3 stub_2_3 T6"><br></td>
+<td class="gt_row gt_center" headers="3 stub_2_3 k">6</td>
+</tr>
+<tr class="gt_row_group_first even">
+<td rowspan="3" class="gt_row gt_left gt_stub_row_group" headers="4 stub_2_4 stub_1">4</td>
+<td class="gt_row gt_center" headers="4 stub_2_4 degree">1</td>
+<td class="gt_row gt_center" headers="4 stub_2_4 T1">−3</td>
+<td class="gt_row gt_center" headers="4 stub_2_4 T2">−1</td>
+<td class="gt_row gt_center" headers="4 stub_2_4 T3">+1</td>
+<td class="gt_row gt_center" headers="4 stub_2_4 T4">+3</td>
+<td class="gt_row gt_center" headers="4 stub_2_4 T5"><br></td>
+<td class="gt_row gt_center" headers="4 stub_2_4 T6"><br></td>
+<td class="gt_row gt_center" headers="4 stub_2_4 k">20</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="4 stub_2_5 degree">2</td>
+<td class="gt_row gt_center" headers="4 stub_2_5 T1">+1</td>
+<td class="gt_row gt_center" headers="4 stub_2_5 T2">−1</td>
+<td class="gt_row gt_center" headers="4 stub_2_5 T3">−1</td>
+<td class="gt_row gt_center" headers="4 stub_2_5 T4">+1</td>
+<td class="gt_row gt_center" headers="4 stub_2_5 T5"><br></td>
+<td class="gt_row gt_center" headers="4 stub_2_5 T6"><br></td>
+<td class="gt_row gt_center" headers="4 stub_2_5 k">4</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="4 stub_2_6 degree">3</td>
+<td class="gt_row gt_center" headers="4 stub_2_6 T1">−1</td>
+<td class="gt_row gt_center" headers="4 stub_2_6 T2">+3</td>
+<td class="gt_row gt_center" headers="4 stub_2_6 T3">−3</td>
+<td class="gt_row gt_center" headers="4 stub_2_6 T4">+1</td>
+<td class="gt_row gt_center" headers="4 stub_2_6 T5"><br></td>
+<td class="gt_row gt_center" headers="4 stub_2_6 T6"><br></td>
+<td class="gt_row gt_center" headers="4 stub_2_6 k">20</td>
+</tr>
+<tr class="gt_row_group_first odd">
+<td rowspan="4" class="gt_row gt_left gt_stub_row_group" headers="5 stub_2_7 stub_1">5</td>
+<td class="gt_row gt_center" headers="5 stub_2_7 degree">1</td>
+<td class="gt_row gt_center" headers="5 stub_2_7 T1">−2</td>
+<td class="gt_row gt_center" headers="5 stub_2_7 T2">−1</td>
+<td class="gt_row gt_center" headers="5 stub_2_7 T3">0</td>
+<td class="gt_row gt_center" headers="5 stub_2_7 T4">+1</td>
+<td class="gt_row gt_center" headers="5 stub_2_7 T5">+2</td>
+<td class="gt_row gt_center" headers="5 stub_2_7 T6"><br></td>
+<td class="gt_row gt_center" headers="5 stub_2_7 k">10</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="5 stub_2_8 degree">2</td>
+<td class="gt_row gt_center" headers="5 stub_2_8 T1">+2</td>
+<td class="gt_row gt_center" headers="5 stub_2_8 T2">−1</td>
+<td class="gt_row gt_center" headers="5 stub_2_8 T3">−2</td>
+<td class="gt_row gt_center" headers="5 stub_2_8 T4">−1</td>
+<td class="gt_row gt_center" headers="5 stub_2_8 T5">+2</td>
+<td class="gt_row gt_center" headers="5 stub_2_8 T6"><br></td>
+<td class="gt_row gt_center" headers="5 stub_2_8 k">14</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="5 stub_2_9 degree">3</td>
+<td class="gt_row gt_center" headers="5 stub_2_9 T1">−1</td>
+<td class="gt_row gt_center" headers="5 stub_2_9 T2">+2</td>
+<td class="gt_row gt_center" headers="5 stub_2_9 T3">0</td>
+<td class="gt_row gt_center" headers="5 stub_2_9 T4">−2</td>
+<td class="gt_row gt_center" headers="5 stub_2_9 T5">+1</td>
+<td class="gt_row gt_center" headers="5 stub_2_9 T6"><br></td>
+<td class="gt_row gt_center" headers="5 stub_2_9 k">10</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="5 stub_2_10 degree">4</td>
+<td class="gt_row gt_center" headers="5 stub_2_10 T1">+1</td>
+<td class="gt_row gt_center" headers="5 stub_2_10 T2">−4</td>
+<td class="gt_row gt_center" headers="5 stub_2_10 T3">+6</td>
+<td class="gt_row gt_center" headers="5 stub_2_10 T4">−4</td>
+<td class="gt_row gt_center" headers="5 stub_2_10 T5">+1</td>
+<td class="gt_row gt_center" headers="5 stub_2_10 T6"><br></td>
+<td class="gt_row gt_center" headers="5 stub_2_10 k">70</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>(You do not have to know these)</p>
+</div>
+<div class="footer">
+<p>Adapted from <a href="https://rcompanion.org/documents/Polycnst.pdf">rcompanion’s Orthogonal Polynomial Contrasts handout</a></p>
+</div>
+</section><section id="polynomial-contrasts-2" class="slide level2"><h2>Polynomial Contrasts</h2>
+<p>For example, we can examine the effect of year of measurement on flipper length.</p>
+<p>We have three groups (year = 2007, 2008, 2009), with ordered, equal spaced intervals between groups, so we can fit a linear and quadratic contrast.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_year_data</span> <span class="op">&lt;-</span> <span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">year</span>, ordered <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">year_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">body_mass_g</span> <span class="op">~</span> <span class="va">year</span>, data <span class="op">=</span> <span class="va">penguins_year_data</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">year_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = body_mass_g ~ year, data = penguins_year_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1566.7  -666.7  -174.5   547.8  2175.5 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  4200.50      43.41  96.770   &lt;2e-16 ***
+year.L         60.64      75.21   0.806    0.421    
+year.Q        -81.04      75.16  -1.078    0.282    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 802.2 on 339 degrees of freedom
+  (2 observations deleted due to missingness)
+Multiple R-squared:  0.005193,  Adjusted R-squared:  -0.000676 
+F-statistic: 0.8848 on 2 and 339 DF,  p-value: 0.4137</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">year_model</span>, specs <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span>
+<span><span class="va">emms_year</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> year emmean   SE  df lower.CL upper.CL
+ 2007   4125 76.8 339     3973     4276
+ 2008   4267 75.1 339     4119     4414
+ 2009   4210 73.5 339     4066     4355
+
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/contrast.html">contrast</a></span><span class="op">(</span><span class="va">emms_year</span>, method <span class="op">=</span> <span class="st">"poly"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast  estimate  SE  df t.ratio p.value
+ linear        85.8 106 339   0.806  0.4207
+ quadratic   -198.5 184 339  -1.078  0.2817</code></pre>
+</div>
+</div>
+</div></div>
+</section><section id="polynomial-contrasts-3" class="slide level2"><h2>Polynomial Contrasts</h2>
+<div>
+<iframe class="slide-deck" src="https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/12%20Models/Lecture%2012%20The%20Model%20Based%20Perspective.html#/overfit-visualized"></iframe>
+</div>
+<div class="footer">
+<p>From Mark’s <a href="https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/12%20Models/Lecture%2012%20The%20Model%20Based%20Perspective.html#/overfit-visualized">Lecture 12: The Model Based Perspective, Slide 44</a> accessed on 2026-10-17</p>
+</div>
+</section><section id="lab-09-assignment" class="slide level2"><h2>Lab 09 Assignment</h2>
 
 
 </section></section>

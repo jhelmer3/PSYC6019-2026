@@ -10,6 +10,7 @@ format:
     code-line-numbers: false
     theme: ../../gt-theme.scss
     width: 1200
+    css: contrast-slide-styling.css
 execute: 
   echo: true
   dpi: 600
@@ -54,8 +55,8 @@ Useful to report with your ANOVA results to actually see the differences between
 
 Remember those interpretations of slope parameters?
 
-:::: {.columns}
-::: {.column width="50%"}
+:::: {.columns style="font-size:90%"}
+::: {.column width="66%"}
 Dummy coding compares $g-1$ groups to $\beta_0 =$ **reference group mean**:
 
 | Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ |
@@ -66,7 +67,7 @@ Dummy coding compares $g-1$ groups to $\beta_0 =$ **reference group mean**:
 | $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | 0 |
 :::
 
-::: {.column width="50%"}
+::: {.column width="33%"}
 **Dummy coding:**
 
 - $\beta_0: = \mu_3$
@@ -75,8 +76,8 @@ Dummy coding compares $g-1$ groups to $\beta_0 =$ **reference group mean**:
 :::
 ::::
 
-:::: {.columns}
-::: {.column width="50%"}
+:::: {.columns style="font-size:90%"}
+::: {.column width="66%"}
 Effects or contrast coding compares $g-1$ groups to $\beta_0 =$ **grand mean**:
 
 | Predictor | $g_1$ | $g_2$ | $\cdots$ | $g_{G-1}$ | $g_G$ |
@@ -87,7 +88,7 @@ Effects or contrast coding compares $g-1$ groups to $\beta_0 =$ **grand mean**:
 | $x_{G-1}$ | 0 | 0 | $\cdots$ | 1 | -1 |
 :::
 
-::: {.column width="50%"}
+::: {.column width="33%"}
 **Contrast/Effects coding:**
 
 - $\beta_0: = \mu$
@@ -114,12 +115,10 @@ Recall from last time...
 #| layout-ncol: 2
 library(palmerpenguins)
 penguins_cleaned <- penguins |>
-  filter_out(when_any(is.na(flipper_length_mm),
-                      is.na(species)))
+  filter_out(when_any(is.na(flipper_length_mm), is.na(species)))
 
 flipper_model <- aov(flipper_length_mm ~ species, data = penguins_cleaned)
 flipper_model_lm <- lm(flipper_length_mm ~ species, data = penguins_cleaned)
-
 summary(flipper_model); summary(flipper_model_lm)
 ```
 
@@ -142,7 +141,7 @@ To obtain the EMMs for some linear model:
 
 <br>
 
-::: {.callout-note style="font-size: 80%"}
+::: {.callout-note style="font-size:85%"}
 ### `emmeans` and pipes `|>`
 
 While we often want to use pipes in our `R` code, and e.g., might want to plot the EMMs from `emmeans`, the developers explicity recommend to always manually check the output of the `emmeans` function! They provide annotations and context that we will lose if we immediately pipe it into something else (e.g., `emmeans(model, specs) |> as_tibble()`)
@@ -324,6 +323,10 @@ Can layer `geom_point` on top, tidy up
 ::: subpoint-narrow
 ○ `geom_point` will need a `y` `aes` (or `x` if it's flipped)
 :::
+
+::: fragment
+Plotting EMMs is one of those places where you'll see some crunched-up scales that visually exaggerate the size of the effect. This is a good time to consider how you'll set your axis limits!
+:::
 :::
 
 ::: {.column width="50%"}
@@ -492,7 +495,7 @@ emms_flipper_df |>
 ::::
 
 
-## Pairwise Comparisons With `emmeans`
+## Pairwise Comparisons
 
 `pairs(emmeans_object, adjust = "tukey")`
 
@@ -523,285 +526,421 @@ pairs(emms_flipper, adjust = "holm")
 ::::
 
 
+## Contrasts
 
-# Two-Way ANOVA `emmeans`
+Contrasts are like custom pairwise comparisons. Can examine differences between two groups... or sets of groups. 
 
-
-## Two-Way ANOVA `emmeans`
-
-[EMMs theoretically in context of two-way ANOVA]
+Typically specify *a priori* (planned before data collection), and often have some theoretical reason for doing that contrast
 
 
-## Two-Way ANOVA
+## Setting up a Linear Contrast I 
+
+Maybe you as a researcher are very interested in Gentoo penguins. You want to compare Gentoo penguins to all other penguin species. 
+
+
+## Setting up a Linear Contrast I {.contrast-slide}
+
+::: {.sub}
+Species means from the `palmerpenguins` data
+:::
+
+::::::::: {.layout}
+
+:::::::: {.diagram}
+
+<!-- Layer 1: all groups (visible from the start) -->
+
+::::::: {.row}
+[Gentoo]{.cell .big} [Adelie]{.cell .big} [Chinstrap]{.cell .big}
+:::::::
+
+<!-- Layer 2: choose the sides -->
+
+::::::: {.row .fragment .fade-up data-fragment-index="1"}
+
+:::::: {.panel .pos}
+[+]{.sign} [Gentoo]{.cell} []{.eq .ghost} []{.total .ghost}
+::::::
+
+:::::: {.panel .neg}
+[−]{.sign} [Adelie]{.cell} []{.op .ghost} [Chinstrap]{.cell} []{.eq .ghost} []{.total .ghost}
+::::::
+
+:::::::
+
+<!-- Layer 3: naive weights of 1 -->
+
+::::::: {.row .fragment .fade-up data-fragment-index="2"}
+
+:::::: {.panel .pos}
+[+]{.sign} [$1$]{.cell} [=]{.eq} [$1$]{.total}
+::::::
+
+:::::: {.panel .neg}
+[−]{.sign} [$1$]{.cell} [+]{.op} [$1$]{.cell} [=]{.eq} [$-2$]{.total}
+::::::
+
+:::::::
+
+<!-- Layer 4: divide by the total -->
+
+::::::: {.row .fragment .fade-up data-fragment-index="3"}
+
+:::::: {.panel .pos}
+[+]{.sign} [$\tfrac{1}{1}$]{.cell} [=]{.eq} [$1$]{.total}
+::::::
+
+:::::: {.panel .neg}
+[−]{.sign} [$\tfrac{1}{2}$]{.cell} [+]{.op} [$\tfrac{1}{2}$]{.cell} [=]{.eq} [$-1$]{.total}
+::::::
+
+:::::::
+
+<!-- Layer 5: the null hypothesis -->
+
+::::::: {.row .final .fragment .fade-up data-fragment-index="4"}
+[$H_0$:]{.h0} [$(1)\,\mu_{\text{Gentoo}}$]{.cell} [+]{.op} [$\left(-\tfrac{1}{2}\right)\mu_{\text{Adelie}}$]{.cell} [+]{.op} [$\left(-\tfrac{1}{2}\right)\mu_{\text{Chinstrap}}$]{.cell} [=]{.eq} [$0$]{.zero}
+:::::::
+
+::::::::
+
+:::::::: {.notes-col}
+
+::: {.note .n1 .fragment .fade-out data-fragment-index="1"}
+First, here are all of the groups laid out. These represent every we could include in our comparison.
+:::
+
+::: {.note .n2 .fragment .fade-in-then-out data-fragment-index="1"}
+Next, ask: *which group, or groups, do I want to compare?* If a side contains several groups, they are weighted equally within the comparison. Here, we plan to compare Gentoo penguins with the average of Adelie and Chinstrap penguins. Which side is positive and which is negative is arbitrary; it only affects interpretation.
+:::
+
+::: {.note .n3 .fragment .fade-in-then-out data-fragment-index="2"}
+Now we need the *weights* on each side to balance, so that everything sums to zero across the selected groups. Right now there is 1 mean on the positive side and 2 on the negative side. If we give every group a weight of 1, the positive side adds up to $1$ and the negative side to $-2$.
+:::
+
+::: {.note .n4 .fragment .fade-in-then-out data-fragment-index="3"}
+If we divide each side by its total, each side sums to $1$ or $-1$, so the two sides now balance.
+:::
+
+::: {.note .n5 .fragment .fade-in-then-out data-fragment-index="4"}
+Our null hypothesis is then that there is no difference between the two sides: the difference between them is zero.
+:::
+
+::::::::
+
+:::::::::
+
+
+## Testing a Linear Contrast I
+
+$$ \psi_1 = (1) \ \mu_\text{Gentoo} \ + \ (-\frac{1}{2}) \ \mu_\text{Adelie} \ + \ (-\frac{1}{2}) \ \mu_\text{Chinstrap}$$
+
+**Hypotheses**: 
+
+$H_0: \psi_1 = 0$
+
+$H_A: \psi_1 \neq 0$
+
+
+## Testing a Linear Contrast I
+
+```{r}
+emms_flipper
+contrast(
+  emms_flipper, 
+  method = list(gentoo_vs_others = c(-1/2, -1/2, 1))
+) 
+```
+
+
+## Setting up a Linear Contrast II
+
+You don't have to include all groups in a contrasts' comparison.
+
+"Zero-out" a group in a contrast equation by setting its weight to zero.
+
+For example, let's just compare Gentoo penguins to Adelie penguins.
+
+
+## Setting up a Linear Contrast II {.contrast-slide}
+
+::: {.sub}
+Just comparing Gentoo and Adelie penguins.
+:::
+
+::::::::: {.layout}
+
+:::::::: {.diagram .three}
+
+<!-- Layer 1: all groups (visible from the start) -->
+
+::::::: {.row}
+[Gentoo]{.cell .big} [Adelie]{.cell .big} [Chinstrap]{.cell .big}
+:::::::
+
+<!-- Layer 2: choose the sides, and set one group aside -->
+
+::::::: {.row .fragment .fade-up data-fragment-index="1"}
+
+:::::: {.panel .pos}
+[+]{.sign} [Gentoo]{.cell} []{.eq .ghost} []{.total .ghost}
+::::::
+
+:::::: {.panel .neg}
+[−]{.sign} [Adelie]{.cell} []{.eq .ghost} []{.total .ghost}
+::::::
+
+:::::: {.panel .nul}
+[0]{.sign} [Chinstrap]{.cell} []{.eq .ghost} []{.total .ghost}
+::::::
+
+:::::::
+
+<!-- Layer 3: weights (the excluded group gets 0) -->
+
+::::::: {.row .fragment .fade-up data-fragment-index="2"}
+
+:::::: {.panel .pos}
+[+]{.sign} [$1$]{.cell} [=]{.eq} [$1$]{.total}
+::::::
+
+:::::: {.panel .neg}
+[−]{.sign} [$1$]{.cell} [=]{.eq} [$-1$]{.total}
+::::::
+
+:::::: {.panel .nul}
+[0]{.sign} [$0$]{.cell} [=]{.eq} [$0$]{.total}
+::::::
+
+:::::::
+
+<!-- Layer 4: the null hypothesis -->
+
+::::::: {.row .final .fragment .fade-up data-fragment-index="3"}
+[$H_0$:]{.h0} [$(1)\,\mu_{\text{Gentoo}}$]{.cell} [+]{.op} [$(-1)\,\mu_{\text{Adelie}}$]{.cell} [+]{.op} [$(0)\,\mu_{\text{Chinstrap}}$]{.cell} [=]{.eq} [$0$]{.zero}
+:::::::
+
+::::::::
+
+:::::::: {.notes-col}
+
+::: {.note .n1 .fragment .fade-out data-fragment-index="1"}
+[We still have all the groups available to us, but this time we only want to compare Gentoo and Adelie]
+:::
+
+::: {.note .n2 .fragment .fade-in-then-out data-fragment-index="1"}
+To do this, Chinstrap gets "zero-ed out". We will assign it a weight of zero.
+:::
+
+::: {.note .n3 .fragment .fade-in-then-out data-fragment-index="2"}
+Since Chinstrap's coefficient is zero, we don't have to consider it in our "sum to zero" constraint.
+:::
+
+::: {.note .n4 .fragment .fade-in-then-out data-fragment-index="3"}
+We only have one group on each (positive / negative) side, so we don't have to divide here. Implicitly, we are dividing each by one.
+:::
+
+::::::::
+
+:::::::::
+
+
+## Testing a Linear Contrast II
+
+$$
+\begin{aligned}
+  \psi_2 &= (1) \ \mu_\text{Gentoo} \ + \ (-1) \ \mu_\text{Adelie} \ + \ (0) \ \mu_\text{Chinstrap} \\
+         &= (1) \ \mu_\text{Gentoo} \ + \ (-1) \ \mu_\text{Adelie} \\
+         &= \mu_\text{Gentoo} - \mu_\text{Adelie}
+\end{aligned}
+$$
+
+**Hypotheses**:
+
+$H_0: \psi_2 = 0$
+
+$H_A: \psi_2 \neq 0$
+
+
+## Testing a Linear Contrast II
+
+```{r}
+emms_flipper
+contrast(
+  emms_flipper,
+  method = list(gentoo_vs_others = c(-1, 0, 1))
+)
+```
+
+
+## Polynomial Contrasts
+
+If your groups have some natural *ordering* and *equal intervals* between levels, you may also be interested in testing a polynomial contrast. 
+
+Polynomial contrasts tests for polynomial relationships in the outcome. If you have $J$ groups, you can test for $J-1$ polynomial contrasts, e.g.,
 
 :::: {.columns}
-::: {.column width="60%"}
-So far we've looked at penguin species, but these penguin measurements were taken over multiple years.
+::: {.column width="33%"}
+**Linear** ($J \geq2$)
 
-What if the year a penguin's measurement was taken is in some way linked to the penguin's flipper length?
+$y = \beta_0 + \beta_1x$
+
+```{r}
+#| fig-width: 2
+#| fig-height: 2
+#| echo: false
+tibble(x = seq(-5, 5, length.out = 1000),
+       y = x) |>
+  ggplot(aes(x = x, y = y)) +
+  geom_line() +
+  theme_classic() +
+  scale_x_continuous(breaks = c(-5, 5), labels = NULL) +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_none(NULL))
+```
+
 :::
 
-::: {.column width="40%"}
-<!-- Penguins in Palmer Archipelago -->
+::: {.column width="33%"}
+**Quadratic** ($J \geq 3$)
 
-<!-- Nesting islands from 2009 Palmer penguins research -->
+$y = \beta_0 + \beta_1x + \beta_2x^2$
 
-![](../media/lab_09/penguin-islands.png)
+```{r}
+#| fig-width: 2
+#| fig-height: 2
+#| echo: false
+tibble(x = seq(-5, 5, length.out = 1000),
+       y = x^2) |>
+  ggplot(aes(x = x, y = y)) +
+  geom_line() +
+  theme_classic() +
+  scale_x_continuous(breaks = c(-5, 5), labels = NULL) +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_none(NULL))
+```
+
+
+:::
+
+::: {.column width="33%"}
+**Cubic** ($J \geq 4$)
+
+$y = \beta_0 + \beta_1x + \beta_2x^2 + \beta_3x^3$
+
+```{r}
+#| fig-width: 2
+#| fig-height: 2
+#| echo: false
+tibble(x = seq(-5, 5, length.out = 1000),
+       y = x^3) |>
+  ggplot(aes(x = x, y = y)) +
+  geom_line() +
+  theme_classic() +
+  scale_x_continuous(breaks = c(-5, 5), labels = NULL) +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_none(NULL))
+```
 :::
 ::::
+
+
+## Polynomial Contrasts
+
+Polynomial contrasts use pre-specified weights for each term ($x$, $x^2$, $x^3$, etc.), e.g.,
+
+```{r}
+#| echo: false
+contrasts <- tribble(
+  ~n, ~degree, ~T1, ~T2, ~T3, ~T4, ~T5, ~T6, ~k,
+  2, 1,  -1,  1, NA, NA, NA, NA,   2,
+  3, 1,  -1,  0,  1, NA, NA, NA,   2,
+  3, 2,   1, -2,  1, NA, NA, NA,   6,
+  4, 1,  -3, -1,  1,  3, NA, NA,  20,
+  4, 2,   1, -1, -1,  1, NA, NA,   4,
+  4, 3,  -1,  3, -3,  1, NA, NA,  20,
+  5, 1,  -2, -1,  0,  1,  2, NA,  10,
+  5, 2,   2, -1, -2, -1,  2, NA,  14,
+  5, 3,  -1,  2,  0, -2,  1, NA,  10,
+  5, 4,   1, -4,  6, -4,  1, NA,  70
+)
+
+contrasts |>
+  gt(groupname_col = "n", row_group_as_column = TRUE) |>
+  tab_header(
+    title = "Polynomial Contrast Weights",
+  ) |>
+  tab_stubhead(label = "Number of treatments") |>
+  tab_spanner(label = "Treatment totals", columns = T1:T6) |>
+  cols_label(
+    degree = "Degree of polynomial",
+    k = html("Divisor<br>\\(k = \\sum \\text{weight}_i^2\\)")
+  ) |>
+  fmt_number(T1:T6, decimals = 0, force_sign = TRUE) |>
+  fmt_integer(k) |>
+  sub_missing(T1:T6, missing_text = "") |>
+  cols_align(align = "center", columns = c(degree, T1:T6, k)) |>
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels()
+  ) |>
+  tab_options(
+    table.font.size = px(18),
+    data_row.padding = px(3),
+    row_group.as_column = TRUE
+  )
+```
+
+::: fragment
+(You do not have to know these)
+:::
 
 ::: footer
-Photo accessed at [rpubs.com/mgsaavedraro/669873](https://rpubs.com/mgsaavedraro/669873) on 2026-10-15.
+Adapted from [rcompanion's Orthogonal Polynomial Contrasts handout](https://rcompanion.org/documents/Polycnst.pdf)
 :::
 
 
-## Two-Way ANOVA
+## Polynomial Contrasts
 
-Let's examine the effect of both penguin species and measurement year on penguin flipper length.
+For example, we can examine the effect of year of measurement on flipper length.
 
-Design: Two-Way 3x3 ANOVA
-
-
-## Two-Way ANOVA
+We have three groups (year = 2007, 2008, 2009), with ordered, equal spaced intervals between groups, so we can fit a linear and quadratic contrast.
 
 :::: {.columns}
 ::: {.column width="50%"}
 ```{r}
-library(palmerpenguins)
-penguins_cleaned <- penguins |>
-  filter_out(when_any(is.na(year), is.na(flipper_length_mm), is.na(species))) |>
-  mutate(year = factor(year))
-
-flipper_model_twoway <- aov(flipper_length_mm ~ species * year, data = penguins_cleaned)
-summary(flipper_model_twoway)
+penguins_year_data <- penguins |>
+  mutate(year = factor(year, ordered = T))
+year_model <- lm(body_mass_g ~ year, data = penguins_year_data)
+summary(year_model)
 ```
 :::
 
 ::: {.column width="50%"}
-Let's get the estimated marginal means of penguin flipper length by species and year!
+```{r}
+emms_year <- emmeans(year_model, specs = "year")
+emms_year
+contrast(emms_year, method = "poly")
+```
 :::
 ::::
 
 
-## One-Way ANOVA `emmeans`
+## Polynomial Contrasts
 
-```{r}
-emms_flipper_twoway <- emmeans(flipper_model_twoway, specs = c("species", "year"))
-emms_flipper_twoway
+<div>
+```{=html}
+<iframe class="slide-deck" src="https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/12%20Models/Lecture%2012%20The%20Model%20Based%20Perspective.html#/overfit-visualized"></iframe>
 ```
+</div>
 
-
-## Plotting One-Way ANOVA `emmeans`
-
-:::: {.columns}
-::: {.column width="50%"}
-Super quick plotting method with `plot()`
-
-Not so great with more than one factor...
+::: footer
+From Mark's [Lecture 12: The Model Based Perspective, Slide 44](https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/12%20Models/Lecture%2012%20The%20Model%20Based%20Perspective.html#/overfit-visualized) accessed on 2026-10-17
 :::
 
-::: {.column width="50%"}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-plot(emms_flipper_twoway)
-```
-
-### Code
-```{r}
-#| eval: false
-plot(emms_flipper_twoway)
-```
-:::
-:::
-::::
+## Lab 09 Assignment
 
 
-## Plotting One-Way ANOVA `emmeans`
 
-:::: {.columns}
-::: {.column width="50%"}
-Let's build our own. The color on our last plot was just to make it look nice, but this time, let's use color to represent the year.
-
-```{r}
-emms_flipper_twoway_df <- as_tibble(emms_flipper_twoway)
-emms_flipper_twoway_df |>
-  glimpse()
-```
-
-::: {.fragment fragment-index=2}
-Like last time, we always want to include our uncertainty.
-:::
-:::
-
-::: {.column .fragment fragment-index=1 width="50%"}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-emms_flipper_twoway_df |>
-  ggplot(aes(x = species, y = emmean, color = year)) +
-  geom_point()
-```
-
-### Code
-```{r}
-#| eval: false
-emms_flipper_twoway_df |>
-  ggplot(aes(x = species, y = emmean, color = year)) +
-  geom_point()
-```
-:::
-:::
-::::
-
-
-## Plotting One-Way ANOVA `emmeans`
-
-:::: {.columns}
-::: {.column width="50%"}
-Let's build our own.
-:::
-
-::: {.column .fragment fragment-index=1 width="50%"}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-emms_flipper_twoway_df |>
-  ggplot(aes(x = species, y = emmean, color = year,
-             ymin = lower.CL, ymax = upper.CL)) +
-  geom_point() +
-  geom_errorbar()
-```
-
-### Code
-```{r}
-#| eval: false
-emms_flipper_twoway_df |>
-  ggplot(aes(x = species, y = emmean, color = year,
-             ymin = lower.CL, ymax = upper.CL)) +
-  geom_point() +
-  geom_errorbar()
-```
-:::
-:::
-::::
-
-
-## Plotting One-Way ANOVA `emmeans`
-
-:::: {.columns}
-::: {.column width="50%"}
-Let's build our own.
-
-And tidy it up.
-:::
-
-::: {.column .fragment fragment-index=1 width="50%"}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-emms_flipper_twoway_df |>
-  ggplot(aes(x = species, y = emmean, color = year,
-             ymin = lower.CL, ymax = upper.CL)) +
-  geom_point(position = position_dodge(0.3)) +
-  geom_errorbar(width = 0.1, position = position_dodge(0.3)) +
-  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
-  guides(x = guide_axis(NULL, cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic() +
-  theme(legend.position = "none")
-```
-
-### Code
-```{r}
-#| eval: false
-emms_flipper_twoway_df |>
-  ggplot(aes(x = species, y = emmean, color = year,
-             ymin = lower.CL, ymax = upper.CL)) +
-  geom_point(position = position_dodge(0.3)) +
-  geom_errorbar(width = 0.1, position = position_dodge(0.3)) +
-  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
-  guides(x = guide_axis(NULL, cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic() +
-  theme(legend.position = "none")
-```
-:::
-:::
-::::
-
-
-## Plotting One-Way ANOVA `emmeans`
-
-:::: {.columns}
-::: {.column width="50%"}
-Can add lines between points to look for interactions.
-:::
-
-::: {.column .fragment fragment-index=1 width="50%"}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-emms_flipper_twoway_df |>
-  ggplot(aes(x = species, y = emmean, color = year,
-             group = year,
-             ymin = lower.CL, ymax = upper.CL)) +
-  geom_point(position = position_dodge(0.3)) +
-  geom_line(position = position_dodge(0.3)) +
-  geom_errorbar(width = 0.1, position = position_dodge(0.3)) +
-  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
-  guides(x = guide_axis(NULL, cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic() +
-  theme(legend.position = "none")
-```
-
-### Code
-```{r}
-#| eval: false
-emms_flipper_twoway_df |>
-  ggplot(aes(x = species, y = emmean, color = year,
-             group = year,
-             ymin = lower.CL, ymax = upper.CL)) +
-  geom_point(position = position_dodge(0.3)) +
-  geom_line(position = position_dodge(0.3)) +
-  geom_errorbar(width = 0.1, position = position_dodge(0.3)) +
-  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
-  guides(x = guide_axis(NULL, cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic() +
-  theme(legend.position = "none")
-```
-:::
-:::
-::::
-
-
-## Pairwise Comparisons With `emmeans`
-
-
-```{r}
-pairs(emms_flipper_twoway) 
-```
 
 

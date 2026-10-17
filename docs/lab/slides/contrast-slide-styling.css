@@ -1,0 +1,110 @@
+/* ---------- palette ---------- */
+.contrast-slide {
+  --ink: #1f2a44;
+  --muted: #6b7a99;
+  --panel: #e9eef7;
+  --panel-line: #c3d0e8;
+  --box-line: #9aa9c4;
+  --pos: #2f8f5b;  --pos-bg: #e1f1e6;  --pos-line: #7dbb96;
+  --neg: #c8473a;  --neg-bg: #fae3df;  --neg-line: #e09286;
+}
+
+/* ---------- title ---------- */
+.reveal .slides section.contrast-slide h2 {
+  font-size: 1.35em; margin: 0 0 4px; text-align: left;
+  text-transform: none; font-weight: 700; color: var(--ink);
+}
+.contrast-slide .sub {
+  font-size: 0.6em; color: var(--muted); margin-bottom: 18px; text-align: left;
+}
+
+/* ---------- layout ---------- */
+.contrast-slide .layout   { display: flex; gap: 32px; align-items: flex-start; }
+.contrast-slide .diagram  { flex: 0 0 760px; display: flex; flex-direction: column;
+                            gap: 12px; font-size: 24px; color: var(--ink); }
+.contrast-slide .notes-col{ flex: 1; position: relative; }
+
+/* paragraphs that pandoc wraps around the spans must not create boxes */
+.contrast-slide .row p, .contrast-slide .panel p { display: contents; margin: 0; }
+          
+/* ---------- rows & panels ---------- */
+.contrast-slide .row {
+  display: flex; gap: 14px; align-items: center; box-sizing: border-box;
+  height: 104px; padding: 12px; background: var(--panel);
+  border: 1.5px solid var(--panel-line); border-radius: 14px;
+}
+.contrast-slide .panel {
+  display: flex; align-items: center; gap: 8px; align-self: stretch;
+  padding: 10px; border-radius: 10px; border: 1.5px solid;
+}
+.contrast-slide .pos { flex: 1; background: var(--pos-bg); border-color: var(--pos-line); }
+.contrast-slide .neg { flex: 2; background: var(--neg-bg); border-color: var(--neg-line); }
+
+/* ---------- pieces ---------- */
+.contrast-slide .cell {
+  flex: 1; height: 60px; display: flex; align-items: center; justify-content: center;
+  background: #fff; border: 1.5px solid var(--box-line); border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(31,42,68,.10); white-space: nowrap;
+}
+.contrast-slide .big { height: 76px; font-weight: 600; }
+.contrast-slide .sign {
+  flex: 0 0 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; color: #fff; font-weight: 700; font-size: 1.1em;
+}
+.contrast-slide .pos .sign { background: var(--pos); }
+.contrast-slide .neg .sign { background: var(--neg); }
+.contrast-slide .op, .contrast-slide .eq {
+  flex: 0 0 22px; text-align: center; color: var(--muted); font-weight: 600;
+}
+.contrast-slide .total {
+  flex: 0 0 60px; height: 60px; box-sizing: border-box; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+  background: #fff; border: 1.5px solid var(--box-line); border-radius: 8px;
+  font-weight: 700; line-height: 1.1;
+}
+.contrast-slide .total::before {
+  content: "total"; font-size: 10px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 2px;
+}
+.contrast-slide .ghost { visibility: hidden; }
+
+/* final H0 row */
+.contrast-slide .final { font-size: 0.8em; background: #dfe8fa; border-color: #a9bfe8; }
+.contrast-slide .h0   { flex: 0 0 auto; padding: 0 6px; font-weight: 600; }
+.contrast-slide .zero {
+  flex: 0 0 56px; height: 60px; display: flex; align-items: center; justify-content: center;
+  background: #fff; border: 1.5px solid var(--box-line); border-radius: 8px; font-weight: 700;
+}
+
+/* ---------- accompanying text ---------- */
+.contrast-slide .note {
+  position: absolute; left: 0; right: 0; padding-left: 18px;
+  border-left: 4px solid #8aa4d6; text-align: left;
+  font-size: 21px; line-height: 1.4; color: #33415c;
+}
+.contrast-slide .note p { margin: 0; }
+/* each note sits beside the row it talks about (row pitch = 104 + 12) */
+.contrast-slide .n1 { top: 0; }
+.contrast-slide .n2 { top: 116px; }
+.contrast-slide .n3 { top: 232px; }
+.contrast-slide .n4 { top: 348px; }
+.contrast-slide .n5 { top: 464px; }
+
+/* new
+/* gray "zero" panel */
+.contrast-slide .nul { flex: 1; background: #eceef2; border-color: #c5cad4; }
+.contrast-slide .nul .sign { background: #8a93a6; }
+
+/* with three single-group panels, the negative panel is no longer double-width */
+.contrast-slide .three .neg { flex: 1; }
+
+/* tighter three-column layout */
+.contrast-slide .three { flex-basis: 800px; }
+.contrast-slide .three .row   { padding: 10px; gap: 10px; }
+.contrast-slide .three .panel { gap: 6px; padding: 8px; }
+.contrast-slide .three .cell  { font-size: 0.85em; }
+.contrast-slide .three .sign  { flex-basis: 34px; height: 34px; }
+.contrast-slide .three .eq    { flex-basis: 16px; }
+.contrast-slide .three .total { flex-basis: 52px; }
+.contrast-slide .three .final .cell { font-size: 1em; }  /* keep the H0 terms readable */
+.contrast-slide .three ~ .notes-col .note { font-size: 20px; }
