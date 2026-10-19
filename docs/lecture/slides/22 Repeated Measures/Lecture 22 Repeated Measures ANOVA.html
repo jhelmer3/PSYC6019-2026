@@ -727,12 +727,12 @@ df_{den, adj}  = \hat{\epsilon} \times df_{den}\]</span></p></li>
 <section id="adjustment" class="slide level2">
 <h2>Adjustment</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-label="1"></a><span class="fu">options</span>(<span class="at">width =</span> <span class="dv">120</span>)</span>
-<span id="cb11-2"><a aria-label="2"></a></span>
-<span id="cb11-3"><a aria-label="3"></a><span class="fu">ezANOVA</span>(<span class="at">data =</span> dat_long, <span class="co"># dataset</span></span>
-<span id="cb11-4"><a aria-label="4"></a>        <span class="at">dv =</span> PropError, <span class="co"># dependent variable</span></span>
-<span id="cb11-5"><a aria-label="5"></a>        <span class="at">wid =</span> Subject, <span class="co"># ID's for within-subject variable</span></span>
-<span id="cb11-6"><a aria-label="6"></a>        <span class="at">within =</span> Contingency) <span class="co"># repeated-measures IV</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-label="1"></a><span class="fu">ezANOVA</span>(<span class="at">data =</span> dat_long, <span class="co"># dataset</span></span>
+<span id="cb11-2"><a aria-label="2"></a>        <span class="at">dv =</span> PropError, <span class="co"># dependent variable</span></span>
+<span id="cb11-3"><a aria-label="3"></a>        <span class="at">wid =</span> Subject, <span class="co"># ID's for within-subject variable</span></span>
+<span id="cb11-4"><a aria-label="4"></a>        <span class="at">within =</span> Contingency) <span class="co"># repeated-measures IV</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a aria-label="1"></a><span class="va">$ANOVA</span></span>
 <span id="cb12-2"><a aria-label="2"></a>       <span class="ex">Effect</span> DFn DFd        F            p p<span class="op">&lt;</span>.05        ges</span>
@@ -754,9 +754,433 @@ df_{den, adj}  = \hat{\epsilon} \times df_{den}\]</span></p></li>
 <li>Both are <span class="math inline">\(&gt; .75\)</span> so use Hyunh-Feldt, round down to 1</li>
 </ul></li>
 </ul>
-
-
 </section>
+<section id="post-hoc-tests" class="slide level2">
+<h2>Post-hoc Tests</h2>
+<p>Most follow-up methods that we learned for between-subjects ANOVA can be adapted for repeated-measures ANOVA</p>
+<ul>
+<li>Use <em>paired</em> <span class="math inline">\(t\)</span>-tests for post-hoc tests on within-subjects variables, Holm or Bonferroni correction</li>
+</ul>
+<p>One major difference:</p>
+<ul>
+<li>In general, do not use a pooled error term (Maxwell, 1980)</li>
+</ul>
+</section>
+<section id="post-hoc-tests-1" class="slide level2">
+<h2>Post-hoc Tests</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-label="1"></a><span class="fu">pairwise.t.test</span>(<span class="at">x =</span> dat_long<span class="sc">$</span>PropError, </span>
+<span id="cb13-2"><a aria-label="2"></a>                <span class="at">g =</span> dat_long<span class="sc">$</span>ContingencyLevel, </span>
+<span id="cb13-3"><a aria-label="3"></a>                <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a aria-label="1"></a></span>
+<span id="cb14-2"><a aria-label="2"></a>    <span class="ex">Pairwise</span> comparisons using paired t tests </span>
+<span id="cb14-3"><a aria-label="3"></a></span>
+<span id="cb14-4"><a aria-label="4"></a><span class="ex">data:</span>  dat_long<span class="va">$PropError</span> and dat_long<span class="va">$ContingencyLevel</span> </span>
+<span id="cb14-5"><a aria-label="5"></a></span>
+<span id="cb14-6"><a aria-label="6"></a><span class="op">&lt;</span>0 <span class="ex">x</span> 0 matrix<span class="op">&gt;</span></span>
+<span id="cb14-7"><a aria-label="7"></a></span>
+<span id="cb14-8"><a aria-label="8"></a><span class="ex">P</span> value adjustment method: holm </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="apa-writeup" class="slide level2">
+<h2>APA Writeup</h2>
+<p>A one-way repeated-measures ANOVA was conducted to test the effect of contingency level (low, medium, high) on the proportion of correct responses. At <span class="math inline">\(\alpha = .05\)</span>, the omnibus test was rejected (<span class="math inline">\(F(2, 474) = 23.42\)</span>, <span class="math inline">\(p &lt; .001\)</span>, <span class="math inline">\(\eta^2 = .008\)</span>, partial <span class="math inline">\(\eta^2 = .090\)</span>).</p>
+<p>Post-hoc comparisons using paired <span class="math inline">\(t\)</span>-tests with Holm-adjusted <span class="math inline">\(p\)</span>-values indicated significant differences between every pair of the three conditions (<span class="math inline">\(M_{low} = .358\)</span>, <span class="math inline">\(M_{medium} = .345\)</span>, <span class="math inline">\(M_{high} = .331\)</span>).</p>
+</section>
+<section id="mixed-anova" class="slide level2">
+<h2>Mixed ANOVA</h2>
+<p>ANOVA can also mix within- and between-subjects factors</p>
+
+<img data-src="Lecture-22-Repeated-Measures-ANOVA_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="mixed-anova-table" class="slide level2">
+<h2>Mixed ANOVA Table</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Source of Variation</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Denominator for F-Test (Error Term)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Between Subject Factor (<span class="math inline">\(A\)</span>)</strong></td>
+<td style="text-align: left;">Between</td>
+<td style="text-align: left;"><span class="math inline">\(\text{MS}_{\text{Subject}}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Error (Between Subject)</strong></td>
+<td style="text-align: left;">Between</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Within Subject Factor (<span class="math inline">\(B\)</span>)</strong></td>
+<td style="text-align: left;">Within</td>
+<td style="text-align: left;"><span class="math inline">\(\text{MS}_{\text{Residual}}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Interaction (<span class="math inline">\(A \times B\)</span>)</strong></td>
+<td style="text-align: left;">Within</td>
+<td style="text-align: left;"><span class="math inline">\(\text{MS}_{\text{Residual}}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Error (Residual)</strong></td>
+<td style="text-align: left;">Within</td>
+<td style="text-align: left;">—</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mixed-anova-intuition" class="slide level2">
+<h2>Mixed ANOVA Intuition</h2>
+<p>For within subjects factor</p>
+<ul>
+<li>We “control” for individual differences
+<ul>
+<li>Variance at “person level”</li>
+</ul></li>
+<li>Care about effect of treatment/group/condition, not effect of persons</li>
+</ul>
+<p>For between subjects factor</p>
+<ul>
+<li>Factor does not vary as subjects go through different treatment/group/condition</li>
+<li>The relevant residual IS variance at person level</li>
+</ul>
+</section>
+<section id="example-anxiety-data" class="slide level2">
+<h2>Example: Anxiety Data</h2>
+<p>Data suitable for mixed ANOVA, part of <code>datarium</code> package. How does exercise impact anxiety over time?</p>
+<p>Between subjects factor:</p>
+<ul>
+<li>Exercise level: low, medium, high</li>
+<li><span class="math inline">\(n = 15\)</span> per group</li>
+</ul>
+<p>Within subjects factor:</p>
+<ul>
+<li>Time: Anxiety scores measured at three different time points</li>
+</ul>
+</section>
+<section id="loading-data" class="slide level2">
+<h2>Loading Data</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a aria-label="1"></a><span class="fu">library</span>(datarium)</span>
+<span id="cb15-2"><a aria-label="2"></a></span>
+<span id="cb15-3"><a aria-label="3"></a><span class="fu">data</span>(<span class="st">"anxiety"</span>, <span class="at">package =</span> <span class="st">"datarium"</span>)</span>
+<span id="cb15-4"><a aria-label="4"></a></span>
+<span id="cb15-5"><a aria-label="5"></a><span class="fu">head</span>(anxiety)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a aria-label="1"></a><span class="co"># A tibble: 6 × 5</span></span>
+<span id="cb16-2"><a aria-label="2"></a>  <span class="fu">id</span>    group    t1    t2    t3</span>
+<span id="cb16-3"><a aria-label="3"></a>  <span class="op">&lt;</span>fct<span class="op">&gt;</span> <span class="op">&lt;</span>fct<span class="op">&gt;</span> <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>dbl<span class="op">&gt;</span> <span class="op">&lt;</span>dbl<span class="op">&gt;</span></span>
+<span id="cb16-4"><a aria-label="4"></a><span class="ex">1</span> 1     grp1   14.1  14.4  14.1</span>
+<span id="cb16-5"><a aria-label="5"></a><span class="ex">2</span> 2     grp1   14.5  14.6  14.3</span>
+<span id="cb16-6"><a aria-label="6"></a><span class="ex">3</span> 3     grp1   15.7  15.2  14.9</span>
+<span id="cb16-7"><a aria-label="7"></a><span class="ex">4</span> 4     grp1   16    15.5  15.3</span>
+<span id="cb16-8"><a aria-label="8"></a><span class="ex">5</span> 5     grp1   16.5  15.8  15.7</span>
+<span id="cb16-9"><a aria-label="9"></a><span class="ex">6</span> 6     grp1   16.9  16.5  16.2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="lengthening-data" class="slide level2">
+<h2>Lengthening Data</h2>
+<p>For mixed ANOVA we need data in “long” format</p>
+<ul>
+<li><code>id</code> column (factor)</li>
+<li><code>group</code> column</li>
+<li>ONE <code>time</code> column (factor)</li>
+<li>ONE <code>anxiety</code> column</li>
+</ul>
+</section>
+<section id="long-data" class="slide level2">
+<h2>Long Data</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-label="1"></a>anxiety_long <span class="ot">&lt;-</span> anxiety <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a aria-label="2"></a>  <span class="fu">gather</span>(<span class="at">key =</span> <span class="st">"time"</span>, <span class="at">value =</span> <span class="st">"anxiety"</span>, t1, t2, t3) <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a aria-label="3"></a>  <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">factor</span>(id),</span>
+<span id="cb17-4"><a aria-label="4"></a>         <span class="at">time =</span> <span class="fu">factor</span>(time))</span>
+<span id="cb17-5"><a aria-label="5"></a></span>
+<span id="cb17-6"><a aria-label="6"></a><span class="fu">head</span>(anxiety_long)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a aria-label="1"></a><span class="co"># A tibble: 6 × 4</span></span>
+<span id="cb18-2"><a aria-label="2"></a>  <span class="fu">id</span>    group time  anxiety</span>
+<span id="cb18-3"><a aria-label="3"></a>  <span class="op">&lt;</span>fct<span class="op">&gt;</span> <span class="op">&lt;</span>fct<span class="op">&gt;</span> <span class="op">&lt;</span>fct<span class="op">&gt;</span>   <span class="op">&lt;</span>dbl<span class="op">&gt;</span></span>
+<span id="cb18-4"><a aria-label="4"></a><span class="ex">1</span> 1     grp1  t1       14.1</span>
+<span id="cb18-5"><a aria-label="5"></a><span class="ex">2</span> 2     grp1  t1       14.5</span>
+<span id="cb18-6"><a aria-label="6"></a><span class="ex">3</span> 3     grp1  t1       15.7</span>
+<span id="cb18-7"><a aria-label="7"></a><span class="ex">4</span> 4     grp1  t1       16  </span>
+<span id="cb18-8"><a aria-label="8"></a><span class="ex">5</span> 5     grp1  t1       16.5</span>
+<span id="cb18-9"><a aria-label="9"></a><span class="ex">6</span> 6     grp1  t1       16.9</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="mixed-aov" class="slide level2">
+<h2>Mixed <code>aov()</code></h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-label="1"></a>aov_anxiety <span class="ot">&lt;-</span> <span class="fu">aov</span>(anxiety <span class="sc">~</span> group <span class="sc">*</span> time <span class="sc">+</span> <span class="fu">Error</span>(id<span class="sc">/</span>time),</span>
+<span id="cb19-2"><a aria-label="2"></a>          <span class="at">data =</span> anxiety_long)</span>
+<span id="cb19-3"><a aria-label="3"></a></span>
+<span id="cb19-4"><a aria-label="4"></a><span class="fu">summary</span>(aov_anxiety)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-label="1"></a></span>
+<span id="cb20-2"><a aria-label="2"></a><span class="ex">Error:</span> id</span>
+<span id="cb20-3"><a aria-label="3"></a>          <span class="ex">Df</span> Sum Sq Mean Sq F value Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span>  </span>
+<span id="cb20-4"><a aria-label="4"></a><span class="ex">group</span>      2  61.99  30.996   4.352 0.0192 <span class="pp">*</span></span>
+<span id="cb20-5"><a aria-label="5"></a><span class="ex">Residuals</span> 42 299.15   7.123                 </span>
+<span id="cb20-6"><a aria-label="6"></a><span class="ex">---</span></span>
+<span id="cb20-7"><a aria-label="7"></a><span class="ex">Signif.</span> codes:  0 <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span>
+<span id="cb20-8"><a aria-label="8"></a></span>
+<span id="cb20-9"><a aria-label="9"></a><span class="ex">Error:</span> id:time</span>
+<span id="cb20-10"><a aria-label="10"></a>           <span class="ex">Df</span> Sum Sq Mean Sq F value Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span>    </span>
+<span id="cb20-11"><a aria-label="11"></a><span class="bu">time</span>        2  66.58   33.29   394.9 <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
+<span id="cb20-12"><a aria-label="12"></a><span class="ex">group:time</span>  4  37.15    9.29   110.2 <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
+<span id="cb20-13"><a aria-label="13"></a><span class="ex">Residuals</span>  84   7.08    0.08                   </span>
+<span id="cb20-14"><a aria-label="14"></a><span class="ex">---</span></span>
+<span id="cb20-15"><a aria-label="15"></a><span class="ex">Signif.</span> codes:  0 <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="compare-to-three-way" class="slide level2">
+<h2>Compare to Three-Way</h2>
+<p>To understand where each component of the table compes from, we can compare to a model that has an interaction between <code>group</code> and <code>time</code> and a “main effect of <code>id</code></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-label="1"></a>aov_anxiety_other <span class="ot">&lt;-</span> <span class="fu">aov</span>(anxiety <span class="sc">~</span> group <span class="sc">*</span> time <span class="sc">+</span> id, anxiety_long)</span>
+<span id="cb21-2"><a aria-label="2"></a><span class="fu">summary</span>(aov_anxiety_other)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a aria-label="1"></a>            <span class="ex">Df</span> Sum Sq Mean Sq F value Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span>    </span>
+<span id="cb22-2"><a aria-label="2"></a><span class="ex">group</span>        2  61.99   31.00  367.70 <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
+<span id="cb22-3"><a aria-label="3"></a><span class="bu">time</span>         2  66.58   33.29  394.91 <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
+<span id="cb22-4"><a aria-label="4"></a><span class="fu">id</span>          42 299.15    7.12   84.49 <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
+<span id="cb22-5"><a aria-label="5"></a><span class="ex">group:time</span>   4  37.15    9.29  110.19 <span class="op">&lt;</span>2e-16 <span class="pp">***</span></span>
+<span id="cb22-6"><a aria-label="6"></a><span class="ex">Residuals</span>   84   7.08    0.08                   </span>
+<span id="cb22-7"><a aria-label="7"></a><span class="ex">---</span></span>
+<span id="cb22-8"><a aria-label="8"></a><span class="ex">Signif.</span> codes:  0 <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<ul>
+<li><strong>Residual for group:</strong> <code>id</code></li>
+<li><strong>Residual for <code>time</code> and interaction:</strong> <code>residual</code></li>
+</ul>
+</section>
+<section id="using-ez" class="slide level2">
+<h2>Using <code>ez</code></h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a aria-label="1"></a><span class="fu">ezANOVA</span>(<span class="at">data =</span> anxiety_long, <span class="co"># dataset</span></span>
+<span id="cb23-2"><a aria-label="2"></a>        <span class="at">dv =</span> anxiety, <span class="co"># dependent variable</span></span>
+<span id="cb23-3"><a aria-label="3"></a>        <span class="at">wid =</span> id, <span class="co"># ID's for within-subject variable</span></span>
+<span id="cb23-4"><a aria-label="4"></a>        <span class="at">between =</span> group,</span>
+<span id="cb23-5"><a aria-label="5"></a>        <span class="at">within =</span> time) <span class="co"># repeated-measures IV</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a aria-label="1"></a>      <span class="ex">Effect</span> DFn DFd          F            p p<span class="op">&lt;</span>.05       ges</span>
+<span id="cb24-2"><a aria-label="2"></a><span class="ex">2</span>      group   2  42   4.351811 1.916093e-02     <span class="pp">*</span> 0.1683558</span>
+<span id="cb24-3"><a aria-label="3"></a><span class="ex">3</span>       time   2  84 394.909490 1.905584e-43     <span class="pp">*</span> 0.1785886</span>
+<span id="cb24-4"><a aria-label="4"></a><span class="ex">4</span> group:time   4  84 110.187610 1.384653e-32     <span class="pp">*</span> 0.1081997</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="visualize-results" class="slide level2">
+<h2>Visualize Results</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-label="1"></a><span class="fu">library</span>(ggeffects)</span>
+<span id="cb25-2"><a aria-label="2"></a></span>
+<span id="cb25-3"><a aria-label="3"></a>ggp1 <span class="ot">&lt;-</span> <span class="fu">ggemmeans</span>(aov_anxiety, <span class="fu">c</span>(<span class="st">"time"</span>,<span class="st">"group"</span>))</span>
+<span id="cb25-4"><a aria-label="4"></a><span class="fu">plot</span>(ggp1) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="dv">11</span>, <span class="dv">20</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="Lecture-22-Repeated-Measures-ANOVA_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="apa-writeup-1" class="slide level2">
+<h2>APA Writeup</h2>
+<p>Mixed ANOVA was conducted to test the effect of exercise over time. The interaction between exercise group and time was significant, <span class="math inline">\(F(4, 84) = 110.19, p &lt; .001, \eta^2 = .11\)</span>. Figure 1 indicates greater decrease over time in the high exercise group than other groups.</p>
+</section>
+<section id="multilevel-models" class="slide level2">
+<h2>Multilevel Models</h2>
+<p>Arguably a more “modern” approach to violations of independence assumption. Basic idea</p>
+<ul>
+<li>Each “person” gets their own intercept and slope(s).
+<ul>
+<li>These are “random effects”</li>
+<li>Sometimes called “person level effects” (more Bayesian term)</li>
+</ul></li>
+<li>Then we estimate the average intercept and slope(s) across all persons
+<ul>
+<li>These are “fixed effects”</li>
+<li>Sometimes called “population level effects)” (more Bayesian term)</li>
+</ul></li>
+</ul>
+<p>You can even have multiple levels of nesting, e.g.&nbsp;have random effects for persons nested within random effects for schools.</p>
+</section>
+<section id="multilevel-visual" class="slide level2">
+<h2>Multilevel Visual</h2>
+
+<img data-src="Lecture-22-Repeated-Measures-ANOVA_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="multilevel-in-r" class="slide level2">
+<h2>Multilevel in <code>R</code></h2>
+<p><code>R</code> has the <code>lme4</code> package and <code>lmerTest</code> extension for doing multilevel modeling using the <code>lmer()</code> function</p>
+<ul>
+<li>Uses <strong>restricted</strong> maximum likelihood estimation
+<ul>
+<li>Like maximum likelihood, but with a <span class="math inline">\(df\)</span>-like adjustment so we don’t “overfit” to the sample
+<ul>
+<li>Can accommodate missing data, imbalanced designs</li>
+<li>Don’t need every participant to be observed in every within subjects condition</li>
+</ul></li>
+<li>Needs a “hill climbing” algorithm. Can sometimes fail to converge if model is complex
+<ul>
+<li>Means it doesn’t find an appropriate peak of the hill</li>
+<li>Within/mixed ANOVA doesn’t have this problem because it uses least-squares estimation</li>
+<li>Need more data than <code>anxiety</code> dataset</li>
+</ul></li>
+</ul></li>
+<li><code>lme4</code> does not produce NHST results by default, only parameter estimates
+<ul>
+<li><code>lmerTest</code> adds tests which include <span class="math inline">\(df\)</span> adjustments to deal with independence violations</li>
+</ul></li>
+</ul>
+</section>
+<section id="lme4-example" class="slide level2">
+<h2><code>lme4</code> example</h2>
+<p><code>lmer()</code> has traditional formula syntax, but we specify “random effects” structure with one extra piece at the end <code>(random slopes (beyond scope of class) | random intercepts (id variable))</code></p>
+<ul>
+<li>Need more data than we have to estimate random slopes</li>
+<li>Same reason we can’t estimate interaction effect with person (discussed earlier)</li>
+<li>Will just specify <code>1</code> random slopes</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a aria-label="1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb26-2"><a aria-label="2"></a><span class="fu">library</span>(lmerTest)</span>
+<span id="cb26-3"><a aria-label="3"></a><span class="fu">options</span>(<span class="at">contrasts =</span> <span class="fu">c</span>(<span class="st">"contr.sum"</span>, <span class="st">"contr.poly"</span>)) <span class="co"># For Type III Tests if needed</span></span>
+<span id="cb26-4"><a aria-label="4"></a></span>
+<span id="cb26-5"><a aria-label="5"></a>lmer_anxiety <span class="ot">&lt;-</span> <span class="fu">lmer</span>(anxiety <span class="sc">~</span> group <span class="sc">*</span> time <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), anxiety_long)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="lme4-output" class="slide level2">
+<h2><code>lme4</code> Output</h2>
+<p>Anova-like table can be generated using <code>anova()</code> function specifying <code>ddf = "Satterthwaite"</code> (degrees of freedom adjustment)</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a aria-label="1"></a><span class="fu">anova</span>(lmer_anxiety, <span class="at">ddf =</span> <span class="st">"Satterthwaite"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a aria-label="1"></a><span class="ex">Type</span> III Analysis of Variance Table with Satterthwaite<span class="st">'s method</span></span>
+<span id="cb28-2"><a aria-label="2"></a><span class="st">           Sum Sq Mean Sq NumDF DenDF  F value  Pr(&gt;F)    </span></span>
+<span id="cb28-3"><a aria-label="3"></a><span class="st">group       0.734   0.367     2    42   4.3518 0.01916 *  </span></span>
+<span id="cb28-4"><a aria-label="4"></a><span class="st">time       66.579  33.289     2    84 394.9094 &lt; 2e-16 ***</span></span>
+<span id="cb28-5"><a aria-label="5"></a><span class="st">group:time 37.154   9.288     4    84 110.1876 &lt; 2e-16 ***</span></span>
+<span id="cb28-6"><a aria-label="6"></a><span class="st">---</span></span>
+<span id="cb28-7"><a aria-label="7"></a><span class="st">Signif. codes:  0 '</span><span class="pp">***</span><span class="st">' 0.001 '</span><span class="pp">**</span><span class="st">' 0.01 '</span><span class="pp">*</span><span class="st">' 0.05 '</span>.<span class="st">' 0.1 '</span> <span class="st">' 1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>Results identical to “standard” repeated measures ANOVA due to fully balanced design!</p>
+<ul>
+<li><span class="math inline">\(n = 15\)</span> in every group</li>
+<li>No missing data over time</li>
+</ul>
+</section>
+<section id="bayesian-version" class="slide level2">
+<h2>Bayesian Version</h2>
+<p>The Bayesian approach to within subjects factors is a variation on the multilevel modeling approach. We can write an <code>rstanarm</code> model with <code>stan_lmer()</code> that mimics the <code>lmer()</code> syntax and structure.</p>
+<ul>
+<li>Caveat: Bayesian statistics don’t differentiate “fixed” and “random” effects</li>
+<li>If we don’t specify, we’ll get <strong>every</strong> person level intercept in the output</li>
+<li>To only get population level effects, we can specify the parameters we want</li>
+<li>Output will be as a dummy coded linear model</li>
+<li>Due to small sample size and repeated measures, I need more iterations to achieve convergence</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a aria-label="1"></a><span class="fu">library</span>(rstanarm)</span>
+<span id="cb29-2"><a aria-label="2"></a><span class="fu">options</span>(<span class="at">contrasts =</span> <span class="fu">c</span>(<span class="st">"contr.treatment"</span>, <span class="st">"contr.poly"</span>)) <span class="co"># Reset dummy coding</span></span>
+<span id="cb29-3"><a aria-label="3"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span>
+<span id="cb29-4"><a aria-label="4"></a>stan_anxiety <span class="ot">&lt;-</span> <span class="fu">stan_lmer</span>(anxiety <span class="sc">~</span> group <span class="sc">*</span> time <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), anxiety_long,</span>
+<span id="cb29-5"><a aria-label="5"></a>                          <span class="at">seed =</span> <span class="dv">1521</span>,</span>
+<span id="cb29-6"><a aria-label="6"></a>                          <span class="at">iter =</span> <span class="dv">5000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="bayesian-output" class="slide level2">
+<h2>Bayesian Output</h2>
+<p>Specifying <code>pars =  c("alpha", "beta")</code> means I just want the results for the intercept and coefficients (not person level intercepts)</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a aria-label="1"></a><span class="fu">summary</span>(stan_anxiety, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"alpha"</span>, <span class="st">"beta"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a aria-label="1"></a></span>
+<span id="cb31-2"><a aria-label="2"></a><span class="ex">Model</span> Info:</span>
+<span id="cb31-3"><a aria-label="3"></a> <span class="ex">function:</span>     stan_lmer</span>
+<span id="cb31-4"><a aria-label="4"></a> <span class="ex">family:</span>       gaussian <span class="pp">[</span><span class="ss">identity</span><span class="pp">]</span></span>
+<span id="cb31-5"><a aria-label="5"></a> <span class="ex">formula:</span>      anxiety ~ group <span class="pp">*</span> time + <span class="er">(</span><span class="ex">1</span> <span class="kw">|</span> <span class="fu">id</span><span class="kw">)</span></span>
+<span id="cb31-6"><a aria-label="6"></a> <span class="ex">algorithm:</span>    sampling</span>
+<span id="cb31-7"><a aria-label="7"></a> <span class="ex">sample:</span>       10000 <span class="er">(</span><span class="ex">posterior</span> sample size<span class="kw">)</span></span>
+<span id="cb31-8"><a aria-label="8"></a> <span class="ex">priors:</span>       see help<span class="er">(</span><span class="st">'prior_summary'</span><span class="kw">)</span></span>
+<span id="cb31-9"><a aria-label="9"></a> <span class="ex">observations:</span> 135</span>
+<span id="cb31-10"><a aria-label="10"></a> <span class="ex">groups:</span>       id <span class="er">(</span><span class="ex">45</span><span class="kw">)</span></span>
+<span id="cb31-11"><a aria-label="11"></a></span>
+<span id="cb31-12"><a aria-label="12"></a><span class="ex">Estimates:</span></span>
+<span id="cb31-13"><a aria-label="13"></a>                   <span class="ex">mean</span>   sd   10%   50%   90%</span>
+<span id="cb31-14"><a aria-label="14"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>      <span class="ex">17.1</span>    0.4 16.6  17.1  17.6 </span>
+<span id="cb31-15"><a aria-label="15"></a><span class="ex">groupgrp2</span>        <span class="at">-0.5</span>    0.6 <span class="at">-1.2</span>  <span class="at">-0.5</span>   0.2 </span>
+<span id="cb31-16"><a aria-label="16"></a><span class="ex">groupgrp3</span>        <span class="at">-0.1</span>    0.6 <span class="at">-0.8</span>  <span class="at">-0.1</span>   0.6 </span>
+<span id="cb31-17"><a aria-label="17"></a><span class="ex">timet2</span>           <span class="at">-0.2</span>    0.1 <span class="at">-0.3</span>  <span class="at">-0.2</span>   0.0 </span>
+<span id="cb31-18"><a aria-label="18"></a><span class="ex">timet3</span>           <span class="at">-0.6</span>    0.1 <span class="at">-0.7</span>  <span class="at">-0.6</span>  <span class="at">-0.4</span> </span>
+<span id="cb31-19"><a aria-label="19"></a><span class="ex">groupgrp2:timet2</span>  0.0    0.2 <span class="at">-0.2</span>   0.0   0.2 </span>
+<span id="cb31-20"><a aria-label="20"></a><span class="ex">groupgrp3:timet2</span> <span class="at">-1.8</span>    0.2 <span class="at">-2.0</span>  <span class="at">-1.8</span>  <span class="at">-1.7</span> </span>
+<span id="cb31-21"><a aria-label="21"></a><span class="ex">groupgrp2:timet3</span> <span class="at">-0.5</span>    0.2 <span class="at">-0.7</span>  <span class="at">-0.5</span>  <span class="at">-0.3</span> </span>
+<span id="cb31-22"><a aria-label="22"></a><span class="ex">groupgrp3:timet3</span> <span class="at">-2.9</span>    0.2 <span class="at">-3.1</span>  <span class="at">-2.9</span>  <span class="at">-2.7</span> </span>
+<span id="cb31-23"><a aria-label="23"></a></span>
+<span id="cb31-24"><a aria-label="24"></a><span class="ex">MCMC</span> diagnostics</span>
+<span id="cb31-25"><a aria-label="25"></a>                 <span class="ex">mcse</span> Rhat n_eff</span>
+<span id="cb31-26"><a aria-label="26"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>      <span class="ex">0.0</span>  1.0   637 </span>
+<span id="cb31-27"><a aria-label="27"></a><span class="ex">groupgrp2</span>        0.0  1.0   618 </span>
+<span id="cb31-28"><a aria-label="28"></a><span class="ex">groupgrp3</span>        0.0  1.0   631 </span>
+<span id="cb31-29"><a aria-label="29"></a><span class="ex">timet2</span>           0.0  1.0  2095 </span>
+<span id="cb31-30"><a aria-label="30"></a><span class="ex">timet3</span>           0.0  1.0  2007 </span>
+<span id="cb31-31"><a aria-label="31"></a><span class="ex">groupgrp2:timet2</span> 0.0  1.0  2452 </span>
+<span id="cb31-32"><a aria-label="32"></a><span class="ex">groupgrp3:timet2</span> 0.0  1.0  2316 </span>
+<span id="cb31-33"><a aria-label="33"></a><span class="ex">groupgrp2:timet3</span> 0.0  1.0  2261 </span>
+<span id="cb31-34"><a aria-label="34"></a><span class="ex">groupgrp3:timet3</span> 0.0  1.0  2277 </span>
+<span id="cb31-35"><a aria-label="35"></a></span>
+<span id="cb31-36"><a aria-label="36"></a><span class="ex">For</span> each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains <span class="er">(</span><span class="ex">at</span> convergence Rhat=1<span class="kw">)</span><span class="bu">.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="emmeans" class="slide level2">
+<h2><code>emmeans</code></h2>
+<p>If I want the means and credible intervals for each cell, I can use <code>emmeans()</code></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a aria-label="1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb32-2"><a aria-label="2"></a><span class="fu">emmeans</span>(stan_anxiety, <span class="sc">~</span> group <span class="sc">*</span> time)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a aria-label="1"></a> <span class="ex">group</span> time emmean lower.HPD upper.HPD</span>
+<span id="cb33-2"><a aria-label="2"></a> <span class="ex">grp1</span>  t1     17.1      16.3      17.9</span>
+<span id="cb33-3"><a aria-label="3"></a> <span class="ex">grp2</span>  t1     16.7      15.9      17.4</span>
+<span id="cb33-4"><a aria-label="4"></a> <span class="ex">grp3</span>  t1     17.0      16.3      17.8</span>
+<span id="cb33-5"><a aria-label="5"></a> <span class="ex">grp1</span>  t2     17.0      16.2      17.7</span>
+<span id="cb33-6"><a aria-label="6"></a> <span class="ex">grp2</span>  t2     16.5      15.7      17.2</span>
+<span id="cb33-7"><a aria-label="7"></a> <span class="ex">grp3</span>  t2     15.0      14.2      15.8</span>
+<span id="cb33-8"><a aria-label="8"></a> <span class="ex">grp1</span>  t3     16.5      15.8      17.3</span>
+<span id="cb33-9"><a aria-label="9"></a> <span class="ex">grp2</span>  t3     15.5      14.7      16.3</span>
+<span id="cb33-10"><a aria-label="10"></a> <span class="ex">grp3</span>  t3     13.6      12.8      14.3</span>
+<span id="cb33-11"><a aria-label="11"></a></span>
+<span id="cb33-12"><a aria-label="12"></a><span class="ex">Point</span> estimate displayed: median </span>
+<span id="cb33-13"><a aria-label="13"></a><span class="ex">HPD</span> interval probability: 0.95 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>Instead of a full APA writeup, you might put these results in an APA table, or, even better…</p>
+</section>
+<section id="plot" class="slide level2">
+<h2>Plot</h2>
+<p>I can also plot my results to get a visual</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a aria-label="1"></a>ggp_stan <span class="ot">&lt;-</span> <span class="fu">ggpredict</span>(stan_anxiety, <span class="fu">c</span>(<span class="st">"time"</span>,<span class="st">"group"</span>))</span>
+<span id="cb34-2"><a aria-label="2"></a><span class="fu">plot</span>(ggp_stan) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="dv">11</span>, <span class="dv">20</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+
+
+<img data-src="Lecture-22-Repeated-Measures-ANOVA_files/figure-revealjs/unnamed-chunk-25-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">

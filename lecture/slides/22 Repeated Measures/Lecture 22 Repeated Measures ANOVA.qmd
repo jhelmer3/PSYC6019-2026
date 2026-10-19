@@ -519,6 +519,17 @@ Greenhouse-Geisser (GG) or Huynh-Feldt (HF) adjusted $F$-test:
 
 ```{r}
 #| echo: true
+#| eval: false
+
+ezANOVA(data = dat_long, # dataset
+        dv = PropError, # dependent variable
+        wid = Subject, # ID's for within-subject variable
+        within = Contingency) # repeated-measures IV
+```
+
+
+```{r}
+#| echo: false
 
 options(width = 120)
 
@@ -532,57 +543,423 @@ ezANOVA(data = dat_long, # dataset
 - `GGe` is Greenhouse-Geisser $\hat{\epsilon}$
 - `HFe` is Hyunh-Feldt $\hat{\epsilon}$
     - Both are $> .75$ so use Hyunh-Feldt, round down to 1
+    
+
+## Post-hoc Tests
+
+Most follow-up methods that we learned for between-subjects ANOVA can be adapted for repeated-measures ANOVA
+
+- Use *paired* $t$-tests for post-hoc tests on within-subjects variables, Holm or Bonferroni correction
+
+One major difference:
+
+- In general, do not use a pooled error term (Maxwell, 1980)
+
+## Post-hoc Tests
 
 ```{r}
-#| eval: false
-library(readxl)
-dat <- read_xlsx("../../data/Schmidt data.xlsx", 
-                 sheet = 2, range = "B20:E257", 
-                 col_names = c("Subject", "High", "Medium", "Low"))
+#| echo: true
 
-dat_long <- dat %>% 
-  pivot_longer(High:Low, names_to = "Contingency", values_to = "PropError") %>%
-  mutate(Subject = factor(Subject), Contingency = factor(Contingency))
-
-dat_long <- dat_long %>% 
-  mutate(ContingencyLevel = as.numeric(fct_relevel(Contingency, "Low", "Medium", "High"))) 
-
-dat_long2 <- dat_long %>%
-  add_row(Subject = "Average", Contingency = "Low", PropError = .331, ContingencyLevel = 1) %>%
-  add_row(Subject = "Average", Contingency = "Medium", PropError = .358, ContingencyLevel = 2) %>%
-  add_row(Subject = "Average", Contingency = "High", PropError = .345, ContingencyLevel = 3)
-
-summary(aov(PropError ~ Contingency + Error(Subject), dat_long))
-summary(aov(PropError ~ Subject + Contingency, dat_long))
+pairwise.t.test(x = dat_long$PropError, 
+                g = dat_long$ContingencyLevel, 
+                paired = TRUE)
 ```
 
 
+## APA Writeup
+
+A one-way repeated-measures ANOVA was conducted to test the effect of contingency level (low, medium, high) on the proportion of correct responses. At $\alpha = .05$, the omnibus test was rejected ($F(2, 474) = 23.42$, $p < .001$, $\eta^2 = .008$, partial $\eta^2 = .090$).
+
+Post-hoc comparisons using paired $t$-tests with Holm-adjusted $p$-values indicated significant differences between every pair of the three conditions ($M_{low} = .358$, $M_{medium} = .345$, $M_{high} = .331$).
+
+## Mixed ANOVA
+
+ANOVA can also mix within- and between-subjects factors
+
 ```{r}
-#| eval: false
-library(tidyverse)
-library(rstatix)
-library(datarium)
+#| echo: false
+#| fig-width: 10
+#| fig-height: 4.5
+#| fig-align: "center"
 
-# Load dataset and reshape to long format
-data("anxiety", package = "datarium")
-anxiety_long <- anxiety %>%
-  gather(key = "time", value = "score", t1, t2, t3)
 
-# Run Mixed ANOVA
-res.aov <- anova_test(
-  data = anxiety_long, 
-  dv = score, 
-  wid = id, 
-  between = group, 
-  within = time
+# Define node text and coordinate positions
+nodes <- data.frame(
+  x = c(0, -3, 3, -4.5, -1.5, 1, 3, 5),
+  y = c(2, 1, 1, 0, 0, 0, 0, 0),
+  label = c(
+    "Total Variation",
+    "Between Subjects",
+    "Within Subjects",
+    "Groups",
+    "Residuals within\ngroups",
+    "Treatments",
+    "Treatments ×\nGroups",
+    "Residuals ×\nw/in subjects"
+  )
 )
 
-get_anova_table(res.aov)
+# Define connections (arrows)
+edges <- data.frame(
+  x    = c(0,  0, -3,   -3,   3, 3, 3),
+  y    = c(2,  2,  1,    1,   1, 1, 1),
+  xend = c(-3, 3, -4.5, -1.5, 1, 3, 5),
+  yend = c(1,  1,  0,    0,   0, 0, 0)
+)
 
-
-summary(aov(score ~ group * factor(time) + Error(factor(id)/factor(time)),
-          data = anxiety_long))
-
-
-summary(aov(score ~ group * factor(time) + factor(id), anxiety_long))
+ggplot() +
+  geom_segment(
+    data = edges,
+    aes(x = x, y = y, xend = xend, yend = yend),
+    arrow = arrow(length = unit(0.2, "cm"), type = "closed"),
+    linewidth = 0.8,
+    color = "gray30"
+  ) +
+  geom_label(
+    data = nodes,
+    aes(x = x, y = y, label = label),
+    fontface = "bold",
+    fill = "white",
+    color = "black",
+    size = 4,
+    label.padding = unit(0.5, "lines")
+  ) +
+  scale_x_continuous(limits = c(-5.5, 6)) +
+  scale_y_continuous(limits = c(-0.5, 2.5)) +
+  theme_void()
 ```
+
+
+## Mixed ANOVA Table
+
+| Source of Variation | Type | Denominator for F-Test (Error Term) |
+|:---|:---|:---|
+| **Between Subject Factor ($A$)** | Between | $\text{MS}_{\text{Subject}}$ |
+| **Error (Between Subject)** | Between | — |
+| **Within Subject Factor ($B$)** | Within | $\text{MS}_{\text{Residual}}$ |
+| **Interaction ($A \times B$)** | Within | $\text{MS}_{\text{Residual}}$ |
+| **Error (Residual)** | Within | — |
+
+## Mixed ANOVA Intuition
+
+For within subjects factor
+
+- We "control" for individual differences 
+  - Variance at "person level"
+- Care about effect of treatment/group/condition, not effect of persons
+
+For between subjects factor
+
+- Factor does not vary as subjects go through different treatment/group/condition
+- The relevant residual IS variance at person level
+
+## Example: Anxiety Data
+
+Data suitable for mixed ANOVA, part of `datarium` package. How does exercise impact anxiety over time?
+
+Between subjects factor:
+
+- Exercise level: low, medium, high
+- $n = 15$ per group
+
+Within subjects factor: 
+
+- Time: Anxiety scores measured at three different time points
+
+
+## Loading Data
+
+```{r}
+#| echo: true
+
+library(datarium)
+
+data("anxiety", package = "datarium")
+
+head(anxiety)
+
+```
+
+## Lengthening Data
+
+For mixed ANOVA we need data in "long" format
+
+- `id` column (factor)
+- `group` column
+- ONE `time` column (factor)
+- ONE `anxiety` column
+
+
+## Long Data
+
+
+```{r}
+#| echo: true
+
+anxiety_long <- anxiety |>
+  gather(key = "time", value = "anxiety", t1, t2, t3) |>
+  mutate(id = factor(id),
+         time = factor(time))
+
+head(anxiety_long)
+
+```
+
+
+## Mixed `aov()`
+
+```{r}
+#| echo: true
+aov_anxiety <- aov(anxiety ~ group * time + Error(id/time),
+          data = anxiety_long)
+
+summary(aov_anxiety)
+
+```
+
+## Compare to Three-Way
+
+To understand where each component of the table compes from, we can compare to a model that has an interaction between `group` and `time` and a "main effect of `id`
+
+```{r}
+#| echo: true
+aov_anxiety_other <- aov(anxiety ~ group * time + id, anxiety_long)
+summary(aov_anxiety_other)
+
+```
+
+- **Residual for group:** `id`
+- **Residual for `time` and interaction:** `residual`
+
+## Using `ez`
+
+
+```{r}
+#| echo: true
+#| eval: false
+
+ezANOVA(data = anxiety_long, # dataset
+        dv = anxiety, # dependent variable
+        wid = id, # ID's for within-subject variable
+        between = group,
+        within = time) # repeated-measures IV
+```
+
+
+```{r}
+#| echo: false
+
+options(width = 120)
+
+ezANOVA(data = anxiety_long, # dataset
+        dv = anxiety, # dependent variable
+        wid = id, # ID's for within-subject variable
+        between = group,
+        within = time)$ANOVA # repeated-measures IV
+```
+
+## Visualize Results
+
+```{r}
+#| echo: true
+library(ggeffects)
+
+ggp1 <- ggemmeans(aov_anxiety, c("time","group"))
+plot(ggp1) + ylim(c(11, 20))
+
+```
+
+## APA Writeup
+
+Mixed ANOVA was conducted to test the effect of exercise over time. The interaction between exercise group and time was significant, $F(4, 84) = 110.19, p < .001, \eta^2 = .11$. Figure 1 indicates greater decrease over time in the high exercise group than other groups. 
+
+## Multilevel Models
+
+Arguably a more "modern" approach to violations of independence assumption. Basic idea
+
+- Each "person" gets their own intercept and slope(s).
+    - These are "random effects"
+    - Sometimes called "person level effects" (more Bayesian term)
+- Then we estimate the average intercept and slope(s) across all persons
+    - These are "fixed effects"
+    - Sometimes called "population level effects)" (more Bayesian term)
+    
+You can even have multiple levels of nesting, e.g. have random effects for persons nested within random effects for schools.
+
+## Multilevel Visual
+
+```{r}
+
+#| echo: false
+#| fig-width: 10
+#| fig-height: 4.5
+#| fig-align: "center"
+
+library(ggplot2)
+
+# 1. Coordinates for diagram nodes
+nodes <- data.frame(
+  x = c(5, 2, 5, 8, 1.25, 2.75, 4.25, 5.75, 7.25, 8.75),
+  y = c(2, 0, 0, 0, -2, -2, -2, -2, -2, -2),
+  label = c("School", "Student 1", "Student 2", "Student 3", 
+            "Obs 1", "Obs 2", "Obs 1", "Obs 2", "Obs 1", "Obs 2")
+)
+
+# 2. Connecting arrow paths
+edges <- data.frame(
+  x    = c(5, 5, 5, 2, 2, 5, 5, 8, 8),
+  y    = c(2, 2, 2, 0, 0, 0, 0, 0, 0),
+  xend = c(2, 5, 8, 1.25, 2.75, 4.25, 5.75, 7.25, 8.75),
+  yend = c(0, 0, 0, -2, -2, -2, -2, -2, -2)
+)
+
+# 3. Level indicator labels on the right
+level_labels <- data.frame(
+  x = c(10.2, 10.2, 10.2),
+  y = c(2, 0, -2),
+  label = c("Level 3 (k)", "Level 2 (j)", "Level 1 (i)")
+)
+
+ggplot() +
+  # Directional arrows
+  geom_segment(
+    data = edges,
+    aes(x = x, y = y, xend = xend, yend = yend),
+    arrow = arrow(length = unit(0.2, "cm"), type = "closed"),
+    linewidth = 0.8,
+    color = "gray30"
+  ) +
+  # Node boxes
+  geom_label(
+    data = nodes,
+    aes(x = x, y = y, label = label),
+    fontface = "bold",
+    fill = "white",
+    color = "black",
+    size = 4,
+    label.padding = unit(0.5, "lines")
+  ) +
+  # Level annotations
+  geom_text(
+    data = level_labels,
+    aes(x = x, y = y, label = label),
+    fontface = "italic",
+    color = "#1a365d",
+    size = 4.5,
+    hjust = 0
+  ) +
+  scale_x_continuous(limits = c(0, 12.5)) +
+  scale_y_continuous(limits = c(-3, 3)) +
+  theme_void()
+```
+
+
+## Multilevel in `R`
+
+`R` has the `lme4` package and `lmerTest` extension for doing multilevel modeling using the `lmer()` function
+
+- Uses **restricted** maximum likelihood estimation
+  - Like maximum likelihood, but with a $df$-like adjustment so we don't "overfit" to the sample
+      - Can accommodate missing data, imbalanced designs
+      - Don't need every participant to be observed in every within subjects condition
+  - Needs a "hill climbing" algorithm. Can sometimes fail to converge if model is complex
+    - Means it doesn't find an appropriate peak of the hill
+    - Within/mixed ANOVA doesn't have this problem because it uses least-squares estimation
+    - Need more data than `anxiety` dataset
+- `lme4` does not produce NHST results by default, only parameter estimates
+  - `lmerTest` adds tests which include $df$ adjustments to deal with independence violations
+  
+
+
+
+## `lme4` example
+
+`lmer()` has traditional formula syntax, but we specify "random effects" structure with one extra piece at the end `(random slopes (beyond scope of class) | random intercepts (id variable))`
+
+- Need more data than we have to estimate random slopes
+- Same reason we can't estimate interaction effect with person (discussed earlier)
+- Will just specify `1` random slopes
+
+
+```{r}
+#| echo: TRUE
+library(lme4)
+library(lmerTest)
+options(contrasts = c("contr.sum", "contr.poly")) # For Type III Tests if needed
+
+lmer_anxiety <- lmer(anxiety ~ group * time + (1 | id), anxiety_long)
+
+```
+
+
+## `lme4` Output
+
+Anova-like table can be generated using `anova()` function specifying `ddf = "Satterthwaite"` (degrees of freedom adjustment) 
+
+```{r}
+#| echo: TRUE
+anova(lmer_anxiety, ddf = "Satterthwaite")
+```
+
+Results identical to "standard" repeated measures ANOVA due to fully balanced design!
+
+- $n = 15$ in every group 
+- No missing data over time
+
+## Bayesian Version
+
+The Bayesian approach to within subjects factors is a variation on the multilevel modeling approach. We can write an `rstanarm` model with `stan_lmer()` that mimics the `lmer()` syntax and structure. 
+
+- Caveat: Bayesian statistics don't differentiate "fixed" and "random" effects
+- If we don't specify, we'll get **every** person level intercept in the output
+- To only get population level effects, we can specify the parameters we want
+- Output will be as a dummy coded linear model
+- Due to small sample size and repeated measures, I need more iterations to achieve convergence
+
+```{r}
+#| echo: TRUE
+library(rstanarm)
+options(contrasts = c("contr.treatment", "contr.poly")) # Reset dummy coding
+options(mc.cores = parallel::detectCores())
+stan_anxiety <- stan_lmer(anxiety ~ group * time + (1 | id), anxiety_long,
+                          seed = 1521,
+                          iter = 5000)
+
+
+```
+
+
+## Bayesian Output
+
+Specifying `pars =  c("alpha", "beta")` means I just want the results for the intercept and coefficients (not person level intercepts)
+
+```{r}
+#| echo: true
+summary(stan_anxiety, pars = c("alpha", "beta"))
+```
+
+## `emmeans`
+
+If I want the means and credible intervals for each cell, I can use `emmeans()`
+
+```{r}
+#| echo: true
+library(emmeans)
+emmeans(stan_anxiety, ~ group * time)
+
+```
+
+Instead of a full APA writeup, you might put these results in an APA table, or, even better...
+
+## Plot
+
+I can also plot my results to get a visual
+
+```{r}
+#| echo: true
+#| message: false
+
+ggp_stan <- ggpredict(stan_anxiety, c("time","group"))
+plot(ggp_stan) + ylim(c(11, 20))
+```
+
