@@ -61,7 +61,63 @@ bball <- read.csv("../../data/2026NBA_data.csv") |> filter(G >= max(G)/2,
 
 ```
 
+
+
+
+## Jargon Refresher
+
+**Linear Model:**
+
+$${\color{blue}y_i} = \beta_0 + \sum_{p=1}^P \beta_p {\color{red}x_{ip}} + \epsilon_i$$
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+
+[**Left side variable terms**]{style="color: blue;"}
+
+
+- $y$
+- Dependent variable (DV)
+- Outcome variable
+- Response variable
+
+:::
+
+::: {.column width="50%"}
+[**Right side variable terms**]{style="color: red;"}
+
+- $x$
+- Independent variable(s) (IVs)
+- Predictor variable(s)
+
+:::
+:::::
+
+## Tests We Will Cover {.scrollable}
+
+
+::: {style="font-size: 0.8em;"}
+
+| IV(s) | DV | IV Status | Model Structure |
+| :--- | :--- | :--- | :--- |
+| — | One categorical | — | $\chi^2$ Goodness of Fit |
+| One Categorical | One categorical | — | $\chi^2$ Test of Independence |
+| — | One Continuous | — | One Sample $t$-Test |
+| One Binary | One Continuous | Dependent Groups | Paired Sample $t$-Test |
+| One Binary | One Continuous | Independent Groups | Independent Sample $t$-Test |
+| **One Categorical** | **One Continuous** | **Independent Groups** | **One-Way ANOVA** |
+| More than One Categorical | One Continuous | Independent Groups | Factorial ANOVA |
+| One Categorical | One Continuous | Dependent Groups | One-Way Repeated Measures ANOVA |
+| More than One Categorical | One Continuous | Dependent Groups | Factorial Repeated Measures ANOVA |
+| More than One Categorical | One Continuous | Mixed Groups | Mixed ANOVA |
+| One Continuous | One Continuous | — | Correlation or Simple Regression |
+| More than One Continuous | One Continuous | — | Multiple Regression |
+
+::: 
+
 ## Last Time
+
+::: {style="font-size: 0.75em;"}
 
 -   We learned how to use the ANOVA framework to test hypotheses that **all means** among many groups are equal
 -   Aka the "omnibus test"
@@ -75,11 +131,13 @@ $$H_1: \text{at least one of the means are different}$$
 
 $$y_{ig} = \color{#377EB8}{\beta_0} + \color{#4DAF4A}{\sum_{p=1}^{g-1}\beta_p x_{p}} + \color{#984EA3}{\epsilon_i}$$
 
-- Use coding schemes like contrast or dummy coding for $\beta$'s so model can represent all group means as parsimoniously as possible
+- Use coding schemes like contrast or dummy coding for $x$'s so model can represent all group means as parsimoniously as possible
+
+:::
 
 ## Specific Comparisons
 
-What if we want to do specific comparisons between individual groups (not all groups at once)? Let's revisit the first example from last time
+What if we want to do specific comparisons between individual groups? Let's revisit the first example from last time
 
 Example: weight of plants under one of three conditions
 
@@ -123,7 +181,7 @@ anova(a1)
 
 ```
 
-Tells us there are differences **somewhere**. But where? What if we want to check `treatment1` vs. `control`? What might we do? 
+Tells us there are (likely) differences **somewhere**. But where? What if we want to check `treatment1` vs. `control`? What might we do? 
 
 
 [An independent samples $t$-test, but how will it be differet from a regular independent samples $t$-test?]{.fragment }
@@ -275,6 +333,7 @@ In the `anova()` output, MSW is in the `Residuals` row under `Mean Sq`
 We can look this up in our `pt()` $t$-table function
 
 ```{r}
+#| echo: true
 pt(1.331, 27, lower.tail = FALSE) * 2
 ```
 
@@ -289,6 +348,7 @@ How will we get the 95% confidence interval?
 -  Find the critical value corresponding to $\alpha$ on our $t$-distribution
 
 ```{r}
+#| echo: true
 qt(.05/2, 27, lower.tail = FALSE)
 ```
 Then Calculate $95\% \text{CI} = \bar{x}_1 - \bar{x}_2 \pm t(df)_{\alpha/2} \times s_{\bar{x}_1 - \bar{x}_2} =$ 
@@ -327,9 +387,11 @@ What if we want to make more than one comparison?
 
 [xkcd Significant Comic](http://xkcd.com/882/)
 
-- If **no** jelly bean color causes acne, there is a high probability that we will reject $H_0$ for at least one test.
+::: {.fragment}
+- Even if **no** jelly bean color causes acne, there is a high probability that we will reject $H_0$ for at least one test.
 
 - To avoid high FWE, we test all the hypotheses at the same time with an omnibus test.
+:::
 
 ::: {.fragment}
 - But what if we WANT to test the hypotheses individually?
@@ -348,17 +410,21 @@ Or the test of a single comparison
 
 Often, we want to also know whether differences occur among *all* pairs of groups.
 
+## Error Inflation
+
+::: {style="font-size: 0.95em;"}
+
 Running multiple tests on the same data leads to an **inflated Type I error rate**. If all of the tests are independent:
 
-\[
-  \alpha^\star = 1 - (1 - \alpha)^k
-\]
+$$\alpha^\star = 1 - (1 - \alpha)^k$$
 
 - $k$: number of comparisons made or tests done
 -  $\alpha$: specified Type I error rate
 - $\alpha^\star$: actual Type I error rate (probability of rejecting at least one correct null)
 
 For a study with $G$ groups, there are $k = \frac{G(G-1)}{2}$ pairs of groups. That means we would do $k$ different tests if we want to compare each individual group to each other group.
+
+::: 
 
 ## Logic of Error Inflation I
 
@@ -423,10 +489,17 @@ Modern Recommendations:
 
 ## Bonferroni and Holm
 
+::::: {style="font-size: 0.75em;"}
+
 ::: {style="background-color: #f3e5f5; border-left: 4px solid #984EA3; padding: 10px; margin-bottom: 15px;"}
 **Bonferroni Correction:**
 
 $$\text{adjusted } \alpha = \alpha / k$$
+
+or
+
+$$\text{adjusted } p = p \times k$$
+
 :::
 
 ::: {style="background-color: #f3e5f5; border-left: 4px solid #984EA3; padding: 10px;"}
@@ -440,7 +513,7 @@ $$\text{adjusted } \alpha = \alpha / k$$
 - If $p < \text{adjusted } \alpha$: reject $H_0$ for that pair
 - Holm's adjustment is more powerful than Bonferroni's
 
-
+::::: 
 
 
 ## Other Example
@@ -489,15 +562,15 @@ Does viewing objects that are close together affect your feelings of closeness t
 
 dat <- read_xls("../../data/Williams data.xls")
 
-dat <- dat %>% mutate(average_bond = (SIB_BOND + PAR_BOND + HOME_BOND) / 3) %>%
-  filter(!is.na(average_bond)) %>%
-  mutate(condition = recode(factor(COND), "1" = "close", "2" = "intermediate", "3" = "distant")) %>% dplyr::select(-COND)
+dat <- dat |> mutate(average_bond = (SIB_BOND + PAR_BOND + HOME_BOND) / 3) |>
+  filter(!is.na(average_bond)) |>
+  mutate(condition = recode(factor(COND), "1" = "close", "2" = "intermediate", "3" = "distant")) |> dplyr::select(-COND)
 
-dat2 <- dat %>% 
-  pivot_longer(c(SIB_BOND:HOME_BOND, average_bond), names_to = "type", values_to = "strength") %>%
+dat2 <- dat |> 
+  pivot_longer(c(SIB_BOND:HOME_BOND, average_bond), names_to = "type", values_to = "strength") |>
   mutate(type = recode(type, SIB_BOND = "Sibling", PAR_BOND = "Parent", HOME_BOND = "Home"))
 
-ggplot(dat2 %>% filter(type == "average_bond")) + 
+ggplot(dat2 |> filter(type == "average_bond")) + 
   geom_boxplot(aes(x = condition, y = strength, fill = condition)) + 
   scale_fill_manual(values = c(my_purple2, my_green2, my_blue2)) + 
   theme(legend.position = "bottom") + theme_light() + 
@@ -549,7 +622,7 @@ $$s_{\bar{x}_1 - \bar{x}_2} = \sqrt{\frac{\left(\frac{MSW}{n_1} + \frac{MSW}{n_2
 
 - $MSW$: mean of within-group effect (from ANOVA table)
 - $df = dfW$
-- $q$ follows a studentized range distribution (`ptukey` / `qtukey` in `R`)
+- $q$ follows a studentized range distribution (`ptukey` and `qtukey` in `R`)
 
 :::
 
@@ -582,9 +655,9 @@ confint(pairs(em1))
 
 ## Games-Howell
 
-::: {style="font-size: 0.85em;"}
+::: {style="font-size: 0.825em;"}
 
-Same $H_0$ and $H_1$ as Bonferroni/Holm/Tukey.
+Same $H_0$ and $H_1$, relaxes homogeneity of variance assumption
 
 **Test statistic:**
 
@@ -607,8 +680,8 @@ $$s_{\bar{x}_1 - \bar{x}_2} = \sqrt{\frac{\left(\frac{s_1^2}{n_1} + \frac{s_2^2}
 ```{r}
 #| echo: true
 library(rstatix)
-dat %>% 
-  ungroup() %>% # needed because we grouped the tibble earlier
+dat |> 
+  ungroup() |> # needed because we grouped the tibble earlier
   games_howell_test(average_bond ~ condition)
 ```
 
@@ -631,6 +704,16 @@ dat %>%
 - **Homogeneity of variance:** Tukey HSD
 - **Heterogeneity of variance:** Games-Howell
 - Work with the same assumptions for both the ANOVA itself and for post-hoc tests
+
+## Cohen's $d$
+
+The `eff_size()` function can get us $d$ for all pairs, but we have to manually specify `sigma = sqrt(MSW)`, `edf = dfW`, and `method = pairwise`
+
+```{r}
+#| echo: true
+eff_size(em1, sigma = sqrt(1.03), edf = 122, 
+         method = "pairwise")
+```
 
 ## A Priori Comparisons
 
@@ -665,10 +748,19 @@ $$\psi = a_1 \bar{x}_1 + a_2 \bar{x}_2 + a_3 \bar{x}_3 + a_4 \bar{x}_4 = \sum a_
 
 What would be a linear contrast to compare $\bar{x}_1$ to $\bar{x}_2$?
 
+
+::::: {.content-visible unless-meta="params.v0"}
+:::: {.fragment}
+::: {.answer}
+
 $$\begin{align*}
 H_0: & \quad 1\mu_1 + -1\mu_2 + 0\mu_3 + 0\mu_4 = 0 \\
 H_1: & \quad 1\mu_1 + -1\mu_2 + 0\mu_3 + 0\mu_4 \neq 0
 \end{align*}$$
+
+:::
+::::
+:::::
 
 ## Linear Contrasts III
 
@@ -714,6 +806,8 @@ $$a_1 = 3, \quad a_2 = -1, \quad a_3 = -1, \quad a_4 = -1$$
 ## Contrasts in R
 
 ::: {style="font-size: 0.85em;"}
+
+Using our `emmeans` object from earlier:
 
 $H_1$: "close" is different than "intermediate" and "distant"
 
@@ -766,6 +860,8 @@ eff_size(em1, sigma = sqrt(1.03), edf = 122,
 
 ## Orthogonal Contrasts
 
+::: {style="font-size: 0.9em;"}
+
 Historically, researchers have conducted **orthogonal** contrasts:
 
 - $G-1$ linear contrasts
@@ -781,6 +877,8 @@ Modern practices generally don't require orthogonal contrasts:
 
 - Traditional/textbook: Bonferroni, Holm, or other correction of $\alpha$
 - Modern: Open debate about whether correction is necessary
+
+::: 
 
 ## Trend Analysis
 
@@ -826,6 +924,7 @@ Do we need multiple comparisons adjustments when we use Bayesian methods? Why or
 
 ```{r}
 #| echo: true
+#| cache: true
 library(rstanarm)
 options(mc.cores = parallel::detectCores())
 
@@ -858,6 +957,7 @@ I can then use `posterior_linpred()` to make predictions about each of these row
 
 ```{r}
 #| echo: true
+#| cache: true
 (toydata <- data.frame(condition = c("close","intermediate", "distant")))
 (post_pred <- posterior_linpred(stan1, newdata = toydata))
 
@@ -872,6 +972,7 @@ Calculating the differences between each column represents the posterior distrib
 
 ```{r}
 #| echo: true
+#| cache: true
 post_diffs <- data.frame(post_pred) |> 
   mutate(close_intermediate = X1 - X2,
          close_distant = X1 - X3,
@@ -891,6 +992,7 @@ We can use the `quantile()` function to get posterior medians and equal tailed c
 
 ```{r}
 #| echo: true
+#| cache: true
 round(quantile(post_diffs$close_intermediate, probs = c(.025, .5, .975)), 2)
 round(quantile(post_diffs$close_distant, probs = c(.025, .5,  .975)), 2)
 round(quantile(post_diffs$intermediate_distant, probs = c(.025, .5,  .975)), 2)
@@ -898,6 +1000,8 @@ round(quantile(post_diffs$intermediate_distant, probs = c(.025, .5,  .975)), 2)
 
 
 ## Using `emmeans()`
+
+::: {style="font-size: 0.9em;"}
 
 Of course, `R` makes this easier for us with `emmeans`, which does all this work for us.  This will give us the highest posterior density interval (slightly different from equal tailed output on prior slide)
 
@@ -912,13 +1016,17 @@ And we can also include linear contrasts if we have a specific linear hypothesis
 
 ```{r}
 #| echo: true
+#| cache: true
 contrast(em_stan1, method = list(c(-2, 1, 1)))
 ```
+
+:::
 
 ## Comparison To Frequentist Result
 
 ```{r}
 #| echo: true
+#| cache: true
 pairs(em1)
 contrast(em1, method = list(c(-2, 1, 1)))
 ```

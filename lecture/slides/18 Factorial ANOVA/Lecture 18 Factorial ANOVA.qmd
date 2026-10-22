@@ -60,6 +60,60 @@ my_yellow2 <- "#FFFFCC"
 
 
 
+
+
+## Jargon Refresher
+
+**Linear Model:**
+
+$${\color{blue}y_i} = \beta_0 + \sum_{p=1}^P \beta_p {\color{red}x_{ip}} + \epsilon_i$$
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+
+[**Left side variable terms**]{style="color: blue;"}
+
+
+- $y$
+- Dependent variable (DV)
+- Outcome variable
+- Response variable
+
+:::
+
+::: {.column width="50%"}
+[**Right side variable terms**]{style="color: red;"}
+
+- $x$
+- Independent variable(s) (IVs)
+- Predictor variable(s)
+
+:::
+:::::
+
+## Tests We Will Cover {.scrollable}
+
+
+::: {style="font-size: 0.8em;"}
+
+| IV(s) | DV | IV Status | Model Structure |
+| :--- | :--- | :--- | :--- |
+| — | One categorical | — | $\chi^2$ Goodness of Fit |
+| One Categorical | One categorical | — | $\chi^2$ Test of Independence |
+| — | One Continuous | — | One Sample $t$-Test |
+| One Binary | One Continuous | Dependent Groups | Paired Sample $t$-Test |
+| One Binary | One Continuous | Independent Groups | Independent Sample $t$-Test |
+| One Categorical | One Continuous** | Independent Groups | One-Way ANOVA |
+| **More than One Categorical** | **One Continuous** | **Independent Groups** | **Factorial ANOVA** |
+| One Categorical | One Continuous | Dependent Groups | One-Way Repeated Measures ANOVA |
+| More than One Categorical | One Continuous | Dependent Groups | Factorial Repeated Measures ANOVA |
+| More than One Categorical | One Continuous | Mixed Groups | Mixed ANOVA |
+| One Continuous | One Continuous | — | Correlation or Simple Regression |
+| More than One Continuous | One Continuous | — | Multiple Regression |
+
+::: 
+
+
 ## Review
 
 - Independent Sample $t$-tests compares the means of two different groups
@@ -149,7 +203,7 @@ dat$condition <- NULL
 ```{r}
 #| message: false
 
-ggplot(dat %>% group_by(method, hill) %>% summarize(rating = mean(rating)), aes(hill, rating, col = method, linetype = method, shape = method, group = method)) + geom_path(size = 2) + 
+ggplot(dat |> group_by(method, hill) |> summarize(rating = mean(rating)), aes(hill, rating, col = method, linetype = method, shape = method, group = method)) + geom_path(size = 2) + 
   geom_point(size = 5) + 
   scale_color_manual(values = c(my_blue, my_orange, my_green)) + 
   theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Method", shape = "Method",linetype = "Method", x = "Hill Side", y = "Rating")  + ylim(70, 100)
@@ -186,7 +240,7 @@ Depends on interpretation you want to make
 ```{r}
 #| message: false
 
-ggplot(dat %>% group_by(method, hill) %>% summarize(rating = mean(rating)), aes(method, rating, col = hill, linetype = hill, shape = hill, group = hill)) + geom_path(size = 2) + 
+ggplot(dat |> group_by(method, hill) |> summarize(rating = mean(rating)), aes(method, rating, col = hill, linetype = hill, shape = hill, group = hill)) + geom_path(size = 2) + 
   geom_point(size = 5) + 
   scale_color_manual(values = c(my_blue, my_orange, my_green)) + 
   theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Method", shape = "Method",linetype = "Method", x = "Hill Side", y = "Rating")  + ylim(70, 100)
@@ -253,7 +307,7 @@ We can write:
 
 $$\text{var}(y) = \text{var}(\alpha) + \text{var}({\beta}) + \text{var}(\alpha\beta) + \text{var}(\epsilon)$$
 
-- Total score variance can be attributed to these 4 sources
+- Total variance can be attributed to these 4 sources
 - Important: variance can only be parsed in this manner if all combinations of groups have **equal** numbers of observations 
     - We will return to "unbalanced" cases later
 
@@ -447,7 +501,7 @@ Is the effect of our grape growing method the same, or different for different s
 #| message: false
 #| out.width: "75%"
 
-ggplot(dat %>% group_by(method, hill) %>% summarize(rating = mean(rating)), aes(hill, rating, col = method, linetype = method, shape = method, group = method)) + geom_path(size = 2) + 
+ggplot(dat |> group_by(method, hill) |> summarize(rating = mean(rating)), aes(hill, rating, col = method, linetype = method, shape = method, group = method)) + geom_path(size = 2) + 
   geom_point(size = 5) + 
   scale_color_manual(values = c(my_blue, my_orange, my_green)) + 
   theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Method", shape = "Method",linetype = "Method", x = "Hill Side", y = "Rating")  + ylim(70, 100)
@@ -514,7 +568,7 @@ When might this be weird or not make sense to do?
 ```{r}
 #| echo: true
 
-dat %>% glimpse
+dat |> glimpse()
 a1 <- aov(rating ~ hill * method, dat)
 summary(a1)
 ```
@@ -544,9 +598,11 @@ The Wine example had a significant interaction effect, $F(2, 294) = 8.89, p < .0
 
 - We might continue investigating **simple effects** (later)
 
-Given a **significant interaction effect**, it is not very meaningful to investigate the main effects of factor $A$ or factor $B$
+Given a **significant interaction effect**, it may not be very meaningful to investigate the main effects of factor $A$ or factor $B$
+
+- Is it sensible to "average over" the other factor?
     
-If the interaction effect is **not significant**, we can look at the hypothesis tests for main effects  
+If we decide to pursue main effects:  
 
 - There is a significant main effect of hill, $F(1, 294) = 24.04, p < .001$
 - There is a significant main effect of task type, $F(2, 294) = 88.31, p < .001$
@@ -626,7 +682,7 @@ Need to manually calculate weights:
 ```{r}
 #| echo: true
 
-dat <- dat %>% group_by(hill, method) %>% 
+dat <- dat |> group_by(hill, method) |> 
   mutate(weights = 1 / var(rating))
 ```
 
@@ -881,12 +937,17 @@ $$y = \beta_0 + \beta_1 z + \beta_2 x_1 + \beta_3 x_2 + \beta_4 z x_1 + \beta_5 
 
 ## Linear Model in `R`
 
+::: {style="font-size: 0.8em;"}
+
 We can use the `lm()` function to see this equivalent linear model
 
 ```{r}
+#| echo: true
 lm1 <- lm(rating ~ hill * method, dat)
 summary(lm1)
 ```
+
+::: 
 
 ## Cell Means
 
@@ -941,6 +1002,7 @@ As in one-way ANOVA, there closest direct corollary to omnibus tests of interact
 
 ```{r}
 #| echo: true
+#| cache: true
 library(rstanarm)
 library(bayestestR)
 options(mc.cores = parallel::detectCores())
@@ -955,6 +1017,7 @@ $$y = \beta_0 + \beta_1 z + \beta_2 x_1 + \beta_3 x_2 + \beta_4 z x_1 + \beta_5 
 
 ```{r}
 #| echo: true
+#| cache: true
 stan_lm1 <- stan_glm(rating ~ hill * method, dat, family = "gaussian",
                      diagnostic_file = "df1.csv", seed = 15421)
 
@@ -970,6 +1033,7 @@ $$y = \beta_0 + \beta_1 z + \beta_2 x_1 + \beta_3 x_2 + \epsilon$$
 
 ```{r}
 #| echo: true
+#| cache: true
 stan_lm2 <- stan_glm(rating ~ hill + method, dat, family = "gaussian",
                      diagnostic_file = "df2.csv", seed = 32105)
 ```
@@ -979,6 +1043,7 @@ stan_lm2 <- stan_glm(rating ~ hill + method, dat, family = "gaussian",
 
 ```{r}
 #| echo: true
+#| cache: true
 set.seed(51021)
 (bfs1 <- bayesfactor_models(stan_lm2, stan_lm1))
 ```

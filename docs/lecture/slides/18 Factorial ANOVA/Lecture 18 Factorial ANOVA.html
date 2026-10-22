@@ -220,6 +220,123 @@ Mark Himmelstein
 </div>
 
 </section>
+<section id="jargon-refresher" class="slide level2">
+<h2>Jargon Refresher</h2>
+<p><strong>Linear Model:</strong></p>
+<p><span class="math display">\[{\color{blue}y_i} = \beta_0 + \sum_{p=1}^P \beta_p {\color{red}x_{ip}} + \epsilon_i\]</span></p>
+<div class="columns v-center-container">
+<div class="column" style="width:50%;">
+<p><span style="color: blue;"><strong>Left side variable terms</strong></span></p>
+<ul>
+<li><span class="math inline">\(y\)</span></li>
+<li>Dependent variable (DV)</li>
+<li>Outcome variable</li>
+<li>Response variable</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><span style="color: red;"><strong>Right side variable terms</strong></span></p>
+<ul>
+<li><span class="math inline">\(x\)</span></li>
+<li>Independent variable(s) (IVs)</li>
+<li>Predictor variable(s)</li>
+</ul>
+</div></div>
+</section>
+<section id="tests-we-will-cover" class="slide level2 scrollable">
+<h2>Tests We Will Cover</h2>
+<div style="font-size: 0.8em;">
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">IV(s)</th>
+<th style="text-align: left;">DV</th>
+<th style="text-align: left;">IV Status</th>
+<th style="text-align: left;">Model Structure</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">One categorical</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;"><span class="math inline">\(\chi^2\)</span> Goodness of Fit</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">One Categorical</td>
+<td style="text-align: left;">One categorical</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;"><span class="math inline">\(\chi^2\)</span> Test of Independence</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">One Sample <span class="math inline">\(t\)</span>-Test</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">One Binary</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Dependent Groups</td>
+<td style="text-align: left;">Paired Sample <span class="math inline">\(t\)</span>-Test</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">One Binary</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Independent Groups</td>
+<td style="text-align: left;">Independent Sample <span class="math inline">\(t\)</span>-Test</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">One Categorical</td>
+<td style="text-align: left;">One Continuous**</td>
+<td style="text-align: left;">Independent Groups</td>
+<td style="text-align: left;">One-Way ANOVA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>More than One Categorical</strong></td>
+<td style="text-align: left;"><strong>One Continuous</strong></td>
+<td style="text-align: left;"><strong>Independent Groups</strong></td>
+<td style="text-align: left;"><strong>Factorial ANOVA</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">One Categorical</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Dependent Groups</td>
+<td style="text-align: left;">One-Way Repeated Measures ANOVA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">More than One Categorical</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Dependent Groups</td>
+<td style="text-align: left;">Factorial Repeated Measures ANOVA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">More than One Categorical</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Mixed Groups</td>
+<td style="text-align: left;">Mixed ANOVA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">Correlation or Simple Regression</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">More than One Continuous</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">Multiple Regression</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="review" class="slide level2">
 <h2>Review</h2>
 <ul>
@@ -381,7 +498,7 @@ Mark Himmelstein
 <p>We can write:</p>
 <p><span class="math display">\[\text{var}(y) = \text{var}(\alpha) + \text{var}({\beta}) + \text{var}(\alpha\beta) + \text{var}(\epsilon)\]</span></p>
 <ul>
-<li>Total score variance can be attributed to these 4 sources</li>
+<li>Total variance can be attributed to these 4 sources</li>
 <li>Important: variance can only be parsed in this manner if all combinations of groups have <strong>equal</strong> numbers of observations
 <ul>
 <li>We will return to “unbalanced” cases later</li>
@@ -770,7 +887,7 @@ Mark Himmelstein
 <h2>Two-Way ANOVA in R</h2>
 <p><strong>Way 1</strong>: Using built-in <code>R</code> commands</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-label="1"></a>dat <span class="sc">%&gt;%</span> glimpse</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-label="1"></a>dat <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-label="1"></a><span class="ex">Rows:</span> 300</span>
 <span id="cb2-2"><a aria-label="2"></a><span class="ex">Columns:</span> 3</span>
@@ -821,8 +938,11 @@ Mark Himmelstein
 <ul>
 <li>We might continue investigating <strong>simple effects</strong> (later)</li>
 </ul>
-<p>Given a <strong>significant interaction effect</strong>, it is not very meaningful to investigate the main effects of factor <span class="math inline">\(A\)</span> or factor <span class="math inline">\(B\)</span></p>
-<p>If the interaction effect is <strong>not significant</strong>, we can look at the hypothesis tests for main effects</p>
+<p>Given a <strong>significant interaction effect</strong>, it may not be very meaningful to investigate the main effects of factor <span class="math inline">\(A\)</span> or factor <span class="math inline">\(B\)</span></p>
+<ul>
+<li>Is it sensible to “average over” the other factor?</li>
+</ul>
+<p>If we decide to pursue main effects:</p>
 <ul>
 <li>There is a significant main effect of hill, <span class="math inline">\(F(1, 294) = 24.04, p &lt; .001\)</span></li>
 <li>There is a significant main effect of task type, <span class="math inline">\(F(2, 294) = 88.31, p &lt; .001\)</span></li>
@@ -916,7 +1036,7 @@ Mark Himmelstein
 <h2>WLS in R</h2>
 <p>Need to manually calculate weights:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-label="1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(hill, method) <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-label="1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">group_by</span>(hill, method) <span class="sc">|&gt;</span> </span>
 <span id="cb11-2"><a aria-label="2"></a>  <span class="fu">mutate</span>(<span class="at">weights =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">var</span>(rating))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Weighted least squares estimation is available using <code>aov</code>, but not <code>ezANOVA</code></p>
@@ -1303,32 +1423,36 @@ Mark Himmelstein
 </section>
 <section id="linear-model-in-r" class="slide level2">
 <h2>Linear Model in <code>R</code></h2>
+<div style="font-size: 0.8em;">
 <p>We can use the <code>lm()</code> function to see this equivalent linear model</p>
 <div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-label="1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(rating <span class="sc">~</span> hill <span class="sc">*</span> method, dat)</span>
+<span id="cb16-2"><a aria-label="2"></a><span class="fu">summary</span>(lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a aria-label="1"></a></span>
-<span id="cb16-2"><a aria-label="2"></a><span class="ex">Call:</span></span>
-<span id="cb16-3"><a aria-label="3"></a><span class="ex">lm</span><span class="er">(</span><span class="ex">formula</span> = rating ~ hill <span class="pp">*</span> method, data = dat<span class="kw">)</span></span>
-<span id="cb16-4"><a aria-label="4"></a></span>
-<span id="cb16-5"><a aria-label="5"></a><span class="ex">Residuals:</span></span>
-<span id="cb16-6"><a aria-label="6"></a>   <span class="ex">Min</span>     1Q Median     3Q    Max </span>
-<span id="cb16-7"><a aria-label="7"></a><span class="ex">-12.98</span>  <span class="at">-2.42</span>   0.10   2.46   8.18 </span>
-<span id="cb16-8"><a aria-label="8"></a></span>
-<span id="cb16-9"><a aria-label="9"></a><span class="ex">Coefficients:</span></span>
-<span id="cb16-10"><a aria-label="10"></a>                 <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span>    </span>
-<span id="cb16-11"><a aria-label="11"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>       <span class="ex">85.4200</span>     0.5246 162.835  <span class="op">&lt;</span> 2e-16 <span class="pp">***</span></span>
-<span id="cb16-12"><a aria-label="12"></a><span class="ex">hillwest</span>          <span class="at">-3.6000</span>     0.7419  <span class="at">-4.853</span> 1.98e-06 <span class="pp">***</span></span>
-<span id="cb16-13"><a aria-label="13"></a><span class="ex">methoda</span>            5.7000     0.7419   7.683 2.33e-13 <span class="pp">***</span></span>
-<span id="cb16-14"><a aria-label="14"></a><span class="ex">methodb</span>            4.1200     0.7419   5.554 6.27e-08 <span class="pp">***</span></span>
-<span id="cb16-15"><a aria-label="15"></a><span class="ex">hillwest:methoda</span>   0.4600     1.0492   0.438 0.661386    </span>
-<span id="cb16-16"><a aria-label="16"></a><span class="ex">hillwest:methodb</span>   4.0400     1.0492   3.851 0.000145 <span class="pp">***</span></span>
-<span id="cb16-17"><a aria-label="17"></a><span class="ex">---</span></span>
-<span id="cb16-18"><a aria-label="18"></a><span class="ex">Signif.</span> codes:  </span>
-<span id="cb16-19"><a aria-label="19"></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span>
-<span id="cb16-20"><a aria-label="20"></a></span>
-<span id="cb16-21"><a aria-label="21"></a><span class="ex">Residual</span> standard error: 3.709 on 294 degrees of freedom</span>
-<span id="cb16-22"><a aria-label="22"></a><span class="ex">Multiple</span> R-squared:  0.4263,    Adjusted R-squared:  0.4165 </span>
-<span id="cb16-23"><a aria-label="23"></a><span class="ex">F-statistic:</span> 43.69 on 5 and 294 DF,  p-value: <span class="op">&lt;</span> 2.2e-16</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a aria-label="1"></a></span>
+<span id="cb17-2"><a aria-label="2"></a><span class="ex">Call:</span></span>
+<span id="cb17-3"><a aria-label="3"></a><span class="ex">lm</span><span class="er">(</span><span class="ex">formula</span> = rating ~ hill <span class="pp">*</span> method, data = dat<span class="kw">)</span></span>
+<span id="cb17-4"><a aria-label="4"></a></span>
+<span id="cb17-5"><a aria-label="5"></a><span class="ex">Residuals:</span></span>
+<span id="cb17-6"><a aria-label="6"></a>   <span class="ex">Min</span>     1Q Median     3Q    Max </span>
+<span id="cb17-7"><a aria-label="7"></a><span class="ex">-12.98</span>  <span class="at">-2.42</span>   0.10   2.46   8.18 </span>
+<span id="cb17-8"><a aria-label="8"></a></span>
+<span id="cb17-9"><a aria-label="9"></a><span class="ex">Coefficients:</span></span>
+<span id="cb17-10"><a aria-label="10"></a>                 <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span>    </span>
+<span id="cb17-11"><a aria-label="11"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>       <span class="ex">85.4200</span>     0.5246 162.835  <span class="op">&lt;</span> 2e-16 <span class="pp">***</span></span>
+<span id="cb17-12"><a aria-label="12"></a><span class="ex">hillwest</span>          <span class="at">-3.6000</span>     0.7419  <span class="at">-4.853</span> 1.98e-06 <span class="pp">***</span></span>
+<span id="cb17-13"><a aria-label="13"></a><span class="ex">methoda</span>            5.7000     0.7419   7.683 2.33e-13 <span class="pp">***</span></span>
+<span id="cb17-14"><a aria-label="14"></a><span class="ex">methodb</span>            4.1200     0.7419   5.554 6.27e-08 <span class="pp">***</span></span>
+<span id="cb17-15"><a aria-label="15"></a><span class="ex">hillwest:methoda</span>   0.4600     1.0492   0.438 0.661386    </span>
+<span id="cb17-16"><a aria-label="16"></a><span class="ex">hillwest:methodb</span>   4.0400     1.0492   3.851 0.000145 <span class="pp">***</span></span>
+<span id="cb17-17"><a aria-label="17"></a><span class="ex">---</span></span>
+<span id="cb17-18"><a aria-label="18"></a><span class="ex">Signif.</span> codes:  </span>
+<span id="cb17-19"><a aria-label="19"></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span>
+<span id="cb17-20"><a aria-label="20"></a></span>
+<span id="cb17-21"><a aria-label="21"></a><span class="ex">Residual</span> standard error: 3.709 on 294 degrees of freedom</span>
+<span id="cb17-22"><a aria-label="22"></a><span class="ex">Multiple</span> R-squared:  0.4263,    Adjusted R-squared:  0.4165 </span>
+<span id="cb17-23"><a aria-label="23"></a><span class="ex">F-statistic:</span> 43.69 on 5 and 294 DF,  p-value: <span class="op">&lt;</span> 2.2e-16</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </div>
 </div>
 </section>
@@ -1397,9 +1521,9 @@ Mark Himmelstein
 <h2>Bayes Factor</h2>
 <p>As in one-way ANOVA, there closest direct corollary to omnibus tests of interactions and main effects in the Bayesian framework is to use Bayes factors.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-label="1"></a><span class="fu">library</span>(rstanarm)</span>
-<span id="cb17-2"><a aria-label="2"></a><span class="fu">library</span>(bayestestR)</span>
-<span id="cb17-3"><a aria-label="3"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a aria-label="1"></a><span class="fu">library</span>(rstanarm)</span>
+<span id="cb18-2"><a aria-label="2"></a><span class="fu">library</span>(bayestestR)</span>
+<span id="cb18-3"><a aria-label="3"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="model-1" class="slide level2">
@@ -1409,8 +1533,8 @@ Mark Himmelstein
 </ul>
 <p><span class="math display">\[y = \beta_0 + \beta_1 z + \beta_2 x_1 + \beta_3 x_2 + \beta_4 z x_1 + \beta_5 z x_2 + \epsilon\]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a aria-label="1"></a>stan_lm1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(rating <span class="sc">~</span> hill <span class="sc">*</span> method, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
-<span id="cb18-2"><a aria-label="2"></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df1.csv"</span>, <span class="at">seed =</span> <span class="dv">15421</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-label="1"></a>stan_lm1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(rating <span class="sc">~</span> hill <span class="sc">*</span> method, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb19-2"><a aria-label="2"></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df1.csv"</span>, <span class="at">seed =</span> <span class="dv">15421</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="model-2" class="slide level2">
@@ -1420,23 +1544,23 @@ Mark Himmelstein
 </ul>
 <p><span class="math display">\[y = \beta_0 + \beta_1 z + \beta_2 x_1 + \beta_3 x_2 + \epsilon\]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-label="1"></a>stan_lm2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(rating <span class="sc">~</span> hill <span class="sc">+</span> method, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
-<span id="cb19-2"><a aria-label="2"></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df2.csv"</span>, <span class="at">seed =</span> <span class="dv">32105</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a aria-label="1"></a>stan_lm2 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(rating <span class="sc">~</span> hill <span class="sc">+</span> method, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb20-2"><a aria-label="2"></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df2.csv"</span>, <span class="at">seed =</span> <span class="dv">32105</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="calculate-bayes-factor" class="slide level2">
 <h2>Calculate Bayes Factor</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a aria-label="1"></a><span class="fu">set.seed</span>(<span class="dv">51021</span>)</span>
-<span id="cb20-2"><a aria-label="2"></a>(bfs1 <span class="ot">&lt;-</span> <span class="fu">bayesfactor_models</span>(stan_lm2, stan_lm1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-label="1"></a><span class="fu">set.seed</span>(<span class="dv">51021</span>)</span>
+<span id="cb21-2"><a aria-label="2"></a>(bfs1 <span class="ot">&lt;-</span> <span class="fu">bayesfactor_models</span>(stan_lm2, stan_lm1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a aria-label="1"></a><span class="ex">Bayes</span> Factors for Model Comparison</span>
-<span id="cb21-2"><a aria-label="2"></a></span>
-<span id="cb21-3"><a aria-label="3"></a>    <span class="ex">Model</span>           BF</span>
-<span id="cb21-4"><a aria-label="4"></a><span class="ex">[2]</span> hill <span class="pp">*</span> method 5.34</span>
-<span id="cb21-5"><a aria-label="5"></a></span>
-<span id="cb21-6"><a aria-label="6"></a><span class="ex">*</span> Against Denominator: <span class="pp">[</span><span class="ss">1</span><span class="pp">]</span> hill + method</span>
-<span id="cb21-7"><a aria-label="7"></a><span class="ex">*</span>   Bayes Factor Type: marginal likelihoods <span class="er">(</span><span class="ex">bridgesampling</span><span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a aria-label="1"></a><span class="ex">Bayes</span> Factors for Model Comparison</span>
+<span id="cb22-2"><a aria-label="2"></a></span>
+<span id="cb22-3"><a aria-label="3"></a>    <span class="ex">Model</span>           BF</span>
+<span id="cb22-4"><a aria-label="4"></a><span class="ex">[2]</span> hill <span class="pp">*</span> method 5.34</span>
+<span id="cb22-5"><a aria-label="5"></a></span>
+<span id="cb22-6"><a aria-label="6"></a><span class="ex">*</span> Against Denominator: <span class="pp">[</span><span class="ss">1</span><span class="pp">]</span> hill + method</span>
+<span id="cb22-7"><a aria-label="7"></a><span class="ex">*</span>   Bayes Factor Type: marginal likelihoods <span class="er">(</span><span class="ex">bridgesampling</span><span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
