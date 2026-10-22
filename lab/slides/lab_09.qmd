@@ -148,7 +148,7 @@ To obtain the EMMs for some linear model:
 ::: {.callout-note style="font-size:85%"}
 ### `emmeans` and pipes `|>`
 
-While we often want to use pipes in our `R` code, and e.g., might want to plot the EMMs from `emmeans`, the developers explicity recommend to always manually check the output of the `emmeans` function! They provide annotations and context that we will lose if we immediately pipe it into something else (e.g., `emmeans(model, specs) |> as_tibble()`)
+While we often want to use pipes in our `R` code, and e.g., might want to plot the EMMs from `emmeans`, the developers explicitly recommend to always **manually check** the output of the `emmeans` function! They provide annotations and context that we will lose if we immediately pipe it into something else (e.g., `emmeans(model, specs) |> as_tibble()`)
 :::
 
 
@@ -248,7 +248,7 @@ emms_flipper_df |>
 ```
 
 ::: {.fragment fragment-index=2}
-If plotting points, we always want to include our uncertainty.
+If plotting point estimates, we always want to include our uncertainty.
 :::
 :::
 
@@ -471,7 +471,7 @@ pairs(emms_flipper, adjust = "holm")
 
 ```{r}
 summary(flipper_model)
-eff_size(emms_flipper, method = "pairwise", edf = 339, sigma = 44)
+eff_size(emms_flipper, method = "pairwise", edf = 339, sigma = sqrt(44))
 ```
 
 ::: fragment
@@ -511,7 +511,7 @@ df_e <- flipper_model_tidy |>
   filter(term == "Residuals") |>
   pull(df)
 
-eff_size(emms_flipper, method = "pairwise", edf = df_e, sigma = ms_w)
+eff_size(emms_flipper, method = "pairwise", edf = df_e, sigma = sqrt(ms_w))
 ```
 :::
 
@@ -558,6 +558,8 @@ The `gt` package can make excellent tables!
 emms_flipper |>
   as_tibble() |>
   gt() |>
+  tab_header(title = "Estimated Marginal Means of Flipper Length",
+             subtitle = "by Penguin Species") |>
   fmt_number() |> # takes everything to two decimal places
   fmt_number(columns = df, decimals = 0) |> # takes df specifically to 0 decimal places
   cols_label_with(columns = species, fn = str_to_title) |> # title case species column
@@ -1012,6 +1014,7 @@ contrast(emms_year, method = "poly")
 ::: footer
 From Mark's [Lecture 12: The Model Based Perspective, Slide 44](https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/12%20Models/Lecture%2012%20The%20Model%20Based%20Perspective.html#/overfit-visualized) accessed on 2026-10-17
 :::
+
 
 ## Lab 09 Assignment
 
