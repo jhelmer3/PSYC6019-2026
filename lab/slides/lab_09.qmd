@@ -24,7 +24,11 @@ knitr:
 
 - `emmeans` with One-Way ANOVA
 
-- `emmeans` with Two-Way ANOVA
+- Pairwise comparisons
+
+- Contrasts
+
+<!-- - `emmeans` with Two-Way ANOVA -->
 
 ```{r setup}
 #| echo: false
@@ -55,7 +59,7 @@ Useful to report with your ANOVA results to actually see the differences between
 
 Remember those interpretations of slope parameters?
 
-:::: {.columns style="font-size:90%"}
+:::: {.columns style="font-size:59%"}
 ::: {.column width="66%"}
 Dummy coding compares $g-1$ groups to $\beta_0 =$ **reference group mean**:
 
@@ -76,7 +80,7 @@ Dummy coding compares $g-1$ groups to $\beta_0 =$ **reference group mean**:
 :::
 ::::
 
-:::: {.columns style="font-size:90%"}
+:::: {.columns style="font-size:59%"}
 ::: {.column width="66%"}
 Effects or contrast coding compares $g-1$ groups to $\beta_0 =$ **grand mean**:
 
@@ -432,69 +436,6 @@ emms_flipper_df |>
 ::::
 
 
-## Plotting One-Way `emmeans`
-
-:::: {.columns}
-::: {.column width="50%"}
-Or add in the original data too...
-:::
-
-::: {.column width="50%"}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 4
-#| fig-height: 3
-#| fig-align: center
-emms_flipper_df |>
-  ggplot(aes(x = species, y = emmean, ymin = lower.CL, ymax = upper.CL,
-             color = species)) +
-  geom_violin(data = penguins_cleaned, 
-              aes(x = species, y = flipper_length_mm, fill = species),
-              alpha = 0.2, color = NA,
-              inherit.aes = F) +
-  geom_jitter(data = penguins_cleaned, 
-              aes(x = species, y = flipper_length_mm, color = species),
-              alpha = 0.15, shape = 21, size = 1.5,
-              inherit.aes = F) +
-  geom_errorbar(width = 0.1) +
-  geom_point() +
-  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
-  guides(x = guide_axis(NULL, cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic() +
-  theme(legend.position = "none")
-```
-
-### Code
-```{r}
-#| eval: false
-emms_flipper_df |>
-  ggplot(aes(x = species, y = emmean, ymin = lower.CL, ymax = upper.CL,
-             color = species)) +
-  geom_violin(data = penguins_cleaned, 
-              aes(x = species, y = flipper_length_mm, fill = species),
-              alpha = 0.2, color = NA,
-              inherit.aes = F) +
-  geom_jitter(data = penguins_cleaned, 
-              aes(x = species, y = flipper_length_mm, color = species),
-              alpha = 0.15, shape = 21, size = 1.5,
-              inherit.aes = F) +
-  geom_errorbar(width = 0.1) +
-  geom_point() +
-  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
-  guides(x = guide_axis(NULL, cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic() +
-  theme(legend.position = "none")
-```
-:::
-
-:::
-::::
-
-
 ## Pairwise Comparisons
 
 `pairs(emmeans_object, adjust = "tukey")`
@@ -524,6 +465,137 @@ pairs(emms_flipper, adjust = "holm")
 ```
 :::
 ::::
+
+
+## Effect Size
+
+```{r}
+summary(flipper_model)
+eff_size(emms_flipper, method = "pairwise", edf = 339, sigma = 44)
+```
+
+::: fragment
+Here, `edf` and `sigma` are *hardcoded*: we manually inputted those numbers, and they won't update if we adjust something upstream.
+:::
+
+
+## Avoid Hardcoding! Boo!
+
+:::: {.columns}
+::: {.column width="50%"}
+![](../media/lab_09/anti-hardcoding_1.jpg)
+:::
+
+::: {.column width="50%"}
+![](../media/lab_09/anti-hardcoding_2.jpg)
+:::
+::::
+
+
+## Effect Size: Dynamically
+
+:::: {.columns}
+::: {.column width="15%"}
+
+:::
+
+::: {.column width="70%"}
+```{r}
+flipper_model_tidy <- broom::tidy(flipper_model)
+flipper_model_tidy
+
+ms_w <- flipper_model_tidy |>
+  filter(term == "Residuals") |>
+  pull(meansq)
+df_e <- flipper_model_tidy |>
+  filter(term == "Residuals") |>
+  pull(df)
+
+eff_size(emms_flipper, method = "pairwise", edf = df_e, sigma = ms_w)
+```
+:::
+
+::: {.column width="15%"}
+
+:::
+::::
+
+
+![](../media/lab_09/less-remembering.png){.absolute top="15%" right="18%" width="250px" style="transform: rotate(5deg);" .fragment fragment-index=1}
+
+![](../media/lab_09/rounding-errors.png){.absolute bottom="35%" left="0%" width="250px" style="transform: rotate(-14deg);" .fragment fragment-index=1}
+
+![](../media/lab_09/up-to-date.png){.absolute bottom="18%" right="5%" width="250px" style="transform: rotate(17deg);" .fragment fragment-index=1}
+
+
+## Nice Tables
+
+The `gt` package can make excellent tables!
+
+```{r}
+library(gt)
+emms_flipper |>
+  as_tibble() |>
+  gt()
+```
+
+::: footer
+Check out the [`gt` documentation](https://gt.rstudio.com/index.html) for more information!
+:::
+
+
+## Nice Tables
+
+The `gt` package can make excellent tables!
+
+::: {.panel-tabset}
+### Table
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms_flipper |>
+  as_tibble() |>
+  gt() |>
+  fmt_number() |> # takes everything to two decimal places
+  fmt_number(columns = df, decimals = 0) |> # takes df specifically to 0 decimal places
+  cols_label_with(columns = species, fn = str_to_title) |> # title case species column
+  cols_label(
+    emmean ~ "EMM", # relabel other columns
+    SE ~ "SE", # specify names with their name from the dataframe columns
+    df = "DF",
+    lower.CL = "CI 2.5%",
+    upper.CL = "CI 97.5%"
+  ) |>
+  tab_style(style = cell_text(weight = "bold"), # make the column headers bold
+            locations = cells_column_labels())
+```
+
+### Code
+```{r}
+#| eval: false
+emms_flipper |>
+  as_tibble() |>
+  gt() |>
+  fmt_number() |> # takes everything to two decimal places
+  fmt_number(columns = df, decimals = 0) |> # takes df specifically to 0 decimal places
+  cols_label_with(columns = species, fn = str_to_title) |> # title case species column
+  cols_label(
+    emmean ~ "EMM", # relabel other columns
+    SE ~ "SE", # specify names with their name from the dataframe columns
+    df = "DF",
+    lower.CL = "CI 2.5%",
+    upper.CL = "CI 97.5%"
+  ) |>
+  tab_style(style = cell_text(weight = "bold"), # make the column headers bold
+            locations = cells_column_labels())
+```
+:::
+
+::: footer
+Check out the [`gt` documentation](https://gt.rstudio.com/index.html) for more information!
+:::
 
 
 ## Contrasts
@@ -646,6 +718,7 @@ $H_A: \psi_1 \neq 0$
 
 ```{r}
 emms_flipper
+levels(penguins_cleaned$species) # what order are they in?
 contrast(
   emms_flipper, 
   method = list(gentoo_vs_others = c(-1/2, -1/2, 1))
@@ -771,6 +844,8 @@ contrast(
   method = list(gentoo_vs_others = c(-1, 0, 1))
 )
 ```
+
+
 
 
 ## Polynomial Contrasts
