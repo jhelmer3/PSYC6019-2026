@@ -36,52 +36,65 @@ library(gt)
 
 
 
-# One-Way ANOVA `emmeans`
+<!-- # One-Way ANOVA `emmeans` -->
 
-Topics: Simple main effects, perhaps of year by species. Interaction contrasts. Type I, Type II, Type III sums of squares. Risk of getting messed up with unbalanced data. Partial and full effect sizes for factorial ANOVA and their interpretations. Implementation in `lm()`, adding and removing components to test. 
-
-# Two-Way ANOVA `emmeans`
+<!-- Topics: Simple main effects, perhaps of year by species. Interaction contrasts. Type I, Type II, Type III sums of squares. Risk of getting messed up with unbalanced data. Partial and full effect sizes for factorial ANOVA and their interpretations. Implementation in `lm()`, adding and removing components to test.  -->
 
 
-## Two-Way ANOVA `emmeans`
+# Two-Way ANOVA
 
-[EMMs theoretically in context of two-way ANOVA]
+## Two-Way ANOVA
+
+Like One-Way ANOVA, but now we have more than one categorical variable of interest.
+
+::: subpoint
+○ Year $\times$ Department on student stress
+:::
+
+::: subpoint
+○ Treatment $\times$ gender on health outcome
+:::
+
+Need to be thinking about both *main effects* of each factor and their *interaction effects*.
 
 
 ## Two-Way ANOVA
 
-:::: {.columns}
-::: {.column width="60%"}
+If you have two factors ($A$ and $B$), and $A$ has levels $j = 1, \ ..., \ J$, and $B$ has levels $k = 1, \ ..., \ K$,
+
+$$y_{ijk} = \mu_\text{grand} + \alpha_j + \beta_k + (\alpha \beta)_{jk} + \epsilon_{ijk}$$
+
+::: subpoint
+○ $\mu_\text{grand}$: overall grand mean
+
+○ $\alpha_j$: effect of $A$
+
+○ $\beta_k$: effect of $B$
+
+○ $(\alpha \beta)_{jk}$: effect of unique interaction between $A_j$ and $B_k$, beyond what just $\alpha_j + \beta_k$ would predict
+:::
+
+Want to examine variance in $y_{ijk}$ that is accounted for by each of these terms.
+
+
+## Two-Way ANOVA Example
+
 So far we've looked at penguin species, but these penguin measurements were taken over multiple years.
 
 What if the year a penguin's measurement was taken is in some way linked to the penguin's flipper length?
-:::
-
-::: {.column width="40%"}
-<!-- Penguins in Palmer Archipelago -->
-
-<!-- Nesting islands from 2009 Palmer penguins research -->
-
-![](../media/lab_09/penguin-islands.png)
-:::
-::::
 
 ::: footer
 Photo accessed at [rpubs.com/mgsaavedraro/669873](https://rpubs.com/mgsaavedraro/669873) on 2026-10-15.
 :::
 
 
-## Two-Way ANOVA
+## Two-Way ANOVA in R
 
-Let's examine the effect of both penguin species and measurement year on penguin flipper length.
+Can use an asterisk `*` between terms to denote interactions in formula syntax.
 
-Design: Two-Way 3x3 ANOVA
+Swapping to a `+` would just estimate the main effects (no interactions).
 
-
-## Two-Way ANOVA
-
-:::: {.columns}
-::: {.column width="50%"}
+::: fragment
 ```{r}
 library(palmerpenguins)
 penguins_cleaned <- penguins |>
@@ -93,21 +106,473 @@ summary(flipper_model_twoway)
 ```
 :::
 
-::: {.column width="50%"}
-Let's get the estimated marginal means of penguin flipper length by species and year!
+:::: {.columns}
+::: {.column .fragment width="50%"}
+$SS_T = SS_B + SS_W$
+
+$SS_B = SS_A + SS_B + SS_{AB}$
+:::
+
+::: {.column .fragment width="50%"}
+
+::: callout-note
+### Note
+
+The $SS_B = SS_A + SS_B + SS_{AB}$ decomposition applies only in the case of **balanced sample sizes** within groups.
+:::
+
 :::
 ::::
 
 
-## One-Way ANOVA `emmeans`
+## Balanced Sample Sizes?
 
 ```{r}
-emms_flipper_twoway <- emmeans(flipper_model_twoway, specs = c("species", "year"))
-emms_flipper_twoway
+penguins_cleaned |>
+  count(species, year)
+
+penguins_cleaned |>
+  count(species, year) |>
+  pivot_wider(names_from = species, values_from = n) |>
+  gt(rowname_col = "year") |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = cells_column_labels())
 ```
 
 
-## Plotting One-Way ANOVA `emmeans`
+## Types of Sums of Squares
+
+![](https://learninghub.primer-e.com/uploads/images/gallery/2022-08/fig1-41.png)
+
+::: footer
+[Sums of Squares diagram](https://learninghub.primer-e.com/uploads/images/gallery/2022-08/fig1-41.png) accessed 2026-10-22.
+:::
+
+
+## Types of Sums of Squares
+
+:::: {.columns}
+::: {.column width="33%"}
+### Type I
+
+Ordered. Use only if you have a theoretical reason (this is rare!)
+
+::: fragment
+`aov()`'s default (uh oh)
+:::
+:::
+
+::: {.column width="33%"}
+### Type II
+
+Assumes no confounding from interaction. Use only if you believe interaction is negligible.
+
+`ezANOVA()`'s default
+:::
+
+::: {.column width="33%"}
+### Type III
+
+Use if you think interaction is non-negligible.
+:::
+::::
+
+
+## Types of Sums of Squares
+
+The capital 'A' `Anova()` function from the `car` package can help us swap between.
+
+But have to specify orthogonal (e.g., effect-coded) contrasts before fitting the 
+
+```{r}
+# install.packages("car")
+```
+
+
+## Types of Sums of Squares
+
+:::: {.columns}
+::: {.column width="33%"}
+### Type I
+
+```{r}
+summary(flipper_model_twoway)
+```
+
+:::
+
+::: {.column width="33%"}
+### Type II
+
+```{r}
+car::Anova(flipper_model_twoway, type = 2)
+```
+
+:::
+
+::: {.column width="33%"}
+### Type III
+
+```{r}
+car::Anova(flipper_model_twoway, type = 3)
+options(
+  contrasts = c(
+    unordered = "contr.sum",
+    ordered = "contr.poly"
+  )
+)
+flipper_model_twoway_again <- aov(flipper_length_mm ~ species * year, data = penguins_cleaned)
+car::Anova(flipper_model_twoway_again, type = 3)
+```
+:::
+::::
+
+
+## Types of Sums of Squares
+
+The `ezANOVA()` function from the `ez` package has different syntax, but will handle remembering unbalanced sample sizes (and remembering the effect coding) for us.
+
+```{r}
+# install.packages("ez")
+```
+
+We will need an ID column for the penguins:
+
+```{r}
+penguins_cleaned <- penguins |>
+  filter_out(when_any(is.na(year), is.na(flipper_length_mm), is.na(species))) |>
+  mutate(year = factor(year),
+         id = row_number())
+```
+
+
+
+## Types of Sums of Squares
+
+:::: {.columns}
+::: {.column width="33%"}
+### Type I
+
+```{r}
+ez::ezANOVA(penguins_cleaned,
+            dv = flipper_length_mm,
+            wid = id,
+            between = c(species, year),
+            type = 1)$ANOVA
+```
+
+:::
+
+::: {.column width="33%"}
+## Type II
+
+```{r}
+ez::ezANOVA(penguins_cleaned,
+            dv = flipper_length_mm,
+            wid = id,
+            between = c(species, year))$ANOVA
+```
+
+:::
+
+::: {.column width="33%"}
+## Type III
+
+```{r}
+ez::ezANOVA(penguins_cleaned,
+            dv = flipper_length_mm,
+            wid = id,
+            between = c(species, year),
+            type = 3)$ANOVA
+```
+:::
+::::
+
+
+## Assumption Checking
+
+Looking for normally distributed outcome in each group combination and homogeneity of variance across groups.
+
+```{r}
+penguins_cleaned |>
+  ggplot(aes(x = year, fill = species, y = flipper_length_mm, color = species)) +
+  geom_violin(alpha = 0.2) +
+  geom_jitter(position = position_jitterdodge(dodge.width = 0.9), alpha = .4) +
+  theme_minimal()
+```
+
+## Effect Sizes: Partial $\eta^2$
+
+With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by **ignoring other factors** or as a proportion of the total variance.
+
+:::: {.columns}
+::: {.column .fragment width="33%"}
+partial $\eta^2$ for species
+
+$\frac{SS_\text{species}}{SS_\text{species} + SS_W}$
+:::
+
+::: {.column .fragment width="33%"}
+partial $\eta^2$ for year
+
+$\frac{SS_\text{year}}{SS_\text{year} + SS_W}$
+:::
+
+::: {.column .fragment width="33%"}
+partial $\eta^2$ for species $\times$ year
+
+$\frac{SS_{\text{year} \times \text{species}}}{SS_{\text{year} \times \text{species}} + SS_W}$
+:::
+::::
+
+::: fragment
+```{r}
+effectsize::eta_squared(flipper_model_twoway, partial = T) # partial = T is default
+```
+:::
+
+
+## Effect Sizes: "Full" $\eta^2$
+
+With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by ignoring other factors or as a **proportion of the total variance**.
+
+:::: {.columns}
+::: {.column .fragment width="33%"}
+partial $\eta^2$ for species
+
+$\frac{SS_\text{species}}{SS_T}$
+:::
+
+::: {.column .fragment width="33%"}
+partial $\eta^2$ for year
+
+$\frac{SS_\text{year}}{SS_T}$
+:::
+
+::: {.column .fragment width="33%"}
+partial $\eta^2$ for species $\times$ year
+
+$\frac{SS_{\text{year} \times \text{species}}}{SS_T}$
+:::
+::::
+
+::: fragment
+```{r}
+effectsize::eta_squared(flipper_model_twoway, partial = F) # partial = T is default
+```
+:::
+
+
+## Effect Sizes: Partial $\omega^2$
+
+With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by **ignoring other factors** or as a proportion of the total variance.
+
+:::: {.columns}
+::: {.column .fragment width="33%"}
+partial $\omega^2$ for species
+
+$\frac{\mathrm{df}_\text{species} (\mathrm{MS}_\text{species} - \mathrm{MS}_\text{W}) }{SS_\text{species} + (N - \mathrm{df}_\text{species})MS_W}$
+:::
+
+::: {.column .fragment width="33%"}
+partial $\omega^2$ for year
+
+$\frac{\mathrm{df}_\text{year} (\mathrm{MS}_\text{year} - \mathrm{MS}_\text{W}) }{SS_\text{year} + (N - \mathrm{df}_\text{year})MS_W}$
+:::
+
+::: {.column .fragment width="33%"}
+partial $\omega^2$ for species $\times$ year
+
+$\frac{\mathrm{df}_{\text{year} \times \text{species}} (\mathrm{MS}_{\text{year} \times \text{species}} - \mathrm{MS}_\text{W}) }{SS_{\text{year} \times \text{species}} + (N - \mathrm{df}_{\text{year} \times \text{species}})MS_W}$
+
+$\frac{\mathrm{df}_{\text{year} \times \text{species}} (\mathrm{MS}_{\text{year} \times \text{species}} - \mathrm{MS}_\text{W}) }{SS_T + MS_W}$
+:::
+::::
+
+::: fragment
+```{r}
+effectsize::omega_squared(flipper_model_twoway, partial = T) # partial = T is default
+```
+:::
+
+
+## Effect Sizes: "Full" $\omega^2$
+
+With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by **ignoring other factors** or as a proportion of the total variance.
+
+:::: {.columns}
+::: {.column .fragment width="33%"}
+$\omega^2$ for species
+
+$\frac{\mathrm{df}_\text{species} (\mathrm{MS}_\text{species} - \mathrm{MS}_\text{W}) }{SS_T + MS_W}$
+:::
+
+::: {.column .fragment width="33%"}
+$\omega^2$ for year
+
+$\frac{\mathrm{df}_\text{year} (\mathrm{MS}_\text{year} - \mathrm{MS}_\text{W}) }{SS_T + MS_W}$
+:::
+
+::: {.column .fragment width="33%"}
+$\omega^2$ for species $\times$ year
+
+$\frac{\mathrm{df}_{\text{year} \times \text{species}} (\mathrm{MS}_{\text{year} \times \text{species}} - \mathrm{MS}_\text{W}) }{SS_T + MS_W}$
+:::
+::::
+
+::: fragment
+```{r}
+effectsize::omega_squared(flipper_model_twoway, partial = F) # partial = T is default
+```
+:::
+
+
+## Comparison
+
+:::: {.columns}
+::: {.column width="50%"}
+partial $\eta^2$
+
+```{r}
+effectsize::eta_squared(flipper_model_twoway)
+```
+:::
+
+::: {.column width="50%"}
+partial $\omega^2$
+
+```{r}
+effectsize::omega_squared(flipper_model_twoway)
+```
+:::
+::::
+
+:::: {.columns}
+::: {.column width="50%"}
+$\eta^2$
+
+```{r}
+effectsize::eta_squared(flipper_model_twoway, partial = F)
+```
+:::
+
+::: {.column width="50%"}
+$\omega^2$
+
+```{r}
+effectsize::omega_squared(flipper_model_twoway, partial = F)
+```
+:::
+::::
+
+
+## Two-Way ANOVA as a Linear Model
+
+```{r}
+flipper_model_twoway_lm <- lm(flipper_length_mm ~ species * year, data = penguins_cleaned)
+summary(flipper_model_twoway_lm)
+```
+
+
+## Bayesian Two-Way ANOVA
+
+```{r}
+#| eval: false
+library(rstanarm)
+flipper_model_twoway_bayes <- stan_glm(
+  flipper_length_mm ~ species * year, 
+  data = penguins_cleaned, 
+  family = "gaussian"
+) 
+summary(flipper_model_twoway_bayes)
+```
+
+```{r}
+#| echo: false
+library(rstanarm)
+flipper_model_twoway_bayes <- stan_glm(
+  flipper_length_mm ~ species * year, 
+  data = penguins_cleaned, 
+  family = "gaussian",
+  refresh = 0
+) 
+summary(flipper_model_twoway_bayes)
+```
+
+
+## Testing Effects with Bayes Factors
+
+[add testing by removing effects and comparing bayes factors]
+
+
+## Simple Main Effects
+
+How do we examine effects within these multiple factors?
+
+We can investigate the differences in outcome between levels of $A$ within a single level of $B$ at a time.
+
+::: subpoint
+○ Within the year of 2007, what were the differences between Adelie, Gentoo, and Chinstrap penguins?
+
+○ What about within the year of 2008?
+:::
+
+Can also flip (depending on how you'd like to interpret the results)
+
+::: subpoint
+○ For Adelie penguins only, what was the effect of year on flipper length?
+
+○ What about for Gentoo penguins?
+:::
+
+Can examine this by running a separate One-Way ANOVA within each level.
+
+
+## Simple Main Effects with `emmeans`
+
+```{r}
+emms_flipper_twoway <- emmeans::emmeans(flipper_model_twoway, specs = c("species", "year"))
+emms_flipper_twoway
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+smes_by_species <- emmeans::joint_tests(emms_flipper_twoway, by = "species")
+smes_by_species
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+smes_by_year <- emmeans::joint_tests(emms_flipper_twoway, by = "year")
+smes_by_year
+```
+:::
+::::
+
+## Simple Main Effects with `emmeans`
+
+Can then look at pairwise comparisons within each of those One-Way ANOVAs.
+
+```{r}
+pairs(emms_flipper_twoway, by = "species") # default: adjust = "tukey"
+```
+
+
+## Main Effects
+
+Given that our interaction wasn't significant, we can also look at main effects.
+
+```{r}
+emms_species <- emmeans::emmeans(flipper_model_twoway, specs = "species")
+emms_year <- emmeans::emmeans(flipper_model_twoway, specs = "year")
+
+emms_species; emms_year
+```
+
+
+## Plotting Two-Way ANOVA `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -137,7 +602,7 @@ plot(emms_flipper_twoway)
 ::::
 
 
-## Plotting One-Way ANOVA `emmeans`
+## Plotting Two-Way ANOVA `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -179,7 +644,7 @@ emms_flipper_twoway_df |>
 ::::
 
 
-## Plotting One-Way ANOVA `emmeans`
+## Plotting Two-Way ANOVA `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -215,7 +680,7 @@ emms_flipper_twoway_df |>
 ::::
 
 
-## Plotting One-Way ANOVA `emmeans`
+## Plotting Two-Way ANOVA `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -263,61 +728,57 @@ emms_flipper_twoway_df |>
 ::::
 
 
-## Plotting One-Way ANOVA `emmeans`
+<!-- ## Plotting Two-Way ANOVA `emmeans` -->
 
-:::: {.columns}
-::: {.column width="50%"}
-Can add lines between points to look for interactions.
-:::
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- Can add lines between points to look for interactions. -->
+<!-- ::: -->
 
-::: {.column .fragment fragment-index=1 width="50%"}
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-emms_flipper_twoway_df |>
-  ggplot(aes(x = species, y = emmean, color = year,
-             group = year,
-             ymin = lower.CL, ymax = upper.CL)) +
-  geom_point(position = position_dodge(0.3)) +
-  geom_line(position = position_dodge(0.3)) +
-  geom_errorbar(width = 0.1, position = position_dodge(0.3)) +
-  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
-  guides(x = guide_axis(NULL, cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic() +
-  theme(legend.position = "none")
-```
+<!-- ::: {.column .fragment fragment-index=1 width="50%"} -->
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 5 -->
+<!-- #| fig-height: 4 -->
+<!-- #| fig-align: center -->
+<!-- emms_flipper_twoway_df |> -->
+<!--   ggplot(aes(x = species, y = emmean, color = year, -->
+<!--              group = year, -->
+<!--              ymin = lower.CL, ymax = upper.CL)) + -->
+<!--   geom_point(position = position_dodge(0.3)) + -->
+<!--   geom_line(position = position_dodge(0.3)) + -->
+<!--   geom_errorbar(width = 0.1, position = position_dodge(0.3)) + -->
+<!--   scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) + -->
+<!--   guides(x = guide_axis(NULL, cap = T), -->
+<!--          y = guide_axis(cap = T)) + -->
+<!--   theme_classic() + -->
+<!--   theme(legend.position = "none") -->
+<!-- ``` -->
 
-### Code
-```{r}
-#| eval: false
-emms_flipper_twoway_df |>
-  ggplot(aes(x = species, y = emmean, color = year,
-             group = year,
-             ymin = lower.CL, ymax = upper.CL)) +
-  geom_point(position = position_dodge(0.3)) +
-  geom_line(position = position_dodge(0.3)) +
-  geom_errorbar(width = 0.1, position = position_dodge(0.3)) +
-  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
-  guides(x = guide_axis(NULL, cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic() +
-  theme(legend.position = "none")
-```
-:::
-:::
-::::
-
-
-## Pairwise Comparisons With `emmeans`
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- emms_flipper_twoway_df |> -->
+<!--   ggplot(aes(x = species, y = emmean, color = year, -->
+<!--              group = year, -->
+<!--              ymin = lower.CL, ymax = upper.CL)) + -->
+<!--   geom_point(position = position_dodge(0.3)) + -->
+<!--   geom_line(position = position_dodge(0.3)) + -->
+<!--   geom_errorbar(width = 0.1, position = position_dodge(0.3)) + -->
+<!--   scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) + -->
+<!--   guides(x = guide_axis(NULL, cap = T), -->
+<!--          y = guide_axis(cap = T)) + -->
+<!--   theme_classic() + -->
+<!--   theme(legend.position = "none") -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- :::: -->
 
 
-```{r}
-pairs(emms_flipper_twoway) 
-```
+## Lab 10 Assignment
+
 
 

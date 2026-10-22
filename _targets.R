@@ -21,6 +21,15 @@ list(
   ## lab index page
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
+  ## lab 10
+  tar_target(lab_10_slides_qmd, 
+             "lab/slides/lab_10.qmd", 
+             format = "file"),
+  tar_target(lab_10_slides, {
+    quarto::quarto_render(lab_10_slides_qmd, quiet = F)
+    qmd_out(lab_10_slides_qmd)
+  }, format = "file"),
+  
   ## lab 09
   tar_target(lab_09_slides_qmd, 
              "lab/slides/lab_09.qmd", 
