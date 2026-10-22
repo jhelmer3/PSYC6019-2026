@@ -39,3 +39,285 @@ library(gt)
 # One-Way ANOVA `emmeans`
 
 Topics: Simple main effects, perhaps of year by species. Interaction contrasts. Type I, Type II, Type III sums of squares. Risk of getting messed up with unbalanced data. Partial and full effect sizes for factorial ANOVA and their interpretations. Implementation in `lm()`, adding and removing components to test. 
+
+# Two-Way ANOVA `emmeans`
+
+
+## Two-Way ANOVA `emmeans`
+
+[EMMs theoretically in context of two-way ANOVA]
+
+
+## Two-Way ANOVA
+
+:::: {.columns}
+::: {.column width="60%"}
+So far we've looked at penguin species, but these penguin measurements were taken over multiple years.
+
+What if the year a penguin's measurement was taken is in some way linked to the penguin's flipper length?
+:::
+
+::: {.column width="40%"}
+<!-- Penguins in Palmer Archipelago -->
+
+<!-- Nesting islands from 2009 Palmer penguins research -->
+
+![](../media/lab_09/penguin-islands.png)
+:::
+::::
+
+::: footer
+Photo accessed at [rpubs.com/mgsaavedraro/669873](https://rpubs.com/mgsaavedraro/669873) on 2026-10-15.
+:::
+
+
+## Two-Way ANOVA
+
+Let's examine the effect of both penguin species and measurement year on penguin flipper length.
+
+Design: Two-Way 3x3 ANOVA
+
+
+## Two-Way ANOVA
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+library(palmerpenguins)
+penguins_cleaned <- penguins |>
+  filter_out(when_any(is.na(year), is.na(flipper_length_mm), is.na(species))) |>
+  mutate(year = factor(year))
+
+flipper_model_twoway <- aov(flipper_length_mm ~ species * year, data = penguins_cleaned)
+summary(flipper_model_twoway)
+```
+:::
+
+::: {.column width="50%"}
+Let's get the estimated marginal means of penguin flipper length by species and year!
+:::
+::::
+
+
+## One-Way ANOVA `emmeans`
+
+```{r}
+emms_flipper_twoway <- emmeans(flipper_model_twoway, specs = c("species", "year"))
+emms_flipper_twoway
+```
+
+
+## Plotting One-Way ANOVA `emmeans`
+
+:::: {.columns}
+::: {.column width="50%"}
+Super quick plotting method with `plot()`
+
+Not so great with more than one factor...
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+plot(emms_flipper_twoway)
+```
+
+### Code
+```{r}
+#| eval: false
+plot(emms_flipper_twoway)
+```
+:::
+:::
+::::
+
+
+## Plotting One-Way ANOVA `emmeans`
+
+:::: {.columns}
+::: {.column width="50%"}
+Let's build our own. The color on our last plot was just to make it look nice, but this time, let's use color to represent the year.
+
+```{r}
+emms_flipper_twoway_df <- as_tibble(emms_flipper_twoway)
+emms_flipper_twoway_df |>
+  glimpse()
+```
+
+::: {.fragment fragment-index=2}
+Like last time, we always want to include our uncertainty.
+:::
+:::
+
+::: {.column .fragment fragment-index=1 width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms_flipper_twoway_df |>
+  ggplot(aes(x = species, y = emmean, color = year)) +
+  geom_point()
+```
+
+### Code
+```{r}
+#| eval: false
+emms_flipper_twoway_df |>
+  ggplot(aes(x = species, y = emmean, color = year)) +
+  geom_point()
+```
+:::
+:::
+::::
+
+
+## Plotting One-Way ANOVA `emmeans`
+
+:::: {.columns}
+::: {.column width="50%"}
+Let's build our own.
+:::
+
+::: {.column .fragment fragment-index=1 width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms_flipper_twoway_df |>
+  ggplot(aes(x = species, y = emmean, color = year,
+             ymin = lower.CL, ymax = upper.CL)) +
+  geom_point() +
+  geom_errorbar()
+```
+
+### Code
+```{r}
+#| eval: false
+emms_flipper_twoway_df |>
+  ggplot(aes(x = species, y = emmean, color = year,
+             ymin = lower.CL, ymax = upper.CL)) +
+  geom_point() +
+  geom_errorbar()
+```
+:::
+:::
+::::
+
+
+## Plotting One-Way ANOVA `emmeans`
+
+:::: {.columns}
+::: {.column width="50%"}
+Let's build our own.
+
+And tidy it up.
+:::
+
+::: {.column .fragment fragment-index=1 width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms_flipper_twoway_df |>
+  ggplot(aes(x = species, y = emmean, color = year,
+             ymin = lower.CL, ymax = upper.CL)) +
+  geom_point(position = position_dodge(0.3)) +
+  geom_errorbar(width = 0.1, position = position_dodge(0.3)) +
+  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+
+### Code
+```{r}
+#| eval: false
+emms_flipper_twoway_df |>
+  ggplot(aes(x = species, y = emmean, color = year,
+             ymin = lower.CL, ymax = upper.CL)) +
+  geom_point(position = position_dodge(0.3)) +
+  geom_errorbar(width = 0.1, position = position_dodge(0.3)) +
+  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+:::
+:::
+::::
+
+
+## Plotting One-Way ANOVA `emmeans`
+
+:::: {.columns}
+::: {.column width="50%"}
+Can add lines between points to look for interactions.
+:::
+
+::: {.column .fragment fragment-index=1 width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms_flipper_twoway_df |>
+  ggplot(aes(x = species, y = emmean, color = year,
+             group = year,
+             ymin = lower.CL, ymax = upper.CL)) +
+  geom_point(position = position_dodge(0.3)) +
+  geom_line(position = position_dodge(0.3)) +
+  geom_errorbar(width = 0.1, position = position_dodge(0.3)) +
+  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+
+### Code
+```{r}
+#| eval: false
+emms_flipper_twoway_df |>
+  ggplot(aes(x = species, y = emmean, color = year,
+             group = year,
+             ymin = lower.CL, ymax = upper.CL)) +
+  geom_point(position = position_dodge(0.3)) +
+  geom_line(position = position_dodge(0.3)) +
+  geom_errorbar(width = 0.1, position = position_dodge(0.3)) +
+  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+:::
+:::
+::::
+
+
+## Pairwise Comparisons With `emmeans`
+
+
+```{r}
+pairs(emms_flipper_twoway) 
+```
+
+
