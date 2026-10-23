@@ -1,0 +1,47 @@
+---
+title: "`{gt}` Demonstration"
+format: html
+---
+
+### Setup
+
+```{r}
+library(emmeans)
+library(gt)
+library(palmerpenguins)
+library(tidyverse)
+```
+
+
+## Data Cleaning
+
+First, we cleaned the data by removing any missing data points for our two variables of interest: penguin species (`species`) and penguin flipper length (`flipper_length_mm`).
+
+```{r}
+penguins_cleaned <- penguins |>
+  filter_out(when_any(is.na(flipper_length_mm), is.na(species)))
+```
+
+
+## Analysis
+
+Next, we fit a One-Way ANVOA model of the effect of species on penguin flipper length.
+
+```{r}
+flipper_model <- aov(flipper_length_mm ~ species, data = penguins_cleaned)
+
+summary(flipper_model)
+```
+
+
+## Results
+
+Beloe, we present the Estimated Marginal Means of penguin flipper length for each penguin species.
+
+```{r}
+emms_flipper <- emmeans(flipper_model, specs = "species")
+emms_flipper
+```
+
+
+

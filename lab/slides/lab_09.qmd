@@ -38,8 +38,14 @@ library(gt)
 ```
 
 
+## Lab 07 Follow-Up!
 
-# One-Way ANOVA `emmeans`
+![](../media/lab_09/lab-07-mistake.png)
+
+I could have clarified this better: here, $95\%$ refers to a shorthand of $pm 2 \ \text{SD}$ of the *prior distribution* for the intercept. I added a note for this on the slides as of 2026-10-23!
+
+
+# One-Way ANOVA Estimated Marginal Means
 
 
 ## Estimated Marginal Means
@@ -53,6 +59,108 @@ For a One-Way ANOVA, this is the same as just looking at the means of our groups
 :::
 
 Useful to report with your ANOVA results to actually see the differences between means.
+
+
+## Why Estimated Marginal Means
+
+These plots all have the same $F$ statistic from a One-Way ANOVA, but their implications are very different!
+
+```{r}
+#| echo: false
+set.seed(2026)
+n   <- 40
+z0  <- as.numeric(scale(rnorm(n)))
+zA  <- as.numeric(scale(rnorm(n)))
+zB  <- as.numeric(scale(rnorm(n)))
+
+b0       <- 5
+target_F <- 20
+k        <- 3
+
+make_F_plot <- function(pattern, title, target_F = 40) {
+  
+  # Rescale the pattern of (control, A, B) offsets so that F == target_F.
+  # With within-group SD = 1 (MSE = 1): F = n * SS_means / (k - 1)
+  ss_pat <- sum((pattern - mean(pattern))^2)
+  delta  <- sqrt(target_F * (k - 1) / n / ss_pat)
+  bA <- delta * (pattern[2] - pattern[1])
+  bB <- delta * (pattern[3] - pattern[1])
+  
+  grp <- c("control", "trtA", "trtB")
+  df <- tibble(
+    group = factor(rep(grp, each = n), levels = grp),
+    y     = c(b0 + z0, b0 + bA + zA, b0 + bB + zB)
+  )
+  
+  # Check F and get pairwise comparisons
+  fit  <- aov(y ~ group, data = df)
+  Fval <- summary(fit)[[1]][["F value"]][1]
+  tk   <- TukeyHSD(fit)$group[, "p adj"]
+  fmt  <- function(p) ifelse(p < 0.001, "p < .001", sprintf("p = %.3f", p))
+  sub  <- sprintf("A vs C: %s   |   B vs C: %s   |   B vs A: %s",
+                  fmt(tk["trtA-control"]), fmt(tk["trtB-control"]), fmt(tk["trtB-trtA"]))
+  
+  mA   <- b0 + bA
+  mB   <- b0 + bB
+  grey <- "grey25"
+  arr  <- arrow(length = unit(0.09, "inches"), type = "closed")
+  
+  bracket <- tibble(
+    x    = c(2.45, 3.45),
+    ymin = c(min(b0, mA), min(b0, mB)),
+    ymax = c(max(b0, mA), max(b0, mB))
+  )
+  
+  ggplot(df, aes(x = group, y = y, fill = group, color = group)) +
+    geom_violin(alpha = 0.3, color = NA, width = 0.7) +
+    geom_jitter(alpha = 0.6, shape = 16, size = 1.8, width = 0.1, height = 0) +
+    annotate("segment", x = 1, xend = 3.45, y = b0, yend = b0,
+             linetype = "dashed", color = grey, linewidth = 0.4) +
+    stat_summary(fun = mean, geom = "point", color = "black", size = 3) +
+    annotate("curve", x = 0.62, xend = 0.93, y = b0 + 1.8, yend = b0 + 0.2,
+             curvature = 0.35, arrow = arr, color = grey, linewidth = 0.5) +
+    annotate("text", x = 0.58, y = b0 + 2.2, label = "beta[0]",
+             parse = TRUE, color = grey, size = 4.5) +
+    geom_errorbar(data = bracket, aes(x = x, ymin = ymin, ymax = ymax),
+                  width = 0.08, color = grey, linewidth = 0.6,
+                  inherit.aes = FALSE) +
+    annotate("text", x = 2.52, y = (b0 + mA) / 2 + 0.35, label = "beta[A]",
+             parse = TRUE, hjust = 0, color = grey, size = 4.5) +
+    annotate("text", x = 3.52, y = (b0 + mB) / 2 + 0.35, label = "beta[B]",
+             parse = TRUE, hjust = 0, color = grey, size = 4.5) +
+    scale_x_discrete(NULL, labels = expression(
+      atop("Control", beta[0]),
+      atop("Treatment A", beta[0] + beta[A]),
+      atop("Treatment B", beta[0] + beta[B])
+    )) +
+    scale_y_continuous("Outcome", breaks = seq(2, 10, 2)) +
+    scale_fill_manual(values = c(control = "#7FA6C9", trtA = "#E8A07A", trtB = "#8FB8A8")) +
+    scale_color_manual(values = c(control = "#3F6E94", trtA = "#C2623A", trtB = "#5E8F7D")) +
+    coord_cartesian(xlim = c(0.45, 3.85), ylim = c(0.5, 10.5)) +
+    guides(x = guide_axis(cap = TRUE), y = guide_axis(cap = TRUE),
+           fill = "none", color = "none") +
+    labs(title = sprintf("%s\nF = %.0f", title, Fval)) +
+    theme_classic() +
+    theme(axis.line.x  = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.text.x  = element_text(size = 10, color = "black"),
+          plot.title    = element_text(hjust = 0.5, size = 11),
+          plot.subtitle = element_text(hjust = 0.5, size = 8.5, color = "grey30"))
+}
+```
+
+```{r}
+#| layout-ncol: 3
+#| fig-width: 3.5
+#| fig-height: 3
+#| echo: false
+#| fig-align: center
+p1 <- make_F_plot(c(0,  1,  1), "Both treatments high")
+p2 <- make_F_plot(c(0,  0,  1), "Only treatment B high")
+p3 <- make_F_plot(c(0,  1, -1), "Treatment A high, treatment B low")
+
+p1; p2; p3
+```
 
 
 ## Estimated Marginal Means
@@ -103,8 +211,7 @@ Compares groups to **grand mean**
 :::
 ::::
 
-The means calculated from the slope parameters are the Estimated Marginal Means (EMMs).
-
+The means calculated from the slope parameters are the Estimated Marginal Means (EMMs) as predicted by our model.
 
 ::: footer
 [Stolen from Mark's slides](https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/16%20One%20Way%20ANOVA/Lecture%2016%20One%20Way%20ANOVA_v0.html#/coding-options)
@@ -154,6 +261,7 @@ While we often want to use pipes in our `R` code, and e.g., might want to plot t
 
 ## One-Way ANOVA `emmeans`
 
+::: fragment
 ```{r}
 # install.packages("emmeans")
 library(emmeans)
@@ -161,6 +269,7 @@ library(emmeans)
 emms_flipper <- emmeans(flipper_model, specs = "species")
 emms_flipper
 ```
+:::
 
 
 ## Plotting One-Way `emmeans`
@@ -290,6 +399,8 @@ emms_flipper_df |>
 ::: subpoint-narrow
 ○ `width` = width of error bar, may want to shrink `width` below its default
 :::
+
+The correct interpretation of error bars can be ambiguous (one SE? Confidence interval?): add a note clarifying what they represent.
 :::
 
 ::: {.column width="50%"}
@@ -302,7 +413,8 @@ emms_flipper_df |>
 #| fig-align: center
 emms_flipper_df |>
   ggplot(aes(x = species, y = emmean, ymin = lower.CL, ymax = upper.CL)) +
-  geom_errorbar()
+  geom_errorbar() +
+  labs(caption = "Error bars represent 95% confidence intervals.")
 ```
 
 ### Code
@@ -310,7 +422,8 @@ emms_flipper_df |>
 #| eval: false
 emms_flipper_df |>
   ggplot(aes(x = species, y = emmean, ymin = lower.CL, ymax = upper.CL)) +
-  geom_errorbar()
+  geom_errorbar() +
+  labs(caption = "Error bars represent 95% confidence intervals.")
 ```
 :::
 
@@ -348,7 +461,8 @@ emms_flipper_df |>
   geom_point() +
   scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
   guides(x = guide_axis(NULL, cap = T),
-         y = guide_axis(cap = T)) +
+         y = guide_axis(cap = T))  +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
   theme_classic() +
   theme(legend.position = "none")
 ```
@@ -362,6 +476,7 @@ emms_flipper_df |>
   geom_errorbar(width = 0.1) +
   geom_point() +
   scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
   guides(x = guide_axis(NULL, cap = T),
          y = guide_axis(cap = T)) +
   theme_classic() +
@@ -378,6 +493,10 @@ emms_flipper_df |>
 :::: {.columns}
 ::: {.column width="50%"}
 Or add in the original data too...
+
+*Note*: setting `limits` in `scale_x_continuous()` (or `y`) will **remove data** that falls outside its bounds.
+
+Pay attention to the `warning` messages, and expand if needed. Setting bounds with `coord_cartesian(xlim, ylim)` will *not* remove data, but you could still zoom in too tight and lose it.
 :::
 
 ::: {.column width="50%"}
@@ -401,7 +520,8 @@ emms_flipper_df |>
               inherit.aes = F) +
   geom_errorbar(width = 0.1) +
   geom_point() +
-  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
+  scale_y_continuous("EMM of Flipper Length", limits = c(160, 240)) +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
   guides(x = guide_axis(NULL, cap = T),
          y = guide_axis(cap = T)) +
   theme_classic() +
@@ -424,7 +544,8 @@ emms_flipper_df |>
               inherit.aes = F) +
   geom_errorbar(width = 0.1) +
   geom_point() +
-  scale_y_continuous("EMM of Flipper Length", limits = c(180, 230)) +
+  scale_y_continuous("EMM of Flipper Length", limits = c(160, 240)) +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
   guides(x = guide_axis(NULL, cap = T),
          y = guide_axis(cap = T)) +
   theme_classic() +
@@ -436,12 +557,195 @@ emms_flipper_df |>
 ::::
 
 
+## Axis Limits Comparison
+
+::::: {.columns style="font-size:80%"}
+:::: {.column width="33%"}
+
+`scale_y_continuous(limits = c(180, 220))`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms_flipper_df |>
+  ggplot(aes(x = species, y = emmean, ymin = lower.CL, ymax = upper.CL,
+             color = species)) +
+  geom_violin(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, fill = species),
+              alpha = 0.2, color = NA,
+              inherit.aes = F) +
+  geom_jitter(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, color = species),
+              alpha = 0.15, shape = 21, size = 1.5,
+              inherit.aes = F) +
+  geom_errorbar(width = 0.1) +
+  geom_point() +
+  scale_y_continuous("EMM of Flipper Length", limits = c(180, 220)) +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+
+### Code
+```{r}
+#| eval: false
+emms_flipper_df |>
+  ggplot(aes(x = species, y = emmean, ymin = lower.CL, ymax = upper.CL,
+             color = species)) +
+  geom_violin(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, fill = species),
+              alpha = 0.2, color = NA,
+              inherit.aes = F) +
+  geom_jitter(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, color = species),
+              alpha = 0.15, shape = 21, size = 1.5,
+              inherit.aes = F) +
+  geom_errorbar(width = 0.1) +
+  geom_point() +
+  scale_y_continuous("EMM of Flipper Length", limits = c(180, 220)) +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+:::
+::::
+
+:::: {.column width="33%"}
+
+`coord_cartesian(ylim = c(180, 220))`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms_flipper_df |>
+  ggplot(aes(x = species, y = emmean, ymin = lower.CL, ymax = upper.CL,
+             color = species)) +
+  geom_violin(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, fill = species),
+              alpha = 0.2, color = NA,
+              inherit.aes = F) +
+  geom_jitter(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, color = species),
+              alpha = 0.15, shape = 21, size = 1.5,
+              inherit.aes = F) +
+  geom_errorbar(width = 0.1) +
+  geom_point() +
+  scale_y_continuous("EMM of Flipper Length") +
+  coord_cartesian(ylim = c(180, 220)) +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+
+### Code
+```{r}
+#| eval: false
+emms_flipper_df |>
+  ggplot(aes(x = species, y = emmean, ymin = lower.CL, ymax = upper.CL,
+             color = species)) +
+  geom_violin(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, fill = species),
+              alpha = 0.2, color = NA,
+              inherit.aes = F) +
+  geom_jitter(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, color = species),
+              alpha = 0.15, shape = 21, size = 1.5,
+              inherit.aes = F) +
+  geom_errorbar(width = 0.1) +
+  geom_point() +
+  scale_y_continuous("EMM of Flipper Length") +
+  coord_cartesian(ylim = c(180, 220)) +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+:::
+::::
+
+:::: {.column width="33%"}
+
+`coord_cartesian(ylim = c(180, 220), clip = "off)`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms_flipper_df |>
+  ggplot(aes(x = species, y = emmean, ymin = lower.CL, ymax = upper.CL,
+             color = species)) +
+  geom_violin(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, fill = species),
+              alpha = 0.2, color = NA,
+              inherit.aes = F) +
+  geom_jitter(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, color = species),
+              alpha = 0.15, shape = 21, size = 1.5,
+              inherit.aes = F) +
+  geom_errorbar(width = 0.1) +
+  geom_point() +
+  scale_y_continuous("EMM of Flipper Length") +
+  coord_cartesian(ylim = c(180, 220), clip = "off") +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+
+### Code
+```{r}
+#| eval: false
+emms_flipper_df |>
+  ggplot(aes(x = species, y = emmean, ymin = lower.CL, ymax = upper.CL,
+             color = species)) +
+  geom_violin(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, fill = species),
+              alpha = 0.2, color = NA,
+              inherit.aes = F) +
+  geom_jitter(data = penguins_cleaned, 
+              aes(x = species, y = flipper_length_mm, color = species),
+              alpha = 0.15, shape = 21, size = 1.5,
+              inherit.aes = F) +
+  geom_errorbar(width = 0.1) +
+  geom_point() +
+  scale_y_continuous("EMM of Flipper Length") +
+  coord_cartesian(ylim = c(180, 220), clip = "off") +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+:::
+::::
+:::::
+
+
 ## Pairwise Comparisons
 
 `pairs(emmeans_object, adjust = "tukey")`
 
 ::: subpoint-narrow
-○ Equivalent to `emmeans::contrast(emmeans_object, method = "pairwise)`
+○ Equivalent to `emmeans::contrast(emmeans_object, method = "pairwise")`
 :::
 
 ::: subpoint-narrow
@@ -469,10 +773,22 @@ pairs(emms_flipper, adjust = "holm")
 
 ## Effect Size
 
+`emmeans::eff_size(emmeans_result, edf, sigma)`
+
+::: subpoint
+○ `dfe =` the residual degrees of freedom from the model
+:::
+
+::: subpoint
+○ `sigma =` $\sqrt{MS_w}$ from the model
+:::
+
+::: fragment
 ```{r}
 summary(flipper_model)
 eff_size(emms_flipper, method = "pairwise", edf = 339, sigma = sqrt(44))
 ```
+:::
 
 ::: fragment
 Here, `edf` and `sigma` are *hardcoded*: we manually inputted those numbers, and they won't update if we adjust something upstream.
@@ -532,12 +848,14 @@ eff_size(emms_flipper, method = "pairwise", edf = df_e, sigma = sqrt(ms_w))
 
 The `gt` package can make excellent tables!
 
+::: fragment
 ```{r}
+# install.packages("gt")
 library(gt)
-emms_flipper |>
-  as_tibble() |>
+emms_flipper_df |>
   gt()
 ```
+:::
 
 ::: footer
 Check out the [`gt` documentation](https://gt.rstudio.com/index.html) for more information!
@@ -555,8 +873,7 @@ The `gt` package can make excellent tables!
 #| fig-width: 5
 #| fig-height: 4
 #| fig-align: center
-emms_flipper |>
-  as_tibble() |>
+emms_flipper_df |>
   gt() |>
   tab_header(title = "Estimated Marginal Means of Flipper Length",
              subtitle = "by Penguin Species") |>
@@ -577,8 +894,7 @@ emms_flipper |>
 ### Code
 ```{r}
 #| eval: false
-emms_flipper |>
-  as_tibble() |>
+emms_flipper_df |>
   gt() |>
   fmt_number() |> # takes everything to two decimal places
   fmt_number(columns = df, decimals = 0) |> # takes df specifically to 0 decimal places
@@ -595,8 +911,12 @@ emms_flipper |>
 ```
 :::
 
+::: fragment
+Tell a Quarto document not to do additional styling (e.g., gray stripes) to a `gt` table by adding to your YAML header `html-table-processing: none`.
+:::
+
 ::: footer
-Check out the [`gt` documentation](https://gt.rstudio.com/index.html) for more information!
+Check out the [`gt` documentation](https://gt.rstudio.com/index.html){target = "blank"} for more information!
 :::
 
 
@@ -721,11 +1041,12 @@ $H_A: \psi_1 \neq 0$
 ```{r}
 emms_flipper
 levels(penguins_cleaned$species) # what order are they in?
-contrast(
-  emms_flipper, 
-  method = list(gentoo_vs_others = c(-1/2, -1/2, 1))
-) 
+contrast(emms_flipper, method = list(gentoo_vs_others = c(-1/2, -1/2, 1))) 
 ```
+
+::: fragment
+There is a significant difference between Gentoo flipper length and the average of Adelie and Chinstrap flipper lengths.
+:::
 
 
 ## Setting up a Linear Contrast II
@@ -800,7 +1121,7 @@ Just comparing Gentoo and Adelie penguins.
 :::::::: {.notes-col}
 
 ::: {.note .n1 .fragment .fade-out data-fragment-index="1"}
-[We still have all the groups available to us, but this time we only want to compare Gentoo and Adelie]
+We still have all the groups available to us, but this time we only want to compare Gentoo and Adelie
 :::
 
 ::: {.note .n2 .fragment .fade-in-then-out data-fragment-index="1"}
@@ -841,13 +1162,8 @@ $H_A: \psi_2 \neq 0$
 
 ```{r}
 emms_flipper
-contrast(
-  emms_flipper,
-  method = list(gentoo_vs_others = c(-1, 0, 1))
-)
+contrast(emms_flipper, method = list(gentoo_vs_adelie = c(-1, 0, 1)))
 ```
-
-
 
 
 ## Polynomial Contrasts
@@ -979,7 +1295,8 @@ Adapted from [rcompanion's Orthogonal Polynomial Contrasts handout](https://rcom
 
 ## Polynomial Contrasts
 
-For example, we can examine the effect of year of measurement on flipper length.
+::: {style="font-size:90%"}
+For example, we can examine the effect of year of measurement on penguin body mass.
 
 We have three groups (year = 2007, 2008, 2009), with ordered, equal spaced intervals between groups, so we can fit a linear and quadratic contrast.
 
@@ -988,7 +1305,8 @@ We have three groups (year = 2007, 2008, 2009), with ordered, equal spaced inter
 ```{r}
 penguins_year_data <- penguins |>
   mutate(year = factor(year, ordered = T))
-year_model <- lm(body_mass_g ~ year, data = penguins_year_data)
+year_model <- lm(body_mass_g ~ year, 
+                 data = penguins_year_data)
 summary(year_model)
 ```
 :::
@@ -1001,6 +1319,132 @@ contrast(emms_year, method = "poly")
 ```
 :::
 ::::
+
+:::
+
+
+## Polynomial Contrasts
+
+We found no significant linear or quadratic effect of year on penguin body mass.
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms_year_df <- emms_year |>
+  as_tibble()
+
+P  <- contr.poly(3)
+m  <- emms_year_df$emmean
+gm <- mean(m)
+
+fits <- tibble(
+  year      = emms_year_df$year,
+  Linear    = gm + sum(P[, 1] * m) * P[, 1],
+  Quadratic = gm + sum(P[, 2] * m) * P[, 2]
+) |>
+  pivot_longer(-year, names_to = "poly", values_to = "fit")
+
+emms_year_df |>
+  ggplot(aes(x = year, y = emmean, ymin = lower.CL, ymax = upper.CL,
+             color = year)) +
+  geom_violin(data = penguins_year_data,
+              aes(x = year, y = body_mass_g, fill = year),
+              alpha = 0.2, color = NA,
+              inherit.aes = F) +
+  geom_jitter(data = penguins_year_data,
+              aes(x = year, y = body_mass_g, color = year),
+              alpha = 0.15, shape = 21, size = 1.5,
+              inherit.aes = F) +
+  
+  # Theoretical polynomial fits
+  geom_line(data = fits,
+            aes(x = year, y = fit, group = poly, linetype = poly),
+            color = "grey25", linewidth = 0.8,
+            inherit.aes = F) +
+  geom_point(data = fits,
+             aes(x = year, y = fit, shape = poly),
+             color = "grey25", fill = "white", size = 2.5,
+             inherit.aes = F) +
+  
+  # Observed EMMs
+  geom_errorbar(width = 0.1) +
+  geom_point() +
+  
+  scale_linetype_manual(NULL, values = c(Linear = "dashed", Quadratic = "dotted")) +
+  scale_shape_manual(NULL, values = c(Linear = 22, Quadratic = 24)) +
+  scale_x_discrete("Year") +
+  scale_y_continuous("EMM of Body Mass (g)") +
+  coord_cartesian(ylim = c(2500, 6500)) +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T),
+         color = "none", fill = "none") +
+  theme_classic() +
+  theme(legend.position = "bottom")
+```
+
+### Code
+```{r}
+#| eval: false
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+# I had Claude Sonnet 5.5 Low make this plot on 2026-10-23.
+
+P  <- contr.poly(3)
+m  <- emms_year_df$emmean
+gm <- mean(m)
+
+fits <- tibble(
+  year      = emms_year_df$year,
+  Linear    = gm + sum(P[, 1] * m) * P[, 1],
+  Quadratic = gm + sum(P[, 2] * m) * P[, 2]
+) |>
+  pivot_longer(-year, names_to = "poly", values_to = "fit")
+
+emms_year_df |>
+  ggplot(aes(x = year, y = emmean, ymin = lower.CL, ymax = upper.CL,
+             color = year)) +
+  geom_violin(data = penguins_year_data,
+              aes(x = year, y = body_mass_g, fill = year),
+              alpha = 0.2, color = NA,
+              inherit.aes = F) +
+  geom_jitter(data = penguins_year_data,
+              aes(x = year, y = body_mass_g, color = year),
+              alpha = 0.15, shape = 21, size = 1.5,
+              inherit.aes = F) +
+  
+  # Theoretical polynomial fits
+  geom_line(data = fits,
+            aes(x = year, y = fit, group = poly, linetype = poly),
+            color = "grey25", linewidth = 0.8,
+            inherit.aes = F) +
+  geom_point(data = fits,
+             aes(x = year, y = fit, shape = poly),
+             color = "grey25", fill = "white", size = 2.5,
+             inherit.aes = F) +
+  
+  # Observed EMMs
+  geom_errorbar(width = 0.1) +
+  geom_point() +
+  
+  scale_linetype_manual(NULL, values = c(Linear = "dashed", Quadratic = "dotted")) +
+  scale_shape_manual(NULL, values = c(Linear = 22, Quadratic = 24)) +
+  scale_x_discrete("Year") +
+  scale_y_continuous("EMM of Body Mass (g)") +
+  coord_cartesian(ylim = c(2500, 6500)) +
+  labs(caption = "Error bars represent 95% confidence intervals.") +
+  guides(x = guide_axis(NULL, cap = T),
+         y = guide_axis(cap = T),
+         color = "none", fill = "none") +
+  theme_classic() +
+  theme(legend.position = "bottom")
+```
+:::
 
 
 ## Polynomial Contrasts
