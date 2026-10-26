@@ -523,7 +523,7 @@ The **most important** difference between frequentist and Bayesian statistics is
 - However, very flexible
 - If you learn Bayesian software more in depth, requires much less computational expertise to start working with fancy/bespoke models
 - **Almost** any data generating process you can imagine can be turned into a model that you can estimate
-  - Main contraints are identifiability and tractaibility of posterior geometry
+  - Main constraints are identifiability and tractability of posterior geometry
 
 :::
 
@@ -716,3 +716,109 @@ $$\int P(\boldsymbol{\theta}|\boldsymbol{D})d\boldsymbol{\theta} = \int \frac{P(
 That's where MCMC comes in, it helps us solve the integral $\int P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})d\boldsymbol{\theta}$ via simulation when it can't be solved analytically
 
 :::
+
+
+## Bayes and Effect Size
+
+::: {style="font-size: .9em;"}
+
+Because Bayesian estimates aren't deterministic the way the simple frequentist ANOVA algorithm is, the traditional $R^2$ is not guaranteed to be $0 \leq R^2 \leq 1$
+
+- Means it is possible for the model to explain more than the total variance
+    - Not a sensible interpretation!
+    
+Alternative:
+
+$$\text{Bayesian } R^2 = \frac{s_{\hat{y}}^2}{s_{\hat{y}}^2 + s_{\epsilon}^2}$$
+
+
+- Is guaranteed to be $0 \leq \text{Bayesian } R^2 \leq 1$
+- Same interpretation as $\eta^2$ and $R^2$
+
+::: 
+
+## Bayesian $\eta^2$
+
+In factorial ANOVA, this corresponds to a **global** effect size for how much of the total variance is explainable by all factors
+
+To get an $\eta^2$ equivalent for **each** factor and the interaction separately, we can use `eta_squared_posterior()` from `effectsize`. Here is how to use it for the wine rating data (you can get either partial or full by specifying)
+
+```{r}
+dat <- read.csv("../../data/wine east west.csv")
+dat$condition <- factor(dat$condition, levels = c("control","a","b"))
+dat$method <- dat$condition
+dat$condition <- NULL
+library(rstanarm)
+options(mc.cores = parallel::detectCores())
+```
+
+```{r}
+#| echo: true
+#| cache: true
+
+stan_lm1 <- stan_glm(rating ~ hill * method, dat, family = "gaussian",
+                     diagnostic_file = "df1.csv", seed = 15421)
+
+library(effectsize)
+
+summary(eta_squared_posterior(stan_lm1, partial = TRUE))
+
+```
+
+## Bayesian $d$
+
+To get $d$ for pairwise comparisons (perhaps for simple main effects), you need to decide what SD to divide by. Options
+
+- Posterior mean of $\sigma$
+- Full posterior distribution of $\sigma$
+
+The former is simpler. All we do is take the posterior mean of `sigma` from the summary output and divided everything by that
+
+## Finding $\sigma$
+
+```{r}
+#| echo: true
+#| cache: true
+summary(stan_lm1)
+```
+
+
+## Simple Main Pairs
+
+```{r}
+#| echo: true
+#| cache: true
+library(emmeans)
+em1 <- emmeans(stan_lm1, ~ hill * method)
+
+pairs(em1, by = "method")
+```
+
+
+## $d$ for pairs
+
+To transform from the original units to $d$ ($Z$-score units), we just divide by $\sigma$
+
+posterior mean and 95% HPD between east - west for control
+
+```{r}
+#| echo: true
+#| cache: true
+round(c(3.585, 2.150, 5.020)/sigma(stan_lm1),3)
+```
+
+posterior mean and 95% HPD between east - west for a
+
+```{r}
+#| echo: true
+#| cache: true
+round(c(3.139, 1.72, 4.57)/sigma(stan_lm1),3)
+```
+
+posterior mean and 95% HPD between east - west for a
+
+```{r}
+#| echo: true
+#| cache: true
+round(c( -0.455, -1.90, 1.00)/sigma(stan_lm1),3)
+```
