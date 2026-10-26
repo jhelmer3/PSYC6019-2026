@@ -227,20 +227,21 @@ Jess Helmer
 </div>
 <p>Need to be thinking about both <em>main effects</em> of each factor and their <em>interaction effects</em>.</p>
 </section><section id="two-way-anova-2" class="slide level2"><h2>Two-Way ANOVA</h2>
-<p>If you have two factors (<span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>), and <span class="math inline">\(A\)</span> has levels <span class="math inline">\(j = 1, \ ..., \ J\)</span>, and <span class="math inline">\(B\)</span> has levels <span class="math inline">\(k = 1, \ ..., \ K\)</span>,</p>
+<p>If you have two factors (<span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>), where <span class="math inline">\(A\)</span> has levels <span class="math inline">\(j = 1, \ ..., \ J\)</span> and <span class="math inline">\(B\)</span> has levels <span class="math inline">\(k = 1, \ ..., \ K\)</span>,</p>
 <p><span class="math display">\[y_{ijk} = \mu_\text{grand} + \alpha_j + \beta_k + (\alpha \beta)_{jk} + \epsilon_{ijk}\]</span></p>
 <div class="subpoint">
 <p>○ <span class="math inline">\(\mu_\text{grand}\)</span>: overall grand mean</p>
 <p>○ <span class="math inline">\(\alpha_j\)</span>: effect of <span class="math inline">\(A\)</span></p>
 <p>○ <span class="math inline">\(\beta_k\)</span>: effect of <span class="math inline">\(B\)</span></p>
-<p>○ <span class="math inline">\((\alpha \beta)_{jk}\)</span>: effect of unique interaction between <span class="math inline">\(A_j\)</span> and <span class="math inline">\(B_k\)</span>, beyond what just <span class="math inline">\(\alpha_j + \beta_k\)</span> would predict</p>
+<p>○ <span class="math inline">\((\alpha \beta)_{jk}\)</span>: effect of unique interaction between <span class="math inline">\(A_j\)</span> and <span class="math inline">\(B_k\)</span>, beyond what just <span class="math inline">\(\alpha_j + \beta_k\)</span> would expect</p>
 </div>
 <p>Want to examine variance in <span class="math inline">\(y_{ijk}\)</span> that is accounted for by each of these terms.</p>
 </section><section id="two-way-anova-example" class="slide level2"><h2>Two-Way ANOVA Example</h2>
 <p>So far we’ve looked at penguin species, but these penguin measurements were taken over multiple years.</p>
 <p>What if the year a penguin’s measurement was taken is in some way linked to the penguin’s flipper length?</p>
-<div class="footer">
-<p>Photo accessed at <a href="https://rpubs.com/mgsaavedraro/669873">rpubs.com/mgsaavedraro/669873</a> on 2026-10-15.</p>
+
+<img data-src="https://media.licdn.com/dms/image/v2/D5622AQEqq9Fr07M2kQ/feedshare-shrink_800/B56ZU1Bx0NGoAo-/0/1740351437275?e=2147483647&amp;v=beta&amp;t=IbECSbsmRubxVsaq6Vx4zks_BKFq13V0S1Mvxs1mlaE.png" class="r-stretch"><div class="footer">
+<p><a href="https://media.licdn.com/dms/image/v2/D5622AQEqq9Fr07M2kQ/feedshare-shrink_800/B56ZU1Bx0NGoAo-/0/1740351437275?e=2147483647&amp;v=beta&amp;t=IbECSbsmRubxVsaq6Vx4zks_BKFq13V0S1Mvxs1mlaE">Penguins photo</a> accessed on 2026-10-22.</p>
 </div>
 </section><section id="two-way-anova-in-r" class="slide level2"><h2>Two-Way ANOVA in R</h2>
 <p>Can use an asterisk <code>*</code> between terms to denote interactions in formula syntax.</p>
@@ -267,9 +268,10 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div class="columns">
 <div class="column fragment" style="width:50%;">
-<p><span class="math inline">\(SS_T = SS_B + SS_W\)</span></p>
-<p><span class="math inline">\(SS_B = SS_A + SS_B + SS_{AB}\)</span></p>
+<p><span class="math inline">\(SS_T = SS_\text{between} + SS_W\)</span></p>
+<p><span class="math inline">\(SS_\text{between} = SS_\text{species} + SS_\text{year} + SS_{\text{species} \times \text{year}}\)</span></p>
 </div><div class="column fragment" style="width:50%;">
+<div style="font-size:80%">
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -283,8 +285,11 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 </div>
+</div>
 </div></div>
 </section><section id="balanced-sample-sizes" class="slide level2"><h2>Balanced Sample Sizes?</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_cleaned</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">count</span><span class="op">(</span><span class="va">species</span>, <span class="va">year</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -302,6 +307,9 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 8 Gentoo    2008     46
 9 Gentoo    2009     43</code></pre>
 </div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_cleaned</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">count</span><span class="op">(</span><span class="va">species</span>, <span class="va">year</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">species</span>, values_from <span class="op">=</span> <span class="va">n</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -309,23 +317,23 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span>  <span class="fu">tab_style</span><span class="op">(</span>style <span class="op">=</span> <span class="fu">cell_text</span><span class="op">(</span>weight <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>,</span>
 <span>            locations <span class="op">=</span> <span class="fu">cells_column_labels</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div id="eoqgxdrpmy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#eoqgxdrpmy table {
+<div id="qbwqimelyz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qbwqimelyz table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#eoqgxdrpmy thead, #eoqgxdrpmy tbody, #eoqgxdrpmy tfoot, #eoqgxdrpmy tr, #eoqgxdrpmy td, #eoqgxdrpmy th {
+#qbwqimelyz thead, #qbwqimelyz tbody, #qbwqimelyz tfoot, #qbwqimelyz tr, #qbwqimelyz td, #qbwqimelyz th {
   border-style: none;
 }
 
-#eoqgxdrpmy p {
+#qbwqimelyz p {
   margin: 0;
   padding: 0;
 }
 
-#eoqgxdrpmy .gt_table {
+#qbwqimelyz .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -351,12 +359,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#eoqgxdrpmy .gt_caption {
+#qbwqimelyz .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#eoqgxdrpmy .gt_title {
+#qbwqimelyz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -368,7 +376,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   border-bottom-width: 0;
 }
 
-#eoqgxdrpmy .gt_subtitle {
+#qbwqimelyz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -380,7 +388,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   border-top-width: 0;
 }
 
-#eoqgxdrpmy .gt_heading {
+#qbwqimelyz .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -392,13 +400,13 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#eoqgxdrpmy .gt_bottom_border {
+#qbwqimelyz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#eoqgxdrpmy .gt_col_headings {
+#qbwqimelyz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -413,7 +421,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#eoqgxdrpmy .gt_col_heading {
+#qbwqimelyz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -433,7 +441,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   overflow-x: hidden;
 }
 
-#eoqgxdrpmy .gt_column_spanner_outer {
+#qbwqimelyz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -445,15 +453,15 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   padding-right: 4px;
 }
 
-#eoqgxdrpmy .gt_column_spanner_outer:first-child {
+#qbwqimelyz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#eoqgxdrpmy .gt_column_spanner_outer:last-child {
+#qbwqimelyz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#eoqgxdrpmy .gt_column_spanner {
+#qbwqimelyz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -465,11 +473,11 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   width: 100%;
 }
 
-#eoqgxdrpmy .gt_spanner_row {
+#qbwqimelyz .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#eoqgxdrpmy .gt_group_heading {
+#qbwqimelyz .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -495,7 +503,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   text-align: left;
 }
 
-#eoqgxdrpmy .gt_empty_group_heading {
+#qbwqimelyz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -510,15 +518,15 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   vertical-align: middle;
 }
 
-#eoqgxdrpmy .gt_from_md > :first-child {
+#qbwqimelyz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#eoqgxdrpmy .gt_from_md > :last-child {
+#qbwqimelyz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#eoqgxdrpmy .gt_row {
+#qbwqimelyz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -537,7 +545,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   overflow-x: hidden;
 }
 
-#eoqgxdrpmy .gt_stub {
+#qbwqimelyz .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -550,7 +558,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   padding-right: 5px;
 }
 
-#eoqgxdrpmy .gt_stub_row_group {
+#qbwqimelyz .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -564,15 +572,15 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   vertical-align: top;
 }
 
-#eoqgxdrpmy .gt_row_group_first td {
+#qbwqimelyz .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#eoqgxdrpmy .gt_row_group_first th {
+#qbwqimelyz .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#eoqgxdrpmy .gt_summary_row {
+#qbwqimelyz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -582,16 +590,16 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   padding-right: 5px;
 }
 
-#eoqgxdrpmy .gt_first_summary_row {
+#qbwqimelyz .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#eoqgxdrpmy .gt_first_summary_row.thick {
+#qbwqimelyz .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#eoqgxdrpmy .gt_last_summary_row {
+#qbwqimelyz .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -601,7 +609,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#eoqgxdrpmy .gt_grand_summary_row {
+#qbwqimelyz .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -611,7 +619,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   padding-right: 5px;
 }
 
-#eoqgxdrpmy .gt_first_grand_summary_row {
+#qbwqimelyz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -621,7 +629,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#eoqgxdrpmy .gt_last_grand_summary_row_top {
+#qbwqimelyz .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -631,11 +639,11 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#eoqgxdrpmy .gt_striped {
+#qbwqimelyz .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#eoqgxdrpmy .gt_table_body {
+#qbwqimelyz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -644,7 +652,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#eoqgxdrpmy .gt_footnotes {
+#qbwqimelyz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -658,7 +666,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#eoqgxdrpmy .gt_footnote {
+#qbwqimelyz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -667,7 +675,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   padding-right: 5px;
 }
 
-#eoqgxdrpmy .gt_sourcenotes {
+#qbwqimelyz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -681,7 +689,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#eoqgxdrpmy .gt_sourcenote {
+#qbwqimelyz .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -689,72 +697,72 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
   padding-right: 5px;
 }
 
-#eoqgxdrpmy .gt_left {
+#qbwqimelyz .gt_left {
   text-align: left;
 }
 
-#eoqgxdrpmy .gt_center {
+#qbwqimelyz .gt_center {
   text-align: center;
 }
 
-#eoqgxdrpmy .gt_right {
+#qbwqimelyz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#eoqgxdrpmy .gt_font_normal {
+#qbwqimelyz .gt_font_normal {
   font-weight: normal;
 }
 
-#eoqgxdrpmy .gt_font_bold {
+#qbwqimelyz .gt_font_bold {
   font-weight: bold;
 }
 
-#eoqgxdrpmy .gt_font_italic {
+#qbwqimelyz .gt_font_italic {
   font-style: italic;
 }
 
-#eoqgxdrpmy .gt_super {
+#qbwqimelyz .gt_super {
   font-size: 65%;
 }
 
-#eoqgxdrpmy .gt_footnote_marks {
+#qbwqimelyz .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#eoqgxdrpmy .gt_asterisk {
+#qbwqimelyz .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#eoqgxdrpmy .gt_indent_1 {
+#qbwqimelyz .gt_indent_1 {
   text-indent: 5px;
 }
 
-#eoqgxdrpmy .gt_indent_2 {
+#qbwqimelyz .gt_indent_2 {
   text-indent: 10px;
 }
 
-#eoqgxdrpmy .gt_indent_3 {
+#qbwqimelyz .gt_indent_3 {
   text-indent: 15px;
 }
 
-#eoqgxdrpmy .gt_indent_4 {
+#qbwqimelyz .gt_indent_4 {
   text-indent: 20px;
 }
 
-#eoqgxdrpmy .gt_indent_5 {
+#qbwqimelyz .gt_indent_5 {
   text-indent: 25px;
 }
 
-#eoqgxdrpmy .katex-display {
+#qbwqimelyz .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#eoqgxdrpmy div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#qbwqimelyz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -789,9 +797,10 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 </div>
+</div></div>
 </section><section id="types-of-sums-of-squares" class="slide level2"><h2>Types of Sums of Squares</h2>
-
-<img data-src="https://learninghub.primer-e.com/uploads/images/gallery/2022-08/fig1-41.png" class="r-stretch"><div class="footer">
+<p><img data-src="https://learninghub.primer-e.com/uploads/images/gallery/2022-08/fig1-41.png" class="absolute" style="left: 25%; width: 600px; height: 600px; "></p>
+<div class="footer">
 <p><a href="https://learninghub.primer-e.com/uploads/images/gallery/2022-08/fig1-41.png">Sums of Squares diagram</a> accessed 2026-10-22.</p>
 </div>
 </section><section id="types-of-sums-of-squares-1" class="slide level2"><h2>Types of Sums of Squares</h2>
@@ -812,14 +821,19 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div></div>
 </section><section id="types-of-sums-of-squares-2" class="slide level2"><h2>Types of Sums of Squares</h2>
 <p>The capital ‘A’ <code>Anova()</code> function from the <code>car</code> package can help us swap between.</p>
-<p>But have to specify orthogonal (e.g., effect-coded) contrasts before fitting the</p>
+<p>But have to specify orthogonal (e.g., effect-coded) contrasts <strong>before fitting the model</strong>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("car")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section><section id="types-of-sums-of-squares-3" class="slide level2"><h2>Types of Sums of Squares</h2>
-<div class="columns">
-<div class="column" style="width:33%;">
-<h3 id="type-i-1">Type I</h3>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-1-1">Type I</a></li>
+<li><a href="#tabset-1-2">Type II</a></li>
+<li><a href="#tabset-1-3">Type III</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-1-1">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -832,8 +846,8 @@ Residuals    333  13401      40
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
-</div><div class="column" style="width:33%;">
-<h3 id="type-ii-1">Type II</h3>
+</div>
+<div id="tabset-1-2">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">car</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/car/man/Anova.html">Anova</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, type <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -849,8 +863,10 @@ Residuals     13401 333
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
-</div><div class="column" style="width:33%;">
-<h3 id="type-iii-1">Type III</h3>
+</div>
+<div id="tabset-1-3">
+<div class="columns">
+<div class="column" style="width:50%;">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">car</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/car/man/Anova.html">Anova</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, type <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -866,13 +882,29 @@ Residuals      13401 333
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span></span>
-<span>  contrasts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>    unordered <span class="op">=</span> <span class="st">"contr.sum"</span>,</span>
-<span>    ordered <span class="op">=</span> <span class="st">"contr.poly"</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">flipper_model_twoway_again</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aov.html">aov</a></span><span class="op">(</span><span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">year</span>, data <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">)</span></span>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">car</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/car/man/Anova.html">Anova</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, type <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Anova Table (Type III tests)
+
+Response: flipper_length_mm
+              Sum Sq  Df    F value    Pr(&gt;F)    
+(Intercept)  1706009   1 42393.8971 &lt; 2.2e-16 ***
+species        17012   2   211.3687 &lt; 2.2e-16 ***
+year             847   2    10.5267  3.69e-05 ***
+species:year      89   4     0.5513    0.6982    
+Residuals      13401 333                         
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>contrasts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>  unordered <span class="op">=</span> <span class="st">"contr.sum"</span>,</span>
+<span>  ordered <span class="op">=</span> <span class="st">"contr.poly"</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">flipper_model_twoway_again</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aov.html">aov</a></span><span class="op">(</span><span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">year</span>, </span>
+<span>                                  data <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">)</span></span>
 <span><span class="fu">car</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/car/man/Anova.html">Anova</a></span><span class="op">(</span><span class="va">flipper_model_twoway_again</span>, type <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Anova Table (Type III tests)
@@ -889,24 +921,32 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 </div></div>
+</div>
+</div>
+</div>
 </section><section id="types-of-sums-of-squares-4" class="slide level2"><h2>Types of Sums of Squares</h2>
 <p>The <code>ezANOVA()</code> function from the <code>ez</code> package has different syntax, but will handle remembering unbalanced sample sizes (and remembering the effect coding) for us.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("ez")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("ez")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We will need an ID column for the penguins:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_cleaned</span> <span class="op">&lt;-</span> <span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_cleaned</span> <span class="op">&lt;-</span> <span class="va">penguins</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">filter_out</span><span class="op">(</span><span class="fu">when_any</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">flipper_length_mm</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">species</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span>,</span>
 <span>         id <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section><section id="types-of-sums-of-squares-5" class="slide level2"><h2>Types of Sums of Squares</h2>
-<div class="columns">
-<div class="column" style="width:33%;">
-<h3 id="type-i-2">Type I</h3>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-2-1">Type I</a></li>
+<li><a href="#tabset-2-2">Type II</a></li>
+<li><a href="#tabset-2-3">Type III</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-2-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ez</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ez/man/ezANOVA.html">ezANOVA</a></span><span class="op">(</span><span class="va">penguins_cleaned</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ez</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ez/man/ezANOVA.html">ezANOVA</a></span><span class="op">(</span><span class="va">penguins_cleaned</span>,</span>
 <span>            dv <span class="op">=</span> <span class="va">flipper_length_mm</span>,</span>
 <span>            wid <span class="op">=</span> <span class="va">id</span>,</span>
 <span>            between <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">species</span>, <span class="va">year</span><span class="op">)</span>,</span>
@@ -918,10 +958,10 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 3 species:year   4 333   0.551277  6.982191e-01       0.006578385</code></pre>
 </div>
 </div>
-</div><div class="column" style="width:33%;">
-<h3 id="type-ii-2">Type II</h3>
+</div>
+<div id="tabset-2-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ez</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ez/man/ezANOVA.html">ezANOVA</a></span><span class="op">(</span><span class="va">penguins_cleaned</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ez</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ez/man/ezANOVA.html">ezANOVA</a></span><span class="op">(</span><span class="va">penguins_cleaned</span>,</span>
 <span>            dv <span class="op">=</span> <span class="va">flipper_length_mm</span>,</span>
 <span>            wid <span class="op">=</span> <span class="va">id</span>,</span>
 <span>            between <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">species</span>, <span class="va">year</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">ANOVA</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -932,10 +972,10 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 3 species:year   4 333   0.551277  6.982191e-01       0.006578385</code></pre>
 </div>
 </div>
-</div><div class="column" style="width:33%;">
-<h3 id="type-iii-2">Type III</h3>
+</div>
+<div id="tabset-2-3">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ez</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ez/man/ezANOVA.html">ezANOVA</a></span><span class="op">(</span><span class="va">penguins_cleaned</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ez</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ez/man/ezANOVA.html">ezANOVA</a></span><span class="op">(</span><span class="va">penguins_cleaned</span>,</span>
 <span>            dv <span class="op">=</span> <span class="va">flipper_length_mm</span>,</span>
 <span>            wid <span class="op">=</span> <span class="va">id</span>,</span>
 <span>            between <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">species</span>, <span class="va">year</span><span class="op">)</span>,</span>
@@ -947,21 +987,48 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 4 species:year   4 333   0.551277  6.982191e-01       0.006578385</code></pre>
 </div>
 </div>
-</div></div>
+</div>
+</div>
+</div>
 </section><section id="assumption-checking" class="slide level2"><h2>Assumption Checking</h2>
 <p>Looking for normally distributed outcome in each group combination and homogeneity of variance across groups.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_cleaned</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, fill <span class="op">=</span> <span class="va">species</span>, y <span class="op">=</span> <span class="va">flipper_length_mm</span>, color <span class="op">=</span> <span class="va">species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_violin</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_jitter</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_jitterdodge</span><span class="op">(</span>dodge.width <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">.4</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-3-1">Plot</a></li>
+<li><a href="#tabset-3-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-3-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-14-1.svg" class="quarto-figure quarto-figure-center" width="672"></p>
+</figure>
 </div>
-<img data-src="lab_10_files/figure-revealjs/unnamed-chunk-12-1.svg" width="960" class="r-stretch"></section><section id="effect-sizes-partial-eta2" class="slide level2"><h2>Effect Sizes: Partial <span class="math inline">\(\eta^2\)</span>
+</div>
+</div>
+</div>
+<div id="tabset-3-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_cleaned</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, fill <span class="op">=</span> <span class="va">species</span>, y <span class="op">=</span> <span class="va">flipper_length_mm</span>, color <span class="op">=</span> <span class="va">species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_violin</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.3</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_jitter</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_jitterdodge</span><span class="op">(</span>dodge.width <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span>, </span>
+<span>              alpha <span class="op">=</span> <span class="fl">.6</span>, shape <span class="op">=</span> <span class="fl">16</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Year"</span>, y <span class="op">=</span> <span class="st">"Flipper Length (mm)"</span>, color <span class="op">=</span> <span class="st">"Species"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="fu">guide_none</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span>,</span>
+<span>        panel.grid.minor <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>        panel.grid.major.x <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section><section id="effect-sizes-partial-eta2" class="slide level2"><h2>Effect Sizes: Partial <span class="math inline">\(\eta^2\)</span>
 </h2>
 <p>With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by <strong>ignoring other factors</strong> or as a proportion of the total variance.</p>
-<div class="columns">
+<div class="columns" style="font-size:90%">
 <div class="column fragment" style="width:33%;">
 <p>partial <span class="math inline">\(\eta^2\)</span> for species</p>
 <p><span class="math inline">\(\frac{SS_\text{species}}{SS_\text{species} + SS_W}\)</span></p>
@@ -974,7 +1041,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div></div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">eta_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="co"># partial = T is default</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">eta_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="co"># partial = T is default</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Effect Size for ANOVA (Type I)
 
@@ -991,7 +1058,7 @@ species:year |       6.58e-03 | [0.00, 1.00]
 </section><section id="effect-sizes-full-eta2" class="slide level2"><h2>Effect Sizes: “Full” <span class="math inline">\(\eta^2\)</span>
 </h2>
 <p>With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by ignoring other factors or as a <strong>proportion of the total variance</strong>.</p>
-<div class="columns">
+<div class="columns" style="font-size:90%">
 <div class="column fragment" style="width:33%;">
 <p>partial <span class="math inline">\(\eta^2\)</span> for species</p>
 <p><span class="math inline">\(\frac{SS_\text{species}}{SS_T}\)</span></p>
@@ -1004,7 +1071,7 @@ species:year |       6.58e-03 | [0.00, 1.00]
 </div></div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">eta_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="co"># partial = T is default</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">eta_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="co"># partial = T is default</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Effect Size for ANOVA (Type I)
 
@@ -1021,7 +1088,7 @@ species:year | 1.32e-03 | [0.00, 1.00]
 </section><section id="effect-sizes-partial-omega2" class="slide level2"><h2>Effect Sizes: Partial <span class="math inline">\(\omega^2\)</span>
 </h2>
 <p>With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by <strong>ignoring other factors</strong> or as a proportion of the total variance.</p>
-<div class="columns">
+<div class="columns" style="font-size:90%">
 <div class="column fragment" style="width:33%;">
 <p>partial <span class="math inline">\(\omega^2\)</span> for species</p>
 <p><span class="math inline">\(\frac{\mathrm{df}_\text{species} (\mathrm{MS}_\text{species} - \mathrm{MS}_\text{W}) }{SS_\text{species} + (N - \mathrm{df}_\text{species})MS_W}\)</span></p>
@@ -1031,11 +1098,10 @@ species:year | 1.32e-03 | [0.00, 1.00]
 </div><div class="column fragment" style="width:33%;">
 <p>partial <span class="math inline">\(\omega^2\)</span> for species <span class="math inline">\(\times\)</span> year</p>
 <p><span class="math inline">\(\frac{\mathrm{df}_{\text{year} \times \text{species}} (\mathrm{MS}_{\text{year} \times \text{species}} - \mathrm{MS}_\text{W}) }{SS_{\text{year} \times \text{species}} + (N - \mathrm{df}_{\text{year} \times \text{species}})MS_W}\)</span></p>
-<p><span class="math inline">\(\frac{\mathrm{df}_{\text{year} \times \text{species}} (\mathrm{MS}_{\text{year} \times \text{species}} - \mathrm{MS}_\text{W}) }{SS_T + MS_W}\)</span></p>
 </div></div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">omega_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="co"># partial = T is default</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">omega_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="co"># partial = T is default</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Effect Size for ANOVA (Type I)
 
@@ -1052,7 +1118,7 @@ species:year |             0.00 | [0.00, 1.00]
 </section><section id="effect-sizes-full-omega2" class="slide level2"><h2>Effect Sizes: “Full” <span class="math inline">\(\omega^2\)</span>
 </h2>
 <p>With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by <strong>ignoring other factors</strong> or as a proportion of the total variance.</p>
-<div class="columns">
+<div class="columns" style="font-size:90%">
 <div class="column fragment" style="width:33%;">
 <p><span class="math inline">\(\omega^2\)</span> for species</p>
 <p><span class="math inline">\(\frac{\mathrm{df}_\text{species} (\mathrm{MS}_\text{species} - \mathrm{MS}_\text{W}) }{SS_T + MS_W}\)</span></p>
@@ -1065,7 +1131,7 @@ species:year |             0.00 | [0.00, 1.00]
 </div></div>
 <div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">omega_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="co"># partial = T is default</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">omega_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="co"># partial = T is default</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Effect Size for ANOVA (Type I)
 
@@ -1080,11 +1146,24 @@ species:year |   0.00 | [0.00, 1.00]
 </div>
 </div>
 </section><section id="comparison" class="slide level2"><h2>Comparison</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>partial <span class="math inline">\(\eta^2\)</span></p>
+</section><section id="comparison-1" class="slide level2"><h2>Comparison</h2>
+<div style="display: grid; grid-template-columns: 2em 1fr 1fr; column-gap: 1.5em; row-gap: 0.5em; align-items: start; font-size: 0.8em;">
+<!-- header row -->
+<div>
+
+</div>
+<div style="text-align: center; font-size: 1.3em;">
+<p><span class="math inline">\(\eta^2\)</span></p>
+</div>
+<div style="text-align: center; font-size: 1.3em;">
+<p><span class="math inline">\(\omega^2\)</span></p>
+</div>
+<!-- partial row -->
+<div style="writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; align-self: center;">
+<p>partial</p>
+</div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">eta_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">eta_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Effect Size for ANOVA (Type I)
 
@@ -1097,10 +1176,8 @@ species:year |       6.58e-03 | [0.00, 1.00]
 - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 </div>
 </div>
-</div><div class="column" style="width:50%;">
-<p>partial <span class="math inline">\(\omega^2\)</span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">omega_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">omega_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Effect Size for ANOVA (Type I)
 
@@ -1113,12 +1190,12 @@ species:year |             0.00 | [0.00, 1.00]
 - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 </div>
 </div>
-</div></div>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><span class="math inline">\(\eta^2\)</span></p>
+<!-- full row -->
+<div style="writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; align-self: center;">
+<p>full</p>
+</div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">eta_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">eta_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Effect Size for ANOVA (Type I)
 
@@ -1131,10 +1208,8 @@ species:year | 1.32e-03 | [0.00, 1.00]
 - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 </div>
 </div>
-</div><div class="column" style="width:50%;">
-<p><span class="math inline">\(\omega^2\)</span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">omega_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta_squared.html">omega_squared</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, partial <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Effect Size for ANOVA (Type I)
 
@@ -1147,10 +1222,38 @@ species:year |   0.00 | [0.00, 1.00]
 - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 </div>
 </div>
-</div></div>
+</div>
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- partial $\eta^2$ -->
+<!-- ```{r} -->
+<!-- effectsize::eta_squared(flipper_model_twoway) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: {.column width="50%"} -->
+<!-- partial $\omega^2$ -->
+<!-- ```{r} -->
+<!-- effectsize::omega_squared(flipper_model_twoway) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- :::: -->
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- $\eta^2$ -->
+<!-- ```{r} -->
+<!-- effectsize::eta_squared(flipper_model_twoway, partial = F) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: {.column width="50%"} -->
+<!-- $\omega^2$ -->
+<!-- ```{r} -->
+<!-- effectsize::omega_squared(flipper_model_twoway, partial = F) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- :::: -->
 </section><section id="two-way-anova-as-a-linear-model" class="slide level2"><h2>Two-Way ANOVA as a Linear Model</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">flipper_model_twoway_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">year</span>, data <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">flipper_model_twoway_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">year</span>, data <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">flipper_model_twoway_lm</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1182,7 +1285,7 @@ F-statistic: 167.8 on 8 and 333 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </section><section id="bayesian-two-way-anova" class="slide level2"><h2>Bayesian Two-Way ANOVA</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/rstanarm/">rstanarm</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/rstanarm/">rstanarm</a></span><span class="op">)</span></span>
 <span><span class="va">flipper_model_twoway_bayes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html">stan_glm</a></span><span class="op">(</span></span>
 <span>  <span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">species</span> <span class="op">*</span> <span class="va">year</span>, </span>
 <span>  data <span class="op">=</span> <span class="va">penguins_cleaned</span>, </span>
@@ -1208,12 +1311,12 @@ Estimates:
 (Intercept)    201.0    0.4 200.5 201.0 201.5
 species1       -11.1    0.5 -11.7 -11.1 -10.5
 species2        -4.9    0.6  -5.7  -4.9  -4.2
-year1           -3.0    0.5  -3.7  -3.0  -2.3
+year1           -3.0    0.5  -3.6  -3.0  -2.3
 year2            1.1    0.5   0.4   1.1   1.8
-species1:year1  -0.4    0.7  -1.2  -0.3   0.5
+species1:year1  -0.3    0.7  -1.2  -0.3   0.5
 species2:year1  -0.7    0.8  -1.7  -0.7   0.3
-species1:year2   0.0    0.7  -0.8   0.0   0.9
-species2:year2   0.6    0.8  -0.5   0.5   1.6
+species1:year2   0.0    0.7  -0.9   0.0   0.9
+species2:year2   0.6    0.9  -0.6   0.6   1.7
 sigma            6.4    0.2   6.1   6.4   6.7
 
 Fit Diagnostics:
@@ -1224,24 +1327,32 @@ The mean_ppd is the sample average posterior predictive distribution of the outc
 
 MCMC diagnostics
                mcse Rhat n_eff
-(Intercept)    0.0  1.0  4161 
-species1       0.0  1.0  3596 
-species2       0.0  1.0  3551 
-year1          0.0  1.0  3536 
-year2          0.0  1.0  3204 
-species1:year1 0.0  1.0  3157 
-species2:year1 0.0  1.0  3250 
-species1:year2 0.0  1.0  3154 
-species2:year2 0.0  1.0  3390 
-sigma          0.0  1.0  4192 
-mean_PPD       0.0  1.0  4035 
-log-posterior  0.1  1.0  1931 
+(Intercept)    0.0  1.0  3982 
+species1       0.0  1.0  3885 
+species2       0.0  1.0  3575 
+year1          0.0  1.0  3202 
+year2          0.0  1.0  3256 
+species1:year1 0.0  1.0  3127 
+species2:year1 0.0  1.0  2993 
+species1:year2 0.0  1.0  2837 
+species2:year2 0.0  1.0  2811 
+sigma          0.0  1.0  3653 
+mean_PPD       0.0  1.0  4096 
+log-posterior  0.1  1.0  1837 
 
 For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
 </div>
-</section><section id="testing-effects-with-bayes-factors" class="slide level2"><h2>Testing Effects with Bayes Factors</h2>
-<p>[add testing by removing effects and comparing bayes factors]</p>
+</section><section id="bayesian-two-way-anova-1" class="slide level2"><h2>Bayesian Two-Way ANOVA</h2>
+<!-- ```{r} -->
+<!-- bayesplot::ppc_violin_grouped( -->
+<!--   y = penguins_cleaned$flipper_length_mm, -->
+<!--   yrep = posterior_predict(flipper_model_twoway_bayes, draws = 50), -->
+<!--   group = penguins_cleaned$species -->
+<!-- )  -->
+<!-- ``` -->
+<!-- ## Testing Effects with Bayes Factors -->
+<!-- [add testing by removing effects and comparing bayes factors] -->
 </section><section id="simple-main-effects" class="slide level2"><h2>Simple Main Effects</h2>
 <p>How do we examine effects within these multiple factors?</p>
 <p>We can investigate the differences in outcome between levels of <span class="math inline">\(A\)</span> within a single level of <span class="math inline">\(B\)</span> at a time.</p>
@@ -1255,10 +1366,10 @@ For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure
 <p>○ What about for Gentoo penguins?</p>
 </div>
 <p>Can examine this by running a separate One-Way ANOVA within each level.</p>
-</section><section id="simple-main-effects-with-emmeans" class="slide level2"><h2>Simple Main Effects with <code>emmeans</code>
+</section><section id="simple-main-effects-emmeans" class="slide level2"><h2>Simple Main Effects <code>emmeans</code>
 </h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"species"</span>, <span class="st">"year"</span><span class="op">)</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"species"</span>, <span class="st">"year"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">emms_flipper_twoway</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> species   year emmean    SE  df lower.CL upper.CL
@@ -1278,7 +1389,8 @@ Confidence level used: 0.95 </code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">smes_by_species</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/joint_tests.html">joint_tests</a></span><span class="op">(</span><span class="va">emms_flipper_twoway</span>, by <span class="op">=</span> <span class="st">"species"</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">smes_by_species</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/joint_tests.html">joint_tests</a></span><span class="op">(</span><span class="va">emms_flipper_twoway</span>, </span>
+<span>                                        by <span class="op">=</span> <span class="st">"species"</span><span class="op">)</span></span>
 <span><span class="va">smes_by_species</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>species = Adelie:
@@ -1296,7 +1408,8 @@ species = Gentoo:
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">smes_by_year</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/joint_tests.html">joint_tests</a></span><span class="op">(</span><span class="va">emms_flipper_twoway</span>, by <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">smes_by_year</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/joint_tests.html">joint_tests</a></span><span class="op">(</span><span class="va">emms_flipper_twoway</span>, </span>
+<span>                                     by <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span>
 <span><span class="va">smes_by_year</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>year = 2007:
@@ -1313,11 +1426,11 @@ year = 2009:
 </div>
 </div>
 </div></div>
-</section><section id="simple-main-effects-with-emmeans-1" class="slide level2"><h2>Simple Main Effects with <code>emmeans</code>
+</section><section id="simple-main-effects-with-emmeans" class="slide level2"><h2>Simple Main Effects with <code>emmeans</code>
 </h2>
 <p>Can then look at pairwise comparisons within each of those One-Way ANOVAs.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html">pairs</a></span><span class="op">(</span><span class="va">emms_flipper_twoway</span>, by <span class="op">=</span> <span class="st">"species"</span><span class="op">)</span> <span class="co"># default: adjust = "tukey"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html">pairs</a></span><span class="op">(</span><span class="va">emms_flipper_twoway</span>, by <span class="op">=</span> <span class="st">"species"</span><span class="op">)</span> <span class="co"># default: adjust = "tukey"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>species = Adelie:
  contrast            estimate   SE  df t.ratio p.value
@@ -1343,7 +1456,7 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
 </section><section id="main-effects" class="slide level2"><h2>Main Effects</h2>
 <p>Given that our interaction wasn’t significant, we can also look at main effects.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_species</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, specs <span class="op">=</span> <span class="st">"species"</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_species</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, specs <span class="op">=</span> <span class="st">"species"</span><span class="op">)</span></span>
 <span><span class="va">emms_year</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">flipper_model_twoway</span>, specs <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">emms_species</span>; <span class="va">emms_year</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1366,129 +1479,13 @@ Results are averaged over the levels of: species
 Confidence level used: 0.95 </code></pre>
 </div>
 </div>
-</section><section id="plotting-two-way-anova-emmeans" class="slide level2"><h2>Plotting Two-Way ANOVA <code>emmeans</code>
+</section><section id="plotting-two-way-emmeans" class="slide level2"><h2>Plotting Two-Way <code>emmeans</code>
 </h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>Super quick plotting method with <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code></p>
 <p>Not so great with more than one factor…</p>
 </div><div class="column" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-1-1">Plot</a></li>
-<li><a href="#tabset-1-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-1-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-29-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-1-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">emms_flipper_twoway</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
-</section><section id="plotting-two-way-anova-emmeans-1" class="slide level2"><h2>Plotting Two-Way ANOVA <code>emmeans</code>
-</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Let’s build our own. The color on our last plot was just to make it look nice, but this time, let’s use color to represent the year.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">&lt;-</span> <span class="fu">as_tibble</span><span class="op">(</span><span class="va">emms_flipper_twoway</span><span class="op">)</span></span>
-<span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">glimpse</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 9
-Columns: 7
-$ species  &lt;fct&gt; Adelie, Chinstrap, Gentoo, Adelie, Chinstrap, Gentoo, Adelie,…
-$ year     &lt;fct&gt; 2007, 2007, 2007, 2008, 2008, 2008, 2009, 2009, 2009
-$ emmean   &lt;dbl&gt; 186.5918, 192.4231, 215.1176, 191.0400, 197.7222, 217.5652, 1…
-$ SE       &lt;dbl&gt; 0.9062353, 1.2440915, 1.0879265, 0.8971272, 1.4952119, 0.9353…
-$ df       &lt;dbl&gt; 333, 333, 333, 333, 333, 333, 333, 333, 333
-$ lower.CL &lt;dbl&gt; 184.8092, 189.9758, 212.9776, 189.2752, 194.7810, 215.7253, 1…
-$ upper.CL &lt;dbl&gt; 188.3745, 194.8703, 217.2577, 192.8048, 200.6635, 219.4051, 1…</code></pre>
-</div>
-</div>
-<div class="fragment" data-fragment-index="2">
-<p>Like last time, we always want to include our uncertainty.</p>
-</div>
-</div><div class="column fragment" data-fragment-index="1" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-2-1">Plot</a></li>
-<li><a href="#tabset-2-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-2-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-32-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-2-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">species</span>, y <span class="op">=</span> <span class="va">emmean</span>, color <span class="op">=</span> <span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
-</section><section id="plotting-two-way-anova-emmeans-2" class="slide level2"><h2>Plotting Two-Way ANOVA <code>emmeans</code>
-</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Let’s build our own.</p>
-</div><div class="column fragment" data-fragment-index="1" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-3-1">Plot</a></li>
-<li><a href="#tabset-3-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-3-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-34-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-3-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">species</span>, y <span class="op">=</span> <span class="va">emmean</span>, color <span class="op">=</span> <span class="va">year</span>,</span>
-<span>             ymin <span class="op">=</span> <span class="va">lower.CL</span>, ymax <span class="op">=</span> <span class="va">upper.CL</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_errorbar</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-</div></div>
-</section><section id="plotting-two-way-anova-emmeans-3" class="slide level2"><h2>Plotting Two-Way ANOVA <code>emmeans</code>
-</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Let’s build our own.</p>
-<p>And tidy it up.</p>
-</div><div class="column fragment" data-fragment-index="1" style="width:50%;">
 <div class="panel-tabset">
 <ul id="tabset-4" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-4-1">Plot</a></li>
@@ -1499,7 +1496,7 @@ $ upper.CL &lt;dbl&gt; 188.3745, 194.8703, 217.2577, 192.8048, 200.6635, 219.405
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-36-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-32-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -1507,7 +1504,123 @@ $ upper.CL &lt;dbl&gt; 188.3745, 194.8703, 217.2577, 192.8048, 200.6635, 219.405
 </div>
 <div id="tabset-4-2">
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">emms_flipper_twoway</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="plotting-two-way-emmeans-1" class="slide level2"><h2>Plotting Two-Way <code>emmeans</code>
+</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Let’s build our own. The color on our last plot was just to make it look nice, but this time, let’s use color to represent the year.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">&lt;-</span> <span class="fu">as_tibble</span><span class="op">(</span><span class="va">emms_flipper_twoway</span><span class="op">)</span></span>
+<span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">glimpse</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 9
+Columns: 7
+$ species  &lt;fct&gt; Adelie, Chinstrap, Gentoo, Adelie, Chinst…
+$ year     &lt;fct&gt; 2007, 2007, 2007, 2008, 2008, 2008, 2009,…
+$ emmean   &lt;dbl&gt; 186.5918, 192.4231, 215.1176, 191.0400, 1…
+$ SE       &lt;dbl&gt; 0.9062353, 1.2440915, 1.0879265, 0.897127…
+$ df       &lt;dbl&gt; 333, 333, 333, 333, 333, 333, 333, 333, 3…
+$ lower.CL &lt;dbl&gt; 184.8092, 189.9758, 212.9776, 189.2752, 1…
+$ upper.CL &lt;dbl&gt; 188.3745, 194.8703, 217.2577, 192.8048, 2…</code></pre>
+</div>
+</div>
+<div class="fragment" data-fragment-index="2">
+<p>Like last time, we always want to include our uncertainty.</p>
+</div>
+</div><div class="column fragment" data-fragment-index="1" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-5" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-5-1">Plot</a></li>
+<li><a href="#tabset-5-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-5-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-35-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-5-2">
+<div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">species</span>, y <span class="op">=</span> <span class="va">emmean</span>, color <span class="op">=</span> <span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="plotting-two-way-anova-emmeans" class="slide level2"><h2>Plotting Two-Way ANOVA <code>emmeans</code>
+</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Let’s build our own.</p>
+</div><div class="column fragment" data-fragment-index="1" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-6" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-6-1">Plot</a></li>
+<li><a href="#tabset-6-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-6-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-37-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-6-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">species</span>, y <span class="op">=</span> <span class="va">emmean</span>, color <span class="op">=</span> <span class="va">year</span>,</span>
+<span>             ymin <span class="op">=</span> <span class="va">lower.CL</span>, ymax <span class="op">=</span> <span class="va">upper.CL</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_errorbar</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="plotting-two-way-anova-emmeans-1" class="slide level2"><h2>Plotting Two-Way ANOVA <code>emmeans</code>
+</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Let’s build our own.</p>
+<p>And tidy it up.</p>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-7" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-7-1">Plot</a></li>
+<li><a href="#tabset-7-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-7-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-39-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-7-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_flipper_twoway_df</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">species</span>, y <span class="op">=</span> <span class="va">emmean</span>, color <span class="op">=</span> <span class="va">year</span>,</span>
 <span>             ymin <span class="op">=</span> <span class="va">lower.CL</span>, ymax <span class="op">=</span> <span class="va">upper.CL</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">0.3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1517,6 +1630,376 @@ $ upper.CL &lt;dbl&gt; 188.3745, 194.8703, 217.2577, 192.8048, 200.6635, 219.405
 <span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="anova-and-power" class="slide level2"><h2>ANOVA and Power</h2>
+<p>Just like with <em>t</em>-tests, you may want to examine power for an ANOVA.</p>
+<p><code>pwr.anova.test(k, n, f, sig.level = 0.05, power)</code></p>
+<div class="subpoint">
+<p>○ <code>k =</code> number of groups</p>
+<p>○ <code>n =</code> number of observations <strong>per group</strong></p>
+<p>○ <code>f =</code> effect size as an <span class="math inline">\(f = \sqrt{f^2}\)</span></p>
+<p>○ <code>sig.level =</code> significance level, typically <code>.05</code></p>
+<p>○ <code>power =</code> power of test</p>
+</div>
+<p>Like before, specify all but one, and the function will calculate the last</p>
+<p>Remember <span class="math inline">\(f^2\)</span> is the ratio of between-group variability to within-group variability</p>
+</section><section id="getting-f" class="slide level2"><h2>Getting <span class="math inline">\(f\)</span>
+</h2>
+<p>The <code>pwr.anova.test</code> function wants <span class="math inline">\(f = \sqrt{f^2}\)</span>.</p>
+<p>If you’re thinking about an effect size in <span class="math inline">\(\eta^2\)</span> or <span class="math inline">\(\omega^2\)</span> you can convert it.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="math inline">\(f = \sqrt{\frac{\eta_2}{1 - \eta^2}}\)</span></p>
+</div><div class="column" style="width:50%;">
+<p><span class="math inline">\(f = \sqrt{\frac{\omega^2}{1 - \omega^2}}\)</span></p>
+</div></div>
+<p>The <code>effectsize::eta2_to_f(effect_size)</code> can convert “any measure of variance explained such as Eta-, Epsilon-, Omega-, or R-Squared, partial or otherwise”</p>
+<div class="columns">
+<div class="column" style="width:33%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta2_to_f2.html">eta2_to_f</a></span><span class="op">(</span><span class="fl">.7</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.527525</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb65"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta2_to_f2.html">eta2_to_f</a></span><span class="op">(</span><span class="fl">.2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">effectsize</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/effectsize/reference/eta2_to_f2.html">eta2_to_f</a></span><span class="op">(</span><span class="fl">.1</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3333333</code></pre>
+</div>
+</div>
+</div></div>
+<div class="footer">
+<p>See <code><a href="https://easystats.github.io/effectsize/reference/eta2_to_f2.html">?effectsize::eta2_to_f</a></code> to confirm.</p>
+</div>
+</section><section id="anova-and-power-1" class="slide level2"><h2>ANOVA and Power</h2>
+<div class="columns">
+<div class="column" style="width:33%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">pwr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pwr/man/pwr.anova.test.html">pwr.anova.test</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">4</span>, </span>
+<span>                    n <span class="op">=</span> <span class="fl">20</span>, </span>
+<span>                    f <span class="op">=</span> <span class="fl">.25</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Balanced one-way analysis of variance power calculation 
+
+              k = 4
+              n = 20
+              f = 0.25
+      sig.level = 0.05
+          power = 0.4203901
+
+NOTE: n is number in each group</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">pwr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pwr/man/pwr.anova.test.html">pwr.anova.test</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">4</span>, </span>
+<span>                    f <span class="op">=</span> <span class="fl">.25</span>,</span>
+<span>                    power <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Balanced one-way analysis of variance power calculation 
+
+              k = 4
+              n = 44.59927
+              f = 0.25
+      sig.level = 0.05
+          power = 0.8
+
+NOTE: n is number in each group</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb73"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">pwr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pwr/man/pwr.anova.test.html">pwr.anova.test</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">20</span>, </span>
+<span>                    f <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>                    power <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Balanced one-way analysis of variance power calculation 
+
+              k = 6.158974
+              n = 20
+              f = 0.3
+      sig.level = 0.05
+          power = 0.7
+
+NOTE: n is number in each group</code></pre>
+</div>
+</div>
+</div></div>
+</section><section id="anova-and-power-2" class="slide level2"><h2>ANOVA and Power</h2>
+<p>Let’s examine how many participants we would need for a small, medium, or large effect (we can do <span class="math inline">\(f =\)</span> <span class="math inline">\(0.1\)</span>, <span class="math inline">\(0.25\)</span>, and <span class="math inline">\(0.6\)</span>.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Starting with small…</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb75"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">power_values_df</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  sample_sizes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">250</span>, by <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    power <span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span></span>
+<span>      <span class="va">sample_sizes</span>, </span>
+<span>      <span class="kw">function</span><span class="op">(</span><span class="va">sample_size</span><span class="op">)</span> </span>
+<span>        <span class="fu">pwr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pwr/man/pwr.anova.test.html">pwr.anova.test</a></span><span class="op">(</span></span>
+<span>          n <span class="op">=</span> <span class="va">sample_size</span>, </span>
+<span>          k <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>          f <span class="op">=</span> <span class="fl">0.1</span>, </span>
+<span>          sig.level <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">$</span><span class="va">power</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="va">power_values_df</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  sample_sizes  power
+         &lt;dbl&gt;  &lt;dbl&gt;
+1           10 0.0708
+2           30 0.121 
+3           50 0.176 
+4           70 0.232 
+5           90 0.290 
+6          110 0.347 </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-8" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-8-1">Plot</a></li>
+<li><a href="#tabset-8-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-8-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-48-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-8-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb77"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">power_values_df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_sizes</span>, y <span class="op">=</span> <span class="va">power</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_hline</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>, </span>
+<span>             linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"gray75"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">coord_cartesian</span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="anova-and-power-3" class="slide level2"><h2>ANOVA and Power</h2>
+<p>Let’s examine how many participants we would need for a small, medium, or large effect (we can do <span class="math inline">\(f =\)</span> <span class="math inline">\(0.1\)</span>, <span class="math inline">\(0.25\)</span>, and <span class="math inline">\(0.6\)</span>.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Adding effect size condition…</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb78"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">power_values_df</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  sample_sizes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">250</span>, by <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">expand_grid</span><span class="op">(</span>f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    power <span class="op">=</span> <span class="fu">map2_dbl</span><span class="op">(</span></span>
+<span>      <span class="va">sample_sizes</span>, <span class="va">f</span>,</span>
+<span>      <span class="kw">function</span><span class="op">(</span><span class="va">sample_size</span>, <span class="va">f</span><span class="op">)</span> </span>
+<span>        <span class="fu">pwr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pwr/man/pwr.anova.test.html">pwr.anova.test</a></span><span class="op">(</span></span>
+<span>          n <span class="op">=</span> <span class="va">sample_size</span>, </span>
+<span>          k <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>          f <span class="op">=</span> <span class="va">f</span>, </span>
+<span>          sig.level <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">$</span><span class="va">power</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="va">power_values_df</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  sample_sizes     f  power
+         &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1           10  0.1  0.0708
+2           10  0.25 0.195 
+3           10  0.6  0.800 
+4           30  0.1  0.121 
+5           30  0.25 0.540 
+6           30  0.6  0.999 </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-9" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-9-1">Plot</a></li>
+<li><a href="#tabset-9-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-9-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-51-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-9-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb80"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">power_values_df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_sizes</span>, y <span class="op">=</span> <span class="va">power</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_hline</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>, </span>
+<span>             linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"gray75"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">coord_cartesian</span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="anova-and-power-4" class="slide level2"><h2>ANOVA and Power</h2>
+<p>Let’s examine how many participants we would need for a small, medium, or large effect (we can do <span class="math inline">\(f =\)</span> <span class="math inline">\(0.1\)</span>, <span class="math inline">\(0.25\)</span>, and <span class="math inline">\(0.6\)</span>.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Increasing sample size max and precision…</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb81"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">power_values_df</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  sample_sizes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">500</span>, by <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">expand_grid</span><span class="op">(</span>f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    power <span class="op">=</span> <span class="fu">map2_dbl</span><span class="op">(</span></span>
+<span>      <span class="va">sample_sizes</span>, <span class="va">f</span>,</span>
+<span>      <span class="kw">function</span><span class="op">(</span><span class="va">sample_size</span>, <span class="va">f</span><span class="op">)</span> </span>
+<span>        <span class="fu">pwr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pwr/man/pwr.anova.test.html">pwr.anova.test</a></span><span class="op">(</span></span>
+<span>          n <span class="op">=</span> <span class="va">sample_size</span>, </span>
+<span>          k <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>          f <span class="op">=</span> <span class="va">f</span>, </span>
+<span>          sig.level <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">$</span><span class="va">power</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="va">power_values_df</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  sample_sizes     f  power
+         &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1           10  0.1  0.0708
+2           10  0.25 0.195 
+3           10  0.6  0.800 
+4           20  0.1  0.0954
+5           20  0.25 0.374 
+6           20  0.6  0.987 </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-10" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-10-1">Plot</a></li>
+<li><a href="#tabset-10-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-10-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-54-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-10-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb83"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">power_values_df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_sizes</span>, y <span class="op">=</span> <span class="va">power</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_hline</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>, </span>
+<span>             linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"gray75"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">coord_cartesian</span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="anova-and-power-5" class="slide level2"><h2>ANOVA and Power</h2>
+<p>Let’s examine how many participants we would need for a small, medium, or large effect (we can do <span class="math inline">\(f =\)</span> <span class="math inline">\(0.1\)</span>, <span class="math inline">\(0.25\)</span>, and <span class="math inline">\(0.6\)</span>.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Remember total sample size is <code>k * n</code>!</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb84"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">power_values_df</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  sample_sizes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">500</span>, by <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">expand_grid</span><span class="op">(</span>f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    power <span class="op">=</span> <span class="fu">map2_dbl</span><span class="op">(</span></span>
+<span>      <span class="va">sample_sizes</span>, <span class="va">f</span>,</span>
+<span>      <span class="kw">function</span><span class="op">(</span><span class="va">sample_size</span>, <span class="va">f</span><span class="op">)</span> </span>
+<span>        <span class="fu">pwr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pwr/man/pwr.anova.test.html">pwr.anova.test</a></span><span class="op">(</span></span>
+<span>          n <span class="op">=</span> <span class="va">sample_size</span>, </span>
+<span>          k <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>          f <span class="op">=</span> <span class="va">f</span>, </span>
+<span>          sig.level <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">$</span><span class="va">power</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    total_sample_size <span class="op">=</span> <span class="va">sample_sizes</span> <span class="op">*</span> <span class="fl">3</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="va">power_values_df</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  sample_sizes     f  power total_sample_size
+         &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;             &lt;dbl&gt;
+1           10  0.1  0.0708                30
+2           10  0.25 0.195                 30
+3           10  0.6  0.800                 30
+4           20  0.1  0.0954                60
+5           20  0.25 0.374                 60
+6           20  0.6  0.987                 60</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-11" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-11-1">Plot</a></li>
+<li><a href="#tabset-11-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-11-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_10_files/figure-revealjs/unnamed-chunk-57-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-11-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb86"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">power_values_df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">total_sample_size</span>, y <span class="op">=</span> <span class="va">power</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_hline</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>, </span>
+<span>             linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"gray75"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">coord_cartesian</span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>

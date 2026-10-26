@@ -60,7 +60,7 @@ Need to be thinking about both *main effects* of each factor and their *interact
 
 ## Two-Way ANOVA
 
-If you have two factors ($A$ and $B$), and $A$ has levels $j = 1, \ ..., \ J$, and $B$ has levels $k = 1, \ ..., \ K$,
+If you have two factors ($A$ and $B$), where $A$ has levels $j = 1, \ ..., \ J$ and $B$ has levels $k = 1, \ ..., \ K$,
 
 $$y_{ijk} = \mu_\text{grand} + \alpha_j + \beta_k + (\alpha \beta)_{jk} + \epsilon_{ijk}$$
 
@@ -71,7 +71,7 @@ $$y_{ijk} = \mu_\text{grand} + \alpha_j + \beta_k + (\alpha \beta)_{jk} + \epsil
 
 ○ $\beta_k$: effect of $B$
 
-○ $(\alpha \beta)_{jk}$: effect of unique interaction between $A_j$ and $B_k$, beyond what just $\alpha_j + \beta_k$ would predict
+○ $(\alpha \beta)_{jk}$: effect of unique interaction between $A_j$ and $B_k$, beyond what just $\alpha_j + \beta_k$ would expect
 :::
 
 Want to examine variance in $y_{ijk}$ that is accounted for by each of these terms.
@@ -83,8 +83,10 @@ So far we've looked at penguin species, but these penguin measurements were take
 
 What if the year a penguin's measurement was taken is in some way linked to the penguin's flipper length?
 
+![](https://media.licdn.com/dms/image/v2/D5622AQEqq9Fr07M2kQ/feedshare-shrink_800/B56ZU1Bx0NGoAo-/0/1740351437275?e=2147483647&v=beta&t=IbECSbsmRubxVsaq6Vx4zks_BKFq13V0S1Mvxs1mlaE)
+
 ::: footer
-Photo accessed at [rpubs.com/mgsaavedraro/669873](https://rpubs.com/mgsaavedraro/669873) on 2026-10-15.
+[Penguins photo](https://media.licdn.com/dms/image/v2/D5622AQEqq9Fr07M2kQ/feedshare-shrink_800/B56ZU1Bx0NGoAo-/0/1740351437275?e=2147483647&v=beta&t=IbECSbsmRubxVsaq6Vx4zks_BKFq13V0S1Mvxs1mlaE) accessed on 2026-10-22.
 :::
 
 
@@ -108,14 +110,14 @@ summary(flipper_model_twoway)
 
 :::: {.columns}
 ::: {.column .fragment width="50%"}
-$SS_T = SS_B + SS_W$
+$SS_T = SS_\text{between} + SS_W$
 
-$SS_B = SS_A + SS_B + SS_{AB}$
+$SS_\text{between} = SS_\text{species} + SS_\text{year} + SS_{\text{species} \times \text{year}}$
 :::
 
 ::: {.column .fragment width="50%"}
 
-::: callout-note
+::: {.callout-note style="font-size:80%"}
 ### Note
 
 The $SS_B = SS_A + SS_B + SS_{AB}$ decomposition applies only in the case of **balanced sample sizes** within groups.
@@ -127,10 +129,16 @@ The $SS_B = SS_A + SS_B + SS_{AB}$ decomposition applies only in the case of **b
 
 ## Balanced Sample Sizes?
 
+:::: {.columns}
+::: {.column width="50%"}
 ```{r}
 penguins_cleaned |>
   count(species, year)
+```
+:::
 
+::: {.column width="50%"}
+```{r}
 penguins_cleaned |>
   count(species, year) |>
   pivot_wider(names_from = species, values_from = n) |>
@@ -138,11 +146,13 @@ penguins_cleaned |>
   tab_style(style = cell_text(weight = "bold"),
             locations = cells_column_labels())
 ```
+:::
+::::
 
 
 ## Types of Sums of Squares
 
-![](https://learninghub.primer-e.com/uploads/images/gallery/2022-08/fig1-41.png)
+![](https://learninghub.primer-e.com/uploads/images/gallery/2022-08/fig1-41.png){.absolute width=600 height=600 left=25%}
 
 ::: footer
 [Sums of Squares diagram](https://learninghub.primer-e.com/uploads/images/gallery/2022-08/fig1-41.png) accessed 2026-10-22.
@@ -182,7 +192,7 @@ Use if you think interaction is non-negligible.
 
 The capital 'A' `Anova()` function from the `car` package can help us swap between.
 
-But have to specify orthogonal (e.g., effect-coded) contrasts before fitting the 
+But have to specify orthogonal (e.g., effect-coded) contrasts **before fitting the model**.
 
 ```{r}
 # install.packages("car")
@@ -191,41 +201,43 @@ But have to specify orthogonal (e.g., effect-coded) contrasts before fitting the
 
 ## Types of Sums of Squares
 
-:::: {.columns}
-::: {.column width="33%"}
+::: {.panel-tabset}
 ### Type I
 
 ```{r}
 summary(flipper_model_twoway)
 ```
 
-:::
-
-::: {.column width="33%"}
 ### Type II
 
 ```{r}
 car::Anova(flipper_model_twoway, type = 2)
 ```
 
-:::
-
-::: {.column width="33%"}
 ### Type III
 
+:::: {.columns}
+::: {.column width="50%"}
 ```{r}
 car::Anova(flipper_model_twoway, type = 3)
-options(
-  contrasts = c(
-    unordered = "contr.sum",
-    ordered = "contr.poly"
-  )
-)
-flipper_model_twoway_again <- aov(flipper_length_mm ~ species * year, data = penguins_cleaned)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+car::Anova(flipper_model_twoway, type = 3)
+options(contrasts = c(
+  unordered = "contr.sum",
+  ordered = "contr.poly"
+))
+flipper_model_twoway_again <- aov(flipper_length_mm ~ species * year, 
+                                  data = penguins_cleaned)
 car::Anova(flipper_model_twoway_again, type = 3)
 ```
 :::
 ::::
+
+:::
 
 
 ## Types of Sums of Squares
@@ -249,8 +261,7 @@ penguins_cleaned <- penguins |>
 
 ## Types of Sums of Squares
 
-:::: {.columns}
-::: {.column width="33%"}
+::: {.panel-tabset}
 ### Type I
 
 ```{r}
@@ -260,9 +271,7 @@ ez::ezANOVA(penguins_cleaned,
             between = c(species, year),
             type = 1)$ANOVA
 ```
-:::
 
-::: {.column width="33%"}
 ### Type II
 
 ```{r}
@@ -271,9 +280,7 @@ ez::ezANOVA(penguins_cleaned,
             wid = id,
             between = c(species, year))$ANOVA
 ```
-:::
 
-::: {.column width="33%"}
 ### Type III
 
 ```{r}
@@ -284,26 +291,55 @@ ez::ezANOVA(penguins_cleaned,
             type = 3)$ANOVA
 ```
 :::
-::::
 
 
 ## Assumption Checking
 
 Looking for normally distributed outcome in each group combination and homogeneity of variance across groups.
 
+::: {.panel-tabset}
+### Plot
 ```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
 penguins_cleaned |>
   ggplot(aes(x = year, fill = species, y = flipper_length_mm, color = species)) +
-  geom_violin(alpha = 0.2) +
-  geom_jitter(position = position_jitterdodge(dodge.width = 0.9), alpha = .4) +
-  theme_minimal()
+  geom_violin(alpha = 0.3, color = NA) +
+  geom_jitter(position = position_jitterdodge(dodge.width = 0.9), 
+              alpha = .6, shape = 16, size = 2) +
+  labs(x = "Year", y = "Flipper Length (mm)", color = "Species") +
+  guides(fill = guide_none()) +
+  theme_minimal() +
+  theme(legend.position = "bottom",
+        panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank())
 ```
+
+### Code
+```{r}
+#| eval: false
+penguins_cleaned |>
+  ggplot(aes(x = year, fill = species, y = flipper_length_mm, color = species)) +
+  geom_violin(alpha = 0.3, color = NA) +
+  geom_jitter(position = position_jitterdodge(dodge.width = 0.9), 
+              alpha = .6, shape = 16, size = 2) +
+  labs(x = "Year", y = "Flipper Length (mm)", color = "Species") +
+  guides(fill = guide_none()) +
+  theme_minimal() +
+  theme(legend.position = "bottom",
+        panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank())
+```
+:::
+
 
 ## Effect Sizes: Partial $\eta^2$
 
 With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by **ignoring other factors** or as a proportion of the total variance.
 
-:::: {.columns}
+:::: {.columns style="font-size:90%"}
 ::: {.column .fragment width="33%"}
 partial $\eta^2$ for species
 
@@ -334,7 +370,7 @@ effectsize::eta_squared(flipper_model_twoway, partial = T) # partial = T is defa
 
 With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by ignoring other factors or as a **proportion of the total variance**.
 
-:::: {.columns}
+:::: {.columns style="font-size:90%"}
 ::: {.column .fragment width="33%"}
 partial $\eta^2$ for species
 
@@ -365,7 +401,7 @@ effectsize::eta_squared(flipper_model_twoway, partial = F) # partial = T is defa
 
 With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by **ignoring other factors** or as a proportion of the total variance.
 
-:::: {.columns}
+:::: {.columns style="font-size:90%"}
 ::: {.column .fragment width="33%"}
 partial $\omega^2$ for species
 
@@ -382,8 +418,6 @@ $\frac{\mathrm{df}_\text{year} (\mathrm{MS}_\text{year} - \mathrm{MS}_\text{W}) 
 partial $\omega^2$ for species $\times$ year
 
 $\frac{\mathrm{df}_{\text{year} \times \text{species}} (\mathrm{MS}_{\text{year} \times \text{species}} - \mathrm{MS}_\text{W}) }{SS_{\text{year} \times \text{species}} + (N - \mathrm{df}_{\text{year} \times \text{species}})MS_W}$
-
-$\frac{\mathrm{df}_{\text{year} \times \text{species}} (\mathrm{MS}_{\text{year} \times \text{species}} - \mathrm{MS}_\text{W}) }{SS_T + MS_W}$
 :::
 ::::
 
@@ -398,7 +432,7 @@ effectsize::omega_squared(flipper_model_twoway, partial = T) # partial = T is de
 
 With two factors, have to consider whether you want to investigate the proportion of variance accounted for by a factor by **ignoring other factors** or as a proportion of the total variance.
 
-:::: {.columns}
+:::: {.columns style="font-size:90%"}
 ::: {.column .fragment width="33%"}
 $\omega^2$ for species
 
@@ -427,41 +461,85 @@ effectsize::omega_squared(flipper_model_twoway, partial = F) # partial = T is de
 
 ## Comparison
 
-:::: {.columns}
-::: {.column width="50%"}
-partial $\eta^2$
+## Comparison
+
+::: {style="display: grid; grid-template-columns: 2em 1fr 1fr; column-gap: 1.5em; row-gap: 0.5em; align-items: start; font-size: 0.8em;"}
+
+<!-- header row -->
+::: {}
+:::
+
+::: {style="text-align: center; font-size: 1.3em;"}
+$\eta^2$
+:::
+
+::: {style="text-align: center; font-size: 1.3em;"}
+$\omega^2$
+:::
+
+<!-- partial row -->
+::: {style="writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; align-self: center;"}
+partial
+:::
 
 ```{r}
 effectsize::eta_squared(flipper_model_twoway)
 ```
-:::
-
-::: {.column width="50%"}
-partial $\omega^2$
 
 ```{r}
 effectsize::omega_squared(flipper_model_twoway)
 ```
-:::
-::::
 
-:::: {.columns}
-::: {.column width="50%"}
-$\eta^2$
+<!-- full row -->
+::: {style="writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; align-self: center;"}
+full
+:::
 
 ```{r}
 effectsize::eta_squared(flipper_model_twoway, partial = F)
 ```
-:::
-
-::: {.column width="50%"}
-$\omega^2$
 
 ```{r}
 effectsize::omega_squared(flipper_model_twoway, partial = F)
 ```
+
 :::
-::::
+
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- partial $\eta^2$ -->
+
+<!-- ```{r} -->
+<!-- effectsize::eta_squared(flipper_model_twoway) -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+<!-- partial $\omega^2$ -->
+
+<!-- ```{r} -->
+<!-- effectsize::omega_squared(flipper_model_twoway) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- :::: -->
+
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- $\eta^2$ -->
+
+<!-- ```{r} -->
+<!-- effectsize::eta_squared(flipper_model_twoway, partial = F) -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+<!-- $\omega^2$ -->
+
+<!-- ```{r} -->
+<!-- effectsize::omega_squared(flipper_model_twoway, partial = F) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- :::: -->
 
 
 ## Two-Way ANOVA as a Linear Model
@@ -498,9 +576,20 @@ summary(flipper_model_twoway_bayes)
 ```
 
 
-## Testing Effects with Bayes Factors
+## Bayesian Two-Way ANOVA
 
-[add testing by removing effects and comparing bayes factors]
+<!-- ```{r} -->
+<!-- bayesplot::ppc_violin_grouped( -->
+<!--   y = penguins_cleaned$flipper_length_mm, -->
+<!--   yrep = posterior_predict(flipper_model_twoway_bayes, draws = 50), -->
+<!--   group = penguins_cleaned$species -->
+<!-- )  -->
+
+<!-- ``` -->
+
+<!-- ## Testing Effects with Bayes Factors -->
+
+<!-- [add testing by removing effects and comparing bayes factors] -->
 
 
 ## Simple Main Effects
@@ -526,7 +615,7 @@ Can also flip (depending on how you'd like to interpret the results)
 Can examine this by running a separate One-Way ANOVA within each level.
 
 
-## Simple Main Effects with `emmeans`
+## Simple Main Effects `emmeans`
 
 ```{r}
 emms_flipper_twoway <- emmeans::emmeans(flipper_model_twoway, specs = c("species", "year"))
@@ -536,14 +625,16 @@ emms_flipper_twoway
 :::: {.columns}
 ::: {.column width="50%"}
 ```{r}
-smes_by_species <- emmeans::joint_tests(emms_flipper_twoway, by = "species")
+smes_by_species <- emmeans::joint_tests(emms_flipper_twoway, 
+                                        by = "species")
 smes_by_species
 ```
 :::
 
 ::: {.column width="50%"}
 ```{r}
-smes_by_year <- emmeans::joint_tests(emms_flipper_twoway, by = "year")
+smes_by_year <- emmeans::joint_tests(emms_flipper_twoway, 
+                                     by = "year")
 smes_by_year
 ```
 :::
@@ -570,7 +661,7 @@ emms_species; emms_year
 ```
 
 
-## Plotting Two-Way ANOVA `emmeans`
+## Plotting Two-Way `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -600,7 +691,7 @@ plot(emms_flipper_twoway)
 ::::
 
 
-## Plotting Two-Way ANOVA `emmeans`
+## Plotting Two-Way `emmeans`
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -609,7 +700,7 @@ Let's build our own. The color on our last plot was just to make it look nice, b
 ```{r}
 emms_flipper_twoway_df <- as_tibble(emms_flipper_twoway)
 emms_flipper_twoway_df |>
-  glimpse()
+  glimpse(width = 60)
 ```
 
 ::: {.fragment fragment-index=2}
@@ -687,7 +778,7 @@ Let's build our own.
 And tidy it up.
 :::
 
-::: {.column .fragment fragment-index=1 width="50%"}
+::: {.column width="50%"}
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -722,6 +813,364 @@ emms_flipper_twoway_df |>
   theme(legend.position = "none")
 ```
 :::
+:::
+::::
+
+
+## ANOVA and Power
+
+Just like with *t*-tests, you may want to examine power for an ANOVA.
+
+`pwr.anova.test(k, n, f, sig.level = 0.05, power)`
+
+::: subpoint
+○ `k =` number of groups
+
+○ `n =` number of observations **per group**
+
+○ `f =` effect size as an $f = \sqrt{f^2}$
+
+○ `sig.level =` significance level, typically `.05`
+
+○ `power =` power of test
+:::
+
+Like before, specify all but one, and the function will calculate the last
+
+Remember $f^2$ is the ratio of between-group variability to within-group variability
+
+
+## Getting $f$
+
+The `pwr.anova.test` function wants $f = \sqrt{f^2}$.
+
+If you're thinking about an effect size in $\eta^2$ or $\omega^2$ you can convert it. 
+
+:::: {.columns}
+::: {.column width="50%"}
+$f = \sqrt{\frac{\eta_2}{1 - \eta^2}}$
+:::
+
+::: {.column width="50%"}
+$f = \sqrt{\frac{\omega^2}{1 - \omega^2}}$
+:::
+::::
+
+The `effectsize::eta2_to_f(effect_size)` can convert "any measure of variance explained such as Eta-, Epsilon-, Omega-, or R-Squared, partial or otherwise"
+
+:::: {.columns}
+::: {.column width="33%"}
+```{r}
+effectsize::eta2_to_f(.7)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+effectsize::eta2_to_f(.2)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+effectsize::eta2_to_f(.1)
+```
+:::
+::::
+
+::: footer
+See `?effectsize::eta2_to_f` to confirm.
+:::
+
+## ANOVA and Power
+
+:::: {.columns}
+::: {.column width="33%"}
+```{r}
+pwr::pwr.anova.test(k = 4, 
+                    n = 20, 
+                    f = .25)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.anova.test(k = 4, 
+                    f = .25,
+                    power = 0.8)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+pwr::pwr.anova.test(n = 20, 
+                    f = 0.3,
+                    power = 0.7)
+```
+:::
+::::
+
+
+## ANOVA and Power
+
+Let's examine how many participants we would need for a small, medium, or large effect (we can do $f =$ $0.1$, $0.25$, and $0.6$.
+
+:::: {.columns}
+::: {.column width="50%"}
+
+Starting with small...
+
+```{r}
+power_values_df <- tibble(
+  sample_sizes = seq(10, 250, by = 20)
+) |>
+  mutate(
+    power = map_dbl(
+      sample_sizes, 
+      function(sample_size) 
+        pwr::pwr.anova.test(
+          n = sample_size, 
+          k = 3,
+          f = 0.1, 
+          sig.level = 0.05)$power
+    )
+  )
+power_values_df |> head(6)
+```
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+power_values_df |>
+  ggplot(aes(x = sample_sizes, y = power)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+
+### Code
+```{r}
+#| eval: false
+power_values_df |>
+  ggplot(aes(x = sample_sizes, y = power)) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+:::
+
+:::
+::::
+
+
+## ANOVA and Power
+
+Let's examine how many participants we would need for a small, medium, or large effect (we can do $f =$ $0.1$, $0.25$, and $0.6$.
+
+:::: {.columns}
+::: {.column width="50%"}
+
+Adding effect size condition...
+
+```{r}
+power_values_df <- tibble(
+  sample_sizes = seq(10, 250, by = 20)
+) |>
+  expand_grid(f = c(0.1, 0.25, 0.6)) |>
+  mutate(
+    power = map2_dbl(
+      sample_sizes, f,
+      function(sample_size, f) 
+        pwr::pwr.anova.test(
+          n = sample_size, 
+          k = 3,
+          f = f, 
+          sig.level = 0.05)$power
+    )
+  )
+power_values_df |> head(6)
+```
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+power_values_df |>
+  ggplot(aes(x = sample_sizes, y = power, color = factor(f))) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+
+### Code
+```{r}
+#| eval: false
+power_values_df |>
+  ggplot(aes(x = sample_sizes, y = power, color = factor(f))) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+:::
+
+:::
+::::
+
+
+## ANOVA and Power
+
+Let's examine how many participants we would need for a small, medium, or large effect (we can do $f =$ $0.1$, $0.25$, and $0.6$.
+
+:::: {.columns}
+::: {.column width="50%"}
+
+Increasing sample size max and precision...
+
+```{r}
+power_values_df <- tibble(
+  sample_sizes = seq(10, 500, by = 10)
+) |>
+  expand_grid(f = c(0.1, 0.25, 0.6)) |>
+  mutate(
+    power = map2_dbl(
+      sample_sizes, f,
+      function(sample_size, f) 
+        pwr::pwr.anova.test(
+          n = sample_size, 
+          k = 3,
+          f = f, 
+          sig.level = 0.05)$power
+    )
+  )
+power_values_df |> head(6)
+```
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+power_values_df |>
+  ggplot(aes(x = sample_sizes, y = power, color = factor(f))) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+
+### Code
+```{r}
+#| eval: false
+power_values_df |>
+  ggplot(aes(x = sample_sizes, y = power, color = factor(f))) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+:::
+
+:::
+::::
+
+
+## ANOVA and Power
+
+Let's examine how many participants we would need for a small, medium, or large effect (we can do $f =$ $0.1$, $0.25$, and $0.6$.
+
+:::: {.columns}
+::: {.column width="50%"}
+
+Remember total sample size is `k * n`!
+
+```{r}
+power_values_df <- tibble(
+  sample_sizes = seq(10, 500, by = 10)
+) |>
+  expand_grid(f = c(0.1, 0.25, 0.6)) |>
+  mutate(
+    power = map2_dbl(
+      sample_sizes, f,
+      function(sample_size, f) 
+        pwr::pwr.anova.test(
+          n = sample_size, 
+          k = 3,
+          f = f, 
+          sig.level = 0.05)$power
+    ),
+    total_sample_size = sample_sizes * 3
+  )
+power_values_df |> head(6)
+```
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+power_values_df |>
+  ggplot(aes(x = total_sample_size, y = power, color = factor(f))) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+
+### Code
+```{r}
+#| eval: false
+power_values_df |>
+  ggplot(aes(x = total_sample_size, y = power, color = factor(f))) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.8), 
+             linetype = "dashed", color = "gray75") +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_classic(base_size = 14)
+```
+:::
+
 :::
 ::::
 
