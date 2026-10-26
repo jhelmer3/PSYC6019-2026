@@ -1,0 +1,1279 @@
+---
+title: "Lecture 24: Simple Regression"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+```
+## Regression Line
+
+Last time, we saw that we can help summarize a scatterplot with a regression line
+
+```{r}
+
+library(haven)
+
+dat <- read_dta("../../Data/Pleskac data.dta")
+
+dat <- dat %>% filter(!is.na(polydrug) & !is.na(testeddrugs))
+
+ggplot(dat, aes(KC, polydrug)) + geom_point() + stat_smooth(method = "lm") +
+  theme_light()
+
+```
+
+
+## What is It?
+
+- Best fitting "straight" line
+- What is a line?
+    - [Has slope and intercept]{.answer .fragment .content-visible unless-meta="params.v0"}
+      - [$y = mx + b]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [**Intercept:** Value of $y$ when $x = 0$]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [**Slope:** For one unit increase in $x$, how many units increase in $y$?]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [How do we find this line?]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [What does "best fitting" mean?]{.answer .fragment .content-visible unless-meta="params.v0"}
+    
+
+
+## Regression Vocabulary
+
+::: {.columns}
+
+::: {.column width="60%"}
+```{r}
+#| message: false
+#| fig.width: 5
+
+set.seed(294)
+x <- rnorm(100)
+y <- 9.94 + 4.81 * x + rnorm(100, sd = 3)
+
+ggplot(tibble(x, y), aes(x, y)) + geom_point() + theme_classic() +
+geom_smooth(method = "lm", se = FALSE, col = my_green) +
+ggtitle("Correlation = .79, Intercept = 9.75, Slope = 4.51")
+```
+:::
+
+::: {.column width="40%"}
+1. **Criterion**: The variable we are trying to predict, which is on the $y$-axis (usually the DV)
+2. **Predictor**: The variable used to predict the criterion, which is on the $x$-axis (usually the IV)
+3. **Slope**: The steepness of the line
+4. **Intercept**: The predicted value of the criterion when the predictor is at 0
+:::
+
+:::
+
+
+## Regression Equation
+
+::: {style="font-size: 0.8em;"}
+
+The form of the simple linear regression model is as follows:
+
+| Population | Sample |
+| :--- | :--- |
+| $y_{i} \mid x_{i} = b_{0} + b_{1}x_{i} + e_{i}$ | $y_{i} \mid x_{i} = \hat{b}_{0} + \hat{b}_{1}x_{i} + e_{i}$ |
+| $\hat{y}_{i} = b_{0} + b_{1}x_{i}$ | $\hat{y}_{i} = \hat{b}_{0} + \hat{b}_{1}x_{i}$ |
+
+1. $y_i \mid x_i$: The **conditional** mean value of $y_i$ given a fixed/specific value of $x_i$
+2. $\hat{y}_i$: Estimated outcome ($\hat{\,\,\,}$: an estimated value)
+3. $b_0$ ($\hat{b}_0$): The (estimated) intercept (predicted value of $y_i$ when $x_i = 0$)
+4. $b_1$ ($\hat{b}_1$): The (estimated) slope (predicted increase in $y_i$ for a one-unit increase in $x_i$)
+5. $e_i = y - \hat{y}$:
+    + The **residual** or **error** when predicting $y_i$ from $x_i$
+    + The **difference** between a particular point and the regression line
+    
+::: 
+
+```{r}
+#| include: false
+
+set.seed(294)
+x <- rnorm(100)
+y <- 9.94 + 4.81 * x + rnorm(100, sd = 3)
+
+# Base plots
+png("Regression1.png", width = 960, height = 960, res = 200)
+ggplot(tibble(x, y), aes(x, y)) + geom_point() + theme_classic() +
+  geom_smooth(method = "lm", se = FALSE, col = my_green)
+dev.off()
+
+png("Regression2.png", width = 960, height = 960, res = 200)
+ggplot(tibble(x, y), aes(x, y)) + geom_point() + theme_classic() +
+  geom_smooth(method = "lm", se = FALSE, col = my_green) +
+  geom_point(aes(0, 9.75), col = my_blue, size = I(4))
+dev.off()
+
+# Plot 3 with '1 unit x' label and slope 'b' annotation
+png("Regression3.png", width = 960, height = 960, res = 200)
+ggplot(tibble(x, y), aes(x, y)) + geom_point() + theme_classic() +
+  geom_smooth(method = "lm", se = FALSE, col = my_green) +
+  geom_point(aes(0, 9.75), col = my_blue, size = I(4)) +
+  geom_segment(aes(x = 1, xend = 2, y = 14.26, yend = 14.26), col = my_red, arrow = arrow(length = unit(0.02, "npc"))) +
+  geom_segment(aes(x = 2, xend = 2, y = 14.26, yend = 18.77), col = my_red, arrow = arrow(length = unit(0.02, "npc"))) +
+  # White background box for "1 unit x"
+  annotate("label", x = 1.5, y = 13.3, label = "bold('1 unit ') ~ italic(x)", parse = TRUE, color = my_red, fill = "white", label.size = NA, size = 4.5) +
+  # Slope label b
+  annotate("text", x = 2.15, y = 16.5, label = "italic(b)", parse = TRUE, color = my_red, size = 5.5, fontface = "bold")
+dev.off()
+
+# Plot 4 with slope annotations plus residual 'e_i' annotation
+png("Regression4.png", width = 960, height = 960, res = 200)
+ggplot(tibble(x, y), aes(x, y)) + geom_point() + theme_classic() +
+  geom_smooth(method = "lm", se = FALSE, col = my_green) +
+  geom_point(aes(0, 9.75), col = my_blue, size = I(4)) +
+  geom_segment(aes(x = 1, xend = 2, y = 14.26, yend = 14.26), col = my_red, arrow = arrow(length = unit(0.02, "npc"))) +
+  geom_segment(aes(x = 2, xend = 2, y = 14.26, yend = 18.77), col = my_red, arrow = arrow(length = unit(0.02, "npc"))) +
+  geom_segment(aes(x = -2.212038, xend = -2.212038, y = -.2262914, yend = -4.979711), col = my_purple) +
+  geom_point(aes(-2.212038, -4.979711), col = my_purple, size = I(3)) +
+  # White background box for "1 unit x"
+  annotate("label", x = 1.5, y = 13.3, label = "bold('1 unit ') ~ italic(x)", parse = TRUE, color = my_red, fill = "white", label.size = NA, size = 4.5) +
+  # Slope label b
+  annotate("text", x = 2.15, y = 16.5, label = "italic(b)", parse = TRUE, color = my_red, size = 5.5, fontface = "bold") +
+  # Residual label e_i
+  annotate("text", x = -1.85, y = -3.5, label = "italic(e)[i]", parse = TRUE, color = my_purple, size = 5.5, fontface = "bold")
+dev.off()
+
+# Plot 5 with constant normal distributions + clean, non-overlapping annotations at x = 0.5
+fit <- lm(y ~ x)
+sigma_val <- summary(fit)$sigma
+x_centers <- c(-1.5, -0.5, 0.5, 1.5)
+
+# Calculate normal density curves at each x position
+dist_df <- map_dfr(x_centers, function(x0) {
+  y0 <- predict(fit, newdata = data.frame(x = x0))
+  y_seq <- seq(y0 - 3 * sigma_val, y0 + 3 * sigma_val, length.out = 100)
+  dens <- dnorm(y_seq, mean = y0, sd = sigma_val)
+  scale_factor <- 3.5 
+  tibble(
+    x0 = x0,
+    y0 = y0,
+    y = y_seq,
+    x_curve = x0 + dens * scale_factor
+  )
+})
+
+dist_summary <- dist_df %>%
+  group_by(x0) %>%
+  summarise(
+    y0 = first(y0),
+    y_min = min(y),
+    y_max = max(y),
+    x_peak = max(x_curve),
+    .groups = "drop"
+  )
+
+# Target point for numerical coordinate annotation (at x = 0.5)
+coord_target <- dist_summary %>% filter(x0 == 0.5)
+
+png("Regression5.png", width = 960, height = 960, res = 200)
+ggplot(tibble(x, y), aes(x, y)) +
+  geom_point() +
+  theme_classic() +
+  geom_smooth(method = "lm", se = FALSE, col = my_green) +
+  # Vertical dotted axis for each distribution
+  geom_segment(data = dist_summary, aes(x = x0, xend = x0, y = y_min, yend = y_max), 
+               col = my_blue, linetype = "dotted", size = 0.8, inherit.aes = FALSE) +
+  # Horizontal dotted peak indicator
+  geom_segment(data = dist_summary, aes(x = x0, xend = x_peak, y = y0, yend = y0), 
+               col = my_blue, linetype = "dotted", size = 0.8, inherit.aes = FALSE) +
+  # Normal density curve
+  geom_path(data = dist_df, aes(x = x_curve, y = y, group = x0), 
+            col = my_blue, size = 0.9, inherit.aes = FALSE) +
+  # Red square box with cross at predicted mean
+  geom_point(data = dist_summary, aes(x = x0, y = y0), 
+             shape = 7, col = my_red, size = 3.5, stroke = 1.2, inherit.aes = FALSE) +
+  # Numerical coordinate annotation label (nudged up and left off the line)
+  geom_label(data = coord_target, 
+             aes(x = x0, y = y0, 
+                 label = paste0("(", sprintf("%.2f", x0), ", ", sprintf("%.2f", y0), ")")), 
+             nudge_x = -0.45, nudge_y = 2.0, col = my_red, fill = "white", 
+             fontface = "bold", size = 4.2, label.size = NA, inherit.aes = FALSE) +
+  # Arrow pointing to the x = 0.5 curve from high above the regression line
+  annotate("segment", x = 1.25, xend = 0.88, y = 18.5, yend = 15.2,
+           col = my_purple, arrow = arrow(length = unit(0.02, "npc")), size = 0.9) +
+  # Text label sigma_epsilon
+  annotate("text", x = 1.30, y = 19.2, label = "s[epsilon]", 
+           parse = TRUE, col = my_purple, size = 5.5, fontface = "bold")
+dev.off()
+
+
+
+# Plot 6: Univariate distribution of y ignoring x (oriented vertically)
+mean_y <- mean(y)
+sd_y <- sd(y)
+
+# Calculate overall vertical density curve for y
+y_seq_total <- seq(mean_y - 3 * sd_y, mean_y + 3 * sd_y, length.out = 100)
+dens_total <- dnorm(y_seq_total, mean = mean_y, sd = sd_y)
+scale_factor_total <- 4.5
+
+total_dist_df <- tibble(
+  y = y_seq_total,
+  x_curve = dens_total * scale_factor_total
+)
+
+png("Regression6.png", width = 960, height = 960, res = 200)
+ggplot() +
+  # Univariate y data points plotted along x = 0
+  geom_point(data = tibble(x = 0, y = y), aes(x = x, y = y), alpha = 0.5) +
+  theme_classic() +
+  # Vertical dotted center line
+  geom_segment(aes(x = 0, xend = 0, y = min(y_seq_total), yend = max(y_seq_total)), 
+               col = my_blue, linetype = "dotted", size = 0.8) +
+  # Horizontal dashed line at overall mean y (y-bar)
+  geom_hline(yintercept = mean_y, col = my_red, linetype = "dashed", size = 0.8) +
+  # Vertical normal density curve
+  geom_path(data = total_dist_df, aes(x = x_curve, y = y), 
+            col = my_blue, size = 1) +
+  # Highlighted point/marker at overall mean y
+  geom_point(aes(x = 0, y = mean_y), shape = 7, col = my_red, size = 3.5, stroke = 1.2) +
+  # Annotation for y-bar (overall mean)
+  annotate("text", x = -0.12, y = mean_y, label = "bar(y)", 
+           parse = TRUE, col = my_red, size = 5.5, fontface = "bold", hjust = 1) +
+  # Arrow pointing to the curve for s_y (total standard deviation of y)
+  annotate("segment", x = 0.60, xend = max(total_dist_df$x_curve) * 0.85, 
+           y = mean_y + sd_y + 1.5, yend = mean_y + sd_y,
+           col = my_purple, arrow = arrow(length = unit(0.02, "npc")), size = 0.9) +
+  # Annotation for s_y
+  annotate("text", x = 0.65, y = mean_y + sd_y + 2.2, label = "s[y]", 
+           parse = TRUE, col = my_purple, size = 5.5, fontface = "bold") +
+  # Match y-limits to previous regression plots for side-by-side visual comparison
+  scale_y_continuous(limits = c(-5, 22)) +
+  scale_x_continuous(limits = c(-0.8, 1.2), breaks = NULL, name = "") +
+  labs(y = "y")
+dev.off()
+```
+
+## Regression Visualization
+
+::: {.columns}
+
+::: {.column width="60%"}
+![](Regression1)
+:::
+
+::: {.column width="40%"}
+In this example,
+  
+$$\hat{y}_i = 9.75 + 4.51x_i$$
+  
+This is the equation of the **green** best-fit line
+:::
+
+:::
+
+
+## Regression Visualization
+
+::: {.columns}
+
+::: {.column width="60%"}
+![](Regression2)
+:::
+
+::: {.column width="40%"}
+In this example,
+  
+$$\hat{y}_i = 9.75 + 4.51x_i$$
+  
+- $b_0 = 9.75$ is the intercept
+- **(0, 9.75)** is a point on the best-fit line
+:::
+
+:::
+
+
+
+## Regression Visualization
+
+::: {.columns}
+
+::: {.column width="60%"}
+![](Regression3)
+:::
+
+::: {.column width="40%"}
+In this example,
+
+$$\hat{y}_i = 9.75 + 4.51x_i$$
+
+* $b_1 = 4.51$ is the slope
+* For a one-unit increase in $x$, predicted $y$ values increase by [**4.51 units**]{style="color: #E41A1C;"}
+:::
+
+:::
+
+
+
+## Regression Visualization
+
+::: {.columns}
+
+::: {.column width="60%"}
+![](Regression5)
+:::
+
+::: {.column width="40%"}
+
+
+::: {style="font-size: 0.78em;"}
+
+
+
+- [**(0.50, 12.00)**]{style="color: #E41A1C;"} is a point on the best fit line
+- For all cases where $x = 0.50$, our estimated mean of $\bar{y} | (x = 0.50) = 12.00$ 
+    - The standard deviation of $y$ when $x = 0.50$ is $s_y | (x = 0.50) = \color{#984EA3} s_{\epsilon} = 3.27$
+      - In fact, this what we are saying the SD of $y$ is for **any** value of $x$, $\sy |x= \color{#984EA3} s_{\epsilon} = 3.27$ 
+- For any given $x$, the regression line tells us the expected mean of $y$, with constant SD
+
+:::
+
+:::
+
+:::
+
+
+
+## Normal Equations
+
+The best-fit line follows the form:
+
+$$\hat{y}_i = \hat{b}_0 + \hat{b}_1 x_i$$
+
+The estimated regression coefficients ($\hat{b}_0$ and $\hat{b}_1$) are functions of familiar descriptive statistics:
+
+$$\hat{b}_1 = \frac{s_{xy}}{s^2_{x}}$$
+
+$$\hat{b}_0 = \bar{y} - \hat{b}_1 \bar{x}$$
+
+These are known as the **normal equations**
+
+
+## Ordinary Least Squares
+
+
+::: {style="font-size: 0.85em;"}
+
+Where do these "normal equations" come from?
+
+Method of **ordinary least squares** (OLS):
+
+- Find $b_0$ and $b_1$ that minimize the sum of squared differences between $y_i$ and $\hat{y}$
+- In symbols:
+
+$$(\hat{b}_0, \hat{b}_1)^\prime  = \underset{b_{0},b_{1}}{\text{argmin}}\left[\sum_{i=1}^N(y_i - \hat{y}_i)^2\right] \\
+   = \underset{b_{0},b_{1}}{\text{argmin}}\left[\sum_{i=1}^N(y_i - b_0 - b_1x_i)^2\right]$$
+
+OLS is the same **loss function** we use in ANOVA: minimize (sums of) squared errors between $\hat{y}_i$'s and the observed $y_i$'s
+
+
+:::
+
+
+
+## Standard Error of the Estimate
+
+$$s_{y\cdot x} =\sqrt{\frac{\sum_{i=1}^N (y_i-\hat{y}_i)^2}{N-2}} = \sqrt{\frac{SS_{\text{residual}}}{df}}$$
+
+- $s_{y \cdot x}$ is the standard deviation of $y$ predicted from $x$
+    - Notice the "$\cdot$" between $y$ and $x$
+- $s_{y \cdot x}^2$ is an unbiased estimator of $\sigma_{y \cdot x}^2$
+- $s^2_{y\cdot x}$ is a measure of the accuracy of the regression line
+- $s_{y\cdot x}$ is in the units of $y$
+
+
+
+## R-Squared
+
+::: {style="font-size: 0.85em;"}
+
+$R^2 = r_{xy}^2$ is the effect size of the simple linear regression model
+
+- Proportion of the variance of $y$ accounted for by $x$
+
+
+Sample variation of $\color{#FF7F00}{\underset{\text{\small sum of\\squares}}{{SS_y}}}$ = numerator of sample variance of y
+
+
+$$SS_y = \sum_{i=1}^N(y_i - \bar{y})^2$$
+
+$(y_i - \bar{y})$ can be decomposed into two parts:
+
+$$
+\color{#377EB8}{\underbrace{\color{black}{(y_i - \bar{y})}}_{\substack{\nearrow \\[0.2em] \text{\textbf{total}} \\ \text{variation of } y}}}
+= 
+\color{#984EA3}{\underbrace{\color{black}{(y_i - \hat{y}_i)}}_{\substack{\uparrow \\[0.2em] \text{variation of } y \\ \text{\textbf{NOT} predicted by } x}}} 
++ 
+\color{#4DAF4A}{\underbrace{\color{black}{(\hat{y}_i - \bar{y})}}_{\substack{\nwarrow \\[0.2em] \text{variation of } y \\ \text{predicted by } x}}}
+$$
+
+:::
+
+
+## R-Squared
+
+Sample variation of $y$ ($SS_y$) can be decomposed into two parts:
+
+$$SS_y = SS_{\text{residual}} + SS_{\text{regression}} \\
+  \sum(y_i - \bar{y})^2  = \sum(y_i - \hat{y}_i)^2 + \sum(\hat{y}_i - \bar{y})^2$$
+
+- $SS_{\text{residual}}$: variation of the residuals
+  - Like $SS_{\text{within}}$ from ANOVA
+
+- $SS_{\text{regression}}$: variation of $y$ predicted by $x$
+  - Like $SS_{\text{between}}$ from ANOVA
+
+$$R^2 = \frac{SS_{\text{regression}}}{SS_y} = 1 - \frac{SS_{\text{residual}}}{SS_y}$$
+
+In the simple regression model, $R^2 = r^2_{xy}$
+
+- Proportion of variation in $y$ accounted for by $\hat{y}$
+
+## R-Squared Viz 1
+
+
+```{r}
+#| message: false
+
+set.seed(294)
+x <- rnorm(100)
+y <- 9.94 + 4.81 * x + rnorm(100, sd = 3)
+
+
+
+ggplot(tibble(x, y), aes(x, y)) + 
+  geom_point() + 
+  theme_light() +
+  
+  # Lines
+  geom_smooth(method = "lm", se = FALSE, col = my_orange, size = I(1.5)) +
+  geom_hline(yintercept = mean(y), col = my_red, size = I(1.5)) +
+  
+  # ARROWS (Corrected Color Alignment)
+  # 1. Residual (y_i - y_hat): point to regression line -> PURPLE
+  geom_segment(aes(x = x[70], y = y[70], xend = x[70], yend = predict(lm(y ~ x))[70]),
+               col = my_purple, arrow = arrow(length = unit(.1, "inches"), ends = "both"), size = 0.8) +
+  # 2. Total Variation (y_i - y_bar): point to mean line -> BLUE
+  geom_segment(aes(x = x[57], y = y[57], xend = x[57], yend = mean(y)),
+               col = my_blue, arrow = arrow(length = unit(.1, "inches"), ends = "both"), size = 0.8) +
+  # 3. Regression Variation (y_hat - y_bar): mean line to regression line -> GREEN
+  geom_segment(aes(x = .9, y = mean(y), xend = .9, yend = predict(lm(y ~ x), newdata = data.frame(x = .9))),
+               col = my_green, arrow = arrow(length = unit(.1, "inches"), ends = "both"), size = 0.8) +
+
+  # LINE LABELS
+  annotate("text", x = -2.2, y = mean(y) + 2.0, label = "bar(y)", parse = TRUE, col = my_red, size = 6, fontface = "bold") +
+  annotate("text", x = -2.2, y = 1.0, label = "hat(y)", parse = TRUE, col = my_orange, size = 6, fontface = "bold") +
+
+  # BOX 1: SS_reg (Top Left - Green)
+  annotate("label", x = -2.1, y = 16.5, 
+           label = "atop(SS[reg] == SS(hat(y)[i] - bar(y)), atop(bold('Variation in ') ~ italic(y), bold('predicted by ') ~ italic(x)))", 
+           parse = TRUE, col = my_green, fill = "white", label.size = 0.8, size = 4.2) +
+  
+  # BOX 2: SS_resid (Middle Right - Purple)
+  annotate("label", x = 1.3, y = 6.5, 
+           label = "atop(SS[resid] == SS(y[i] - hat(y)[i]), atop(bold('Variation in ') ~ italic(y) ~ bold('NOT'), bold('predicted by ') ~ italic(x)))", 
+           parse = TRUE, col = my_purple, fill = "white", label.size = 0.8, size = 4.2) +
+
+  # BOX 3: SS_y (Bottom Right - Blue)
+  annotate("label", x = 0.6, y = -3.0, 
+           label = "atop(SS[y] == SS(y[i] - bar(y)), bold('Variation in ') ~ italic(y))", 
+           parse = TRUE, col = my_blue, fill = "white", label.size = 0.8, size = 4.2) +
+
+  # R^2 COLORED FRACTION FORMULA (Fixed parse syntax for R^2 =)
+  annotate("text", x = 1.40, y = -3.2, label = "R^2 ~ '='", parse = TRUE, col = "black", size = 6.5) +
+  annotate("segment", x = 1.65, xend = 2.05, y = -3.2, yend = -3.2, col = "black", size = 0.8) +
+  annotate("text", x = 1.85, y = -2.3, label = "SS[reg]", parse = TRUE, col = my_green, size = 6.5, fontface = "bold") +
+  annotate("text", x = 1.85, y = -4.1, label = "SS[y]", parse = TRUE, col = my_blue, size = 6.5, fontface = "bold")
+```
+
+$R^2$ represents how **different** the best fitting regression line is along the $y$-axis than the simple mean of $y$
+
+
+## R-Squared Viz 2
+
+```{r}
+#| message: false
+
+set.seed(294)
+x <- rnorm(100)
+y <- 9.94 + 4.81 * x + rnorm(100, sd = 3)
+
+
+
+ggplot(tibble(x, y), aes(x, y)) + 
+  geom_point() + 
+  theme_light() +
+  
+  # Lines
+  geom_smooth(method = "lm", se = FALSE, col = my_orange, size = I(1.5)) +
+  geom_hline(yintercept = mean(y), col = my_red, size = I(1.5)) +
+  
+  # ARROWS (Corrected Color Alignment)
+  # 1. Residual (y_i - y_hat): point to regression line -> PURPLE
+  geom_segment(aes(x = x[70], y = y[70], xend = x[70], yend = predict(lm(y ~ x))[70]),
+               col = my_purple, arrow = arrow(length = unit(.1, "inches"), ends = "both"), size = 0.8) +
+  # 2. Total Variation (y_i - y_bar): point to mean line -> BLUE
+  geom_segment(aes(x = x[57], y = y[57], xend = x[57], yend = mean(y)),
+               col = my_blue, arrow = arrow(length = unit(.1, "inches"), ends = "both"), size = 0.8) +
+  # 3. Regression Variation (y_hat - y_bar): mean line to regression line -> GREEN
+  geom_segment(aes(x = .9, y = mean(y), xend = .9, yend = predict(lm(y ~ x), newdata = data.frame(x = .9))),
+               col = my_green, arrow = arrow(length = unit(.1, "inches"), ends = "both"), size = 0.8) +
+
+  # LINE LABELS
+  annotate("text", x = -2.2, y = mean(y) + 2.0, label = "bar(y)", parse = TRUE, col = my_red, size = 6, fontface = "bold") +
+  annotate("text", x = -2.2, y = 1.0, label = "hat(y)", parse = TRUE, col = my_orange, size = 6, fontface = "bold") +
+
+  # BOX 1: SS_reg (Top Left - Green)
+  annotate("label", x = -2.1, y = 16.5, 
+           label = "atop(SS[reg] == SS(hat(y)[i] - bar(y)), atop(bold('Variation in ') ~ italic(y), bold('predicted by ') ~ italic(x)))", 
+           parse = TRUE, col = my_green, fill = "white", label.size = 0.8, size = 4.2) +
+  
+  # BOX 2: SS_resid (Middle Right - Purple)
+  annotate("label", x = 1.3, y = 6.5, 
+           label = "atop(SS[resid] == SS(y[i] - hat(y)[i]), atop(bold('Variation in ') ~ italic(y) ~ bold('NOT'), bold('predicted by ') ~ italic(x)))", 
+           parse = TRUE, col = my_purple, fill = "white", label.size = 0.8, size = 4.2) +
+
+  # BOX 3: SS_y (Bottom Center-Left - Blue, shifted left to x = 0.15)
+  annotate("label", x = 0.15, y = -3.0, 
+           label = "atop(SS[y] == SS(y[i] - bar(y)), bold('Variation in ') ~ italic(y))", 
+           parse = TRUE, col = my_blue, fill = "white", label.size = 0.8, size = 4.2) +
+
+  # R^2 ALTERNATIVE FORMULA: R^2 = 1 - SS_resid / SS_y
+  annotate("text", x = 1.25, y = -3.2, label = "R^2 ~ '= 1 -'", parse = TRUE, col = "black", size = 6.5) +
+  annotate("segment", x = 1.58, xend = 2.05, y = -3.2, yend = -3.2, col = "black", size = 0.8) +
+  annotate("text", x = 1.81, y = -2.3, label = "SS[resid]", parse = TRUE, col = my_purple, size = 6.5, fontface = "bold") +
+  annotate("text", x = 1.81, y = -4.1, label = "SS[y]", parse = TRUE, col = my_blue, size = 6.5, fontface = "bold")
+```
+
+$R^2$ represents how much **smaller** the residuals are for the regression line than for the simple mean of $y$
+
+## R-Squared Viz 3
+
+
+::: {.columns}
+
+::: {.column width="60%"}
+![](Regression5)
+:::
+
+::: {.column width="40%"}
+
+
+- $R^2$ quantifies how much smaller the conditional SD of $y$ given $x$ is
+    - $s_y |x= \color{#984EA3} \sigma_{\epsilon} = 3.27$  
+
+:::
+
+:::
+
+## R-Squared Viz 3
+
+
+::: {.columns}
+
+::: {.column width="60%"}
+![](Regression6)
+:::
+
+::: {.column width="40%"}
+
+
+- Than the marginal SD of $y$ ignoring $x$ is
+    - $s_y = 5.36$  
+
+:::
+
+:::
+
+
+
+## Adjusted R-Squared
+
+- $R^2$ is a positively biased estimate of the population squared correlation
+- Adjusted $R^2$ is less biased, but not completely unbiased
+- For simple linear regression:
+
+$$\text{Adjusted }R^2 = \left(R^2 - \frac{1}{N-1}\right)\left(\frac{N-1}{N-2}\right)$$
+
+## Standardized Regression
+
+What happens if we standardize $x$ and $y$?
+
+What is standardization?
+
+- [Converts a variable to $Z$-score units]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [$Z_x = \frac{x -\bar{x}}{s_x}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [$Z_y = \frac{y -\bar{y}}{s_y}$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [**New Intercept Interpretation:** $Z_y$ when $Z_x = 0$ (Always 0)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [**New Slope Interpretation:** Increase in $Z_y$ for one unit increase in $Z_x$ ($r_{xy}$)]{.answer .fragment .content-visible unless-meta="params.v0"}
+    
+    
+    
+
+## Map to Correlation
+
+**Standardized regression coefficients** are those that describe the relationship between standardized variables
+
+Standardized $\hat{b}_0 = 0$ and $\hat{b}_1 = r_{xy}$.
+
+Unstandardized $\hat{b}_1 = \frac{r_{xy}s_y}{s_x}$
+
+Unstandardized $\hat{b}_0 = \bar{y} - \hat{b}_1\bar{x}$ (unstandardized $\hat{b}_1$)
+
+
+## Test for Intercept
+
+
+::: {style="font-size: 0.85em;"}
+
+
+- $H_0: b_0 = 0$
+- $H_1: b_0 \neq 0$
+- $b_0$ is population regression intercept (sample statistic = $\hat{b}_0$)
+
+$$t_{\text{obs}}(df) = \frac{\hat{b}_0}{s_{\hat{b}_0}} \hspace{1cm}   s_{\hat{b}_0}= \sqrt{\left(\frac{(1 - r^2_{xy})\times\sum(y_i - \bar{y})^2}{df}\right)\left(\frac{1}{N} + \frac{\bar{x}^2}{(N-1)\times s^2_{x}}\right)}$$
+
+:::
+
+## Intercept Test Terms
+
+- $df$: degrees of freedom = $N - 2$
+- $s_x^2$: sample variance of $x$
+- $\bar{y}$: sample mean of $y$
+- $\bar{x}$: sample mean of $x$
+- $r_{xy}$: sample correlation between $x$ and $y$
+
+Under $H_0$, $t_{\text{obs}}(df)$ is $t$-distributed with $df = N - 2$ degrees of freedom
+
+Confidence interval:
+
+$$\hat{b}_0 \pm t(df)_{\alpha/2} \times s_{\hat{b}_0}$$
+
+## Why Care?
+
+What is the interpretation of the intercept?
+
+
+- [Estimated mean of $y$ when $x = 0$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Test is whether $\bar{y}|(x=0) \neq 0$ when $x = 0$]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Is 0 a plausible value for $x$?]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Is 0 a plausible value for $y$?]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Do you care specifically about $\bar{y}|(x=0)$?]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+
+## Test for Slope
+
+* $H_0: b_1 = 0$
+* $H_1: b_1 \neq 0$
+* $b_1$ is population regression slope of $x$ on $y$ (sample statistic = $\hat{b}_1$)
+
+::: {.columns}
+
+::: {.column width="50%"}
+$$t_{\text{obs}}(df) = \frac{\hat{b}_1}{s_{\hat{b}_1}}$$
+:::
+
+::: {.column width="50%"}
+$$s_{\hat{b}_1}= \frac{s_y}{s_x}\sqrt{\frac{1 - r^2_{xy}}{df}}$$
+:::
+
+:::
+
+## Slope Test Terms
+
+* $df$: degrees of freedom = $N - 2$
+* $s_y$: sample $SD$ of $y$
+* $s_x$: sample $SD$ of $x$
+* $r_{xy}$: sample correlation between $x$ and $y$
+
+Under $H_0$, $t_{\text{obs}}(df)$ is $t$-distributed with $df = N - 2$ degrees of freedom
+
+Confidence interval:
+
+$$\hat{b}_1 \pm t(df)_{\alpha/2} \times s_{\hat{b}_1}$$
+
+
+## Hypothesis Tests for $R^2$
+
+
+* $H_0$: population $R^2 = 0$
+* $H_1$: population $R^2 > 0$ (note: $R^2$ cannot be negative)
+
+$$F_{\text{obs}}(1, N-2) = \frac{MS_{\text{regression}}}{MS_{\text{residual}}}$$
+
+* $MS_{\text{regression}} = \frac{SS_{\text{regression}}}{1}$ ($MS$: "mean squares")
+* $MS_{\text{residual}} = \frac{SS_{\text{residual}}}{N-2}$
+* $N$: sample size
+
+Under $H_0$, $F_{\text{obs}}$ follows the $F$ distribution with 1 and $N-2$ $df$
+
+## Test Equivalence
+
+For **simple** regression (just one $x$), the following tests are all equivalent:
+
+- $t$-test of correlation $r_{xy}$
+- $t$-test of regression slope $b_1$
+- $F$-test of $R^2$
+
+## Why $N-2$ $df$?
+
+- How many (which) parameters are we estimating in a simple regression?
+  - [One intercept and one slope. That's why we "lose" 2 $df$]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+
+## Assumptions
+
+1. All observations are **conditionally** independent
+  - Nothing about one observation of $x$ tells you anything about any other observation of $x$ that $y$ doesn't already tell you (and vice versa)
+2. No outliers
+3. Across each predictor value, **residuals** are normally distributed with mean 0 and constant variance (homoscedasticity)
+    - Equivalently put: There is a linear relationship between $x$ and $y$
+    - New version of the normality and homogeneity of variance assumptions
+
+
+
+
+## Residual Assumptions
+
+::: {.columns}
+
+::: {.column width="60%"}
+![](Regression5)
+:::
+
+::: {.column width="40%"}
+
+
+
+
+
+
+- For every point on the $x$ axis
+    - Residuals follow a normal distribution
+    - Variance (SD) of $y$ is constant
+
+
+
+:::
+
+:::
+
+
+## Non-Normal Residuals
+
+
+```{r}
+#| message: false
+#| warning: false
+#| fig.width: 8
+#| fig.height: 6
+
+set.seed(294)
+n <- 400
+x_nonnormal <- rnorm(n)
+shape_p <- 2.0
+scale_p <- 2.5
+
+# Right-skewed gamma residuals centered at zero
+e_skew <- rgamma(n, shape = shape_p, scale = scale_p) - (shape_p * scale_p)
+y_nonnormal <- 9.94 + 4.81 * x_nonnormal + e_skew
+
+fit_nonnormal <- lm(y_nonnormal ~ x_nonnormal)
+x_centers <- c(-1.5, -0.5, 0.5, 1.5)
+
+# Calculate right-skewed conditional density curves
+dist_df_nonnormal <- map_dfr(x_centers, function(x0) {
+  y0 <- predict(fit_nonnormal, newdata = data.frame(x_nonnormal = x0))
+  g_seq <- seq(0.01, 16, length.out = 100)
+  dens <- dgamma(g_seq, shape = shape_p, scale = scale_p)
+  y_vals <- y0 - (shape_p * scale_p) + g_seq
+  scale_factor <- 8.0
+  tibble(
+    x0 = x0,
+    y0 = y0,
+    y = y_vals,
+    x_curve = x0 + dens * scale_factor
+  )
+})
+
+dist_summary_nonnormal <- dist_df_nonnormal %>%
+  group_by(x0) %>%
+  summarise(
+    y0 = first(y0),
+    y_min = min(y),
+    y_max = max(y),
+    x_peak = max(x_curve),
+    .groups = "drop"
+  )
+
+ggplot(tibble(x = x_nonnormal, y = y_nonnormal), aes(x, y)) +
+  geom_point(alpha = 0.4) +
+  theme_classic() +
+  geom_smooth(method = "lm", se = FALSE, col = my_green) +
+  # Vertical dotted center axis
+  geom_segment(data = dist_summary_nonnormal, aes(x = x0, xend = x0, y = y_min, yend = y_max), 
+               col = my_blue, linetype = "dotted", size = 0.8, inherit.aes = FALSE) +
+  # Asymmetric, right-skewed density curves
+  geom_path(data = dist_df_nonnormal, aes(x = x_curve, y = y, group = x0), 
+            col = my_blue, size = 0.9, inherit.aes = FALSE) +
+  # Predicted mean marker
+  geom_point(data = dist_summary_nonnormal, aes(x = x0, y = y0), 
+             shape = 7, col = my_red, size = 3.5, stroke = 1.2, inherit.aes = FALSE)
+
+```
+
+
+## Heteroscedasticity
+
+```{r}
+#| message: false
+#| warning: false
+#| fig.width: 8
+#| fig.height: 6
+
+set.seed(6543)
+n <- 400
+x_het <- rnorm(n)
+
+# Residual standard deviation increases linearly with x
+sd_het <- 0.8 + 4.0 * (x_het - min(x_het)) / (max(x_het) - min(x_het))
+y_het <- 9.94 + 4.81 * x_het + rnorm(n, mean = 0, sd = sd_het)
+
+fit_het <- lm(y_het ~ x_het)
+x_centers <- c(-1.5, -0.5, 0.5, 1.5)
+
+# Calculate conditional normal density curves with expanding variance
+dist_df_het <- map_dfr(x_centers, function(x0) {
+  y0 <- predict(fit_het, newdata = data.frame(x_het = x0))
+  sigma_x0 <- 0.8 + 4.0 * (x0 - min(x_het)) / (max(x_het) - min(x_het))
+  y_seq <- seq(y0 - 3 * sigma_x0, y0 + 3 * sigma_x0, length.out = 100)
+  dens <- dnorm(y_seq, mean = y0, sd = sigma_x0)
+  scale_factor <- 8.0 
+  tibble(
+    x0 = x0,
+    y0 = y0,
+    y = y_seq,
+    x_curve = x0 + dens * scale_factor
+  )
+})
+
+dist_summary_het <- dist_df_het %>%
+  group_by(x0) %>%
+  summarise(
+    y0 = first(y0),
+    y_min = min(y),
+    y_max = max(y),
+    x_peak = max(x_curve),
+    .groups = "drop"
+  )
+
+ggplot(tibble(x = x_het, y = y_het), aes(x, y)) +
+  geom_point(alpha = 0.4) +
+  theme_classic() +
+  geom_smooth(method = "lm", se = FALSE, col = my_green) +
+  # Vertical dotted center axis
+  geom_segment(data = dist_summary_het, aes(x = x0, xend = x0, y = y_min, yend = y_max), 
+               col = my_blue, linetype = "dotted", size = 0.8, inherit.aes = FALSE) +
+  # Horizontal dotted peak indicator
+  geom_segment(data = dist_summary_het, aes(x = x0, xend = x_peak, y = y0, yend = y0), 
+               col = my_blue, linetype = "dotted", size = 0.8, inherit.aes = FALSE) +
+  # Density curves showing expanding spread
+  geom_path(data = dist_df_het, aes(x = x_curve, y = y, group = x0), 
+            col = my_blue, size = 0.9, inherit.aes = FALSE) +
+  # Predicted mean marker
+  geom_point(data = dist_summary_het, aes(x = x0, y = y0), 
+             shape = 7, col = my_red, size = 3.5, stroke = 1.2, inherit.aes = FALSE)
+
+```
+
+
+
+
+## Role of Assumptions
+
+
+::: {style="font-size: 0.85em;"}
+
+Models can be used for different purposes:
+
+- Describe
+- Predict
+- Decide
+
+Our assumptions are **primarily** used to delineate the conditions under which hypothesis tests have known properties. 
+
+- e.g., $\alpha$ equals true Type I error rate
+
+However they also can set the terms for which are descriptions can be correct and our predictions are likely to be accurate. 
+
+- There are techniques to improve predictions under assumption violations (beyond this course)
+
+:::
+
+
+
+
+## Example
+
+::: {style="font-size: 0.6em;"}
+
+**Original Study**:
+
+Pleskac, T. J. (2008). Decision making and learning while taking sequential risks. *Journal of Experimental Psychology: Learning, Memory, and Cognition*, *34*, 167-185.
+
+**Replication study link**: [https://osf.io/3amj4](https://osf.io/3amj4)
+
+:::
+
+::: {style="font-size: 0.8em;"}
+
+
+To what extent is the learning aspect of risk-taking behavior related to risky drug use?
+
+ART = Angling Risk Tasks, computer game to study risk-taking behavior
+
+Game play:
+
+- Subjects decide whether to cast a rod to catch fish in a pond
+- If red fish is caught, earn 5 cents and a chance to cast again
+- If blue fish is caught, end the round & lose money
+- Play 30 rounds per study condition
+- Subjects were compensated based on their winnings
+
+:::
+
+## Details
+
+::: {style="font-size: 0.8em;"}
+
+**Conditions**:
+
+- Weather:
+    - Sunny day (S): subjects can see # of red & blue fish in the pond
+    - Cloudy day (C): subjects cannot see # each type of fish
+    - In cloudy day condition, subjects can learn about probabilities
+- Type of fishing:
+    - Catch n' release (R): probabilities of red and blue fish are constant
+    - Catch n' keep (K): probabilities change with successive casts
+
+Each subject was exposed to 30 reps of all 4 combinations of conditions:
+
+- KS, KC, RS, RC
+
+**Variables**:
+
+- Polydrug: count of the number of risky/illegal drugs ever tried (11 categories), weighted by frequency of use
+- ART scores (for each KS, KC, RS, RC): average number of casts taken on trials for which subjects chose to stop fishing (no blue fish)
+
+:::
+
+## More Details
+
+
+
+Original comparisons of interest:
+
+- Are the correlations between ART scores and polydrug in the sunny conditions greater than the correlations for the cloudy conditions?
+
+Let's test a simpler hypothesis:
+
+- Are KC scores related to real-life risk-taking behavior (polydrug)?
+    - Catch n' keep on a cloudy day
+    
+
+
+## Example
+
+```{r}
+#| echo: true
+
+lm1 <- lm(polydrug ~ KC, dat)
+summary(lm1)
+```
+## Results
+
+$$\widehat{\text{polydrug}} = \hat{b}_0 + \hat{b}_1 \text{KC}$$
+
+| Coefficient | Estimate | SE | $t$ | $p$ |
+| :--- | :--- | :--- | :--- | :--- |
+| **Intercept ($\hat{b}_0$)** | 7.46 | 1.01 | 7.41 | <.001 |
+| **KC ($\hat{b}_1$)** | -0.01 | 0.02 | -0.56 | .574 |
+
+$R^2 = 0.002, F(1, 151) = 0.32, p = .57$
+    
+## Interpretations
+
+- Intercept = 7.45 ($p < .001$)
+    - [When KC = 0, the estimated mean of polydrug = 7.45, which is significantly different from the mean of polydrug being 0]{.answer .fragment .content-visible unless-meta="params.v0"}
+- Slope = -0.01 ($p = .57$)
+    - [For one unit increase in KC, we expect a 0.01 unit decrease in polydrug, which is not significantly different from a 0 unit decrease]{.answer .fragment .content-visible unless-meta="params.v0"}
+- $R^2 = 0.002$ ($p = .57$)
+    - [KC explains 0.2% of the variance in polydrug, which is not significantly different from 0]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+## Standardization
+
+We can use the `scale()` function to standardize variables and then review the standardized regression result
+
+
+```{r}
+#| eval: false
+#| echo: true
+dat <- dat |> 
+  mutate(Z_KC = scale(KC),
+         Z_polydrug = scale(polydrug))
+
+std_lm1 <- lm(Z_polydrug ~ Z_KC, dat)
+summary(std_lm1)
+```
+
+## Standardized Results
+
+```{r}
+#| eval: true
+#| echo: false
+dat <- dat |> 
+  mutate(Z_KC = scale(KC),
+         Z_polydrug = scale(polydrug))
+
+std_lm1 <- lm(Z_polydrug ~ Z_KC, dat)
+summary(std_lm1)
+```
+
+## Map to Correlation
+
+Note that in the standardized result:
+- $b_0 \approx 0$ (slightly different due to rounding) 
+- $b_1 = r_{\text{KC, polydrug}}$*
+
+```{r}
+#| echo: true
+
+cor(dat$KC, dat$polydrug)
+```
+
+* Only for regression with a single predictor!
+    
+## Assumption Checks
+
+Assumptions are typically check graphically
+
+- **Normality:** QQ Plot of **residuals**
+- **homoscedasticity:** 
+    - Plot $x$ variable along $x$-axis
+    - Plot residuals along $y$-axis
+    - Spread of residuals (vertically) should be uniform for different values of $x$ variable (horizontal)
+    
+## QQ Residuals
+
+First we use `residuals()` function to extract residuals
+
+```{r}
+#| echo: true
+dat$residuals <- residuals(lm1)
+```
+
+
+Then we can create a QQ plot like we've learned
+
+```{r}
+#| fig.height: 4
+#| eval: false
+#| echo: true
+ggplot(dat, aes(sample = residuals)) + stat_qq() + stat_qq_line(col = my_red) +
+  theme_light()
+```
+
+## QQ Plot
+
+```{r}
+#| fig.height: 4
+#| eval: true
+#| echo: false
+ggplot(dat, aes(sample = residuals)) + stat_qq() + stat_qq_line(col = my_red) +
+theme_light()
+```
+
+## Homoscedasticity
+
+For homoscedasticity, I will 
+
+- Plot $x$-values along $x$-axis 
+- Residuals along $y$-axis
+- Add horizontal reference line at $y = 0$
+- Points should be uniformly and noisily spread around reference line
+
+
+```{r}
+#| eval: false
+#| echo: true
+ggplot(dat, aes(KC, residuals)) +
+  geom_hline(yintercept = 0, col = my_blue) +
+  geom_point() + theme_light()
+```
+
+## Homoscedasticity Plot
+
+```{r}
+#| eval: true
+#| echo: false
+ggplot(dat, aes(KC, residuals)) +
+  geom_hline(yintercept = 0, col = my_blue) +
+  xlab("KC") + ylab("Residual") +
+  geom_point() + theme_light()
+```
+
+## Interpretations
+
+- Normality seems somewhat violated
+  - Tails of QQ Plot deviate from reference line
+  - If $N$ is large enough, relatively robust to violations of normality due to central limit theorem
+- Homoscedasticity seems somewhat violated (aka relationship is heteroscedastic)
+    - Variance seems a bit larger for small values of KC than large values of KC
+    - Heteroscedasticity can bias standard errors of regression coefficients (more on this in multiple regression lectures)
+    
+## APA Writeup
+
+A simple linear regression of Catch and Keep scores on a Cloudy Day (KC) on risk taking behavior was not significant, $F(1, 151) = 0.32, p = .56, R^2 = 0.002$. The intercept was significantly different from zero, $b_0 = 7.45, t(151) = 7.41, p < .001$. The slope was not significantly different from zero, $b_1 = -0.01, t(151) = 0.56, p = .57$
+
+(I usually wouldn't include the intercept, but put it here for reference)
+
+## Bayesian Version
+
+We can do simple regression in `rstanarm` exactly as we have seen every other time we have estimated a linear model (it's more what `rstanarm` was built to do!)
+
+- With a uniform prior, posterior mean of $b_0$ and $b_1$ will be identical to OLS solution
+- Stronger priors might cause posterior means to differ
+
+## Bayesian Example
+
+```{r}
+library(rstanarm)
+options(mc.cores = parallel::detectCores())
+```
+
+```{r}
+#| eval: false
+#| echo: true
+
+stan_lm1 <- stan_glm(polydrug ~ KC, dat, 
+                     family = "gaussian", 
+                     seed = 12340)
+
+summary(stan_lm1)
+```
+
+## Bayesian Output
+
+```{r}
+#| echo: false
+#| cache: true
+
+
+stan_lm1 <- stan_glm(polydrug ~ KC, dat, 
+                     family = "gaussian", 
+                     seed = 12340)
+
+summary(stan_lm1, probs = c(.025, .5, .975), digits = 2)
+
+```
+
+
+## HDI Intervals
+
+```{r}
+#| echo: true
+#| cache: true
+library(bayestestR)
+hdi(stan_lm1, component = "all")
+```
+  
+## Bayesian $R^2$ Review
+
+::: {style="font-size: .9em;"}
+
+Because Bayesian estimates aren't deterministic the way the simple OLS algorithm is, the traditional $R^2$ is not guaranteed to be $0 \leq R^2 \leq 1$
+
+- Means it is possible for the model to explain more than the total variance
+    - Not a sensible interpretation!
+    
+Alternative:
+
+$$\text{Bayesian } R^2 = \frac{s_{\hat{y}}^2}{s_{\hat{y}}^2 + s_{\epsilon}^2}$$
+
+
+- Is guaranteed to be $0 \leq \text{Bayesian } R^2 \leq 1$
+- Same interpretation as $\eta^2$ and $R^2$
+
+::: 
+
+
+
+## Bayesian $R^2$
+
+```{r}
+#| echo: true
+#| cache: true
+library(performance)
+r2_bayes(stan_lm1)
+```
+
+
+## Bayesian APA Writeup
+
+Using Bayesian estimation, we fit a simple regression of Catch and Keep scores on a Cloudy Day (KC) on risk taking behavior. The intercept had a posterior mean $b_0 = 7.46, 95% CI = [5.46, 9.39]$. The slope had a posterior mean $b_1 = -0.01, 95% CI = [-0.06, 0.03]$. The posterior mean Bayesian $R^2 = 0.004, 95% CI = [<.001, 0.031]$, suggesting KC scores explained between 0 and 3% of the variance in risk taking behavior. 
+
+(I usually wouldn't include the intercept, but put it here for reference)
+

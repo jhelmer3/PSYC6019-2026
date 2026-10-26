@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
+
+  <meta name="author" content="Mark Himmelstein">
+  <title>PSYC 6019 – Lecture 24: Simple Regression</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-15d324c2aafc27a03d2c3a1c4b493f27.css">
+  <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script>
+  window.MathJax = {
+    tex: {
+      packages: {'[+]': ['cancel']}
+    },
+    loader: {
+      load: ['[tex]/cancel']
+    }
+  };
+  </script>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Lecture 24: Simple Regression</h1>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Mark Himmelstein
+</div>
+</div>
+</div>
+
+</section>
+<section id="regression-line" class="slide level2">
+<h2>Regression Line</h2>
+<p>Last time, we saw that we can help summarize a scatterplot with a regression line</p>
+
+<img data-src="Lecture-24-Simple-Regression_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="what-is-it" class="slide level2">
+<h2>What is It?</h2>
+<ul>
+<li>Best fitting “straight” line</li>
+<li>What is a line?
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">Has slope and intercept</span>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">$y = mx + b</span></li>
+</ul></li>
+<li><span class="answer fragment" data-unless-meta="params.v0"><strong>Intercept:</strong> Value of <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0\)</span></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0"><strong>Slope:</strong> For one unit increase in <span class="math inline">\(x\)</span>, how many units increase in <span class="math inline">\(y\)</span>?</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">How do we find this line?</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">What does “best fitting” mean?</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="regression-vocabulary" class="slide level2">
+<h2>Regression Vocabulary</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Lecture-24-Simple-Regression_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:40%;">
+<ol type="1">
+<li><strong>Criterion</strong>: The variable we are trying to predict, which is on the <span class="math inline">\(y\)</span>-axis (usually the DV)</li>
+<li><strong>Predictor</strong>: The variable used to predict the criterion, which is on the <span class="math inline">\(x\)</span>-axis (usually the IV)</li>
+<li><strong>Slope</strong>: The steepness of the line</li>
+<li><strong>Intercept</strong>: The predicted value of the criterion when the predictor is at 0</li>
+</ol>
+</div></div>
+</section>
+<section id="regression-equation" class="slide level2">
+<h2>Regression Equation</h2>
+<div style="font-size: 0.8em;">
+<p>The form of the simple linear regression model is as follows:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Population</th>
+<th style="text-align: left;">Sample</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(y_{i} \mid x_{i} = b_{0} + b_{1}x_{i} + e_{i}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(y_{i} \mid x_{i} = \hat{b}_{0} + \hat{b}_{1}x_{i} + e_{i}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\hat{y}_{i} = b_{0} + b_{1}x_{i}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\hat{y}_{i} = \hat{b}_{0} + \hat{b}_{1}x_{i}\)</span></td>
+</tr>
+</tbody>
+</table>
+<ol type="1">
+<li><span class="math inline">\(y_i \mid x_i\)</span>: The <strong>conditional</strong> mean value of <span class="math inline">\(y_i\)</span> given a fixed/specific value of <span class="math inline">\(x_i\)</span></li>
+<li><span class="math inline">\(\hat{y}_i\)</span>: Estimated outcome (<span class="math inline">\(\hat{\,\,\,}\)</span>: an estimated value)</li>
+<li><span class="math inline">\(b_0\)</span> (<span class="math inline">\(\hat{b}_0\)</span>): The (estimated) intercept (predicted value of <span class="math inline">\(y_i\)</span> when <span class="math inline">\(x_i = 0\)</span>)</li>
+<li><span class="math inline">\(b_1\)</span> (<span class="math inline">\(\hat{b}_1\)</span>): The (estimated) slope (predicted increase in <span class="math inline">\(y_i\)</span> for a one-unit increase in <span class="math inline">\(x_i\)</span>)</li>
+<li><span class="math inline">\(e_i = y - \hat{y}\)</span>:
+<ul>
+<li>The <strong>residual</strong> or <strong>error</strong> when predicting <span class="math inline">\(y_i\)</span> from <span class="math inline">\(x_i\)</span></li>
+<li>The <strong>difference</strong> between a particular point and the regression line</li>
+</ul></li>
+</ol>
+</div>
+</section>
+<section id="regression-visualization" class="slide level2">
+<h2>Regression Visualization</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><img data-src="Regression1.png"></p>
+</div><div class="column" style="width:40%;">
+<p>In this example,</p>
+<p><span class="math display">\[\hat{y}_i = 9.75 + 4.51x_i\]</span></p>
+<p>This is the equation of the <strong>green</strong> best-fit line</p>
+</div></div>
+</section>
+<section id="regression-visualization-1" class="slide level2">
+<h2>Regression Visualization</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><img data-src="Regression2.png"></p>
+</div><div class="column" style="width:40%;">
+<p>In this example,</p>
+<p><span class="math display">\[\hat{y}_i = 9.75 + 4.51x_i\]</span></p>
+<ul>
+<li><span class="math inline">\(b_0 = 9.75\)</span> is the intercept</li>
+<li><strong>(0, 9.75)</strong> is a point on the best-fit line</li>
+</ul>
+</div></div>
+</section>
+<section id="regression-visualization-2" class="slide level2">
+<h2>Regression Visualization</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><img data-src="Regression3.png"></p>
+</div><div class="column" style="width:40%;">
+<p>In this example,</p>
+<p><span class="math display">\[\hat{y}_i = 9.75 + 4.51x_i\]</span></p>
+<ul>
+<li><span class="math inline">\(b_1 = 4.51\)</span> is the slope</li>
+<li>For a one-unit increase in <span class="math inline">\(x\)</span>, predicted <span class="math inline">\(y\)</span> values increase by <span style="color: #E41A1C;"><strong>4.51 units</strong></span></li>
+</ul>
+</div></div>
+</section>
+<section id="regression-visualization-3" class="slide level2">
+<h2>Regression Visualization</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><img data-src="Regression5.png"></p>
+</div><div class="column" style="width:40%;">
+<div style="font-size: 0.78em;">
+<ul>
+<li><span style="color: #E41A1C;"><strong>(0.50, 12.00)</strong></span> is a point on the best fit line</li>
+<li>For all cases where <span class="math inline">\(x = 0.50\)</span>, our estimated mean of <span class="math inline">\(\bar{y} | (x = 0.50) = 12.00\)</span>
+<ul>
+<li>The standard deviation of <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0.50\)</span> is <span class="math inline">\(s_y | (x = 0.50) = \color{#984EA3} s_{\epsilon} = 3.27\)</span>
+<ul>
+<li>In fact, this what we are saying the SD of <span class="math inline">\(y\)</span> is for <strong>any</strong> value of <span class="math inline">\(x\)</span>, <span class="math inline">\(\sy |x= \color{#984EA3} s_{\epsilon} = 3.27\)</span></li>
+</ul></li>
+</ul></li>
+<li>For any given <span class="math inline">\(x\)</span>, the regression line tells us the expected mean of <span class="math inline">\(y\)</span>, with constant SD</li>
+</ul>
+</div>
+</div></div>
+</section>
+<section id="normal-equations" class="slide level2">
+<h2>Normal Equations</h2>
+<p>The best-fit line follows the form:</p>
+<p><span class="math display">\[\hat{y}_i = \hat{b}_0 + \hat{b}_1 x_i\]</span></p>
+<p>The estimated regression coefficients (<span class="math inline">\(\hat{b}_0\)</span> and <span class="math inline">\(\hat{b}_1\)</span>) are functions of familiar descriptive statistics:</p>
+<p><span class="math display">\[\hat{b}_1 = \frac{s_{xy}}{s^2_{x}}\]</span></p>
+<p><span class="math display">\[\hat{b}_0 = \bar{y} - \hat{b}_1 \bar{x}\]</span></p>
+<p>These are known as the <strong>normal equations</strong></p>
+</section>
+<section id="ordinary-least-squares" class="slide level2">
+<h2>Ordinary Least Squares</h2>
+<div style="font-size: 0.85em;">
+<p>Where do these “normal equations” come from?</p>
+<p>Method of <strong>ordinary least squares</strong> (OLS):</p>
+<ul>
+<li>Find <span class="math inline">\(b_0\)</span> and <span class="math inline">\(b_1\)</span> that minimize the sum of squared differences between <span class="math inline">\(y_i\)</span> and <span class="math inline">\(\hat{y}\)</span></li>
+<li>In symbols:</li>
+</ul>
+<p><span class="math display">\[(\hat{b}_0, \hat{b}_1)^\prime  = \underset{b_{0},b_{1}}{\text{argmin}}\left[\sum_{i=1}^N(y_i - \hat{y}_i)^2\right] \\
+   = \underset{b_{0},b_{1}}{\text{argmin}}\left[\sum_{i=1}^N(y_i - b_0 - b_1x_i)^2\right]\]</span></p>
+<p>OLS is the same <strong>loss function</strong> we use in ANOVA: minimize (sums of) squared errors between <span class="math inline">\(\hat{y}_i\)</span>’s and the observed <span class="math inline">\(y_i\)</span>’s</p>
+</div>
+</section>
+<section id="standard-error-of-the-estimate" class="slide level2">
+<h2>Standard Error of the Estimate</h2>
+<p><span class="math display">\[s_{y\cdot x} =\sqrt{\frac{\sum_{i=1}^N (y_i-\hat{y}_i)^2}{N-2}} = \sqrt{\frac{SS_{\text{residual}}}{df}}\]</span></p>
+<ul>
+<li><span class="math inline">\(s_{y \cdot x}\)</span> is the standard deviation of <span class="math inline">\(y\)</span> predicted from <span class="math inline">\(x\)</span>
+<ul>
+<li>Notice the “<span class="math inline">\(\cdot\)</span>” between <span class="math inline">\(y\)</span> and <span class="math inline">\(x\)</span></li>
+</ul></li>
+<li><span class="math inline">\(s_{y \cdot x}^2\)</span> is an unbiased estimator of <span class="math inline">\(\sigma_{y \cdot x}^2\)</span></li>
+<li><span class="math inline">\(s^2_{y\cdot x}\)</span> is a measure of the accuracy of the regression line</li>
+<li><span class="math inline">\(s_{y\cdot x}\)</span> is in the units of <span class="math inline">\(y\)</span></li>
+</ul>
+</section>
+<section id="r-squared" class="slide level2">
+<h2>R-Squared</h2>
+<div style="font-size: 0.85em;">
+<p><span class="math inline">\(R^2 = r_{xy}^2\)</span> is the effect size of the simple linear regression model</p>
+<ul>
+<li>Proportion of the variance of <span class="math inline">\(y\)</span> accounted for by <span class="math inline">\(x\)</span></li>
+</ul>
+<p>Sample variation of <span class="math inline">\(\color{#FF7F00}{\underset{\text{\small sum of\\squares}}{{SS_y}}}\)</span> = numerator of sample variance of y</p>
+<p><span class="math display">\[SS_y = \sum_{i=1}^N(y_i - \bar{y})^2\]</span></p>
+<p><span class="math inline">\((y_i - \bar{y})\)</span> can be decomposed into two parts:</p>
+<p><span class="math display">\[
+\color{#377EB8}{\underbrace{\color{black}{(y_i - \bar{y})}}_{\substack{\nearrow \\[0.2em] \text{\textbf{total}} \\ \text{variation of } y}}}
+=
+\color{#984EA3}{\underbrace{\color{black}{(y_i - \hat{y}_i)}}_{\substack{\uparrow \\[0.2em] \text{variation of } y \\ \text{\textbf{NOT} predicted by } x}}}
++
+\color{#4DAF4A}{\underbrace{\color{black}{(\hat{y}_i - \bar{y})}}_{\substack{\nwarrow \\[0.2em] \text{variation of } y \\ \text{predicted by } x}}}
+\]</span></p>
+</div>
+</section>
+<section id="r-squared-1" class="slide level2">
+<h2>R-Squared</h2>
+<p>Sample variation of <span class="math inline">\(y\)</span> (<span class="math inline">\(SS_y\)</span>) can be decomposed into two parts:</p>
+<p><span class="math display">\[SS_y = SS_{\text{residual}} + SS_{\text{regression}} \\
+  \sum(y_i - \bar{y})^2  = \sum(y_i - \hat{y}_i)^2 + \sum(\hat{y}_i - \bar{y})^2\]</span></p>
+<ul>
+<li><span class="math inline">\(SS_{\text{residual}}\)</span>: variation of the residuals
+<ul>
+<li>Like <span class="math inline">\(SS_{\text{within}}\)</span> from ANOVA</li>
+</ul></li>
+<li><span class="math inline">\(SS_{\text{regression}}\)</span>: variation of <span class="math inline">\(y\)</span> predicted by <span class="math inline">\(x\)</span>
+<ul>
+<li>Like <span class="math inline">\(SS_{\text{between}}\)</span> from ANOVA</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[R^2 = \frac{SS_{\text{regression}}}{SS_y} = 1 - \frac{SS_{\text{residual}}}{SS_y}\]</span></p>
+<p>In the simple regression model, <span class="math inline">\(R^2 = r^2_{xy}\)</span></p>
+<ul>
+<li>Proportion of variation in <span class="math inline">\(y\)</span> accounted for by <span class="math inline">\(\hat{y}\)</span></li>
+</ul>
+</section>
+<section id="r-squared-viz-1" class="slide level2">
+<h2>R-Squared Viz 1</h2>
+
+<img data-src="Lecture-24-Simple-Regression_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p><span class="math inline">\(R^2\)</span> represents how <strong>different</strong> the best fitting regression line is along the <span class="math inline">\(y\)</span>-axis than the simple mean of <span class="math inline">\(y\)</span></p>
+</section>
+<section id="r-squared-viz-2" class="slide level2">
+<h2>R-Squared Viz 2</h2>
+
+<img data-src="Lecture-24-Simple-Regression_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p><span class="math inline">\(R^2\)</span> represents how much <strong>smaller</strong> the residuals are for the regression line than for the simple mean of <span class="math inline">\(y\)</span></p>
+</section>
+<section id="r-squared-viz-3" class="slide level2">
+<h2>R-Squared Viz 3</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><img data-src="Regression5.png"></p>
+</div><div class="column" style="width:40%;">
+<ul>
+<li><span class="math inline">\(R^2\)</span> quantifies how much smaller the conditional SD of <span class="math inline">\(y\)</span> given <span class="math inline">\(x\)</span> is
+<ul>
+<li><span class="math inline">\(s_y |x= \color{#984EA3} \sigma_{\epsilon} = 3.27\)</span></li>
+</ul></li>
+</ul>
+</div></div>
+</section>
+<section id="r-squared-viz-3-1" class="slide level2">
+<h2>R-Squared Viz 3</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><img data-src="Regression6.png"></p>
+</div><div class="column" style="width:40%;">
+<ul>
+<li>Than the marginal SD of <span class="math inline">\(y\)</span> ignoring <span class="math inline">\(x\)</span> is
+<ul>
+<li><span class="math inline">\(s_y = 5.36\)</span></li>
+</ul></li>
+</ul>
+</div></div>
+</section>
+<section id="adjusted-r-squared" class="slide level2">
+<h2>Adjusted R-Squared</h2>
+<ul>
+<li><span class="math inline">\(R^2\)</span> is a positively biased estimate of the population squared correlation</li>
+<li>Adjusted <span class="math inline">\(R^2\)</span> is less biased, but not completely unbiased</li>
+<li>For simple linear regression:</li>
+</ul>
+<p><span class="math display">\[\text{Adjusted }R^2 = \left(R^2 - \frac{1}{N-1}\right)\left(\frac{N-1}{N-2}\right)\]</span></p>
+</section>
+<section id="standardized-regression" class="slide level2">
+<h2>Standardized Regression</h2>
+<p>What happens if we standardize <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>?</p>
+<p>What is standardization?</p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">Converts a variable to <span class="math inline">\(Z\)</span>-score units</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(Z_x = \frac{x -\bar{x}}{s_x}\)</span></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0"><span class="math inline">\(Z_y = \frac{y -\bar{y}}{s_y}\)</span></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0"><strong>New Intercept Interpretation:</strong> <span class="math inline">\(Z_y\)</span> when <span class="math inline">\(Z_x = 0\)</span> (Always 0)</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0"><strong>New Slope Interpretation:</strong> Increase in <span class="math inline">\(Z_y\)</span> for one unit increase in <span class="math inline">\(Z_x\)</span> (<span class="math inline">\(r_{xy}\)</span>)</span></li>
+</ul>
+</section>
+<section id="map-to-correlation" class="slide level2">
+<h2>Map to Correlation</h2>
+<p><strong>Standardized regression coefficients</strong> are those that describe the relationship between standardized variables</p>
+<p>Standardized <span class="math inline">\(\hat{b}_0 = 0\)</span> and <span class="math inline">\(\hat{b}_1 = r_{xy}\)</span>.</p>
+<p>Unstandardized <span class="math inline">\(\hat{b}_1 = \frac{r_{xy}s_y}{s_x}\)</span></p>
+<p>Unstandardized <span class="math inline">\(\hat{b}_0 = \bar{y} - \hat{b}_1\bar{x}\)</span> (unstandardized <span class="math inline">\(\hat{b}_1\)</span>)</p>
+</section>
+<section id="test-for-intercept" class="slide level2">
+<h2>Test for Intercept</h2>
+<div style="font-size: 0.85em;">
+<ul>
+<li><span class="math inline">\(H_0: b_0 = 0\)</span></li>
+<li><span class="math inline">\(H_1: b_0 \neq 0\)</span></li>
+<li><span class="math inline">\(b_0\)</span> is population regression intercept (sample statistic = <span class="math inline">\(\hat{b}_0\)</span>)</li>
+</ul>
+<p><span class="math display">\[t_{\text{obs}}(df) = \frac{\hat{b}_0}{s_{\hat{b}_0}} \hspace{1cm}   s_{\hat{b}_0}= \sqrt{\left(\frac{(1 - r^2_{xy})\times\sum(y_i - \bar{y})^2}{df}\right)\left(\frac{1}{N} + \frac{\bar{x}^2}{(N-1)\times s^2_{x}}\right)}\]</span></p>
+</div>
+</section>
+<section id="intercept-test-terms" class="slide level2">
+<h2>Intercept Test Terms</h2>
+<ul>
+<li><span class="math inline">\(df\)</span>: degrees of freedom = <span class="math inline">\(N - 2\)</span></li>
+<li><span class="math inline">\(s_x^2\)</span>: sample variance of <span class="math inline">\(x\)</span></li>
+<li><span class="math inline">\(\bar{y}\)</span>: sample mean of <span class="math inline">\(y\)</span></li>
+<li><span class="math inline">\(\bar{x}\)</span>: sample mean of <span class="math inline">\(x\)</span></li>
+<li><span class="math inline">\(r_{xy}\)</span>: sample correlation between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></li>
+</ul>
+<p>Under <span class="math inline">\(H_0\)</span>, <span class="math inline">\(t_{\text{obs}}(df)\)</span> is <span class="math inline">\(t\)</span>-distributed with <span class="math inline">\(df = N - 2\)</span> degrees of freedom</p>
+<p>Confidence interval:</p>
+<p><span class="math display">\[\hat{b}_0 \pm t(df)_{\alpha/2} \times s_{\hat{b}_0}\]</span></p>
+</section>
+<section id="why-care" class="slide level2">
+<h2>Why Care?</h2>
+<p>What is the interpretation of the intercept?</p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">Estimated mean of <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0\)</span></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">Test is whether <span class="math inline">\(\bar{y}|(x=0) \neq 0\)</span> when <span class="math inline">\(x = 0\)</span></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">Is 0 a plausible value for <span class="math inline">\(x\)</span>?</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">Is 0 a plausible value for <span class="math inline">\(y\)</span>?</span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">Do you care specifically about <span class="math inline">\(\bar{y}|(x=0)\)</span>?</span></li>
+</ul>
+</section>
+<section id="test-for-slope" class="slide level2">
+<h2>Test for Slope</h2>
+<ul>
+<li><span class="math inline">\(H_0: b_1 = 0\)</span></li>
+<li><span class="math inline">\(H_1: b_1 \neq 0\)</span></li>
+<li><span class="math inline">\(b_1\)</span> is population regression slope of <span class="math inline">\(x\)</span> on <span class="math inline">\(y\)</span> (sample statistic = <span class="math inline">\(\hat{b}_1\)</span>)</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="math display">\[t_{\text{obs}}(df) = \frac{\hat{b}_1}{s_{\hat{b}_1}}\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><span class="math display">\[s_{\hat{b}_1}= \frac{s_y}{s_x}\sqrt{\frac{1 - r^2_{xy}}{df}}\]</span></p>
+</div></div>
+</section>
+<section id="slope-test-terms" class="slide level2">
+<h2>Slope Test Terms</h2>
+<ul>
+<li><span class="math inline">\(df\)</span>: degrees of freedom = <span class="math inline">\(N - 2\)</span></li>
+<li><span class="math inline">\(s_y\)</span>: sample <span class="math inline">\(SD\)</span> of <span class="math inline">\(y\)</span></li>
+<li><span class="math inline">\(s_x\)</span>: sample <span class="math inline">\(SD\)</span> of <span class="math inline">\(x\)</span></li>
+<li><span class="math inline">\(r_{xy}\)</span>: sample correlation between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></li>
+</ul>
+<p>Under <span class="math inline">\(H_0\)</span>, <span class="math inline">\(t_{\text{obs}}(df)\)</span> is <span class="math inline">\(t\)</span>-distributed with <span class="math inline">\(df = N - 2\)</span> degrees of freedom</p>
+<p>Confidence interval:</p>
+<p><span class="math display">\[\hat{b}_1 \pm t(df)_{\alpha/2} \times s_{\hat{b}_1}\]</span></p>
+</section>
+<section id="hypothesis-tests-for-r2" class="slide level2">
+<h2>Hypothesis Tests for <span class="math inline">\(R^2\)</span></h2>
+<ul>
+<li><span class="math inline">\(H_0\)</span>: population <span class="math inline">\(R^2 = 0\)</span></li>
+<li><span class="math inline">\(H_1\)</span>: population <span class="math inline">\(R^2 &gt; 0\)</span> (note: <span class="math inline">\(R^2\)</span> cannot be negative)</li>
+</ul>
+<p><span class="math display">\[F_{\text{obs}}(1, N-2) = \frac{MS_{\text{regression}}}{MS_{\text{residual}}}\]</span></p>
+<ul>
+<li><span class="math inline">\(MS_{\text{regression}} = \frac{SS_{\text{regression}}}{1}\)</span> (<span class="math inline">\(MS\)</span>: “mean squares”)</li>
+<li><span class="math inline">\(MS_{\text{residual}} = \frac{SS_{\text{residual}}}{N-2}\)</span></li>
+<li><span class="math inline">\(N\)</span>: sample size</li>
+</ul>
+<p>Under <span class="math inline">\(H_0\)</span>, <span class="math inline">\(F_{\text{obs}}\)</span> follows the <span class="math inline">\(F\)</span> distribution with 1 and <span class="math inline">\(N-2\)</span> <span class="math inline">\(df\)</span></p>
+</section>
+<section id="test-equivalence" class="slide level2">
+<h2>Test Equivalence</h2>
+<p>For <strong>simple</strong> regression (just one <span class="math inline">\(x\)</span>), the following tests are all equivalent:</p>
+<ul>
+<li><span class="math inline">\(t\)</span>-test of correlation <span class="math inline">\(r_{xy}\)</span></li>
+<li><span class="math inline">\(t\)</span>-test of regression slope <span class="math inline">\(b_1\)</span></li>
+<li><span class="math inline">\(F\)</span>-test of <span class="math inline">\(R^2\)</span></li>
+</ul>
+</section>
+<section id="why-n-2-df" class="slide level2">
+<h2>Why <span class="math inline">\(N-2\)</span> <span class="math inline">\(df\)</span>?</h2>
+<ul>
+<li>How many (which) parameters are we estimating in a simple regression?
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">One intercept and one slope. That’s why we “lose” 2 <span class="math inline">\(df\)</span></span></li>
+</ul></li>
+</ul>
+</section>
+<section id="assumptions" class="slide level2">
+<h2>Assumptions</h2>
+<ol type="1">
+<li>All observations are <strong>conditionally</strong> independent</li>
+</ol>
+<ul>
+<li>Nothing about one observation of <span class="math inline">\(x\)</span> tells you anything about any other observation of <span class="math inline">\(x\)</span> that <span class="math inline">\(y\)</span> doesn’t already tell you (and vice versa)</li>
+</ul>
+<ol start="2" type="1">
+<li>No outliers</li>
+<li>Across each predictor value, <strong>residuals</strong> are normally distributed with mean 0 and constant variance (homoscedasticity)
+<ul>
+<li>Equivalently put: There is a linear relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></li>
+<li>New version of the normality and homogeneity of variance assumptions</li>
+</ul></li>
+</ol>
+</section>
+<section id="residual-assumptions" class="slide level2">
+<h2>Residual Assumptions</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><img data-src="Regression5.png"></p>
+</div><div class="column" style="width:40%;">
+<ul>
+<li>For every point on the <span class="math inline">\(x\)</span> axis
+<ul>
+<li>Residuals follow a normal distribution</li>
+<li>Variance (SD) of <span class="math inline">\(y\)</span> is constant</li>
+</ul></li>
+</ul>
+</div></div>
+</section>
+<section id="non-normal-residuals" class="slide level2">
+<h2>Non-Normal Residuals</h2>
+
+<img data-src="Lecture-24-Simple-Regression_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="heteroscedasticity" class="slide level2">
+<h2>Heteroscedasticity</h2>
+
+<img data-src="Lecture-24-Simple-Regression_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="role-of-assumptions" class="slide level2">
+<h2>Role of Assumptions</h2>
+<div style="font-size: 0.85em;">
+<p>Models can be used for different purposes:</p>
+<ul>
+<li>Describe</li>
+<li>Predict</li>
+<li>Decide</li>
+</ul>
+<p>Our assumptions are <strong>primarily</strong> used to delineate the conditions under which hypothesis tests have known properties.</p>
+<ul>
+<li>e.g., <span class="math inline">\(\alpha\)</span> equals true Type I error rate</li>
+</ul>
+<p>However they also can set the terms for which are descriptions can be correct and our predictions are likely to be accurate.</p>
+<ul>
+<li>There are techniques to improve predictions under assumption violations (beyond this course)</li>
+</ul>
+</div>
+</section>
+<section id="example" class="slide level2">
+<h2>Example</h2>
+<div style="font-size: 0.6em;">
+<p><strong>Original Study</strong>:</p>
+<p>Pleskac, T. J. (2008). Decision making and learning while taking sequential risks. <em>Journal of Experimental Psychology: Learning, Memory, and Cognition</em>, <em>34</em>, 167-185.</p>
+<p><strong>Replication study link</strong>: <a href="https://osf.io/3amj4">https://osf.io/3amj4</a></p>
+</div>
+<div style="font-size: 0.8em;">
+<p>To what extent is the learning aspect of risk-taking behavior related to risky drug use?</p>
+<p>ART = Angling Risk Tasks, computer game to study risk-taking behavior</p>
+<p>Game play:</p>
+<ul>
+<li>Subjects decide whether to cast a rod to catch fish in a pond</li>
+<li>If red fish is caught, earn 5 cents and a chance to cast again</li>
+<li>If blue fish is caught, end the round &amp; lose money</li>
+<li>Play 30 rounds per study condition</li>
+<li>Subjects were compensated based on their winnings</li>
+</ul>
+</div>
+</section>
+<section id="details" class="slide level2">
+<h2>Details</h2>
+<div style="font-size: 0.8em;">
+<p><strong>Conditions</strong>:</p>
+<ul>
+<li>Weather:
+<ul>
+<li>Sunny day (S): subjects can see # of red &amp; blue fish in the pond</li>
+<li>Cloudy day (C): subjects cannot see # each type of fish</li>
+<li>In cloudy day condition, subjects can learn about probabilities</li>
+</ul></li>
+<li>Type of fishing:
+<ul>
+<li>Catch n’ release (R): probabilities of red and blue fish are constant</li>
+<li>Catch n’ keep (K): probabilities change with successive casts</li>
+</ul></li>
+</ul>
+<p>Each subject was exposed to 30 reps of all 4 combinations of conditions:</p>
+<ul>
+<li>KS, KC, RS, RC</li>
+</ul>
+<p><strong>Variables</strong>:</p>
+<ul>
+<li>Polydrug: count of the number of risky/illegal drugs ever tried (11 categories), weighted by frequency of use</li>
+<li>ART scores (for each KS, KC, RS, RC): average number of casts taken on trials for which subjects chose to stop fishing (no blue fish)</li>
+</ul>
+</div>
+</section>
+<section id="more-details" class="slide level2">
+<h2>More Details</h2>
+<p>Original comparisons of interest:</p>
+<ul>
+<li>Are the correlations between ART scores and polydrug in the sunny conditions greater than the correlations for the cloudy conditions?</li>
+</ul>
+<p>Let’s test a simpler hypothesis:</p>
+<ul>
+<li>Are KC scores related to real-life risk-taking behavior (polydrug)?
+<ul>
+<li>Catch n’ keep on a cloudy day</li>
+</ul></li>
+</ul>
+</section>
+<section id="example-1" class="slide level2">
+<h2>Example</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-label="1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(polydrug <span class="sc">~</span> KC, dat)</span>
+<span id="cb1-2"><a aria-label="2"></a><span class="fu">summary</span>(lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-label="1"></a></span>
+<span id="cb2-2"><a aria-label="2"></a><span class="ex">Call:</span></span>
+<span id="cb2-3"><a aria-label="3"></a><span class="ex">lm</span><span class="er">(</span><span class="ex">formula</span> = polydrug ~ KC, data = dat<span class="kw">)</span></span>
+<span id="cb2-4"><a aria-label="4"></a></span>
+<span id="cb2-5"><a aria-label="5"></a><span class="ex">Residuals:</span></span>
+<span id="cb2-6"><a aria-label="6"></a>    <span class="ex">Min</span>      1Q  Median      3Q     Max </span>
+<span id="cb2-7"><a aria-label="7"></a><span class="ex">-7.3062</span> <span class="at">-2.9767</span> <span class="at">-0.7359</span>  2.8687 17.8964 </span>
+<span id="cb2-8"><a aria-label="8"></a></span>
+<span id="cb2-9"><a aria-label="9"></a><span class="ex">Coefficients:</span></span>
+<span id="cb2-10"><a aria-label="10"></a>            <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span>    </span>
+<span id="cb2-11"><a aria-label="11"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>  <span class="ex">7.45812</span>    1.00642   7.411 8.32e-12 <span class="pp">***</span></span>
+<span id="cb2-12"><a aria-label="12"></a><span class="ex">KC</span>          <span class="at">-0.01333</span>    0.02367  <span class="at">-0.563</span>    0.574    </span>
+<span id="cb2-13"><a aria-label="13"></a><span class="ex">---</span></span>
+<span id="cb2-14"><a aria-label="14"></a><span class="ex">Signif.</span> codes:  </span>
+<span id="cb2-15"><a aria-label="15"></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span>
+<span id="cb2-16"><a aria-label="16"></a></span>
+<span id="cb2-17"><a aria-label="17"></a><span class="ex">Residual</span> standard error: 4.401 on 151 degrees of freedom</span>
+<span id="cb2-18"><a aria-label="18"></a><span class="ex">Multiple</span> R-squared:  0.002095,  Adjusted R-squared:  <span class="at">-0.004514</span> </span>
+<span id="cb2-19"><a aria-label="19"></a><span class="ex">F-statistic:</span> 0.3169 on 1 and 151 DF,  p-value: 0.5743</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="results" class="slide level2">
+<h2>Results</h2>
+<p><span class="math display">\[\widehat{\text{polydrug}} = \hat{b}_0 + \hat{b}_1 \text{KC}\]</span></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Coefficient</th>
+<th style="text-align: left;">Estimate</th>
+<th style="text-align: left;">SE</th>
+<th style="text-align: left;"><span class="math inline">\(t\)</span></th>
+<th style="text-align: left;"><span class="math inline">\(p\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Intercept (<span class="math inline">\(\hat{b}_0\)</span>)</strong></td>
+<td style="text-align: left;">7.46</td>
+<td style="text-align: left;">1.01</td>
+<td style="text-align: left;">7.41</td>
+<td style="text-align: left;">&lt;.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>KC (<span class="math inline">\(\hat{b}_1\)</span>)</strong></td>
+<td style="text-align: left;">-0.01</td>
+<td style="text-align: left;">0.02</td>
+<td style="text-align: left;">-0.56</td>
+<td style="text-align: left;">.574</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(R^2 = 0.002, F(1, 151) = 0.32, p = .57\)</span></p>
+</section>
+<section id="interpretations" class="slide level2">
+<h2>Interpretations</h2>
+<ul>
+<li>Intercept = 7.45 (<span class="math inline">\(p &lt; .001\)</span>)
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">When KC = 0, the estimated mean of polydrug = 7.45, which is significantly different from the mean of polydrug being 0</span></li>
+</ul></li>
+<li>Slope = -0.01 (<span class="math inline">\(p = .57\)</span>)
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">For one unit increase in KC, we expect a 0.01 unit decrease in polydrug, which is not significantly different from a 0 unit decrease</span></li>
+</ul></li>
+<li><span class="math inline">\(R^2 = 0.002\)</span> (<span class="math inline">\(p = .57\)</span>)
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">KC explains 0.2% of the variance in polydrug, which is not significantly different from 0</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="standardization" class="slide level2">
+<h2>Standardization</h2>
+<p>We can use the <code>scale()</code> function to standardize variables and then review the standardized regression result</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-label="1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a aria-label="2"></a>  <span class="fu">mutate</span>(<span class="at">Z_KC =</span> <span class="fu">scale</span>(KC),</span>
+<span id="cb3-3"><a aria-label="3"></a>         <span class="at">Z_polydrug =</span> <span class="fu">scale</span>(polydrug))</span>
+<span id="cb3-4"><a aria-label="4"></a></span>
+<span id="cb3-5"><a aria-label="5"></a>std_lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Z_polydrug <span class="sc">~</span> Z_KC, dat)</span>
+<span id="cb3-6"><a aria-label="6"></a><span class="fu">summary</span>(std_lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="standardized-results" class="slide level2">
+<h2>Standardized Results</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-label="1"></a></span>
+<span id="cb4-2"><a aria-label="2"></a><span class="ex">Call:</span></span>
+<span id="cb4-3"><a aria-label="3"></a><span class="ex">lm</span><span class="er">(</span><span class="ex">formula</span> = Z_polydrug ~ Z_KC, data = dat<span class="kw">)</span></span>
+<span id="cb4-4"><a aria-label="4"></a></span>
+<span id="cb4-5"><a aria-label="5"></a><span class="ex">Residuals:</span></span>
+<span id="cb4-6"><a aria-label="6"></a>    <span class="ex">Min</span>      1Q  Median      3Q     Max </span>
+<span id="cb4-7"><a aria-label="7"></a><span class="ex">-1.6640</span> <span class="at">-0.6780</span> <span class="at">-0.1676</span>  0.6534  4.0760 </span>
+<span id="cb4-8"><a aria-label="8"></a></span>
+<span id="cb4-9"><a aria-label="9"></a><span class="ex">Coefficients:</span></span>
+<span id="cb4-10"><a aria-label="10"></a>              <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span></span>
+<span id="cb4-11"><a aria-label="11"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>  <span class="ex">6.063e-17</span>  8.103e-02   0.000    1.000</span>
+<span id="cb4-12"><a aria-label="12"></a><span class="ex">Z_KC</span>        <span class="at">-4.577e-02</span>  8.129e-02  <span class="at">-0.563</span>    0.574</span>
+<span id="cb4-13"><a aria-label="13"></a></span>
+<span id="cb4-14"><a aria-label="14"></a><span class="ex">Residual</span> standard error: 1.002 on 151 degrees of freedom</span>
+<span id="cb4-15"><a aria-label="15"></a><span class="ex">Multiple</span> R-squared:  0.002095,  Adjusted R-squared:  <span class="at">-0.004514</span> </span>
+<span id="cb4-16"><a aria-label="16"></a><span class="ex">F-statistic:</span> 0.3169 on 1 and 151 DF,  p-value: 0.5743</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="map-to-correlation-1" class="slide level2">
+<h2>Map to Correlation</h2>
+<p>Note that in the standardized result: - <span class="math inline">\(b_0 \approx 0\)</span> (slightly different due to rounding) - <span class="math inline">\(b_1 = r_{\text{KC, polydrug}}\)</span>*</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-label="1"></a><span class="fu">cor</span>(dat<span class="sc">$</span>KC, dat<span class="sc">$</span>polydrug)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-label="1"></a><span class="ex">[1]</span> <span class="at">-0.04576666</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<ul>
+<li>Only for regression with a single predictor!</li>
+</ul>
+</section>
+<section id="assumption-checks" class="slide level2">
+<h2>Assumption Checks</h2>
+<p>Assumptions are typically check graphically</p>
+<ul>
+<li><strong>Normality:</strong> QQ Plot of <strong>residuals</strong></li>
+<li><strong>homoscedasticity:</strong>
+<ul>
+<li>Plot <span class="math inline">\(x\)</span> variable along <span class="math inline">\(x\)</span>-axis</li>
+<li>Plot residuals along <span class="math inline">\(y\)</span>-axis</li>
+<li>Spread of residuals (vertically) should be uniform for different values of <span class="math inline">\(x\)</span> variable (horizontal)</li>
+</ul></li>
+</ul>
+</section>
+<section id="qq-residuals" class="slide level2">
+<h2>QQ Residuals</h2>
+<p>First we use <code>residuals()</code> function to extract residuals</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-label="1"></a>dat<span class="sc">$</span>residuals <span class="ot">&lt;-</span> <span class="fu">residuals</span>(lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then we can create a QQ plot like we’ve learned</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-label="1"></a><span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">sample =</span> residuals)) <span class="sc">+</span> <span class="fu">stat_qq</span>() <span class="sc">+</span> <span class="fu">stat_qq_line</span>(<span class="at">col =</span> my_red) <span class="sc">+</span></span>
+<span id="cb8-2"><a aria-label="2"></a>  <span class="fu">theme_light</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="qq-plot" class="slide level2">
+<h2>QQ Plot</h2>
+
+<img data-src="Lecture-24-Simple-Regression_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="homoscedasticity" class="slide level2">
+<h2>Homoscedasticity</h2>
+<p>For homoscedasticity, I will</p>
+<ul>
+<li>Plot <span class="math inline">\(x\)</span>-values along <span class="math inline">\(x\)</span>-axis</li>
+<li>Residuals along <span class="math inline">\(y\)</span>-axis</li>
+<li>Add horizontal reference line at <span class="math inline">\(y = 0\)</span></li>
+<li>Points should be uniformly and noisily spread around reference line</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-label="1"></a><span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(KC, residuals)) <span class="sc">+</span></span>
+<span id="cb9-2"><a aria-label="2"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">col =</span> my_blue) <span class="sc">+</span></span>
+<span id="cb9-3"><a aria-label="3"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_light</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="homoscedasticity-plot" class="slide level2">
+<h2>Homoscedasticity Plot</h2>
+
+<img data-src="Lecture-24-Simple-Regression_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="interpretations-1" class="slide level2">
+<h2>Interpretations</h2>
+<ul>
+<li>Normality seems somewhat violated
+<ul>
+<li>Tails of QQ Plot deviate from reference line</li>
+<li>If <span class="math inline">\(N\)</span> is large enough, relatively robust to violations of normality due to central limit theorem</li>
+</ul></li>
+<li>Homoscedasticity seems somewhat violated (aka relationship is heteroscedastic)
+<ul>
+<li>Variance seems a bit larger for small values of KC than large values of KC</li>
+<li>Heteroscedasticity can bias standard errors of regression coefficients (more on this in multiple regression lectures)</li>
+</ul></li>
+</ul>
+</section>
+<section id="apa-writeup" class="slide level2">
+<h2>APA Writeup</h2>
+<p>A simple linear regression of Catch and Keep scores on a Cloudy Day (KC) on risk taking behavior was not significant, <span class="math inline">\(F(1, 151) = 0.32, p = .56, R^2 = 0.002\)</span>. The intercept was significantly different from zero, <span class="math inline">\(b_0 = 7.45, t(151) = 7.41, p &lt; .001\)</span>. The slope was not significantly different from zero, <span class="math inline">\(b_1 = -0.01, t(151) = 0.56, p = .57\)</span></p>
+<p>(I usually wouldn’t include the intercept, but put it here for reference)</p>
+</section>
+<section id="bayesian-version" class="slide level2">
+<h2>Bayesian Version</h2>
+<p>We can do simple regression in <code>rstanarm</code> exactly as we have seen every other time we have estimated a linear model (it’s more what <code>rstanarm</code> was built to do!)</p>
+<ul>
+<li>With a uniform prior, posterior mean of <span class="math inline">\(b_0\)</span> and <span class="math inline">\(b_1\)</span> will be identical to OLS solution</li>
+<li>Stronger priors might cause posterior means to differ</li>
+</ul>
+</section>
+<section id="bayesian-example" class="slide level2">
+<h2>Bayesian Example</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-label="1"></a>stan_lm1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(polydrug <span class="sc">~</span> KC, dat, </span>
+<span id="cb10-2"><a aria-label="2"></a>                     <span class="at">family =</span> <span class="st">"gaussian"</span>, </span>
+<span id="cb10-3"><a aria-label="3"></a>                     <span class="at">seed =</span> <span class="dv">12340</span>)</span>
+<span id="cb10-4"><a aria-label="4"></a></span>
+<span id="cb10-5"><a aria-label="5"></a><span class="fu">summary</span>(stan_lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="bayesian-output" class="slide level2">
+<h2>Bayesian Output</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-label="1"></a></span>
+<span id="cb11-2"><a aria-label="2"></a><span class="ex">Model</span> Info:</span>
+<span id="cb11-3"><a aria-label="3"></a> <span class="ex">function:</span>     stan_glm</span>
+<span id="cb11-4"><a aria-label="4"></a> <span class="ex">family:</span>       gaussian <span class="pp">[</span><span class="ss">identity</span><span class="pp">]</span></span>
+<span id="cb11-5"><a aria-label="5"></a> <span class="ex">formula:</span>      polydrug ~ KC</span>
+<span id="cb11-6"><a aria-label="6"></a> <span class="ex">algorithm:</span>    sampling</span>
+<span id="cb11-7"><a aria-label="7"></a> <span class="ex">sample:</span>       4000 <span class="er">(</span><span class="ex">posterior</span> sample size<span class="kw">)</span></span>
+<span id="cb11-8"><a aria-label="8"></a> <span class="ex">priors:</span>       see help<span class="er">(</span><span class="st">'prior_summary'</span><span class="kw">)</span></span>
+<span id="cb11-9"><a aria-label="9"></a> <span class="ex">observations:</span> 153</span>
+<span id="cb11-10"><a aria-label="10"></a> <span class="ex">predictors:</span>   2</span>
+<span id="cb11-11"><a aria-label="11"></a></span>
+<span id="cb11-12"><a aria-label="12"></a><span class="ex">Estimates:</span></span>
+<span id="cb11-13"><a aria-label="13"></a>              <span class="ex">mean</span>   sd    2.5%   50%   97.5%</span>
+<span id="cb11-14"><a aria-label="14"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>  <span class="ex">7.46</span>   1.00  5.50   7.44  9.44  </span>
+<span id="cb11-15"><a aria-label="15"></a><span class="ex">KC</span>          <span class="at">-0.01</span>   0.02 <span class="at">-0.06</span>  <span class="at">-0.01</span>  0.03  </span>
+<span id="cb11-16"><a aria-label="16"></a><span class="ex">sigma</span>        4.42   0.25  3.98   4.41  4.95  </span>
+<span id="cb11-17"><a aria-label="17"></a></span>
+<span id="cb11-18"><a aria-label="18"></a><span class="ex">Fit</span> Diagnostics:</span>
+<span id="cb11-19"><a aria-label="19"></a>           <span class="ex">mean</span>   sd   2.5%   50%   97.5%</span>
+<span id="cb11-20"><a aria-label="20"></a><span class="ex">mean_PPD</span> 6.92   0.50 5.93   6.91  7.91   </span>
+<span id="cb11-21"><a aria-label="21"></a></span>
+<span id="cb11-22"><a aria-label="22"></a><span class="ex">The</span> mean_ppd is the sample average posterior predictive distribution of the outcome variable <span class="er">(</span><span class="cf">for</span> details <span class="ex">see</span> help<span class="er">(</span><span class="st">'summary.stanreg'</span><span class="kw">))</span><span class="bu">.</span></span>
+<span id="cb11-23"><a aria-label="23"></a></span>
+<span id="cb11-24"><a aria-label="24"></a><span class="ex">MCMC</span> diagnostics</span>
+<span id="cb11-25"><a aria-label="25"></a>              <span class="ex">mcse</span> Rhat n_eff</span>
+<span id="cb11-26"><a aria-label="26"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>   <span class="ex">0.02</span> 1.00 3844 </span>
+<span id="cb11-27"><a aria-label="27"></a><span class="ex">KC</span>            0.00 1.00 3910 </span>
+<span id="cb11-28"><a aria-label="28"></a><span class="ex">sigma</span>         0.00 1.00 4032 </span>
+<span id="cb11-29"><a aria-label="29"></a><span class="ex">mean_PPD</span>      0.01 1.00 3887 </span>
+<span id="cb11-30"><a aria-label="30"></a><span class="ex">log-posterior</span> 0.03 1.00 1624 </span>
+<span id="cb11-31"><a aria-label="31"></a></span>
+<span id="cb11-32"><a aria-label="32"></a><span class="ex">For</span> each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains <span class="er">(</span><span class="ex">at</span> convergence Rhat=1<span class="kw">)</span><span class="bu">.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="hdi-intervals" class="slide level2">
+<h2>HDI Intervals</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-label="1"></a><span class="fu">library</span>(bayestestR)</span>
+<span id="cb12-2"><a aria-label="2"></a><span class="fu">hdi</span>(stan_lm1, <span class="at">component =</span> <span class="st">"all"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a aria-label="1"></a><span class="ex">Highest</span> Density Interval</span>
+<span id="cb13-2"><a aria-label="2"></a></span>
+<span id="cb13-3"><a aria-label="3"></a><span class="ex">Parameter</span>   <span class="kw">|</span>       <span class="ex">95%</span> HDI</span>
+<span id="cb13-4"><a aria-label="4"></a><span class="ex">---------------------------</span></span>
+<span id="cb13-5"><a aria-label="5"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span> <span class="kw">|</span> <span class="bu">[</span> 5.46, 9.39]</span>
+<span id="cb13-6"><a aria-label="6"></a>KC          <span class="er">|</span> <span class="er">[-0.06,</span> <span class="ex">0.03]</span></span>
+<span id="cb13-7"><a aria-label="7"></a></span>
+<span id="cb13-8"><a aria-label="8"></a><span class="co"># Fixed effects (sigma)</span></span>
+<span id="cb13-9"><a aria-label="9"></a></span>
+<span id="cb13-10"><a aria-label="10"></a><span class="ex">Parameter</span> <span class="kw">|</span>       <span class="ex">95%</span> HDI</span>
+<span id="cb13-11"><a aria-label="11"></a><span class="ex">-------------------------</span></span>
+<span id="cb13-12"><a aria-label="12"></a><span class="ex">sigma</span>     <span class="kw">|</span> <span class="bu">[</span> 3.95, 4.91]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="bayesian-r2-review" class="slide level2">
+<h2>Bayesian <span class="math inline">\(R^2\)</span> Review</h2>
+<div style="font-size: .9em;">
+<p>Because Bayesian estimates aren’t deterministic the way the simple OLS algorithm is, the traditional <span class="math inline">\(R^2\)</span> is not guaranteed to be <span class="math inline">\(0 \leq R^2 \leq 1\)</span></p>
+<ul>
+<li>Means it is possible for the model to explain more than the total variance
+<ul>
+<li>Not a sensible interpretation!</li>
+</ul></li>
+</ul>
+<p>Alternative:</p>
+<p><span class="math display">\[\text{Bayesian } R^2 = \frac{s_{\hat{y}}^2}{s_{\hat{y}}^2 + s_{\epsilon}^2}\]</span></p>
+<ul>
+<li>Is guaranteed to be <span class="math inline">\(0 \leq \text{Bayesian } R^2 \leq 1\)</span></li>
+<li>Same interpretation as <span class="math inline">\(\eta^2\)</span> and <span class="math inline">\(R^2\)</span></li>
+</ul>
+</div>
+</section>
+<section id="bayesian-r2" class="slide level2">
+<h2>Bayesian <span class="math inline">\(R^2\)</span></h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-label="1"></a><span class="fu">library</span>(performance)</span>
+<span id="cb14-2"><a aria-label="2"></a><span class="fu">r2_bayes</span>(stan_lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a aria-label="1"></a><span class="co"># Bayesian R2 with Compatibility Interval</span></span>
+<span id="cb15-2"><a aria-label="2"></a></span>
+<span id="cb15-3"><a aria-label="3"></a>  <span class="ex">Conditional</span> R2: 0.004 <span class="er">(</span><span class="ex">95%</span> CI [2.351e-09, 0.031]<span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="bayesian-apa-writeup" class="slide level2">
+<h2>Bayesian APA Writeup</h2>
+<p>Using Bayesian estimation, we fit a simple regression of Catch and Keep scores on a Cloudy Day (KC) on risk taking behavior. The intercept had a posterior mean <span class="math inline">\(b_0 = 7.46, 95% CI = [5.46, 9.39]\)</span>. The slope had a posterior mean <span class="math inline">\(b_1 = -0.01, 95% CI = [-0.06, 0.03]\)</span>. The posterior mean Bayesian <span class="math inline">\(R^2 = 0.004, 95% CI = [&lt;.001, 0.031]\)</span>, suggesting KC scores explained between 0 and 3% of the variance in risk taking behavior.</p>
+<p>(I usually wouldn’t include the intercept, but put it here for reference)</p>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jhelmer3\.github\.io\/PSYC6019-2026\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

@@ -55,11 +55,64 @@ my_yellow2 <- "#FFFFCC"
 ```
 
 
-## Traditional Two-way ANOVA
+
+## Jargon Refresher
+
+**Linear Model:**
+
+$${\color{blue}y_i} = \beta_0 + \sum_{p=1}^P \beta_p {\color{red}x_{ip}} + \epsilon_i$$
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+
+[**Left side variable terms**]{style="color: blue;"}
+
+
+- $y$
+- Dependent variable (DV)
+- Outcome variable
+- Response variable
+
+:::
+
+::: {.column width="50%"}
+[**Right side variable terms**]{style="color: red;"}
+
+- $x$
+- Independent variable(s) (IVs)
+- Predictor variable(s)
+
+:::
+:::::
+
+## Tests We Will Cover {.scrollable}
+
 
 ::: {style="font-size: 0.8em;"}
 
-For the two-way ANOVA, there are two categorical IVs (factors)
+| IV(s) | DV | IV Status | Model Structure |
+| :--- | :--- | :--- | :--- |
+| — | One categorical | — | $\chi^2$ Goodness of Fit |
+| One Categorical | One categorical | — | $\chi^2$ Test of Independence |
+| — | One Continuous | — | One Sample $t$-Test |
+| One Binary | One Continuous | Dependent Groups | Paired Sample $t$-Test |
+| One Binary | One Continuous | Independent Groups | Independent Sample $t$-Test |
+| One Categorical | One Continuous | Independent Groups | One-Way ANOVA |
+| **More than One Categorical** | **One Continuous** | **Independent Groups** | **Factorial ANOVA** |
+| One Categorical | One Continuous | Dependent Groups | One-Way Repeated Measures ANOVA |
+| More than One Categorical | One Continuous | Dependent Groups | Factorial Repeated Measures ANOVA |
+| More than One Categorical | One Continuous | Mixed Groups | Mixed ANOVA |
+| One Continuous | One Continuous | — | Correlation or Simple Regression |
+| More than One Continuous | One Continuous | — | Multiple Regression |
+
+::: 
+
+
+## Two-way ANOVA
+
+::: {style="font-size: 0.77em;"}
+
+For two-way ANOVA, there are two categorical IVs (factors)
 
 Factor $A$ has levels $j = 1, \ldots, J$ and Factor $B$ has levels $k = 1, \ldots, K$
 
@@ -95,9 +148,9 @@ $$y_{ijk} = \mu_G + \alpha_j + \beta_k + (\alpha\beta)_{jk} + \epsilon_{ijk}$$
 
 ## Interpretations
 
-- **Interaction** $F_{df_{AB}, df_W}$: Do differences in means for factor $A$ different depend on the level of $B$ OR do differences in means for factor $B$ different depend on the level of $A$
-- **Main Effect** $A$ $F(df_A, df_W)$: Are there differences in the group means for factor $A$ at the **average** level of $B$
-- **Main Effect** $B$ $F(df_B, df_W)$: Are there differences in the group means for factor $B$ at the **average** level of $A$
+- **Interaction** $F_{df_{AB}, df_W}$: Do differences in means for factor $A$ depend on the level of $B$ OR do differences in means for factor $B$ depend on the level of $A$
+- **Main Effect** $A$ $F(df_A, df_W)$: Are there differences in the group means for factor $A$ **averaging** over each level of $B$
+- **Main Effect** $B$ $F(df_B, df_W)$: Are there differences in the group means for factor $B$ **averaging** over each level of $B$
 
 Like ommibus test in one-way ANOVA does not tell us **how** groups might differ, only **whether** there are differences in means and if those differences depend on one factor or both.
 
@@ -195,7 +248,7 @@ But instead of ignoring the west hill, I use $MS_W$ from the **full** ANOVA, rat
 - $MS_{W} = 13.8$, $df_W = 294$ (from full model)
 
 ```{r}
-
+#| echo: true
 433.0 / 13.8
 pf(31.38, df1 = 2, df2 = 294, lower.tail = FALSE)
 ```
@@ -211,6 +264,7 @@ Now I do the same for the west side of the hill
 
 
 ```{r}
+#| echo: true
 a1_west <- aov(rating ~ method, dat %>% filter(hill == "west"))
 summary(a1_west)
 904.4 / 13.8
@@ -234,7 +288,21 @@ joint_tests(e1, by = "hill")
 
 (slight numerical differences due to rounding)
 
-## Reversed Simple Mian
+## Visual
+
+This plot (from last time) corresponds to this analysis
+
+
+```{r}
+d2 <- Rmisc::summarySE(dat, "rating", c("method","hill"))
+
+ggplot(d2, aes(hill, rating, col = method, shape = method, group = method)) +  geom_point(size = 2, position = position_dodge(.25)) +
+  geom_errorbar(aes(ymin = rating - ci, ymax = rating + ci, width = .25), position = position_dodge(.25)) + 
+  scale_color_manual(values = c(my_blue, my_orange, my_green)) + 
+  theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Method", shape = "Method",linetype = "Method", x = "Hill Side", y = "Rating") + ylim(70, 100)
+```
+
+## Reversed Simple Main
 
 I could also look at the effect of hill by method if I prefer to make that interpretation
 
@@ -246,6 +314,16 @@ joint_tests(e1, by = "method")
 
 There were significant differences in the side of the hill for control and method `a`, but not method `b`.
 
+## Reversed Visual
+
+Which would correspond to this plot
+
+```{r}
+ggplot(d2, aes(method, rating, col = hill, shape = hill, group = hill)) +  geom_point(size = 2, position = position_dodge(.25)) +
+  geom_errorbar(aes(ymin = rating - ci, ymax = rating + ci, width = .25), position = position_dodge(.25)) + 
+  scale_color_manual(values = c(my_purple, my_red)) + 
+  theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Hill Side", shape = "Hill Side",linetype = "Hill Side", x = "Method", y = "Rating") + ylim(70, 100)
+```
 
 ## Simple Main Effects: Post-Hoc Comparisons
 
@@ -264,6 +342,18 @@ On both sides of hill, there is a statistically significant simple main effect o
 #| echo: true
 
 pairs(e1, by = "hill")
+```
+
+## Visual Revisited
+
+This corresponds to pairwise $t$-tests for these comparisons
+
+```{r}
+
+ggplot(d2, aes(hill, rating, col = method, shape = method, group = method)) +  geom_point(size = 2, position = position_dodge(.25)) +
+  geom_errorbar(aes(ymin = rating - ci, ymax = rating + ci, width = .25), position = position_dodge(.25)) + 
+  scale_color_manual(values = c(my_blue, my_orange, my_green)) + 
+  theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Method", shape = "Method",linetype = "Method", x = "Hill Side", y = "Rating") + ylim(70, 100)
 ```
 
 ## Interpretations
@@ -285,7 +375,7 @@ We can also do linear contrasts for simple main effects. For example, we can com
 
 - What linear contrast would compare `control` to the average of `a` and `b`?
 
-- [Homogeneity of variance! The full model is a better estimate of the shared within group variance than the model that ignores half my data (west side of hill)]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [$\psi = 1 (\text{control}) + -0.5 (\text{a}) + -0.5 (\text{b})$]{.answer .fragment .content-visible unless-meta="params.v0"}
 
 ## Linear Contrasts
 
@@ -306,7 +396,7 @@ For both sides of the hill, `control` is significantly different from the averag
 
 If we assume that the interaction isn't meaningful then we may want to look at the ~~simple~~ main effects
 
-- What is meaningful?
+- What is meant by *meaningful*?
 - Often interpreted as "significant"
     - Personally don't love this way of thinking! Significance doesn't always mean an effect is "real"
 - **More importantly:** If differences in one factor change for different levels of another factor, it may not make sense to interpret ~~simple~~ main effects
@@ -325,6 +415,7 @@ pairs(em2)
 
 
 At the **average** of `east` and `west` hills
+
 - `control` is significantly different from `a`
 - `control` is significantly different from `b`
 - `a` and `b` are not significantly different from each other
@@ -488,6 +579,11 @@ All of this stuff generalizes to Bayes-world! You can use `emmeans()` with `rsta
 ```{r}
 #| echo: true
 library(rstanarm)
+options(mc.cores = parallel::detectCores())
+```
+```{r}
+#| echo: true
+#| cache: true
 stan_a1 <- stan_glm(rating ~ hill * method, dat, family = "gaussian")
 ```
 
@@ -497,6 +593,7 @@ stan_a1 <- stan_glm(rating ~ hill * method, dat, family = "gaussian")
 
 ```{r}
 #| echo: true
+#| cache: true
 stan_e1 <- emmeans(stan_a1, ~ hill * method)
 pairs(stan_e1, by = "hill")
 ```
@@ -507,6 +604,7 @@ For inference, we get the 95% HPD credible intervals
 
 ```{r}
 #| echo: true
+#| cache: true
 interaction_results <- contrast(stan_e1, 
   interaction = list(hill = hill_contrast, condition = condition_contrasts))
 
