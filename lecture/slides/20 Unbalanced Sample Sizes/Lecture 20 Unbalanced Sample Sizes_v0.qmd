@@ -59,7 +59,7 @@ my_yellow2 <- "#FFFFCC"
 
 In the examples we've been dealing with so far, our factorial ANOVAs have had **balanced** sample sizes
 
-- Sample $n$ in every cell
+- Same $n$ in every cell
 
 
 ```{r}
@@ -137,7 +137,7 @@ dat <- dat %>% mutate(sex = as_factor(sex..),
 #| message: false
 
 
-lm1 <- lm(vengefulness ~ condition * gender, dat)
+lm1 <- lm(vengefulness ~ gender * condition, dat)
 library(ggeffects)
 ggp1 <- ggpredict(lm1, terms = c("condition","gender"))
 plot(ggp1) + ylim(c(0, 5)) + labs(color = "gender", title = NULL)
@@ -583,7 +583,7 @@ The littel-**a** `anova()` function (built into `R`) gives us Type I
 ```{r}
 #| echo: true
 
-a_t1 <- aov(vengefulness ~ condition * gender, dat)
+a_t1 <- aov(vengefulness ~ gender * condition, dat)
 anova(a_t1)
 
 ```
@@ -596,7 +596,7 @@ For Type II and III we can use `car::Anova()` or `ez::ezANOVA()`. For Type II us
 #| echo: true
 
 library(car)
-a_t2 <- aov(vengefulness ~ condition * gender, dat)
+a_t2 <- aov(vengefulness ~ gender * condition, dat)
 Anova(a_t2, type = 2)
 
 ```
@@ -632,7 +632,7 @@ For Type II and III we can use `car::Anova()` or `ez::ezANOVA()`. For Type III u
 options(contrasts = c(unordered = "contr.sum", ordered = "contr.poly"))
 library(car)
 
-a_t3 <- aov(vengefulness ~ condition * gender, dat)
+a_t3 <- aov(vengefulness ~ gender * condition, dat)
 Anova(a_t3, type = 3)
 
 ```
