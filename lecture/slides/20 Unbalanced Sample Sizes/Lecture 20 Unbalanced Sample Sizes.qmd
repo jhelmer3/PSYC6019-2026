@@ -59,7 +59,7 @@ my_yellow2 <- "#FFFFCC"
 
 In the examples we've been dealing with so far, our factorial ANOVAs have had **balanced** sample sizes
 
-- Sample $n$ in every cell
+- Same $n$ in every cell
 
 
 ```{r}
@@ -137,7 +137,7 @@ dat <- dat %>% mutate(sex = as_factor(sex..),
 #| message: false
 
 
-lm1 <- lm(vengefulness ~ condition * gender, dat)
+lm1 <- lm(vengefulness ~ gender * condition, dat)
 library(ggeffects)
 ggp1 <- ggpredict(lm1, terms = c("condition","gender"))
 plot(ggp1) + ylim(c(0, 5)) + labs(color = "gender", title = NULL)
@@ -213,7 +213,7 @@ What do you think about these results?
 | **Arizona** | 9 11 14 10 6<br>8 12 13 11 6<br>$\bar{y}_{21} = 10$ | 28 29 21 20 22<br>20 28 24 21 27<br>$\bar{y}_{22} = 24$ |<br>$\bar{y}_{2\bullet} = 17.00$ |
 | **Col Means** | $\bar{y}_{\bullet 1} = 12.00$ | $\bar{y}_{\bullet 2} = 22.00$ | |
 
-If we equalized the sample sizes:
+If we equalized the sample sizes while holding the cell means constant:
 
 - Still a clear effect of drinking, no longer an effect of state!
 - The effect of state was really because we had more drinkers in Michigan and more non-drinkers in Arizona
@@ -510,7 +510,7 @@ Order of terms in model: $B \to A \to AB$
 - Type II assumes main effects are unconfounded by interaction
     - Most useful if you are OK assuming a negligible interaction **in the population**
     - If so, more powerful test of main effect
-- Type III assumes main effects are confounded byt interaction
+- Type III assumes main effects are confounded by interaction
     - Most useful if you are assuming a non-negligible interaction in the population
     - Main effect tests less powerful, but also main effects have less clear interpretation if interaction is present, so may not be an issue
 
@@ -583,7 +583,7 @@ The littel-**a** `anova()` function (built into `R`) gives us Type I
 ```{r}
 #| echo: true
 
-a_t1 <- aov(vengefulness ~ condition * gender, dat)
+a_t1 <- aov(vengefulness ~ gender * condition, dat)
 anova(a_t1)
 
 ```
@@ -596,7 +596,7 @@ For Type II and III we can use `car::Anova()` or `ez::ezANOVA()`. For Type II us
 #| echo: true
 
 library(car)
-a_t2 <- aov(vengefulness ~ condition * gender, dat)
+a_t2 <- aov(vengefulness ~ gender * condition, dat)
 Anova(a_t2, type = 2)
 
 ```
@@ -632,7 +632,7 @@ For Type II and III we can use `car::Anova()` or `ez::ezANOVA()`. For Type III u
 options(contrasts = c(unordered = "contr.sum", ordered = "contr.poly"))
 library(car)
 
-a_t3 <- aov(vengefulness ~ condition * gender, dat)
+a_t3 <- aov(vengefulness ~ gender * condition, dat)
 Anova(a_t3, type = 3)
 
 ```
@@ -662,4 +662,4 @@ Note that the interaction **never changes**. Only the main effects results diffe
 The interaction effect is not statistically significant ($F(1, 131) = .02, p = .89$). There is a significant main effect of gender ($F(1, 131) = 4.51$, $p = .04$), but no main effect of condition ($F(1, 131) = .08, p = .77$). Males have higher vengefulness scores than females (Cohen's $d$ = .39).
 
 
-**Note from Mark (note part of APA writeup):** Post-hoc tests are not necessary for the effect of gender because this variable has only two levels. Means we don't need additional tests and can just calculate $d$ for difference between males and females
+**Note from Mark (not part of APA writeup):** Post-hoc tests are not necessary for the effect of gender because this variable has only two levels. Means we don't need additional tests and can just calculate $d$ for difference between males and females

@@ -1,0 +1,989 @@
+---
+title: "Exam 2 Review"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(gganimate)
+library(gifski)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+
+
+```
+
+## Reminder
+
+The exam will take place in JS Coon 247/248 instead of 250
+
+- This is where you do lab
+- Should be more comfortable/spacious!
+
+
+
+## Review Question 1
+
+For the review, would it be possible to go over Equal Tailed Credible intervals and how they differ from Confidence Intervals and HDIs? I think the differences in interpretations are throwing me off a little. Thank you!
+
+## Credible Intervals
+
+Any type of credible interval represents some proportion of the posterior distribution. 
+
+- For example, a 95% credible interval represents 95% of the posterior distribution
+- An 80% credible interval represents 80% of the posterior distribution
+
+But it doesn't say WHICH 95% or 80%. Equal tailed and highest posterior density are two methods for choosing the 
+
+##  Equal Tailed Credible Interval
+
+An equal tailed credible interval is most similar to the version of a confidence interval we have seen in that it is **symmetrical** by definition. 
+
+- If we call $c$ the proportion of the credible interval (e.g. $c = .95$ for a 95% credible interval):
+    - *exactly** $\frac{1 - c}{2}$ of the area of the distribution goes in the upper tail
+    - *exactly** $\frac{1 - c}{2}$ of the area of the distribution goes in the lower tail 
+
+The next two slides show the equal tailed interval for a 
+
+- **symmetric** posterior
+- **asymmetric** posterior
+    
+## Symmetric ETI
+
+```{r}
+
+# 1. Define distribution parameters and interval boundaries
+alpha <- 0.05
+x_lower <- qnorm(alpha / 2)       # -1.96 (2.5th percentile)
+x_upper <- qnorm(1 - alpha / 2)   #  1.96 (97.5th percentile)
+y_cutoff <- dnorm(x_upper)         #  Density height at boundary (~0.0584)
+
+# 2. Build plotting data frame
+df_curve <- data.frame(
+  x = seq(-4, 4, length.out = 1000)
+)
+df_curve$y <- dnorm(df_curve$x)
+
+# Data subsets for conditional shading
+df_left_tail  <- subset(df_curve, x <= x_lower)
+df_right_tail <- subset(df_curve, x >= x_upper)
+df_interval   <- subset(df_curve, x >= x_lower & x <= x_upper)
+
+# 3. Create plot
+ggplot(df_curve, aes(x = x, y = y)) +
+  # Shading inside the 95% Credible Interval
+  geom_area(data = df_interval, aes(y = y), fill = "#4A90E2", alpha = 0.3) +
+  
+  # Shading the two 2.5% tails (Requirement A)
+  geom_area(data = df_left_tail, aes(y = y), fill = "#E74C3C", alpha = 0.5) +
+  geom_area(data = df_right_tail, aes(y = y), fill = "#E74C3C", alpha = 0.5) +
+  
+  # Main density curve
+  geom_line(color = "#1F2937", linewidth = 1) +
+  
+  # Vertical cutoffs separating inside from outside
+  geom_vline(xintercept = c(x_lower, x_upper), linetype = "dashed", color = "#C0392B", linewidth = 0.8) +
+  
+  # Horizontal reference line highlighting boundary height (Requirement B)
+  geom_segment(
+    aes(x = x_lower, xend = x_upper, y = y_cutoff, yend = y_cutoff),
+    linetype = "dotted", color = "#2C3E50", linewidth = 0.8
+  ) +
+  
+  # Point markers at the threshold boundaries (x = ±1.96, y = 0.0584)
+  annotate("point", x = c(x_lower, x_upper), y = c(y_cutoff, y_cutoff), color = "#C0392B", size = 3) +
+  
+  # Annotations for tail proportions (Requirement A)
+  annotate("text", x = -2.7, y = 0.08, label = "Tail Area = 2.5%", color = "#C0392B", fontface = "bold", size = 3.8) +
+  annotate("text", x = 2.7, y = 0.08, label = "Tail Area = 2.5%", color = "#C0392B", fontface = "bold", size = 3.8) +
+  
+  # Annotation for credible interval core
+  annotate("text", x = 0, y = 0.18, label = "95% Equal-Tailed\nCredible Interval\n(Area = 0.95)", color = "#1E3A8A", fontface = "bold", size = 4) +
+  
+  # Annotation for height at threshold point (Requirement B)
+  annotate(
+    "text", x = 0, y = y_cutoff + 0.02,
+    label = paste0("Boundary Height f(θ) = ", round(y_cutoff, 4)),
+    color = "#2C3E50", fontface = "bold", size = 3.8
+  ) +
+  
+  # Aesthetics and axis labels
+  labs(
+    x = expression("Parameter " * theta),
+    y = expression("Density " * f(theta))
+  ) +
+  scale_x_continuous(breaks = c(-4, x_lower, 0, x_upper, 4), labels = c("-4", "-1.96", "0", "1.96", "4")) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    panel.grid.minor = element_blank()
+  )
+```
+
+
+## Asymmetric ETI
+
+```{r}
+
+# 1. Define asymmetric posterior distribution (Beta(2, 6))
+alpha_shape <- 2
+beta_shape  <- 6
+alpha_level <- 0.05
+
+# Equal-tailed cutoffs (2.5th and 97.5th percentiles)
+x_lower <- qbeta(alpha_level / 2, alpha_shape, beta_shape)       # ~0.0367
+x_upper <- qbeta(1 - alpha_level / 2, alpha_shape, beta_shape)   # ~0.5787
+
+# Density heights at each cutoff boundary
+y_lower <- dbeta(x_lower, alpha_shape, beta_shape)               # ~1.2784
+y_upper <- dbeta(x_upper, alpha_shape, beta_shape)               # ~0.3225
+
+# 2. Build plotting data frame
+df_curve <- data.frame(
+  x = seq(0, 0.85, length.out = 1000)
+)
+df_curve$y <- dbeta(df_curve$x, alpha_shape, beta_shape)
+
+# Data subsets for shading
+df_left_tail  <- subset(df_curve, x <= x_lower)
+df_right_tail <- subset(df_curve, x >= x_upper)
+df_interval   <- subset(df_curve, x >= x_lower & x <= x_upper)
+
+# 3. Create plot (titles and subtitles omitted)
+ggplot(df_curve, aes(x = x, y = y)) +
+  # Shading inside the 95% Credible Interval
+  geom_area(data = df_interval, aes(y = y), fill = "#4A90E2", alpha = 0.3) +
+  
+  # Shading the two 2.5% tails (Requirement A)
+  geom_area(data = df_left_tail, aes(y = y), fill = "#E74C3C", alpha = 0.5) +
+  geom_area(data = df_right_tail, aes(y = y), fill = "#E74C3C", alpha = 0.5) +
+  
+  # Main density curve
+  geom_line(color = "#1F2937", linewidth = 1) +
+  
+  # Vertical cutoffs separating inside from outside
+  geom_vline(xintercept = c(x_lower, x_upper), linetype = "dashed", color = "#C0392B", linewidth = 0.8) +
+  
+  # Point markers at threshold boundaries
+  annotate("point", x = c(x_lower, x_upper), y = c(y_lower, y_upper), color = "#C0392B", size = 3) +
+  
+  # Annotations for tail proportions (Requirement A)
+  annotate("text", x = 0.015, y = 0.4, label = "Tail Area = 2.5%", color = "#C0392B", fontface = "bold", size = 3.5, hjust = 0) +
+  annotate("text", x = 0.61, y = 0.2, label = "Tail Area = 2.5%", color = "#C0392B", fontface = "bold", size = 3.5, hjust = 0) +
+  
+  # Annotation for credible interval core
+  annotate("text", x = 0.28, y = 0.8, label = "95% Equal-Tailed\nCredible Interval\n(Area = 0.95)", color = "#1E3A8A", fontface = "bold", size = 4) +
+  
+  # Annotations for distinct heights at threshold points (Requirement B)
+  annotate(
+    "text", x = x_lower + 0.02, y = y_lower + 0.08,
+    label = paste0("Left Height f(θ) = ", round(y_lower, 3)),
+    color = "#2C3E50", fontface = "bold", size = 3.5, hjust = 0
+  ) +
+  annotate(
+    "text", x = x_upper + 0.02, y = y_upper + 0.08,
+    label = paste0("Right Height f(θ) = ", round(y_upper, 3)),
+    color = "#2C3E50", fontface = "bold", size = 3.5, hjust = 0
+  ) +
+  
+  # Axis formatting
+  labs(
+    x = expression("Parameter " * theta),
+    y = expression("Posterior Density " * p(theta * " | " * y))
+  ) +
+  scale_x_continuous(
+    breaks = c(0, round(x_lower, 3), 0.25, round(x_upper, 3), 0.8),
+    labels = c("0", round(x_lower, 3), "0.25", round(x_upper, 3), "0.8")
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.minor = element_blank())
+```
+
+
+## Differences
+
+What differences do you notice?
+
+- [In the first figure, the boundary separating the 95% credible interval from the tails is the same height]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [In the second figure, the boundary separating the 95% credible has a might higher density value on the left than the right]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Means that that values around the left cutoff are more likely than values around the right cutoff]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Highest Posterior Density
+
+For the HPD intervals, we use a different method to choose the boundary:
+
+- Find the value such that the height of the boundary is **always** equal
+  - Regardless of whether distribution is symmetric
+  - Means we might have less total area in one tail than the other
+  - But There are no values outside the credible interval more likely than any values inside the credible interval
+- For symmetric posteriors, ETI and HPD will be equivalent
+- For asymmetric posteriors, they will not
+
+## Symmetric HPD
+
+
+```{r}
+
+# 1. Define distribution parameters and interval boundaries
+alpha <- 0.05
+x_lower <- qnorm(alpha / 2)       # -1.96 (2.5th percentile)
+x_upper <- qnorm(1 - alpha / 2)   #  1.96 (97.5th percentile)
+y_cutoff <- dnorm(x_upper)         #  Density height at boundary (~0.0584)
+
+# 2. Build plotting data frame
+df_curve <- data.frame(
+  x = seq(-4, 4, length.out = 1000)
+)
+df_curve$y <- dnorm(df_curve$x)
+
+# Data subsets for conditional shading
+df_left_tail  <- subset(df_curve, x <= x_lower)
+df_right_tail <- subset(df_curve, x >= x_upper)
+df_interval   <- subset(df_curve, x >= x_lower & x <= x_upper)
+
+# 3. Create plot
+ggplot(df_curve, aes(x = x, y = y)) +
+  # Shading inside the 95% Credible Interval
+  geom_area(data = df_interval, aes(y = y), fill = "#4A90E2", alpha = 0.3) +
+  
+  # Shading the two 2.5% tails (Requirement A)
+  geom_area(data = df_left_tail, aes(y = y), fill = "#E74C3C", alpha = 0.5) +
+  geom_area(data = df_right_tail, aes(y = y), fill = "#E74C3C", alpha = 0.5) +
+  
+  # Main density curve
+  geom_line(color = "#1F2937", linewidth = 1) +
+  
+  # Vertical cutoffs separating inside from outside
+  geom_vline(xintercept = c(x_lower, x_upper), linetype = "dashed", color = "#C0392B", linewidth = 0.8) +
+  
+  # Horizontal reference line highlighting boundary height (Requirement B)
+  geom_segment(
+    aes(x = x_lower, xend = x_upper, y = y_cutoff, yend = y_cutoff),
+    linetype = "dotted", color = "#2C3E50", linewidth = 0.8
+  ) +
+  
+  # Point markers at the threshold boundaries (x = ±1.96, y = 0.0584)
+  annotate("point", x = c(x_lower, x_upper), y = c(y_cutoff, y_cutoff), color = "#C0392B", size = 3) +
+  
+  # Annotations for tail proportions (Requirement A)
+  annotate("text", x = -2.7, y = 0.08, label = "Tail Area = 2.5%", color = "#C0392B", fontface = "bold", size = 3.8) +
+  annotate("text", x = 2.7, y = 0.08, label = "Tail Area = 2.5%", color = "#C0392B", fontface = "bold", size = 3.8) +
+  
+  # Annotation for credible interval core
+  annotate("text", x = 0, y = 0.18, label = "95% Equal-Tailed\nCredible Interval\n(Area = 0.95)", color = "#1E3A8A", fontface = "bold", size = 4) +
+  
+  # Annotation for height at threshold point (Requirement B)
+  annotate(
+    "text", x = 0, y = y_cutoff + 0.02,
+    label = paste0("Boundary Height f(θ) = ", round(y_cutoff, 4)),
+    color = "#2C3E50", fontface = "bold", size = 3.8
+  ) +
+  
+  # Aesthetics and axis labels
+  labs(
+    x = expression("Parameter " * theta),
+    y = expression("Density " * f(theta))
+  ) +
+  scale_x_continuous(breaks = c(-4, x_lower, 0, x_upper, 4), labels = c("-4", "-1.96", "0", "1.96", "4")) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    panel.grid.minor = element_blank()
+  )
+```
+
+## Asymmetric HPD
+
+```{r}
+library(ggplot2)
+
+# 1. Define asymmetric posterior distribution (Beta(2, 6))
+alpha_shape <- 2
+beta_shape  <- 6
+mass        <- 0.95
+
+# Find 95% Highest Posterior Density Interval (HPDI) boundaries by minimizing interval width
+hpd_obj <- function(x1) {
+  x2 <- qbeta(pbeta(x1, alpha_shape, beta_shape) + mass, alpha_shape, beta_shape)
+  return(x2 - x1)
+}
+
+res <- optimize(hpd_obj, interval = c(0, qbeta(1 - mass, alpha_shape, beta_shape)))
+x_lower <- res$minimum                                              # ~0.0133
+x_upper <- qbeta(pbeta(x_lower, alpha_shape, beta_shape) + mass, alpha_shape, beta_shape) # ~0.5273
+
+# Single equal height boundary h* separating inside from outside
+y_hpd <- dbeta(x_lower, alpha_shape, beta_shape)                    # ~0.5226
+
+# Calculate left and right tail proportions
+left_tail_mass  <- pbeta(x_lower, alpha_shape, beta_shape)          # ~0.36%
+right_tail_mass <- 1 - pbeta(x_upper, alpha_shape, beta_shape)      # ~4.64%
+
+# 2. Build plotting data frame
+df_curve <- data.frame(
+  x = seq(0, 0.85, length.out = 1000)
+)
+df_curve$y <- dbeta(df_curve$x, alpha_shape, beta_shape)
+
+# Data subsets for shading
+df_left_tail  <- subset(df_curve, x <= x_lower)
+df_right_tail <- subset(df_curve, x >= x_upper)
+df_interval   <- subset(df_curve, x >= x_lower & x <= x_upper)
+
+# 3. Create plot (titles and subtitles omitted)
+ggplot(df_curve, aes(x = x, y = y)) +
+  # Shading inside the 95% HPDI
+  geom_area(data = df_interval, aes(y = y), fill = "#4A90E2", alpha = 0.3) +
+  
+  # Shading the tail areas (Requirement A)
+  geom_area(data = df_left_tail, aes(y = y), fill = "#E74C3C", alpha = 0.5) +
+  geom_area(data = df_right_tail, aes(y = y), fill = "#E74C3C", alpha = 0.5) +
+  
+  # Main density curve
+  geom_line(color = "#1F2937", linewidth = 1) +
+  
+  # Vertical cutoffs separating inside from outside
+  geom_vline(xintercept = c(x_lower, x_upper), linetype = "dashed", color = "#C0392B", linewidth = 0.8) +
+  
+  # Single horizontal threshold line showing equal density height (Requirement B)
+  geom_segment(
+    aes(x = 0, xend = x_upper + 0.05, y = y_hpd, yend = y_hpd),
+    linetype = "dotted", color = "#D97706", linewidth = 0.8
+  ) +
+  
+  # Point markers at both threshold boundaries (x_lower, y_hpd) and (x_upper, y_hpd)
+  annotate("point", x = c(x_lower, x_upper), y = c(y_hpd, y_hpd), color = "#C0392B", size = 3) +
+  
+  # Annotations for asymmetric tail proportions (Requirement A)
+  annotate("text", x = 0.005, y = 0.25, label = paste0("Left Tail\n", round(left_tail_mass * 100, 2), "%"), color = "#C0392B", fontface = "bold", size = 3.5, hjust = 0) +
+  annotate("text", x = 0.55, y = 0.25, label = paste0("Right Tail\n", round(right_tail_mass * 100, 2), "%"), color = "#C0392B", fontface = "bold", size = 3.5, hjust = 0) +
+  
+  # Annotation for HPDI core
+  annotate("text", x = 0.25, y = 0.9, label = "95% Highest Posterior\nDensity Interval (HPDI)\n(Area = 0.95)", color = "#1E3A8A", fontface = "bold", size = 4) +
+  
+  # Annotation for shared boundary height h* (Requirement B)
+  annotate(
+    "text", x = x_upper + 0.06, y = y_hpd,
+    label = paste0("Equal Boundary Height\n f(θ) = ", round(y_hpd, 3)),
+    color = "#D97706", fontface = "bold", size = 3.5, hjust = 0
+  ) +
+  
+  # Axis formatting
+  labs(
+    x = expression("Parameter " * theta),
+    y = expression("Posterior Density " * p(theta * " | " * y))
+  ) +
+  scale_x_continuous(
+    breaks = c(0, round(x_lower, 3), 0.25, round(x_upper, 3), 0.8),
+    labels = c("0", round(x_lower, 3), "0.25", round(x_upper, 3), "0.8")
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.minor = element_blank())
+```
+
+
+## Overview
+
+- Even for asymmetric posteriors **both** versions represent a range of values we are 95% sure the parameter falls into
+  - But they represent a different 95% range!
+- There is no objectively right one to choose
+- If you want to exclude equal areas in both tails, use ETI
+- If you want the range of values that are more likely than the 5% of values outside the 95% CI, use the HPD
+
+
+## Review Question 2
+
+To add to exam questions, can we do a crash course on Bayes in regard to how it differs from ANOVA tests and t-tests?
+
+## Frequentist vs. Bayesian
+
+The **most important** difference between frequentist and Bayesian statistics is philosophical:
+
+- How do we **infer** what an **unknown parameter** is from messy data
+- **Parameters:** Numerical values that define probability distribution
+- **Data:** Outcome of probability distribution
+- **Statistical Theory:** Parameters **generate** data
+  - We try to reverse engineer the parameters from the data
+
+## Examples of Parameters
+
+- Bernoulli distribution: $\pi$ (probability, not 3.14)
+    - Statistical estimate: observe binary outcomes and counting the proportion of successes
+- Normal distribution: $\mu, \sigma$
+    - Statistical estimate: Observe a sample of some continuous distribution, calculate mean and SD
+- General linear model: $\beta_0 \dots \beta_p, \sigma_{\epsilon}$
+    - Estimate relationship between predictors $x$'s and outcome $y$ using a computational algorithm
+      - Ordinary least squares, maximum likelihood, Markov Chain Monte Carlo
+      
+## Philosophical Differences
+
+
+::: {style="font-size: 0.8em;"}
+::: {.columns}
+
+::: {.column width="50%"}
+
+**Frequentist**
+
+- State null hypothesis
+- Collect data
+- Obtain statistical estimate of parameters
+- Calculate how unlikely that statistical estimate would be if null hypothesis were true
+- Parameter estimate is single value estimated by ordinary least squares, maximum likelihood, etc
+- Uncertainty quantified with confidence intervals
+- Focus on tests, which can be represented as general linear models
+
+:::
+
+::: {.column width="50%"}
+
+**Bayesian**
+
+- State prior belief as probability distribution about parameter(s)
+- Collect data
+- Use Bayes' rule to calculate posterior belief as new probability distribution about parameters given data
+- Parameter estimate represents range of possible values and how likely those values are relative to others calculated by Markov Chain Monte Carlo
+- Uncertainty quantified with credible intervals
+- Focus on general linear models, which can be compared with Bayes factors
+
+:::
+
+:::
+
+:::
+
+## More Differences
+
+
+
+::: {style="font-size: 0.75em;"}
+::: {.columns}
+
+::: {.column width="50%"}
+
+**Frequentist**
+
+- OLS and maximum likelihood are relatively simple computationally
+- However, they can be rigid/inflexible
+- If you need a model that isn't "out-of-the-box" it can be very hard to figure out how to program unless you are computer scientist
+- Limited to $t$-tests, ANOVA, regression, and generalizations like logistic regression, Poisson regression, beta regression, etc.
+
+:::
+
+::: {.column width="50%"}
+
+**Bayesian**
+
+- MCMC is more complex/slow computationally
+- However, very flexible
+- If you learn Bayesian software more in depth, requires much less computational expertise to start working with fancy/bespoke models
+- **Almost** any data generating process you can imagine can be turned into a model that you can estimate
+  - Main constraints are identifiability and tractability of posterior geometry
+
+:::
+
+:::
+
+Stuff on this slide is beyond our class. Any type of analysis we cover in this class can be done using either frequentist or Bayesian methods, differences are preferred philosophy and computational method
+
+:::
+
+## Review Question 3
+
+Hi, I am a little bit confused with a priori comparison from the Lecture 17. Would it be possible to go through it in terms of how the procedure is different from an independent t-test? Thank you! 
+
+## Post-hoc vs A Priori
+
+::: {style="font-size: 0.9em;"}
+
+In one-way ANOVA, we are comparing the means of more than two groups to one another. 
+
+- We first do an omnibus $F$-test to test for **any** differences among means
+- Then we do follow-up tests to see where those differences are
+  - **Post-hoc:** We do not have any existing theory about where differences should be
+    - Usually means we compare **all** pairs of groups to one another
+  - **A priori:** We do have some theory about where the differences should be
+    - Usually means we **plan** what comparisons we are going to do in advance
+    - May involve contrasts that are linear combinations of multiple groups (not just pairs)
+    
+::: 
+    
+## Follow-up vs Simple $t$
+
+How are follow-up tests in ANOVA (whether post-hoc or a priori) different from just doing regular independent sample $t$-tests for each pair?
+
+[Both have the form: $t(df) = \frac{\bar{x_1} - \bar{x_2}}{s_{x_1 - x_2}}$. How do they differ?]{.fragment}
+
+
+    
+
+:::::: {.content-visible unless-meta="params.v0"}
+::::: {.fragment}
+:::: {.answer}
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+**Independent Sample $t$**
+
+$s_{x_1 - x_2} = s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}$
+
+
+:::
+
+::: {.column width="50%"}
+
+**ANOVA Follow-up**
+
+$s_{x_1 - x_2} = \sqrt{\frac{MSW}{n_1} + \frac{MSW}{n_2}}$
+
+:::
+
+:::
+
+::::
+:::::
+::::::
+
+## Why MSW?
+
+- [MSW is our estimate of the **shared/pooled** within group variance]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Remember, we assume homogeneity of variance. MSW represents the variance of **all** groups separately]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [If we have more than two groups, MSW is a **better estimate** of this variance than $s_p^2$, which only considers the two groups being compared]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Post-hoc
+
+- Because post-hoc tests compare all groups, we need to control the family-wise error rate (FWE)
+- Probability we reject at least one true null is larger than $\alpha$ because each individual test has a 5% chance of rejecting a true null
+  - Probability compounds for each extra test we do
+  - If tests are independent, FWE = $1 - (1 - \alpha)^k$ for $k$ tests
+  - Post-hoc tests reuse the same groups, so tests are **not** independent
+    - E.g. group 1 vs 2 is not independent of Group 1 vs 3 or group 2 vs 3
+  - Tukey's HSD and Games-Howell account for non-independence in FWE
+
+## A Priori
+
+::: {style="font-size: 0.9em;"}
+
+- For A Priori tests, we don't compare all groups, just a specific set of groups that we think are of theoretical interest
+- Reduces the total number of tests, which in turn reduces inflation in FWE
+- Can also do planned contrasts
+
+
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+**Contrast 1:**
+
+$$\psi_1 = \quad 1\mu_1 + -\frac{1}{2}\mu_2 + -\frac{1}{2}\mu_3= 0$$
+
+Compares group 1 to average of groups 2 and 3
+
+:::
+
+::: {.column width="50%"}
+
+**Contrast 2:**
+
+$$\psi_2 = \quad 0\mu_1 + 1\mu_2 + -1\mu_3 = 0$$
+
+Compares group 2 to 3
+
+:::
+
+:::
+:::
+
+
+## Standard Error?
+
+::: {style="font-size: 0.8em;"}
+
+I glossed over this initially, but we would still use MSW to define the standard error for this type of linear contrast:
+
+$$t(df) = \frac{\psi}{s_\psi}$$
+Where:
+
+$$s_\psi = \sqrt{MSW\sum_{i=1}^G\frac{c_i^2}{n_i}}$$
+
+Same logic as for pairwise test except we weight each group by its $c_i$
+
+$$s_{x_1 - x_2} = \sqrt{\frac{MSW}{n_1} + \frac{MSW}{n_2}}$$
+
+:::
+
+## Review Question 4
+
+For Bayes' rule, I'm confused about what conceptually makes the likelihood and the scaling term different. 
+
+For the cue ball example (Lecture 14 slide 19), they're explained as "All possible ways the 9-ball could wind up to the right of the cue ball" and "Divided by the sum of all possible ways the 9-ball could be to the right of the cue ball." What does this mean?
+
+## Likelihood vs Scaling
+
+This is a good catch about my wording being confusing. 
+
+- The likelihood represents each **individual** way the 9-ball could be to the right of the cue ball **separately**
+- The scaling term represents the **weighted sum of all ways** the 9-ball could be to the right of the cue ball (where the weights are our prior belief for the individual ways)
+
+## Two Forms
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+Traditionally we write Bayes' rule as:
+
+$$P(A|B) = \frac{P(B|A)P(A)}{P(B)}$$
+
+:::
+
+::: {.column width="50%"}
+
+::::: {.fragment}
+
+But we can also say that:
+
+$P(B) = \sum_{i=1}^N P(B|A_i)P(A_i)$
+
+where $N$ is some finite number of different values $A$ can take on. That means we can instead write Bayes' rule as
+
+$$P(A|B) = \frac{P(B|A)P(A)}{\sum_{i=1}^N P(B|A_i)P(A_i)}$$
+::::: 
+:::
+:::
+
+## Scaling
+
+
+::: {style="font-size: 0.8em;"}
+
+This means that if we sum up all the posterior probabilities $P(A_i | B)$ for every possible value of $A$, it is guaranteed to sum to 1
+
+$$\sum_{j=1}^N P(A_j|B) = \sum_{j=1}^N\frac{P(B|A_j)P(A_j)}{\sum_{i=1}^N P(B|A_i)P(A_i)} = 1$$
+
+The problem is that when we work with a continuous parameter space $\boldsymbol{\theta}$, we can't count $N$ different possible values $\boldsymbol{\theta}$, so we need to integrate instead
+
+$$\int P(\boldsymbol{\theta}|\boldsymbol{D})d\boldsymbol{\theta} = \int \frac{P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})}{\int P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})d\boldsymbol{\theta}}d\boldsymbol{\theta} = 1$$
+
+That's where MCMC comes in, it helps us solve the integral $\int P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})d\boldsymbol{\theta}$ via simulation when it can't be solved analytically
+
+:::
+
+
+## Review Question 5  
+
+On Lecture 18 Slide 35, you mentioned that sometimes it does not make sense to average across conditions to interpret main effect. In the wine example, does it mean that we cannot interpret anything about which growing condition works best on the east hill based on main effect A alone? But we can interpret this using simple effect?
+
+## Simple Main Effects
+
+- Clear interpretation
+- Effect of one factor **conditional** on a level of another factor
+- Effect of growing condition GIVEN east side of hill
+- Effect of growing condition GIVEN west side of hill
+- Makes use of combinations of conditions as they exist in your data
+
+
+## Review Question 6
+
+We learned that Bayesian inference can begin with either a subjective or a uniform prior. However, I'm curious about how researchers determine whether their chosen prior is appropriate.
+
+Since different priors can lead to different posterior distributions, are there any objective criteria or methods for evaluating whether a prior is reasonable, especially when there is limited previous evidence?
+
+## Ordinary Main Effects
+
+::: {style="font-size: 0.8em;"}
+
+- More potential for misleading interpretation
+- Effect of one factor **averaged** over **all** levels of other factor **as they exist in your data**
+  - **Not** the effect of one factor ignoring the other factor
+- Effect of growing condition at average level of east and west side of hill
+  - Always think about what it means to say you are averaging (aka marginalizing) over other factors when interpreting marginal main effects
+    - Interaction may mean ordinary main effects are averaging two very different simple main effects in a way that doesn't make sense
+    - Don't generalize to other conditions that aren't included in your data!
+
+:::
+
+
+## Choosing Priors
+
+::: {style="font-size: 0.8em;"}
+
+Can be really hard! Especially for complex models. 
+
+- Often the "safest" option is to use a weak or uniform prior
+  - Uniform priors can lead to other problems because they are often improper
+- The defaults in `rstanarm` are "weak" priors
+  - Centered at "no effect" (e.g. $\beta_1$ will be centered at 0)
+  - Have large uncertainty (e.g. $\beta_1$ will have a large SD)
+    - Means 0 is the most likely value, but almost any other value remains possible
+
+This is almost always how priors are chosen
+
+- In academic research regardless of whether you have a strong subjective prior, to avoid being criticized for a prior a reviewer might disagree with
+- When you don't have a strong subjective prior 
+
+:::
+
+## Review Question 7
+
+I have a question about a figure for checking the interaction effects. Is there a recommended procedure as to when or how to use the figure to get a sense of the interaction effects/simple main effects? Is there any information we can only find in graphs? Thanks! 
+
+
+## Interactions and Graphs
+
+There are many ways to try and interpret interaction effects
+
+- Simple main effects + pairwise comparisons
+- Interaction contrasts
+- And to me, best of all: **graphs**!
+
+
+## ANOVA Table
+
+
+```{r}
+#| echo: false
+
+dat <- read.csv("../../data/wine east west.csv")
+dat$condition <- factor(dat$condition, levels = c("control","a","b"))
+dat$method <- dat$condition
+dat$condition <- NULL
+
+a1 <- aov(rating ~ hill * method, dat)
+summary(a1)
+```
+
+
+Graphs will often tell you everything you need to know. In a two-way ANOVA, you have to choose which factor goes on the $x$-axis, and which factor gets grouped by color/shape/linetype
+
+## Graph 1
+
+```{r}
+d2 <- Rmisc::summarySE(dat, "rating", c("method","hill"))
+
+ggplot(d2, aes(hill, rating, col = method, shape = method, group = method)) +  geom_point(size = 2, position = position_dodge(.25)) +
+  geom_errorbar(aes(ymin = rating - ci, ymax = rating + ci, width = .25), position = position_dodge(.25)) + 
+  scale_color_manual(values = c(my_blue, my_orange, my_green)) + 
+  theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Method", shape = "Method",linetype = "Method", x = "Hill Side", y = "Rating") + ylim(70, 100)
+```
+
+We can interpret the interaction just by looking!
+
+
+
+## Visual Interaction Interpretation
+
+- [A difference in how each method performs depending on the side of the hill is an interaction]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Control and a do better on east than west, but b does better on west than east]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Numerical Interaction Interpretation
+
+
+```{r}
+library(emmeans)
+e1 <- emmeans(a1, ~ hill * method)
+
+pairs(e1, by = "hill")
+```
+
+- We can see the same thing in the numbers. On east, `a - b` is positive, but on west, it is negative. 
+- Note that this won't always be a change in sign! There's also a pretty big difference in `control - b`
+
+## Flipped Factors
+
+```{r}
+
+ggplot(d2, aes(method, rating, col = hill, shape = hill, group = hill)) +  geom_point(size = 2, position = position_dodge(.25)) +
+  geom_errorbar(aes(ymin = rating - ci, ymax = rating + ci, width = .25), position = position_dodge(.25)) + 
+  scale_color_manual(values = c(my_purple, my_red)) + 
+  theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Hill Side", shape = "Hill Side",linetype = "Hill Side", x = "Method", y = "Rating") + ylim(70, 100)
+```
+
+## Flipped Visual Interpretation
+
+- [East beats west for control and a]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [They are about the same for b]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+## Flipped Numerical Interpretation
+
+
+```{r}
+library(emmeans)
+e1 <- emmeans(a1, ~ hill * method)
+
+pairs(e1, by = "method")
+```
+
+- Again, we can see the same trend numerically
+- The numeric results give us null hypothesis tests
+- Visual is often a more holistic picture for interpreting the data
+
+
+
+## Side Note: Bayes and Effect Size
+
+::: {style="font-size: .8em;"}
+
+Because Bayesian estimates aren't deterministic the way the simple frequentist ANOVA algorithm is, the traditional $R^2$ is not guaranteed to be $0 \leq R^2 \leq 1$
+
+- Means it is possible for the model to explain more than the total variance
+    - Not a sensible interpretation!
+    
+Alternative:
+
+$$\text{Bayesian } R^2 = \frac{s_{\hat{y}}^2}{s_{\hat{y}}^2 + s_{\epsilon}^2}$$
+
+
+- Is guaranteed to be $0 \leq \text{Bayesian } R^2 \leq 1$
+- Same interpretation as $\eta^2$ and $R^2$
+
+::: 
+
+## Bayesian $\eta^2$
+
+In factorial ANOVA, this corresponds to a **global** effect size for how much of the total variance is explainable by all factors
+
+To get an $\eta^2$ equivalent for **each** factor and the interaction separately, we can use `eta_squared_posterior()` from `effectsize`. This will give you an estimate of $\eta^2$ **for every MCMC sample**. 
+
+- Mean of the $\eta^2$ distribution can be our point estimate
+  - can use `colMeans()` to get all means
+- .025 and .975 quantiles give us our 95% ETI Credible Interval (if we wish)
+
+## Posterior $\eta^2$
+
+We can get the 95% ETI CI by calculating the quantiles. Here is how to use it for the wine rating data (you can get either partial or full by specifying)
+
+```{r}
+dat <- read.csv("../../data/wine east west.csv")
+dat$condition <- factor(dat$condition, levels = c("control","a","b"))
+dat$method <- dat$condition
+dat$condition <- NULL
+library(rstanarm)
+options(mc.cores = parallel::detectCores())
+```
+
+```{r}
+#| echo: true
+#| cache: true
+
+stan_lm1 <- stan_glm(rating ~ hill * method, dat, family = "gaussian",
+                     seed = 15421)
+
+library(effectsize)
+
+eta_squared_posterior <- eta_squared_posterior(stan_lm1, partial = TRUE)
+colMeans(eta_squared_posterior)
+```
+
+We can also use `quantile()` to get the 95% ETI CI
+
+```{r echo = TRUE}
+quantile(eta_squared_posterior$`hill:method`, c(.025, .5, .975))
+```
+
+## Bayesian $d$
+
+To get $d$ for pairwise comparisons (perhaps for simple main effects), you need to decide what SD to divide by. Options
+
+- Posterior mean of $\sigma$
+- Full posterior distribution of $\sigma$
+
+The former is simpler. All we do is take the posterior mean of `sigma` from the summary output and divided everything by that
+
+## Finding $\sigma$
+
+```{r}
+#| echo: true
+#| cache: true
+summary(stan_lm1)
+```
+
+
+## Simple Main Pairs
+
+```{r}
+#| echo: true
+#| cache: true
+library(emmeans)
+em1 <- emmeans(stan_lm1, ~ hill * method)
+
+pairs(em1, by = "method")
+```
+
+
+## $d$ for pairs
+
+To transform from the original units to $d$ ($Z$-score units), we just divide by $\sigma$
+
+posterior mean and 95% HPD between east - west for control
+
+```{r}
+#| echo: true
+#| cache: true
+round(c(3.585, 2.150, 5.020)/sigma(stan_lm1),3)
+```
+
+posterior mean and 95% HPD between east - west for a
+
+```{r}
+#| echo: true
+#| cache: true
+round(c(3.139, 1.72, 4.57)/sigma(stan_lm1),3)
+```
+
+posterior mean and 95% HPD between east - west for a
+
+```{r}
+#| echo: true
+#| cache: true
+round(c( -0.455, -1.90, 1.00)/sigma(stan_lm1),3)
+```
