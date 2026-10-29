@@ -220,8 +220,8 @@ Mark Himmelstein
 </div>
 
 </section>
-<section id="brief-update-1" class="slide level2">
-<h2>Brief Update 1</h2>
+<section id="reminder" class="slide level2">
+<h2>Reminder</h2>
 <p>The exam will take place in JS Coon 247/248 instead of 250</p>
 <ul>
 <li>This is where you do lab</li>
@@ -522,9 +522,172 @@ Mark Himmelstein
 <p>That’s where MCMC comes in, it helps us solve the integral <span class="math inline">\(\int P(\boldsymbol{D}|\boldsymbol{\theta})P(\boldsymbol{\theta})d\boldsymbol{\theta}\)</span> via simulation when it can’t be solved analytically</p>
 </div>
 </section>
-<section id="bayes-and-effect-size" class="slide level2">
-<h2>Bayes and Effect Size</h2>
-<div style="font-size: .9em;">
+<section id="review-question-5" class="slide level2">
+<h2>Review Question 5</h2>
+<p>On Lecture 18 Slide 35, you mentioned that sometimes it does not make sense to average across conditions to interpret main effect. In the wine example, does it mean that we cannot interpret anything about which growing condition works best on the east hill based on main effect A alone? But we can interpret this using simple effect?</p>
+</section>
+<section id="simple-main-effects" class="slide level2">
+<h2>Simple Main Effects</h2>
+<ul>
+<li>Clear interpretation</li>
+<li>Effect of one factor <strong>conditional</strong> on a level of another factor</li>
+<li>Effect of growing condition GIVEN east side of hill</li>
+<li>Effect of growing condition GIVEN west side of hill</li>
+<li>Makes use of combinations of conditions as they exist in your data</li>
+</ul>
+</section>
+<section id="review-question-6" class="slide level2">
+<h2>Review Question 6</h2>
+<p>We learned that Bayesian inference can begin with either a subjective or a uniform prior. However, I’m curious about how researchers determine whether their chosen prior is appropriate.</p>
+<p>Since different priors can lead to different posterior distributions, are there any objective criteria or methods for evaluating whether a prior is reasonable, especially when there is limited previous evidence?</p>
+</section>
+<section id="ordinary-main-effects" class="slide level2">
+<h2>Ordinary Main Effects</h2>
+<div style="font-size: 0.8em;">
+<ul>
+<li>More potential for misleading interpretation</li>
+<li>Effect of one factor <strong>averaged</strong> over <strong>all</strong> levels of other factor <strong>as they exist in your data</strong>
+<ul>
+<li><strong>Not</strong> the effect of one factor ignoring the other factor</li>
+</ul></li>
+<li>Effect of growing condition at average level of east and west side of hill
+<ul>
+<li>Always think about what it means to say you are averaging (aka marginalizing) over other factors when interpreting marginal main effects
+<ul>
+<li>Interaction may mean ordinary main effects are averaging two very different simple main effects in a way that doesn’t make sense</li>
+<li>Don’t generalize to other conditions that aren’t included in your data!</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="choosing-priors" class="slide level2">
+<h2>Choosing Priors</h2>
+<div style="font-size: 0.8em;">
+<p>Can be really hard! Especially for complex models.</p>
+<ul>
+<li>Often the “safest” option is to use a weak or uniform prior
+<ul>
+<li>Uniform priors can lead to other problems because they are often improper</li>
+</ul></li>
+<li>The defaults in <code>rstanarm</code> are “weak” priors
+<ul>
+<li>Centered at “no effect” (e.g.&nbsp;<span class="math inline">\(\beta_1\)</span> will be centered at 0)</li>
+<li>Have large uncertainty (e.g.&nbsp;<span class="math inline">\(\beta_1\)</span> will have a large SD)
+<ul>
+<li>Means 0 is the most likely value, but almost any other value remains possible</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>This is almost always how priors are chosen</p>
+<ul>
+<li>In academic research regardless of whether you have a strong subjective prior, to avoid being criticized for a prior a reviewer might disagree with</li>
+<li>When you don’t have a strong subjective prior</li>
+</ul>
+</div>
+</section>
+<section id="review-question-7" class="slide level2">
+<h2>Review Question 7</h2>
+<p>I have a question about a figure for checking the interaction effects. Is there a recommended procedure as to when or how to use the figure to get a sense of the interaction effects/simple main effects? Is there any information we can only find in graphs? Thanks!</p>
+</section>
+<section id="interactions-and-graphs" class="slide level2">
+<h2>Interactions and Graphs</h2>
+<p>There are many ways to try and interpret interaction effects</p>
+<ul>
+<li>Simple main effects + pairwise comparisons</li>
+<li>Interaction contrasts</li>
+<li>And to me, best of all: <strong>graphs</strong>!</li>
+</ul>
+</section>
+<section id="anova-table" class="slide level2">
+<h2>ANOVA Table</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a aria-label="1"></a>             <span class="ex">Df</span> Sum Sq Mean Sq F value   Pr<span class="er">(</span><span class="op">&gt;</span>F<span class="kw">)</span>    </span>
+<span id="cb1-2"><a aria-label="2"></a><span class="ex">hill</span>          1    331   330.8  24.038 1.56e-06 <span class="pp">***</span></span>
+<span id="cb1-3"><a aria-label="3"></a><span class="ex">method</span>        2   2430  1215.1  88.315  <span class="op">&lt;</span> 2e-16 <span class="pp">***</span></span>
+<span id="cb1-4"><a aria-label="4"></a><span class="ex">hill:method</span>   2    245   122.3   8.888 0.000179 <span class="pp">***</span></span>
+<span id="cb1-5"><a aria-label="5"></a><span class="ex">Residuals</span>   294   4045    13.8                     </span>
+<span id="cb1-6"><a aria-label="6"></a><span class="ex">---</span></span>
+<span id="cb1-7"><a aria-label="7"></a><span class="ex">Signif.</span> codes:  </span>
+<span id="cb1-8"><a aria-label="8"></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>Graphs will often tell you everything you need to know. In a two-way ANOVA, you have to choose which factor goes on the <span class="math inline">\(x\)</span>-axis, and which factor gets grouped by color/shape/linetype</p>
+</section>
+<section id="graph-1" class="slide level2">
+<h2>Graph 1</h2>
+
+<img data-src="Exam-2-Review_v0_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"><p>We can interpret the interaction just by looking!</p>
+</section>
+<section id="visual-interaction-interpretation" class="slide level2">
+<h2>Visual Interaction Interpretation</h2>
+<ul>
+<li></li>
+<li></li>
+</ul>
+</section>
+<section id="numerical-interaction-interpretation" class="slide level2">
+<h2>Numerical Interaction Interpretation</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-label="1"></a><span class="ex">hill</span> = east:</span>
+<span id="cb2-2"><a aria-label="2"></a> <span class="ex">contrast</span>    estimate    SE  df t.ratio p.value</span>
+<span id="cb2-3"><a aria-label="3"></a> <span class="ex">control</span> <span class="at">-</span> a    <span class="at">-5.70</span> 0.742 294  <span class="at">-7.683</span>  <span class="op">&lt;</span>.0001</span>
+<span id="cb2-4"><a aria-label="4"></a> <span class="ex">control</span> <span class="at">-</span> b    <span class="at">-4.12</span> 0.742 294  <span class="at">-5.554</span>  <span class="op">&lt;</span>.0001</span>
+<span id="cb2-5"><a aria-label="5"></a> <span class="ex">a</span> <span class="at">-</span> b           1.58 0.742 294   2.130  0.0856</span>
+<span id="cb2-6"><a aria-label="6"></a></span>
+<span id="cb2-7"><a aria-label="7"></a><span class="ex">hill</span> = west:</span>
+<span id="cb2-8"><a aria-label="8"></a> <span class="ex">contrast</span>    estimate    SE  df t.ratio p.value</span>
+<span id="cb2-9"><a aria-label="9"></a> <span class="ex">control</span> <span class="at">-</span> a    <span class="at">-6.16</span> 0.742 294  <span class="at">-8.303</span>  <span class="op">&lt;</span>.0001</span>
+<span id="cb2-10"><a aria-label="10"></a> <span class="ex">control</span> <span class="at">-</span> b    <span class="at">-8.16</span> 0.742 294 <span class="at">-10.999</span>  <span class="op">&lt;</span>.0001</span>
+<span id="cb2-11"><a aria-label="11"></a> <span class="ex">a</span> <span class="at">-</span> b          <span class="at">-2.00</span> 0.742 294  <span class="at">-2.696</span>  0.0202</span>
+<span id="cb2-12"><a aria-label="12"></a></span>
+<span id="cb2-13"><a aria-label="13"></a><span class="ex">P</span> value adjustment: tukey method for comparing a family of 3 estimates </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<ul>
+<li>We can see the same thing in the numbers. On east, <code>a - b</code> is positive, but on west, it is negative.</li>
+<li>Note that this won’t always be a change in sign! There’s also a pretty big difference in <code>control - b</code></li>
+</ul>
+</section>
+<section id="flipped-factors" class="slide level2">
+<h2>Flipped Factors</h2>
+
+<img data-src="Exam-2-Review_v0_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="flipped-visual-interpretation" class="slide level2">
+<h2>Flipped Visual Interpretation</h2>
+<ul>
+<li></li>
+<li></li>
+</ul>
+</section>
+<section id="flipped-numerical-interpretation" class="slide level2">
+<h2>Flipped Numerical Interpretation</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a aria-label="1"></a><span class="ex">method</span> = control:</span>
+<span id="cb3-2"><a aria-label="2"></a> <span class="ex">contrast</span>    estimate    SE  df t.ratio p.value</span>
+<span id="cb3-3"><a aria-label="3"></a> <span class="ex">east</span> <span class="at">-</span> west     3.60 0.742 294   4.853  <span class="op">&lt;</span>.0001</span>
+<span id="cb3-4"><a aria-label="4"></a></span>
+<span id="cb3-5"><a aria-label="5"></a><span class="ex">method</span> = a:</span>
+<span id="cb3-6"><a aria-label="6"></a> <span class="ex">contrast</span>    estimate    SE  df t.ratio p.value</span>
+<span id="cb3-7"><a aria-label="7"></a> <span class="ex">east</span> <span class="at">-</span> west     3.14 0.742 294   4.233  <span class="op">&lt;</span>.0001</span>
+<span id="cb3-8"><a aria-label="8"></a></span>
+<span id="cb3-9"><a aria-label="9"></a><span class="ex">method</span> = b:</span>
+<span id="cb3-10"><a aria-label="10"></a> <span class="ex">contrast</span>    estimate    SE  df t.ratio p.value</span>
+<span id="cb3-11"><a aria-label="11"></a> <span class="ex">east</span> <span class="at">-</span> west    <span class="at">-0.44</span> 0.742 294  <span class="at">-0.593</span>  0.5536</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<ul>
+<li>Again, we can see the same trend numerically</li>
+<li>The numeric results give us null hypothesis tests</li>
+<li>Visual is often a more holistic picture for interpreting the data</li>
+</ul>
+</section>
+<section id="side-note-bayes-and-effect-size" class="slide level2">
+<h2>Side Note: Bayes and Effect Size</h2>
+<div style="font-size: .8em;">
 <p>Because Bayesian estimates aren’t deterministic the way the simple frequentist ANOVA algorithm is, the traditional <span class="math inline">\(R^2\)</span> is not guaranteed to be <span class="math inline">\(0 \leq R^2 \leq 1\)</span></p>
 <ul>
 <li>Means it is possible for the model to explain more than the total variance
@@ -543,22 +706,37 @@ Mark Himmelstein
 <section id="bayesian-eta2" class="slide level2">
 <h2>Bayesian <span class="math inline">\(\eta^2\)</span></h2>
 <p>In factorial ANOVA, this corresponds to a <strong>global</strong> effect size for how much of the total variance is explainable by all factors</p>
-<p>To get an <span class="math inline">\(\eta^2\)</span> equivalent for <strong>each</strong> factor and the interaction separately, we can use <code>eta_squared_posterior()</code> from <code>effectsize</code>. Here is how to use it for the wine rating data (you can get either partial or full by specifying)</p>
+<p>To get an <span class="math inline">\(\eta^2\)</span> equivalent for <strong>each</strong> factor and the interaction separately, we can use <code>eta_squared_posterior()</code> from <code>effectsize</code>. This will give you an estimate of <span class="math inline">\(\eta^2\)</span> <strong>for every MCMC sample</strong>.</p>
+<ul>
+<li>Mean of the <span class="math inline">\(\eta^2\)</span> distribution can be our point estimate
+<ul>
+<li>can use <code>colMeans()</code> to get all means</li>
+</ul></li>
+<li>.025 and .975 quantiles give us our 95% ETI Credible Interval (if we wish)</li>
+</ul>
+</section>
+<section id="posterior-eta2" class="slide level2">
+<h2>Posterior <span class="math inline">\(\eta^2\)</span></h2>
+<p>We can get the 95% ETI CI by calculating the quantiles. Here is how to use it for the wine rating data (you can get either partial or full by specifying)</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-label="1"></a>stan_lm1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(rating <span class="sc">~</span> hill <span class="sc">*</span> method, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
-<span id="cb1-2"><a aria-label="2"></a>                     <span class="at">diagnostic_file =</span> <span class="st">"df1.csv"</span>, <span class="at">seed =</span> <span class="dv">15421</span>)</span>
-<span id="cb1-3"><a aria-label="3"></a></span>
-<span id="cb1-4"><a aria-label="4"></a><span class="fu">library</span>(effectsize)</span>
-<span id="cb1-5"><a aria-label="5"></a></span>
-<span id="cb1-6"><a aria-label="6"></a><span class="fu">summary</span>(<span class="fu">eta_squared_posterior</span>(stan_lm1, <span class="at">partial =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a aria-label="1"></a>stan_lm1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(rating <span class="sc">~</span> hill <span class="sc">*</span> method, dat, <span class="at">family =</span> <span class="st">"gaussian"</span>,</span>
+<span id="cb4-2"><a aria-label="2"></a>                     <span class="at">seed =</span> <span class="dv">15421</span>)</span>
+<span id="cb4-3"><a aria-label="3"></a></span>
+<span id="cb4-4"><a aria-label="4"></a><span class="fu">library</span>(effectsize)</span>
+<span id="cb4-5"><a aria-label="5"></a></span>
+<span id="cb4-6"><a aria-label="6"></a>eta_squared_posterior <span class="ot">&lt;-</span> <span class="fu">eta_squared_posterior</span>(stan_lm1, <span class="at">partial =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-7"><a aria-label="7"></a><span class="fu">colMeans</span>(eta_squared_posterior)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-label="1"></a>      <span class="ex">hill</span>              method        hill:method       </span>
-<span id="cb2-2"><a aria-label="2"></a> <span class="ex">Min.</span>   :0.002607   Min.   :0.1562   Min.   :0.0008354  </span>
-<span id="cb2-3"><a aria-label="3"></a> <span class="ex">1st</span> Qu.:0.046870   1st Qu.:0.3373   1st Qu.:0.0389423  </span>
-<span id="cb2-4"><a aria-label="4"></a> <span class="ex">Median</span> :0.075701   Median :0.3778   Median :0.0622155  </span>
-<span id="cb2-5"><a aria-label="5"></a> <span class="ex">Mean</span>   :0.079094   Mean   :0.3787   Mean   :0.0667844  </span>
-<span id="cb2-6"><a aria-label="6"></a> <span class="ex">3rd</span> Qu.:0.106745   3rd Qu.:0.4180   3rd Qu.:0.0861615  </span>
-<span id="cb2-7"><a aria-label="7"></a> <span class="ex">Max.</span>   :0.227055   Max.   :0.5370   Max.   :0.2529261  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a aria-label="1"></a>       <span class="ex">hill</span>      method hill:method </span>
+<span id="cb5-2"><a aria-label="2"></a> <span class="ex">0.08138150</span>  0.37497032  0.07032129 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>We can also use <code>quantile()</code> to get the 95% ETI CI</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a aria-label="1"></a><span class="fu">quantile</span>(eta_squared_posterior<span class="sc">$</span><span class="st">`</span><span class="at">hill:method</span><span class="st">`</span>, <span class="fu">c</span>(.<span class="dv">025</span>, .<span class="dv">5</span>, .<span class="dv">975</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-label="1"></a>      <span class="ex">2.5%</span>        50%      97.5% </span>
+<span id="cb7-2"><a aria-label="2"></a><span class="ex">0.01323068</span> 0.06533440 0.15357072 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -574,73 +752,73 @@ Mark Himmelstein
 <section id="finding-sigma" class="slide level2">
 <h2>Finding <span class="math inline">\(\sigma\)</span></h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-label="1"></a><span class="fu">summary</span>(stan_lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-label="1"></a><span class="fu">summary</span>(stan_lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-label="1"></a></span>
-<span id="cb4-2"><a aria-label="2"></a><span class="ex">Model</span> Info:</span>
-<span id="cb4-3"><a aria-label="3"></a> <span class="ex">function:</span>     stan_glm</span>
-<span id="cb4-4"><a aria-label="4"></a> <span class="ex">family:</span>       gaussian <span class="pp">[</span><span class="ss">identity</span><span class="pp">]</span></span>
-<span id="cb4-5"><a aria-label="5"></a> <span class="ex">formula:</span>      rating ~ hill <span class="pp">*</span> method</span>
-<span id="cb4-6"><a aria-label="6"></a> <span class="ex">algorithm:</span>    sampling</span>
-<span id="cb4-7"><a aria-label="7"></a> <span class="ex">sample:</span>       4000 <span class="er">(</span><span class="ex">posterior</span> sample size<span class="kw">)</span></span>
-<span id="cb4-8"><a aria-label="8"></a> <span class="ex">priors:</span>       see help<span class="er">(</span><span class="st">'prior_summary'</span><span class="kw">)</span></span>
-<span id="cb4-9"><a aria-label="9"></a> <span class="ex">observations:</span> 300</span>
-<span id="cb4-10"><a aria-label="10"></a> <span class="ex">predictors:</span>   6</span>
-<span id="cb4-11"><a aria-label="11"></a></span>
-<span id="cb4-12"><a aria-label="12"></a><span class="ex">Estimates:</span></span>
-<span id="cb4-13"><a aria-label="13"></a>                   <span class="ex">mean</span>   sd   10%   50%   90%</span>
-<span id="cb4-14"><a aria-label="14"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>      <span class="ex">85.4</span>    0.5 84.7  85.4  86.1 </span>
-<span id="cb4-15"><a aria-label="15"></a><span class="ex">hillwest</span>         <span class="at">-3.6</span>    0.7 <span class="at">-4.5</span>  <span class="at">-3.6</span>  <span class="at">-2.6</span> </span>
-<span id="cb4-16"><a aria-label="16"></a><span class="ex">methoda</span>           5.7    0.7  4.7   5.7   6.6 </span>
-<span id="cb4-17"><a aria-label="17"></a><span class="ex">methodb</span>           4.1    0.7  3.2   4.1   5.1 </span>
-<span id="cb4-18"><a aria-label="18"></a><span class="ex">hillwest:methoda</span>  0.5    1.1 <span class="at">-0.9</span>   0.5   1.8 </span>
-<span id="cb4-19"><a aria-label="19"></a><span class="ex">hillwest:methodb</span>  4.0    1.1  2.6   4.0   5.4 </span>
-<span id="cb4-20"><a aria-label="20"></a><span class="ex">sigma</span>             3.7    0.2  3.5   3.7   3.9 </span>
-<span id="cb4-21"><a aria-label="21"></a></span>
-<span id="cb4-22"><a aria-label="22"></a><span class="ex">Fit</span> Diagnostics:</span>
-<span id="cb4-23"><a aria-label="23"></a>           <span class="ex">mean</span>   sd   10%   50%   90%</span>
-<span id="cb4-24"><a aria-label="24"></a><span class="ex">mean_PPD</span> 87.6    0.3 87.3  87.6  88.0 </span>
-<span id="cb4-25"><a aria-label="25"></a></span>
-<span id="cb4-26"><a aria-label="26"></a><span class="ex">The</span> mean_ppd is the sample average posterior predictive distribution of the outcome variable <span class="er">(</span><span class="cf">for</span> details <span class="ex">see</span> help<span class="er">(</span><span class="st">'summary.stanreg'</span><span class="kw">))</span><span class="bu">.</span></span>
-<span id="cb4-27"><a aria-label="27"></a></span>
-<span id="cb4-28"><a aria-label="28"></a><span class="ex">MCMC</span> diagnostics</span>
-<span id="cb4-29"><a aria-label="29"></a>                 <span class="ex">mcse</span> Rhat n_eff</span>
-<span id="cb4-30"><a aria-label="30"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>      <span class="ex">0.0</span>  1.0  1849 </span>
-<span id="cb4-31"><a aria-label="31"></a><span class="ex">hillwest</span>         0.0  1.0  1742 </span>
-<span id="cb4-32"><a aria-label="32"></a><span class="ex">methoda</span>          0.0  1.0  1916 </span>
-<span id="cb4-33"><a aria-label="33"></a><span class="ex">methodb</span>          0.0  1.0  1802 </span>
-<span id="cb4-34"><a aria-label="34"></a><span class="ex">hillwest:methoda</span> 0.0  1.0  1792 </span>
-<span id="cb4-35"><a aria-label="35"></a><span class="ex">hillwest:methodb</span> 0.0  1.0  1745 </span>
-<span id="cb4-36"><a aria-label="36"></a><span class="ex">sigma</span>            0.0  1.0  3558 </span>
-<span id="cb4-37"><a aria-label="37"></a><span class="ex">mean_PPD</span>         0.0  1.0  3982 </span>
-<span id="cb4-38"><a aria-label="38"></a><span class="ex">log-posterior</span>    0.0  1.0  1437 </span>
-<span id="cb4-39"><a aria-label="39"></a></span>
-<span id="cb4-40"><a aria-label="40"></a><span class="ex">For</span> each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains <span class="er">(</span><span class="ex">at</span> convergence Rhat=1<span class="kw">)</span><span class="bu">.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-label="1"></a></span>
+<span id="cb9-2"><a aria-label="2"></a><span class="ex">Model</span> Info:</span>
+<span id="cb9-3"><a aria-label="3"></a> <span class="ex">function:</span>     stan_glm</span>
+<span id="cb9-4"><a aria-label="4"></a> <span class="ex">family:</span>       gaussian <span class="pp">[</span><span class="ss">identity</span><span class="pp">]</span></span>
+<span id="cb9-5"><a aria-label="5"></a> <span class="ex">formula:</span>      rating ~ hill <span class="pp">*</span> method</span>
+<span id="cb9-6"><a aria-label="6"></a> <span class="ex">algorithm:</span>    sampling</span>
+<span id="cb9-7"><a aria-label="7"></a> <span class="ex">sample:</span>       4000 <span class="er">(</span><span class="ex">posterior</span> sample size<span class="kw">)</span></span>
+<span id="cb9-8"><a aria-label="8"></a> <span class="ex">priors:</span>       see help<span class="er">(</span><span class="st">'prior_summary'</span><span class="kw">)</span></span>
+<span id="cb9-9"><a aria-label="9"></a> <span class="ex">observations:</span> 300</span>
+<span id="cb9-10"><a aria-label="10"></a> <span class="ex">predictors:</span>   6</span>
+<span id="cb9-11"><a aria-label="11"></a></span>
+<span id="cb9-12"><a aria-label="12"></a><span class="ex">Estimates:</span></span>
+<span id="cb9-13"><a aria-label="13"></a>                   <span class="ex">mean</span>   sd   10%   50%   90%</span>
+<span id="cb9-14"><a aria-label="14"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>      <span class="ex">85.4</span>    0.5 84.7  85.4  86.1 </span>
+<span id="cb9-15"><a aria-label="15"></a><span class="ex">hillwest</span>         <span class="at">-3.6</span>    0.7 <span class="at">-4.5</span>  <span class="at">-3.6</span>  <span class="at">-2.6</span> </span>
+<span id="cb9-16"><a aria-label="16"></a><span class="ex">methoda</span>           5.7    0.7  4.7   5.7   6.6 </span>
+<span id="cb9-17"><a aria-label="17"></a><span class="ex">methodb</span>           4.1    0.7  3.2   4.1   5.1 </span>
+<span id="cb9-18"><a aria-label="18"></a><span class="ex">hillwest:methoda</span>  0.5    1.1 <span class="at">-0.9</span>   0.5   1.8 </span>
+<span id="cb9-19"><a aria-label="19"></a><span class="ex">hillwest:methodb</span>  4.0    1.1  2.6   4.0   5.4 </span>
+<span id="cb9-20"><a aria-label="20"></a><span class="ex">sigma</span>             3.7    0.2  3.5   3.7   3.9 </span>
+<span id="cb9-21"><a aria-label="21"></a></span>
+<span id="cb9-22"><a aria-label="22"></a><span class="ex">Fit</span> Diagnostics:</span>
+<span id="cb9-23"><a aria-label="23"></a>           <span class="ex">mean</span>   sd   10%   50%   90%</span>
+<span id="cb9-24"><a aria-label="24"></a><span class="ex">mean_PPD</span> 87.6    0.3 87.3  87.6  88.0 </span>
+<span id="cb9-25"><a aria-label="25"></a></span>
+<span id="cb9-26"><a aria-label="26"></a><span class="ex">The</span> mean_ppd is the sample average posterior predictive distribution of the outcome variable <span class="er">(</span><span class="cf">for</span> details <span class="ex">see</span> help<span class="er">(</span><span class="st">'summary.stanreg'</span><span class="kw">))</span><span class="bu">.</span></span>
+<span id="cb9-27"><a aria-label="27"></a></span>
+<span id="cb9-28"><a aria-label="28"></a><span class="ex">MCMC</span> diagnostics</span>
+<span id="cb9-29"><a aria-label="29"></a>                 <span class="ex">mcse</span> Rhat n_eff</span>
+<span id="cb9-30"><a aria-label="30"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>      <span class="ex">0.0</span>  1.0  1849 </span>
+<span id="cb9-31"><a aria-label="31"></a><span class="ex">hillwest</span>         0.0  1.0  1742 </span>
+<span id="cb9-32"><a aria-label="32"></a><span class="ex">methoda</span>          0.0  1.0  1916 </span>
+<span id="cb9-33"><a aria-label="33"></a><span class="ex">methodb</span>          0.0  1.0  1802 </span>
+<span id="cb9-34"><a aria-label="34"></a><span class="ex">hillwest:methoda</span> 0.0  1.0  1792 </span>
+<span id="cb9-35"><a aria-label="35"></a><span class="ex">hillwest:methodb</span> 0.0  1.0  1745 </span>
+<span id="cb9-36"><a aria-label="36"></a><span class="ex">sigma</span>            0.0  1.0  3558 </span>
+<span id="cb9-37"><a aria-label="37"></a><span class="ex">mean_PPD</span>         0.0  1.0  3982 </span>
+<span id="cb9-38"><a aria-label="38"></a><span class="ex">log-posterior</span>    0.0  1.0  1437 </span>
+<span id="cb9-39"><a aria-label="39"></a></span>
+<span id="cb9-40"><a aria-label="40"></a><span class="ex">For</span> each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains <span class="er">(</span><span class="ex">at</span> convergence Rhat=1<span class="kw">)</span><span class="bu">.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
 <section id="simple-main-pairs" class="slide level2">
 <h2>Simple Main Pairs</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-label="1"></a><span class="fu">library</span>(emmeans)</span>
-<span id="cb5-2"><a aria-label="2"></a>em1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(stan_lm1, <span class="sc">~</span> hill <span class="sc">*</span> method)</span>
-<span id="cb5-3"><a aria-label="3"></a></span>
-<span id="cb5-4"><a aria-label="4"></a><span class="fu">pairs</span>(em1, <span class="at">by =</span> <span class="st">"method"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-label="1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb10-2"><a aria-label="2"></a>em1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(stan_lm1, <span class="sc">~</span> hill <span class="sc">*</span> method)</span>
+<span id="cb10-3"><a aria-label="3"></a></span>
+<span id="cb10-4"><a aria-label="4"></a><span class="fu">pairs</span>(em1, <span class="at">by =</span> <span class="st">"method"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-label="1"></a><span class="ex">method</span> = control:</span>
-<span id="cb6-2"><a aria-label="2"></a> <span class="ex">contrast</span>    estimate lower.HPD upper.HPD</span>
-<span id="cb6-3"><a aria-label="3"></a> <span class="ex">east</span> <span class="at">-</span> west    3.585      2.15      5.02</span>
-<span id="cb6-4"><a aria-label="4"></a></span>
-<span id="cb6-5"><a aria-label="5"></a><span class="ex">method</span> = a:</span>
-<span id="cb6-6"><a aria-label="6"></a> <span class="ex">contrast</span>    estimate lower.HPD upper.HPD</span>
-<span id="cb6-7"><a aria-label="7"></a> <span class="ex">east</span> <span class="at">-</span> west    3.139      1.72      4.57</span>
-<span id="cb6-8"><a aria-label="8"></a></span>
-<span id="cb6-9"><a aria-label="9"></a><span class="ex">method</span> = b:</span>
-<span id="cb6-10"><a aria-label="10"></a> <span class="ex">contrast</span>    estimate lower.HPD upper.HPD</span>
-<span id="cb6-11"><a aria-label="11"></a> <span class="ex">east</span> <span class="at">-</span> west   <span class="at">-0.455</span>     <span class="at">-1.90</span>      1.00</span>
-<span id="cb6-12"><a aria-label="12"></a></span>
-<span id="cb6-13"><a aria-label="13"></a><span class="ex">Point</span> estimate displayed: median </span>
-<span id="cb6-14"><a aria-label="14"></a><span class="ex">HPD</span> interval probability: 0.95 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-label="1"></a><span class="ex">method</span> = control:</span>
+<span id="cb11-2"><a aria-label="2"></a> <span class="ex">contrast</span>    estimate lower.HPD upper.HPD</span>
+<span id="cb11-3"><a aria-label="3"></a> <span class="ex">east</span> <span class="at">-</span> west    3.585      2.15      5.02</span>
+<span id="cb11-4"><a aria-label="4"></a></span>
+<span id="cb11-5"><a aria-label="5"></a><span class="ex">method</span> = a:</span>
+<span id="cb11-6"><a aria-label="6"></a> <span class="ex">contrast</span>    estimate lower.HPD upper.HPD</span>
+<span id="cb11-7"><a aria-label="7"></a> <span class="ex">east</span> <span class="at">-</span> west    3.139      1.72      4.57</span>
+<span id="cb11-8"><a aria-label="8"></a></span>
+<span id="cb11-9"><a aria-label="9"></a><span class="ex">method</span> = b:</span>
+<span id="cb11-10"><a aria-label="10"></a> <span class="ex">contrast</span>    estimate lower.HPD upper.HPD</span>
+<span id="cb11-11"><a aria-label="11"></a> <span class="ex">east</span> <span class="at">-</span> west   <span class="at">-0.455</span>     <span class="at">-1.90</span>      1.00</span>
+<span id="cb11-12"><a aria-label="12"></a></span>
+<span id="cb11-13"><a aria-label="13"></a><span class="ex">Point</span> estimate displayed: median </span>
+<span id="cb11-14"><a aria-label="14"></a><span class="ex">HPD</span> interval probability: 0.95 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -649,23 +827,23 @@ Mark Himmelstein
 <p>To transform from the original units to <span class="math inline">\(d\)</span> (<span class="math inline">\(Z\)</span>-score units), we just divide by <span class="math inline">\(\sigma\)</span></p>
 <p>posterior mean and 95% HPD between east - west for control</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-label="1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="fl">3.585</span>, <span class="fl">2.150</span>, <span class="fl">5.020</span>)<span class="sc">/</span><span class="fu">sigma</span>(stan_lm1),<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-label="1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="fl">3.585</span>, <span class="fl">2.150</span>, <span class="fl">5.020</span>)<span class="sc">/</span><span class="fu">sigma</span>(stan_lm1),<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-label="1"></a><span class="ex">[1]</span> 0.965 0.579 1.351</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a aria-label="1"></a><span class="ex">[1]</span> 0.965 0.579 1.351</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>posterior mean and 95% HPD between east - west for a</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-label="1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="fl">3.139</span>, <span class="fl">1.72</span>, <span class="fl">4.57</span>)<span class="sc">/</span><span class="fu">sigma</span>(stan_lm1),<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-label="1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="fl">3.139</span>, <span class="fl">1.72</span>, <span class="fl">4.57</span>)<span class="sc">/</span><span class="fu">sigma</span>(stan_lm1),<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-label="1"></a><span class="ex">[1]</span> 0.845 0.463 1.230</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a aria-label="1"></a><span class="ex">[1]</span> 0.845 0.463 1.230</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>posterior mean and 95% HPD between east - west for a</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-label="1"></a><span class="fu">round</span>(<span class="fu">c</span>( <span class="sc">-</span><span class="fl">0.455</span>, <span class="sc">-</span><span class="fl">1.90</span>, <span class="fl">1.00</span>)<span class="sc">/</span><span class="fu">sigma</span>(stan_lm1),<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-label="1"></a><span class="fu">round</span>(<span class="fu">c</span>( <span class="sc">-</span><span class="fl">0.455</span>, <span class="sc">-</span><span class="fl">1.90</span>, <span class="fl">1.00</span>)<span class="sc">/</span><span class="fu">sigma</span>(stan_lm1),<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a aria-label="1"></a><span class="ex">[1]</span> <span class="at">-0.122</span> <span class="at">-0.511</span>  0.269</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a aria-label="1"></a><span class="ex">[1]</span> <span class="at">-0.122</span> <span class="at">-0.511</span>  0.269</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 

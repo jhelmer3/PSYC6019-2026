@@ -58,7 +58,7 @@ my_yellow2 <- "#FFFFCC"
 
 ```
 
-## Brief Update 1
+## Reminder
 
 The exam will take place in JS Coon 247/248 instead of 250
 
@@ -718,9 +718,160 @@ That's where MCMC comes in, it helps us solve the integral $\int P(\boldsymbol{D
 :::
 
 
-## Bayes and Effect Size
+## Review Question 5  
 
-::: {style="font-size: .9em;"}
+On Lecture 18 Slide 35, you mentioned that sometimes it does not make sense to average across conditions to interpret main effect. In the wine example, does it mean that we cannot interpret anything about which growing condition works best on the east hill based on main effect A alone? But we can interpret this using simple effect?
+
+## Simple Main Effects
+
+- Clear interpretation
+- Effect of one factor **conditional** on a level of another factor
+- Effect of growing condition GIVEN east side of hill
+- Effect of growing condition GIVEN west side of hill
+- Makes use of combinations of conditions as they exist in your data
+
+
+## Review Question 6
+
+We learned that Bayesian inference can begin with either a subjective or a uniform prior. However, I'm curious about how researchers determine whether their chosen prior is appropriate.
+
+Since different priors can lead to different posterior distributions, are there any objective criteria or methods for evaluating whether a prior is reasonable, especially when there is limited previous evidence?
+
+## Ordinary Main Effects
+
+::: {style="font-size: 0.8em;"}
+
+- More potential for misleading interpretation
+- Effect of one factor **averaged** over **all** levels of other factor **as they exist in your data**
+  - **Not** the effect of one factor ignoring the other factor
+- Effect of growing condition at average level of east and west side of hill
+  - Always think about what it means to say you are averaging (aka marginalizing) over other factors when interpreting marginal main effects
+    - Interaction may mean ordinary main effects are averaging two very different simple main effects in a way that doesn't make sense
+    - Don't generalize to other conditions that aren't included in your data!
+
+:::
+
+
+## Choosing Priors
+
+::: {style="font-size: 0.8em;"}
+
+Can be really hard! Especially for complex models. 
+
+- Often the "safest" option is to use a weak or uniform prior
+  - Uniform priors can lead to other problems because they are often improper
+- The defaults in `rstanarm` are "weak" priors
+  - Centered at "no effect" (e.g. $\beta_1$ will be centered at 0)
+  - Have large uncertainty (e.g. $\beta_1$ will have a large SD)
+    - Means 0 is the most likely value, but almost any other value remains possible
+
+This is almost always how priors are chosen
+
+- In academic research regardless of whether you have a strong subjective prior, to avoid being criticized for a prior a reviewer might disagree with
+- When you don't have a strong subjective prior 
+
+:::
+
+## Review Question 7
+
+I have a question about a figure for checking the interaction effects. Is there a recommended procedure as to when or how to use the figure to get a sense of the interaction effects/simple main effects? Is there any information we can only find in graphs? Thanks! 
+
+
+## Interactions and Graphs
+
+There are many ways to try and interpret interaction effects
+
+- Simple main effects + pairwise comparisons
+- Interaction contrasts
+- And to me, best of all: **graphs**!
+
+
+## ANOVA Table
+
+
+```{r}
+#| echo: false
+
+dat <- read.csv("../../data/wine east west.csv")
+dat$condition <- factor(dat$condition, levels = c("control","a","b"))
+dat$method <- dat$condition
+dat$condition <- NULL
+
+a1 <- aov(rating ~ hill * method, dat)
+summary(a1)
+```
+
+
+Graphs will often tell you everything you need to know. In a two-way ANOVA, you have to choose which factor goes on the $x$-axis, and which factor gets grouped by color/shape/linetype
+
+## Graph 1
+
+```{r}
+d2 <- Rmisc::summarySE(dat, "rating", c("method","hill"))
+
+ggplot(d2, aes(hill, rating, col = method, shape = method, group = method)) +  geom_point(size = 2, position = position_dodge(.25)) +
+  geom_errorbar(aes(ymin = rating - ci, ymax = rating + ci, width = .25), position = position_dodge(.25)) + 
+  scale_color_manual(values = c(my_blue, my_orange, my_green)) + 
+  theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Method", shape = "Method",linetype = "Method", x = "Hill Side", y = "Rating") + ylim(70, 100)
+```
+
+We can interpret the interaction just by looking!
+
+
+
+## Visual Interaction Interpretation
+
+- [A difference in how each method performs depending on the side of the hill is an interaction]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Control and a do better on east than west, but b does better on west than east]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Numerical Interaction Interpretation
+
+
+```{r}
+library(emmeans)
+e1 <- emmeans(a1, ~ hill * method)
+
+pairs(e1, by = "hill")
+```
+
+- We can see the same thing in the numbers. On east, `a - b` is positive, but on west, it is negative. 
+- Note that this won't always be a change in sign! There's also a pretty big difference in `control - b`
+
+## Flipped Factors
+
+```{r}
+
+ggplot(d2, aes(method, rating, col = hill, shape = hill, group = hill)) +  geom_point(size = 2, position = position_dodge(.25)) +
+  geom_errorbar(aes(ymin = rating - ci, ymax = rating + ci, width = .25), position = position_dodge(.25)) + 
+  scale_color_manual(values = c(my_purple, my_red)) + 
+  theme_light() + scale_shape_manual(values = c(15, 19, 17)) + labs(color = "Hill Side", shape = "Hill Side",linetype = "Hill Side", x = "Method", y = "Rating") + ylim(70, 100)
+```
+
+## Flipped Visual Interpretation
+
+- [East beats west for control and a]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [They are about the same for b]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+## Flipped Numerical Interpretation
+
+
+```{r}
+library(emmeans)
+e1 <- emmeans(a1, ~ hill * method)
+
+pairs(e1, by = "method")
+```
+
+- Again, we can see the same trend numerically
+- The numeric results give us null hypothesis tests
+- Visual is often a more holistic picture for interpreting the data
+
+
+
+## Side Note: Bayes and Effect Size
+
+::: {style="font-size: .8em;"}
 
 Because Bayesian estimates aren't deterministic the way the simple frequentist ANOVA algorithm is, the traditional $R^2$ is not guaranteed to be $0 \leq R^2 \leq 1$
 
@@ -741,7 +892,15 @@ $$\text{Bayesian } R^2 = \frac{s_{\hat{y}}^2}{s_{\hat{y}}^2 + s_{\epsilon}^2}$$
 
 In factorial ANOVA, this corresponds to a **global** effect size for how much of the total variance is explainable by all factors
 
-To get an $\eta^2$ equivalent for **each** factor and the interaction separately, we can use `eta_squared_posterior()` from `effectsize`. Here is how to use it for the wine rating data (you can get either partial or full by specifying)
+To get an $\eta^2$ equivalent for **each** factor and the interaction separately, we can use `eta_squared_posterior()` from `effectsize`. This will give you an estimate of $\eta^2$ **for every MCMC sample**. 
+
+- Mean of the $\eta^2$ distribution can be our point estimate
+  - can use `colMeans()` to get all means
+- .025 and .975 quantiles give us our 95% ETI Credible Interval (if we wish)
+
+## Posterior $\eta^2$
+
+We can get the 95% ETI CI by calculating the quantiles. Here is how to use it for the wine rating data (you can get either partial or full by specifying)
 
 ```{r}
 dat <- read.csv("../../data/wine east west.csv")
@@ -757,12 +916,18 @@ options(mc.cores = parallel::detectCores())
 #| cache: true
 
 stan_lm1 <- stan_glm(rating ~ hill * method, dat, family = "gaussian",
-                     diagnostic_file = "df1.csv", seed = 15421)
+                     seed = 15421)
 
 library(effectsize)
 
-summary(eta_squared_posterior(stan_lm1, partial = TRUE))
+eta_squared_posterior <- eta_squared_posterior(stan_lm1, partial = TRUE)
+colMeans(eta_squared_posterior)
+```
 
+We can also use `quantile()` to get the 95% ETI CI
+
+```{r echo = TRUE}
+quantile(eta_squared_posterior$`hill:method`, c(.025, .5, .975))
 ```
 
 ## Bayesian $d$
