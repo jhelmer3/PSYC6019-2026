@@ -1,0 +1,672 @@
+---
+title: "Repeated Measures ANOVA"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2026-11-06 | Lab 11"
+author: "Jess Helmer"
+footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
+format: 
+  revealjs:
+    code-link: true
+    slide-number: true
+    code-line-numbers: false
+    theme: ../../gt-theme.scss
+    width: 1200
+    css: contrast-slide-styling.css
+execute: 
+  echo: true
+  dpi: 600
+  freeze: auto
+knitr:
+  opts_chunk:
+    dev: svg
+---
+
+## Outline
+
+- Repeated measures ANOVA
+
+- Multilevel modeling
+
+```{r setup}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(gt)
+```
+
+
+
+# Repeated Measures ANOVA
+
+## Repeated Measures ANOVA
+
+It is sometimes the case that we have *repeated measures* data
+
+::: subpoint
+○ Responses collected on the same measure for the same subjects more than one time
+:::
+
+Some examples of repeated measures data are...
+
+::: subpoint
+○ A mental health screening questionnaire given to participants once per day
+:::
+
+::: subpoint
+○ A yearly customer satisfaction survey
+:::
+
+For these designs, we have to consider if conditions are **between-person** or **within-person**.
+
+
+## Repeated Measures Model
+
+
+## Repeated Measures Example
+
+:::: {.columns}
+::: {.column width="85%"}
+Remember the chick dataset from Lab 06?
+
+We are going to use... another chick dataset!
+
+Instead of having one value of chick weight for each chick, this one tracks chicks over time. We will have weekly updates on each chick's weight.
+:::
+
+::: {.column width="15%"}
+![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
+:::
+::::
+
+
+## Repeated Measures Example
+
+```{r}
+chick_data <- read_csv(here::here("lab", "data", "lab_11", "chick_week_data.csv"))
+chick_data
+```
+
+
+## Repeated Measures Example
+
+```{r}
+# install.packages("psych")
+psych::describe(chick_data)
+```
+
+## Repeated Measures Example
+
+We want to estimate the effect of week of the experiment on chick weight! Is `week` a between- or within-subject (chick) factor? [Within!]{.fragment}
+
+[First, notice that all the variables in this dataset are `double`s (decimal point numbers). The ANOVA functions want to treat these as `factor`s.]{.fragment}
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+chick_cleaned <- chick_data |>
+  mutate(chick = factor(chick),
+         week = factor(week),
+         diet = factor(diet))
+```
+
+:::
+
+::: {.column width="50%"}
+```{r}
+chick_cleaned <- chick_data |>
+  mutate(
+    across(c(chick, week, diet), factor)
+  )
+```
+:::
+::::
+
+
+## Aside: `across()`
+
+`across()` is a helpful function that can be used within functions like `summarize()` and `mutate()`.
+
+When we want to apply the same transformation to multiple columns, we can target them all with `across()` and specify the transformation once, instead of manually specifying each one.
+
+`across(columns, function(s))`
+
+::: subpoint
+○ `columns` = `<tidy-select>` columns to target
+:::
+
+::: subpoint
+○ `function(s)` = name of function to use, *anonymous function*, or list of functions.
+:::
+
+
+## Aside: `across()`
+
+Examples of `across()`...
+
+
+::: {.panel-tabset}
+### Name of Function
+
+Just like we did before
+
+```{r}
+chick_data |>
+  mutate(across(c(chick, week, diet), factor))
+```
+
+### Anonymous Function
+
+Example of standardizing across all columns (not necessarily helpful here). Reminder: within `function()`, `column` just serves as a placeholder name for that column. You can name this whatever you want, as long as you use the same name within the actual function part.
+
+```{r}
+chick_data |>
+  mutate(across(everything(), function(column) (column - mean(column)) / sd(column)))
+```
+
+### List of Functions
+
+Example of summarizing columns by multiple functions
+
+```{r}
+chick_data |>
+  summarize(
+    across(
+      where(is.numeric), 
+      list(min = min, max = max, 
+           mean = function(column) mean(column, na.rm = T))
+    )
+  )
+```
+:::
+
+
+## Aside: `across()`
+
+Our original `across()` method successfully converted the intended columns to `factor()`s.
+
+```{r}
+chick_cleaned <- chick_data |>
+  mutate(
+    across(c(chick, week, diet), factor)
+  )
+
+chick_cleaned
+```
+
+
+## Repeated Measures Example
+
+`ez::ezANOVA(data, dv, wid, within = NULL, between = NULL, type = 2)`
+
+::: subpoint
+○ `dv` = the outcome variable
+:::
+
+::: subpoint
+○ `wid` = name of the column with subject identifier. Typically contains an `id` for each person (here, each chick!)
+:::
+
+::: subpoint
+○ `within` = column(s) with within-subject factors
+:::
+
+::: subpoint
+○ `between` = column(s) with between-subject factors
+:::
+
+::: subpoint
+○ `type` = the sums of squares method used
+:::
+
+`= NULL` means the default is set to `NULL`, and you do not necessarily need to input a value for that argument for the function to work. (May need to specify it for the function to work the way you *want*, though! Depends on your ANOVA goal.)
+
+
+## Balanced or Unbalanced
+
+:::: {.columns}
+::: {.column width="50%"}
+
+```{r}
+chick_cleaned |> 
+  count(week)
+```
+:::
+
+::: {.column width="50%"}
+What type of Sums of Squares should we use?
+
+[Doesn't matter!]{.fragment}
+:::
+::::
+
+
+## Repeated Measures Example
+
+`ez::ezANOVA(data, dv, wid, within = NULL, between = NULL, type = 2)`
+
+::: subpoint
+○ `dv` = the outcome variable
+:::
+
+::: subpoint
+○ `wid` = name of the column with subject identifier. Typically contains an `id` for each person (here, each chick!)
+:::
+
+::: subpoint
+○ `within` = column(s) with within-subject factors
+:::
+
+::: subpoint
+○ `between` = column(s) with between-subject factors
+:::
+
+::: subpoint
+○ `type` = the sums of squares method used
+:::
+
+`= NULL` means the default is set to `NULL`, and you do not necessarily need to input a value for that argument for the function to work. (May need to specify it for the function to work the way you *want*, though! Depends on your ANOVA goal.)
+
+```{r}
+chick_weight_model <- ez::ezANOVA(
+  data = chick_cleaned,
+  dv = weight,
+  wid = chick,
+  within = week
+)
+chick_weight_model
+```
+
+
+## Assumptions
+
+```{r}
+chick_cleaned |>
+  pivot_wider(names_from = week, 
+              names_prefix = "week_", 
+              values_from = weight) |>
+  select(starts_with("week")) |>
+  cov()
+```
+
+**Sphericity**: are the elements on the diagonal all equal in the population?
+
+**Compound Symmetry**: are the elements on the diagonal AND on the off-diagonals all equal in the population?
+
+
+## Assumptions
+
+If assumption holds, `W` should be close to 1 and `p` will be large ($p > .05$).
+
+```{r}
+chick_weight_model$`Mauchly's Test for Sphericity`
+```
+
+
+## Assumptions Corrections
+
+```{r}
+chick_weight_model$`Sphericity Corrections`
+```
+
+
+## Results
+
+```{r}
+chick_weight_model
+```
+
+We observe a significant effect of week on chick weight.
+
+
+## Visualization
+
+```{r}
+chick_weight_model <- afex::aov_ez(
+  data = chick_cleaned,
+  dv = "weight",
+  id = "chick",
+  within = "week"
+)
+emms <- chick_weight_model |>
+  emmeans::emmeans("week")
+emms
+```
+
+
+## Visualization
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms |>
+  as_tibble() |>
+  mutate(week = parse_number(as.character(week)) |> as.numeric()) |>
+  ggplot(aes(x = week + 1, y = emmean, ymin = lower.CL, ymax = upper.CL)) +
+  # geom_jitter(data = chick_cleaned, aes(x = week, y = weight), inherit.aes = F,
+  #             alpha = 0.2) +
+  ggdist::geom_dots(data = chick_cleaned, aes(x = week, y = weight), inherit.aes = F,
+              alpha = 0.4) +
+  geom_point() +
+  geom_linerange() +
+  labs(caption = "Line ranges represent 95% confidence intervals.") +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+emms |>
+  as_tibble() |>
+  mutate(week = parse_number(as.character(week)) |> as.numeric()) |>
+  ggplot(aes(x = week + 1, y = emmean, ymin = lower.CL, ymax = upper.CL)) +
+  # geom_jitter(data = chick_cleaned, aes(x = week, y = weight), inherit.aes = F,
+  #             alpha = 0.2) +
+  ggdist::geom_dots(data = chick_cleaned, aes(x = week, y = weight), inherit.aes = F,
+              alpha = 0.4) +
+  geom_point() +
+  geom_linerange() +
+  labs(caption = "Line ranges represent 95% confidence intervals.") +
+  theme_classic()
+```
+:::
+
+
+
+
+# Mixed ANOVA
+
+## Mixed ANOVA
+
+We aren't just limited to between- **OR** within-subject factors, can also test combinations of both.
+
+
+## Mixed ANOVA Example
+
+We can also consider the effect of diet given to the chicks on their weight!
+
+```{r}
+chick_weight_diet_model <- ez::ezANOVA(
+  data = chick_cleaned,
+  dv = weight,
+  wid = chick,
+  within = week,
+  between = diet
+)
+chick_weight_diet_model
+```
+
+
+
+## Balanced or Unbalanced
+
+:::: {.columns}
+::: {.column width="50%"}
+
+```{r}
+chick_cleaned |> 
+  count(week, diet) |>
+  pivot_wider(names_from = diet, names_prefix = "week_", values_from = n)
+```
+:::
+
+::: {.column width="50%"}
+What type of Sums of Squares should we use?
+
+[Do we think an interaction between week and diet would be negligible?]{.fragment} [Maybe not!]{.fragment}
+:::
+::::
+
+
+## Mixed ANOVA Example
+
+We can also consider the effect of diet given to the chicks on their weight!
+
+```{r}
+options(contrasts = c("contr.sum", "contr.poly"))
+chick_weight_diet_model <- ez::ezANOVA(
+  data = chick_cleaned,
+  dv = weight,
+  wid = chick,
+  within = week,
+  between = diet,
+  type = 3
+)
+chick_weight_diet_model
+```
+
+## Mixed ANOVA Example
+
+We can also consider the effect of diet given to the chicks on their weight!
+
+```{r}
+chick_weight_diet_model_afex <- afex::aov_ez(
+  data = chick_cleaned,
+  dv = "weight",
+  id = "chick",
+  within = "week",
+  between = "diet"
+)
+chick_weight_diet_model_afex
+```
+
+`afex` does Type III sums of squares by default... and will also automatically change the contrasts to `contr.sum`. 
+
+
+## Mixed ANOVA Example
+
+```{r}
+chick_weight_diet_model_afex |> summary()
+```
+
+## Visualization
+
+```{r}
+emms <- emmeans::emmeans(chick_weight_diet_model_afex, specs = c("diet", "week"))
+emms
+```
+
+
+
+## Visualization
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms |>
+  as_tibble() |>
+  mutate(week = parse_number(as.character(week)) |> as.numeric()) |>
+  ggplot(aes(x = week + 1, y = emmean, ymin = lower.CL, ymax = upper.CL, color = diet)) +
+  # geom_jitter(data = chick_cleaned, aes(x = week, y = weight), inherit.aes = F,
+  #             alpha = 0.2) +
+  ggdist::geom_dots(data = chick_cleaned, aes(x = week, y = weight, color = diet), inherit.aes = F,
+              alpha = 0.4, position = position_dodge(.5)) +
+  geom_point(position = position_dodge(.5)) +
+  geom_linerange(position = position_dodge(.5)) +
+  geom_line(position = position_dodge(.5)) +
+  labs(caption = "Line ranges represent 95% confidence intervals.") +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+emms |>
+  as_tibble() |>
+  mutate(week = parse_number(as.character(week)) |> as.numeric()) |>
+  ggplot(aes(x = week + 1, y = emmean, ymin = lower.CL, ymax = upper.CL, color = diet)) +
+  # geom_jitter(data = chick_cleaned, aes(x = week, y = weight), inherit.aes = F,
+  #             alpha = 0.2) +
+  ggdist::geom_dots(data = chick_cleaned, aes(x = week, y = weight, color = diet), inherit.aes = F,
+              alpha = 0.4, position = position_dodge(.5)) +
+  geom_point(position = position_dodge(.5)) +
+  geom_linerange(position = position_dodge(.5)) +
+  geom_line(position = position_dodge(.5)) +
+  labs(caption = "Line ranges represent 95% confidence intervals.") +
+  theme_classic()
+```
+:::
+
+
+
+## Visualization
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+emms |>
+  as_tibble() |>
+  mutate(week = parse_number(as.character(week)) |> as.numeric()) |>
+  ggplot(aes(x = week + 1, y = emmean, ymin = lower.CL, ymax = upper.CL, color = diet)) +
+  # geom_jitter(data = chick_cleaned, aes(x = week, y = weight), inherit.aes = F,
+  #             alpha = 0.2) +
+  ggdist::geom_dots(data = chick_cleaned, aes(x = week, y = weight, color = diet), inherit.aes = F,
+              alpha = 0.4, position = position_dodge(.5)) +
+  geom_point(position = position_dodge(.5)) +
+  geom_linerange(position = position_dodge(.5)) +
+  geom_line(position = position_dodge(.5)) +
+  labs(caption = "Line ranges represent 95% confidence intervals.") +
+  facet_wrap("diet") +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+emms |>
+  as_tibble() |>
+  mutate(week = parse_number(as.character(week)) |> as.numeric()) |>
+  ggplot(aes(x = week + 1, y = emmean, ymin = lower.CL, ymax = upper.CL, color = diet)) +
+  # geom_jitter(data = chick_cleaned, aes(x = week, y = weight), inherit.aes = F,
+  #             alpha = 0.2) +
+  ggdist::geom_dots(data = chick_cleaned, aes(x = week, y = weight, color = diet), inherit.aes = F,
+              alpha = 0.4, position = position_dodge(.5)) +
+  geom_point(position = position_dodge(.5)) +
+  geom_linerange(position = position_dodge(.5)) +
+  geom_line(position = position_dodge(.5)) +
+  labs(caption = "Line ranges represent 95% confidence intervals.") +
+  facet_wrap("diet") +
+  theme_classic()
+```
+:::
+
+
+# Multilevel Modeling
+
+## Multilevel Modeling
+
+Multilevel Modeling (MLM) is a more flexible framework for examining between- and within-subject variation!
+
+
+## Multilevel Modeling Example
+
+Just within factor...
+
+```{r}
+# install.packages("lme4")
+chick_weight_model_lmer <- lme4::lmer(weight ~ 1 + week + (1 | chick), data = chick_cleaned)
+summary(chick_weight_model_lmer)
+```
+
+
+## Multilevel Modeling Example
+
+Within and between factor...
+
+```{r}
+# install.packages("lme4")
+chick_weight_diet_model_lmer <- lme4::lmer(weight ~ week * diet + (1 | chick), data = chick_cleaned)
+summary(chick_weight_diet_model_lmer)
+```
+
+
+## Bayesian Multilevel Modeling
+
+```{r}
+library(rstanarm)
+
+chick_weight_diet_model_bayes <- stan_lmer(weight ~ week * diet + (1 | chick), data = chick_cleaned)
+summary(chick_weight_diet_model_bayes)
+```
+
+
+## Bayesian Multilevel Modeling
+
+```{r}
+summary(chick_weight_diet_model_bayes, pars = c("alpha", "beta", "sigma", "Sigma[chick:(Intercept),(Intercept)]"))
+```
+
+
+## Bayesian Multilevel Modeling
+
+
+```{r}
+bayesplot::mcmc_trace(chick_weight_diet_model_bayes, pars = c("sigma"))
+```
+
+
+
+## Visualization
+
+```{r}
+emms <- emmeans::emmeans(chick_weight_diet_model_bayes, specs = c("diet", "week"))
+emms
+```
+
+## Visualization
+
+```{r}
+emms |>
+  as_tibble() |>
+  ggplot(aes(x = week, y = emmean)) +
+  geom_point()
+```
+
+
+<!-- ## Ideas -->
+
+<!-- Some sort of visual showing examples of between vs within -->
+
+<!-- Showing examples of fixed vs. random -->
+
+<!-- Showing how within-variance gets bundled into the residual -->
+
+
+<!-- ## Include -->
+
+<!-- W/IN equation -->
+
+<!-- w/in example in R -->
+
+<!-- qualRtrics -->
+
+<!-- MLM high level -->
+
+<!-- MLM example -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Lab 10 Assignment
+
+

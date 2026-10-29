@@ -21,6 +21,31 @@ list(
   ## lab index page
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
+  
+  ## lab 11
+  tar_target(chick_week_data, make_chick_week_data()),
+  tar_file(chick_week_data_file, 
+           write.csv(chick_week_data, "lab/data/lab_11/chick_week_data.csv", row.names = F)),
+  
+  tar_target(lab_11_slides_qmd, 
+             "lab/slides/lab_11.qmd", 
+             format = "file"),
+  tar_target(lab_11_slides, {
+    chick_week_data
+    quarto::quarto_render(lab_11_slides_qmd, quiet = F)
+    qmd_out(lab_11_slides_qmd)
+  }, format = "file"),
+  
+  # tar_target(lab_11_activity_key_qmd,
+  #            "lab/activities/activity-keys/lab_11_activity_key.qmd",
+  #            format = "file"),
+  # tar_target(lab_11_activity_key, {
+  #   pumpkin_prices_data_file
+  #   quarto::quarto_render(lab_11_activity_key_qmd)
+  #   qmd_out(lab_11_activity_key_qmd)
+  # }, format = "file"),
+  
+  
   ## lab 10
   tar_target(lab_10_slides_qmd, 
              "lab/slides/lab_10.qmd", 
@@ -30,14 +55,14 @@ list(
     qmd_out(lab_10_slides_qmd)
   }, format = "file"),
   
-  # tar_target(lab_08_activity_key_qmd, 
-  #            "lab/activities/activity-keys/lab_08_activity_key.qmd", 
-  #            format = "file"),
-  # tar_target(lab_08_activity_key, {
-  #   pumpkin_prices_data_file
-  #   quarto::quarto_render(lab_08_activity_key_qmd)
-  #   qmd_out(lab_08_activity_key_qmd)
-  # }, format = "file"),
+  tar_target(lab_10_activity_key_qmd,
+             "lab/activities/activity-keys/lab_10_activity_key.qmd",
+             format = "file"),
+  tar_target(lab_10_activity_key, {
+    pumpkin_prices_data_file
+    quarto::quarto_render(lab_10_activity_key_qmd)
+    qmd_out(lab_10_activity_key_qmd)
+  }, format = "file"),
   
   ## lab 09
   tar_target(lab_09_slides_qmd, 
