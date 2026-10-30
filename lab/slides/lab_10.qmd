@@ -134,7 +134,7 @@ What if the year a penguin's measurement was taken is in some way linked to the 
 ::::
 
 ::: footer
-[Left penguins photo](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzYUfXHwRxnp2TO2aWno8g92wL-smciQRjTJQh3NGAisxvuiy-f9fmewQO&s=10) accessed on 2026-10-30. [Right penguins photo](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3ay9b-kaFKcfoam63QlCU4YUb137GjbhzlP1jxjG6M12eEvZvLBMl9BWT&s=10) accessed on 2026-10-30.
+[Right penguins photo](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3ay9b-kaFKcfoam63QlCU4YUb137GjbhzlP1jxjG6M12eEvZvLBMl9BWT&s=10) accessed on 2026-10-30.
 :::
 
 
@@ -302,7 +302,7 @@ flipper_model_type_iii
 ## Types of Sums of Squares
 
 :::: {.columns}
-::: {.column .fragment width="33%"}
+::: {.column .fragment fragment-index=1 width="33%"}
 ### Type I
 
 ::: {style="font-size:70%"}
@@ -311,10 +311,10 @@ flipper_model_type_i
 ```
 :::
 
-![](../media/lab_10/type_i.png)
+<!-- ![](../media/lab_10/type_i.png) -->
 :::
 
-::: {.column .fragment width="33%"}
+::: {.column .fragment fragment-index=2 width="33%"}
 ### Type II
 
 ::: {style="font-size:70%"}
@@ -323,10 +323,10 @@ flipper_model_type_ii
 ```
 :::
 
-![](../media/lab_10/type_ii.png)
+<!-- ![](../media/lab_10/type_ii.png) -->
 :::
 
-::: {.column .fragment width="33%"}
+::: {.column .fragment fragment-index=3 width="33%"}
 ### Type III
 
 ::: {style="font-size:70%"}
@@ -335,9 +335,13 @@ flipper_model_type_iii
 ```
 :::
 
-![](../media/lab_10/type_iii.png)
+<!-- ![](../media/lab_10/type_iii.png) -->
 :::
 ::::
+
+![](../media/lab_10/type_i.png){.absolute bottom=20 left=40 width=260 .fragment fragment-index=1}
+![](../media/lab_10/type_ii.png){.absolute bottom=20 left=390 width=260 .fragment fragment-index=2}
+![](../media/lab_10/type_iii.png){.absolute bottom=20 left=740 width=260 .fragment fragment-index=3}
 
 
 ## Proceeding With Type III
@@ -1091,8 +1095,8 @@ flipper_model_twoway_bayes |>
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 4
-#| fig-height: 6
+#| fig-width: 5
+#| fig-height: 4
 #| fig-align: center
 bayesplot::mcmc_areas(
  flipper_model_twoway_bayes,
@@ -1142,6 +1146,7 @@ If you want to include the full uncertainty of $\sigma$ in your effect size:
 ### Get Ingredients
 
 ```{r}
+#| out-width: 100%
 emms_contrast_draws <- as.mcmc.emmGrid(pairs_by_species_bayes, sep.chains = F) |>
   as_tibble()
 sigma_draws <- flipper_model_twoway_bayes |> 
@@ -1165,6 +1170,8 @@ d_draws <- emms_contrast_draws |>
         contrast_draws_column / sigma_draws
     )
   )
+
+glimpse(d_draws, width = 60)
 ```
 :::
 
