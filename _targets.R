@@ -100,7 +100,7 @@ list(
   tar_target(lab_08_activity_key, {
     quarto::quarto_render(lab_08_activity_key_qmd)
     qmd_out(lab_08_activity_key_qmd)
-  }, format = "file"),
+  }, format = "file")#,
   
   # ## lab 07
   # tar_target(where_ffmpeg, Sys.which("ffmpeg")),
