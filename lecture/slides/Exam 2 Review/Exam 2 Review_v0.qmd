@@ -78,15 +78,15 @@ Any type of credible interval represents some proportion of the posterior distri
 - For example, a 95% credible interval represents 95% of the posterior distribution
 - An 80% credible interval represents 80% of the posterior distribution
 
-But it doesn't say WHICH 95% or 80%. Equal tailed and highest posterior density are two methods for choosing the 
+But it doesn't say WHICH 95% or 80%. Equal tailed and highest posterior density are two methods for choosing 
 
 ##  Equal Tailed Credible Interval
 
 An equal tailed credible interval is most similar to the version of a confidence interval we have seen in that it is **symmetrical** by definition. 
 
 - If we call $c$ the proportion of the credible interval (e.g. $c = .95$ for a 95% credible interval):
-    - *exactly** $\frac{1 - c}{2}$ of the area of the distribution goes in the upper tail
-    - *exactly** $\frac{1 - c}{2}$ of the area of the distribution goes in the lower tail 
+    - **exactly** $\frac{1 - c}{2}$ of the area of the distribution goes in the upper tail
+    - **exactly** $\frac{1 - c}{2}$ of the area of the distribution goes in the lower tail 
 
 The next two slides show the equal tailed interval for a 
 
@@ -260,7 +260,7 @@ For the HPD intervals, we use a different method to choose the boundary:
 - Find the value such that the height of the boundary is **always** equal
   - Regardless of whether distribution is symmetric
   - Means we might have less total area in one tail than the other
-  - But There are no values outside the credible interval more likely than any values inside the credible interval
+  - But there are no values outside the credible interval more likely than any values inside the credible interval
 - For symmetric posteriors, ETI and HPD will be equivalent
 - For asymmetric posteriors, they will not
 
@@ -315,7 +315,7 @@ ggplot(df_curve, aes(x = x, y = y)) +
   annotate("text", x = 2.7, y = 0.08, label = "Tail Area = 2.5%", color = "#C0392B", fontface = "bold", size = 3.8) +
   
   # Annotation for credible interval core
-  annotate("text", x = 0, y = 0.18, label = "95% Equal-Tailed\nCredible Interval\n(Area = 0.95)", color = "#1E3A8A", fontface = "bold", size = 4) +
+  annotate("text", x = 0, y = 0.18, label = "95% Highest Posterior\nDensity Interval (HPDI)\n(Area = 0.95)", color = "#1E3A8A", fontface = "bold", size = 4) +
   
   # Annotation for height at threshold point (Requirement B)
   annotate(
@@ -445,7 +445,7 @@ To add to exam questions, can we do a crash course on Bayes in regard to how it 
 The **most important** difference between frequentist and Bayesian statistics is philosophical:
 
 - How do we **infer** what an **unknown parameter** is from messy data
-- **Parameters:** Numerical values that define probability distribution
+- **Parameters:** Numerical values that define a probability distribution
 - **Data:** Outcome of probability distribution
 - **Statistical Theory:** Parameters **generate** data
   - We try to reverse engineer the parameters from the data
@@ -453,7 +453,7 @@ The **most important** difference between frequentist and Bayesian statistics is
 ## Examples of Parameters
 
 - Bernoulli distribution: $\pi$ (probability, not 3.14)
-    - Statistical estimate: observe binary outcomes and counting the proportion of successes
+    - Statistical estimate: observe binary outcomes and count the proportion of successes
 - Normal distribution: $\mu, \sigma$
     - Statistical estimate: Observe a sample of some continuous distribution, calculate mean and SD
 - General linear model: $\beta_0 \dots \beta_p, \sigma_{\epsilon}$
@@ -463,7 +463,7 @@ The **most important** difference between frequentist and Bayesian statistics is
 ## Philosophical Differences
 
 
-::: {style="font-size: 0.8em;"}
+::: {style="font-size: 0.75em;"}
 ::: {.columns}
 
 ::: {.column width="50%"}
@@ -476,7 +476,7 @@ The **most important** difference between frequentist and Bayesian statistics is
 - Calculate how unlikely that statistical estimate would be if null hypothesis were true
 - Parameter estimate is single value estimated by ordinary least squares, maximum likelihood, etc
 - Uncertainty quantified with confidence intervals
-- Focus on tests, which can be represented as general linear models
+- Focus is often on on null hypothesis tests
 
 :::
 
@@ -489,12 +489,14 @@ The **most important** difference between frequentist and Bayesian statistics is
 - Use Bayes' rule to calculate posterior belief as new probability distribution about parameters given data
 - Parameter estimate represents range of possible values and how likely those values are relative to others calculated by Markov Chain Monte Carlo
 - Uncertainty quantified with credible intervals
-- Focus on general linear models, which can be compared with Bayes factors
+- Focus is posterior beliefs about coefficients
 
 :::
 
 :::
 
+
+**General linear models are flexible ways of representing statistical estimates for a variety of research questions in both frequentist and Bayesian frameworks**
 :::
 
 ## More Differences
@@ -654,9 +656,9 @@ Where:
 
 $$s_\psi = \sqrt{MSW\sum_{i=1}^G\frac{c_i^2}{n_i}}$$
 
-Same logic as for pairwise test except we weight each group by its $c_i$
+Same logic as for pairwise test except we weight each group by its $c_i$, where $c_1 = 1$ and $c_2 = -1$
 
-$$s_{x_1 - x_2} = \sqrt{\frac{MSW}{n_1} + \frac{MSW}{n_2}}$$
+$$s_{x_1 - x_2} = \sqrt{\frac{MSW}{n_1} + \frac{MSW}{n_2}} = \sqrt{MSW\bigg(\frac{1^2}{n_1} + \frac{-1^2}{n_2}\bigg)}$$
 
 :::
 
@@ -731,25 +733,27 @@ On Lecture 18 Slide 35, you mentioned that sometimes it does not make sense to a
 - Makes use of combinations of conditions as they exist in your data
 
 
-## Review Question 6
-
-We learned that Bayesian inference can begin with either a subjective or a uniform prior. However, I'm curious about how researchers determine whether their chosen prior is appropriate.
-
-Since different priors can lead to different posterior distributions, are there any objective criteria or methods for evaluating whether a prior is reasonable, especially when there is limited previous evidence?
 
 ## Ordinary Main Effects
 
-::: {style="font-size: 0.8em;"}
+::: {style="font-size: 0.85em;"}
 
 - More potential for misleading interpretation
 - Effect of one factor **averaged** over **all** levels of other factor **as they exist in your data**
   - **Not** the effect of one factor ignoring the other factor
 - Effect of growing condition at average level of east and west side of hill
-  - Always think about what it means to say you are averaging (aka marginalizing) over other factors when interpreting marginal main effects
+  - Always think about what it means to say you are averaging (aka marginalizing) over other factors when interpreting ordinary main effects
     - Interaction may mean ordinary main effects are averaging two very different simple main effects in a way that doesn't make sense
     - Don't generalize to other conditions that aren't included in your data!
 
 :::
+
+
+## Review Question 6
+
+We learned that Bayesian inference can begin with either a subjective or a uniform prior. However, I'm curious about how researchers determine whether their chosen prior is appropriate.
+
+Since different priors can lead to different posterior distributions, are there any objective criteria or methods for evaluating whether a prior is reasonable, especially when there is limited previous evidence?
 
 
 ## Choosing Priors
@@ -770,6 +774,7 @@ This is almost always how priors are chosen
 - In academic research regardless of whether you have a strong subjective prior, to avoid being criticized for a prior a reviewer might disagree with
 - When you don't have a strong subjective prior 
 
+It also may help to try many different priors to see how much changing your prior affects results (sensitivity analysis)
 :::
 
 ## Review Question 7
