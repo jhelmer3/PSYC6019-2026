@@ -1,0 +1,1034 @@
+---
+title: "Lecture 22: Repeated and Mixed ANOVA"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: true 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+```
+
+
+## Jargon Refresher
+
+**Linear Model:**
+
+$${\color{blue}y_i} = \beta_0 + \sum_{p=1}^P \beta_p {\color{red}x_{ip}} + \epsilon_i$$
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+
+[**Left side variable terms**]{style="color: blue;"}
+
+
+- $y$
+- Dependent variable (DV)
+- Outcome variable
+- Response variable
+
+:::
+
+::: {.column width="50%"}
+[**Right side variable terms**]{style="color: red;"}
+
+- $x$
+- Independent variable(s) (IVs)
+- Predictor variable(s)
+
+:::
+:::::
+
+## Tests We Will Cover {.scrollable}
+
+
+::: {style="font-size: 0.8em;"}
+
+| IV(s) | DV | IV Status | Model Structure |
+| :--- | :--- | :--- | :--- |
+| — | One categorical | — | $\chi^2$ Goodness of Fit |
+| One Categorical | One categorical | — | $\chi^2$ Test of Independence |
+| — | One Continuous | — | One Sample $t$-Test |
+| One Binary | One Continuous | Dependent Groups | Paired Sample $t$-Test |
+| One Binary | One Continuous | Independent Groups | Independent Sample $t$-Test |
+| One Categorical | One Continuous | Independent Groups | One-Way ANOVA |
+| More than One Categorical | One Continuous | Independent Groups | Factorial ANOVA |
+| One Categorical | One Continuous | Dependent Groups | One-Way Repeated Measures ANOVA |
+| **More than One Categorical** | **One Continuous** | **Dependent Groups** | **Factorial Repeated Measures ANOVA** |
+| **More than One Categorical** | **One Continuous** | **Mixed Groups** | **Mixed ANOVA** |
+| One Continuous | One Continuous | — | Correlation or Simple Regression |
+| More than One Continuous | One Continuous | — | Multiple Regression |
+
+::: 
+
+
+
+
+## Review
+
+
+- Independent Sample $t$-tests let us compare the means of two different groups
+- One way ANOVA lets us compare the means of more than two different groups
+- Factorial ANOVA lets us compare the means of more than two crossed factors
+
+Put another way
+
+- Independent Sample $t$-tests let us test one between subjects factor with exactly two levels
+- One way ANOVA lets us test one between subjects factor with more than two levels
+- Factorial ANOVA lets us test more than one between subjects factor
+
+## Between vs. Within 
+
+Examples of between subjects factors
+
+- Randomizing participants into **exactly one** experimental condition
+- Mutually exclusive demographic categories at a given time point
+- Comparing students between different sections of the same course
+
+Examples of within subjects factors
+
+- Having all participants go through all experimental conditions in a random order
+- Measurements from the same person collected at various time points
+- Comparing a group of students who each took the same courses
+
+## Assumption Violations
+
+Which of our assumptions do within subjects designs violate?
+
+- [Independence of observations]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+Where have we seen a method for handling this violation already?
+
+- [Paired sample $t$-test]{.answer .fragment .content-visible unless-meta="params.v0"}
+  - [We simplified things by using a **difference** score so we only had one variable instead of two dependent variables]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [When we have more than two variables, this solution will no longer work]{.answer .fragment .content-visible unless-meta="params.v0"}
+    
+
+## Stroop Effect
+
+
+::: {style="font-size: 0.8em;"}
+
+**Traditional task**: 
+
+<div style="text-align: center;">
+[**BLUE**]{style="color: #984EA3;"} &nbsp;&nbsp;&nbsp;&nbsp; [**GREEN**]{style="color: #FF7F00;"} &nbsp;&nbsp;&nbsp;&nbsp; [**RED**]{style="color: #377EB8;"} &nbsp;&nbsp;&nbsp;&nbsp; [**ORANGE**]{style="color: #4DAF4A;"}
+</div>
+
+- Difficult to correctly identify the text color of each word
+
+**Idea**: maybe the Stroop effect has to do with contingency rather than congruency
+
+- i.e., Stroop task is hard because we have learned the correspondence between the word "blue" and the color "blue"
+- To test this hypothesis, manipulate contingencies between colors and neutral words
+
+<div style="text-align: center;">
+[**MEET**]{style="color: #984EA3;"} &nbsp;&nbsp;&nbsp;&nbsp; [**LOOP**]{style="color: #FF7F00;"} &nbsp;&nbsp;&nbsp;&nbsp; [**CALL**]{style="color: #E41A1C;"} &nbsp;&nbsp;&nbsp;&nbsp; [**MEET**]{style="color: #984EA3;"}
+
+
+
+[**MEET**]{style="color: #984EA3;"} &nbsp;&nbsp;&nbsp;&nbsp; [**MEET**]{style="color: #984EA3;"} &nbsp;&nbsp;&nbsp;&nbsp; [**SLID**]{style="color: #377EB8;"} &nbsp;&nbsp;&nbsp;&nbsp; [**CALL**]{style="color: #4DAF4A;"}
+
+
+[**FINS**]{style="color: #377EB8;"} &nbsp;&nbsp;&nbsp;&nbsp; [**MEET**]{style="color: #E41A1C;"} &nbsp;&nbsp;&nbsp;&nbsp; [**LOOP**]{style="color: #4DAF4A;"} &nbsp;&nbsp;&nbsp;&nbsp; [**FINS**]{style="color: #FF7F00;"}
+</div>
+
+According to the contingency hypothesis, it should be difficult to correctly indicate "red" for [**MEET**]{style="color: #E41A1C;"}
+
+::: 
+
+## Stroop Replication
+
+::: {style="font-size: 0.6em;"}
+
+**Original study**: Schmidt, J. R., & Besner, D. (2008). The Stroop effect: Why proportion congruent has nothing to do with congruency and everything to do with contingency. *Journal of Experimental Psychology: Learning Memory, and Cognition*, *34*, 514--523.
+  
+**OSF link**: [https://osf.io/x5b6d](https://osf.io/x5b6d)
+
+:::
+
+::: {style="font-size: 0.8em;"}
+
+**Study design**:
+
+* 432 trials, including 6 blocks of 72 trials, 6 words repeated 12 times per block
+* Each subject exposed to each type of trial
+* Subjects forced to respond quickly
+  
+**IV**: Contingency level: high, medium, low
+
+**DV**: Proportion of trials where color was identified incorrectly
+
+**Key finding to replicate**: Low contingency trials generate higher performance errors than medium contingency trials
+
+:::
+
+
+## The Structural Model
+
+**Simplest model**: 
+
+$$y_{ij} = \mu + \pi_i + \tau_j + \epsilon_{ij}$$
+
+- $\mu$: grand mean (overall average score)
+- $\pi_{i}$: person's $i$'s deviation from the average person
+- $\tau_{j}$: treatment $j$'s deviation from the average treatment mean
+- $\epsilon_{ij}$: error associated with person $i$ and treatment $j$
+
+
+## With Interaction
+
+$$y_{ij} = \mu + \pi_i + \tau_j + (\tau\pi)_{ij} + \epsilon_{ij}$$
+
+- $(\pi\tau)_{ij}$: allows different subjects to change differently over treatments
+- Can only be estimated if there are multiple measurements per person + condition combo
+- May not be the case in within-subjects designs
+
+
+## Notation
+
+::: {style="font-size: 0.85em;"}
+
+$$y_{ij} = \mu + \pi_i + \tau_j + (\tau\pi)_{ij} + \epsilon_{ij}$$
+
+- $\mu$: overall average proportion of errors
+- $\pi_i$: person $i$'s average deviation from the average person mean, across contingency levels
+- $\tau_j$: sound condition $j$'s average deviation from the average sound condition mean
+- $(\tau\pi)_{ij}$: interaction of person with contingency level
+  - If only one observation per cell, no way to distinguish interaction effect and error term
+  - There is a $(\tau\pi)_{ij}$ corresponding to every observation, so $\epsilon_{ij} = 0$
+  - Can describe every data point exactly
+
+In such cases we instead work with the simpler model.
+
+:::
+
+
+
+
+## One-Way Repeated
+
+::: {style="font-size: 0.7em;"}
+
+Total sum of squares:
+
+$$SST = \sum_i\sum_j(y_{ij} - \bar{y})^2$$
+
+
+Sum of squares within subjects (treatment effect averaged across individuals):
+
+$$SSA = I\sum_j (\bar{y}_{\bullet j} - \bar{y})^2$$
+
+Sum of squares between subjects (variance in individual differences averaged across treatments):
+
+$$SSS = J\sum_i (\bar{y}_{i\bullet} - \bar{y})^2$$
+
+
+Sum of squares residual:
+
+$$SSR = SST - SSS - SSA$$
+
+::: {.columns}
+
+::: {.column width="50%"}
+* $I$: # subjects, $i = 1, \ldots, I$
+:::
+
+::: {.column width="50%"}
+* $J$: # treatment conditions, $j = 1, \ldots, J$
+:::
+
+:::
+
+:::
+
+## Refactor!
+
+::: {style="font-size: 0.7em;"}
+
+What if we wanted to test the effect of subject and condition? Then we would have a two-way ANOVA (without interaction) where we treat subjects as a second factor 
+
+
+Total sum of squares:
+
+$$SST = \sum_i\sum_j(y_{ij} - \bar{y})^2$$
+
+
+
+Sum of squares within subjects (treatment effect averaged across individuals):
+
+$$SSA = I\sum_j (\bar{y}_{\bullet j} - \bar{y})^2$$
+
+Sum of squares treating subjects as factor B:
+
+$$SSB = J\sum_i (\bar{y}_{i\bullet} - \bar{y})^2$$
+
+Sum of squares residual:
+
+$$SSR = SST - SSA - SSB$$
+
+::: {.columns}
+
+::: {.column width="50%"}
+* $I$: # subjects, $i = 1, \ldots, I$
+:::
+
+::: {.column width="50%"}
+* $J$: # treatment conditions, $j = 1, \ldots, J$
+:::
+
+:::
+
+
+:::
+
+
+
+## Fixed vs Random
+
+::: {style="font-size: 0.85em;"}
+
+**Question:** Do we care if the average error for one participant is different from the others? 
+
+- [We might, but probably not. We're more interested in the effect of **condition** averaged over participants]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [But we also need to account for how the participant average effects contribute to our errors]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [Another way to think about this is that we need to estimate the **variance** in how people differ even if we aren't testing that factor]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [This is sometimes referred to as a "random effect"]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [**Fixed effects:** A complete factor for which we want to compare all levels]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [**Random effects:** A factor where we sample from a population to estimate the variance attributable to that factor, but don't care so much about the specific levels we sample from the population]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+:::
+
+## Repeated-Measures ANOVA Table
+
+For the Stroop example, $J = 3$ levels of the within-subject IV, and $I = 238$ subjects
+
+Mean squares are calculated as before
+
+For each source of variability, $MS = SS / df$
+
+| Source | $df$ | $SS$ | $MS$ |
+| :--- | :--- | :--- | :--- |
+| **Subject Effect** | 237 | 10.26 | .043 |
+| Contingency Level | 2 | .084 | .042 |
+| Residual | 474 | .852 | .002 |
+| **Total** | 713 | 11.196 | .016 |
+
+
+## ANOVA Table Comparisons
+
+::: {.columns}
+
+::: {.column width="50%"}
+**Between-Subjects ANOVA**  
+*(incorrectly ignoring repeated measures)*
+
+| Source | $df$ | $SS$ | $MS$ |
+| :--- | :--- | :--- | :--- |
+| Cont. Level | 2 | .084 | .042 |
+| Residual | 711 | 11.112 | .016 |
+| **Total** | **713** | **11.196** | |
+:::
+
+::: {.column width="50%"}
+**Repeated-Measures ANOVA**
+
+| Source | $df$ | $SS$ | $MS$ |
+| :--- | :--- | :--- | :--- |
+| Subj. Eff. | 237 | 10.26 | |
+| Cont. Level | 2 | .084 | .042 |
+| Residual | 474 | .852 | .002 |
+| **Total** | **713** | **11.196** | |
+:::
+
+:::
+
+
+
+## Hypothesis Test
+
+::: {style="font-size: 0.85em;"}
+
+The hypothesis test is conducted using the same logic as the between-subjects ANOVA, except for the different error term:
+
+$$F_{obs} = \frac{MSA}{MSR} = \frac{.042}{.002} = 23.42$$
+
+
+Under $H_0$ (all treatment means equal in the population): 
+
+$$F_{obs} \sim F(dfA, dfR)$$
+
+Like other ANOVA tests, compare $F_{obs}$ to the $F$ distribution
+
+- numerator $df$ = $dfA$ = # within-subject treatment conditions - 1
+- denominator $df$ = $dfR$ = (# within-subject treatment conditions - 1)$\times$(# subjects - 1)
+
+:::
+
+## Data Cleaning
+
+The raw data here is in wide format (one column per contingency level)
+
+```{r}
+#| echo: true
+library(readxl)
+
+dat <- read_xlsx("../../data/Schmidt data.xlsx", 
+                 sheet = 2, range = "B20:E257", 
+                 col_names = c("Subject", "High", "Medium", "Low"))
+
+
+head(dat)
+```
+
+
+## Data Lengthening
+
+I am going to pivot it to long format first (multiple rows per person, column indicating contingency level)
+
+
+```{r}
+#| echo: true
+
+dat_long <- dat %>% 
+  pivot_longer(High:Low, names_to = "Contingency", values_to = "PropError") %>%
+  mutate(Subject = factor(Subject), Contingency = factor(Contingency))
+
+head(dat_long)
+```
+
+
+
+## In `R` with `aov()`
+
+```{r}
+#| echo: true
+
+a1 <- aov(PropError ~ Contingency + Error(Subject / Contingency),
+            dat_long)
+
+summary(a1)
+```
+
+
+`Error(Subject / Contingency)` indicates `Contingency` is a within-subjects factor for `Subject`
+
+## In `R` with `ezANOVA()`
+
+```{r}
+#| echo: true
+#| warning: false
+
+library(ez)
+
+ezANOVA(data = dat_long, # dataset
+        dv = PropError, # dependent variable
+        wid = Subject, # ID's for within-subject variable
+        within = Contingency) # repeated-measures IV
+
+```
+
+
+## Assumptions
+
+::: {style="font-size: 0.85em;"}
+
+
+1. Independence
+    
+    - Individuals respond independently of each other
+    - Residuals between subjects are independent of each other
+
+2. Covariance structure for the within-subjects factor
+  
+    - Compound symmetry (stronger)
+      - Take the variance-covariance matrix of treatment effects
+      - Equal variances: same number on the diagonal of the matrix
+      - Equal covariances: same number on the off-diagonals
+    - Sphericity (weaker)
+      -  Equal variances for all within-subjects variables
+
+Violations of these assumptions can bias the $F$-statistic
+
+:::
+
+## Covariance Structure
+
+```{r}
+#| echo: true
+#| eval: false
+
+cov(dat[, -1])
+
+```
+
+```{r}
+round(cov(dat[, -1]), 5)
+```
+
+**Sphericity**: diagonal elements are equal (in the population)
+
+**Compound symmetry**: sphericity + off-diagonal elements are equal (in the population)
+
+
+## Mauchly's Test of Sphericity
+
+
+::: {style="font-size: 0.8em;"}
+
+If sphericity assumption is not met, $F$ is positively biased (Box, 1954)
+
+- Inflated Type I error rate
+
+How far does the covariance matrix deviate from sphericity?
+
+- Mauchly's test is a formal hypothesis test for sphericity
+- If sphericity is met, the expected test statistic equals 1
+- If $p<.05$, evidence against sphericity
+- Mauchly's test only reported for effects with >2 levels because sphericity necessarily holds for variables with 2 levels
+
+Adjustments for positive bias (both available in `ezANOVA`):
+
+- Greenhouse-Geisser
+- Huynh-Feldt
+
+Recommended to use adjustments instead of bothering with Mauchly's test
+
+- For reasons comparable to Levene's test in the context of the independent samples $t$-test
+
+:::
+
+## Adjustment for Non-Sphericity
+
+
+::: {style="font-size: 0.8em;"}
+
+Greenhouse-Geisser (GG) or Huynh-Feldt (HF) adjusted $F$-test:
+
+- Same numerator and denominator $MS$
+- Same $F$-statistic
+- Adjusted numerator and denominator $df$
+- Adjusted $p$-value
+- GG and HF use different formulas for $\hat{\epsilon}$ (not shown here)
+
+
+  $$df_{num, adj}  = \hat{\epsilon} \times df_{num} \\
+  df_{den, adj}  = \hat{\epsilon} \times df_{den}$$
+
+- If $\hat{\epsilon} = 1$, adjusted $df$ identical to usual $df$
+- If $\hat{\epsilon} > 1$, set $\hat{\epsilon} = 1$ (use original $p$-value)
+- If $\hat{\epsilon} > .75$, use Huynh-Feldt, otherwise use Greenhouse-Geisser
+
+::: 
+
+## Adjustment
+
+
+```{r}
+#| echo: true
+#| eval: false
+
+ezANOVA(data = dat_long, # dataset
+        dv = PropError, # dependent variable
+        wid = Subject, # ID's for within-subject variable
+        within = Contingency) # repeated-measures IV
+```
+
+
+```{r}
+#| echo: false
+
+options(width = 120)
+
+ezANOVA(data = dat_long, # dataset
+        dv = PropError, # dependent variable
+        wid = Subject, # ID's for within-subject variable
+        within = Contingency) # repeated-measures IV
+```
+
+
+- `GGe` is Greenhouse-Geisser $\hat{\epsilon}$
+- `HFe` is Hyunh-Feldt $\hat{\epsilon}$
+    - Both are $> .75$ so use Hyunh-Feldt, round down to 1
+    
+
+## Post-hoc Tests
+
+Most follow-up methods that we learned for between-subjects ANOVA can be adapted for repeated-measures ANOVA
+
+- Use *paired* $t$-tests for post-hoc tests on within-subjects variables, Holm or Bonferroni correction
+
+One major difference:
+
+- In general, do not use a pooled error term (Maxwell, 1980)
+
+## Post-hoc Tests
+
+```{r}
+#| echo: true
+
+pairwise.t.test(x = dat_long$PropError, 
+                g = dat_long$ContingencyLevel, 
+                paired = TRUE)
+```
+
+
+## APA Writeup
+
+A one-way repeated-measures ANOVA was conducted to test the effect of contingency level (low, medium, high) on the proportion of correct responses. At $\alpha = .05$, the omnibus test was rejected ($F(2, 474) = 23.42$, $p < .001$, $\eta^2 = .008$, partial $\eta^2 = .090$).
+
+Post-hoc comparisons using paired $t$-tests with Holm-adjusted $p$-values indicated significant differences between every pair of the three conditions ($M_{low} = .358$, $M_{medium} = .345$, $M_{high} = .331$).
+
+## Mixed ANOVA
+
+ANOVA can also mix within- and between-subjects factors
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 4.5
+#| fig-align: "center"
+
+
+# Define node text and coordinate positions
+nodes <- data.frame(
+  x = c(0, -3, 3, -4.5, -1.5, 1, 3, 5),
+  y = c(2, 1, 1, 0, 0, 0, 0, 0),
+  label = c(
+    "Total Variation",
+    "Between Subjects",
+    "Within Subjects",
+    "Groups",
+    "Residuals within\ngroups",
+    "Treatments",
+    "Treatments ×\nGroups",
+    "Residuals ×\nw/in subjects"
+  )
+)
+
+# Define connections (arrows)
+edges <- data.frame(
+  x    = c(0,  0, -3,   -3,   3, 3, 3),
+  y    = c(2,  2,  1,    1,   1, 1, 1),
+  xend = c(-3, 3, -4.5, -1.5, 1, 3, 5),
+  yend = c(1,  1,  0,    0,   0, 0, 0)
+)
+
+ggplot() +
+  geom_segment(
+    data = edges,
+    aes(x = x, y = y, xend = xend, yend = yend),
+    arrow = arrow(length = unit(0.2, "cm"), type = "closed"),
+    linewidth = 0.8,
+    color = "gray30"
+  ) +
+  geom_label(
+    data = nodes,
+    aes(x = x, y = y, label = label),
+    fontface = "bold",
+    fill = "white",
+    color = "black",
+    size = 4,
+    label.padding = unit(0.5, "lines")
+  ) +
+  scale_x_continuous(limits = c(-5.5, 6)) +
+  scale_y_continuous(limits = c(-0.5, 2.5)) +
+  theme_void()
+```
+
+
+## Mixed ANOVA Table
+
+| Source of Variation | Type | Denominator for F-Test (Error Term) |
+|:---|:---|:---|
+| **Between Subject Factor ($A$)** | Between | $\text{MS}_{\text{Subject}}$ |
+| **Error (Between Subject)** | Between | — |
+| **Within Subject Factor ($B$)** | Within | $\text{MS}_{\text{Residual}}$ |
+| **Interaction ($A \times B$)** | Within | $\text{MS}_{\text{Residual}}$ |
+| **Error (Residual)** | Within | — |
+
+## Mixed ANOVA Intuition
+
+For within subjects factor
+
+- We "control" for individual differences 
+  - Variance at "person level"
+- Care about effect of treatment/group/condition, not effect of persons
+
+For between subjects factor
+
+- Factor does not vary as subjects go through different treatment/group/condition
+- The relevant residual IS variance at person level
+
+## Example: Anxiety Data
+
+Data suitable for mixed ANOVA, part of `datarium` package. How does exercise impact anxiety over time?
+
+Between subjects factor:
+
+- Exercise level: low, medium, high
+- $n = 15$ per group
+
+Within subjects factor: 
+
+- Time: Anxiety scores measured at three different time points
+
+
+## Loading Data
+
+```{r}
+#| echo: true
+
+library(datarium)
+
+data("anxiety", package = "datarium")
+
+head(anxiety)
+
+```
+
+## Lengthening Data
+
+For mixed ANOVA we need data in "long" format
+
+- `id` column (factor)
+- `group` column
+- ONE `time` column (factor)
+- ONE `anxiety` column
+
+
+## Long Data
+
+
+```{r}
+#| echo: true
+
+anxiety_long <- anxiety |>
+  gather(key = "time", value = "anxiety", t1, t2, t3) |>
+  mutate(id = factor(id),
+         time = factor(time))
+
+head(anxiety_long)
+
+```
+
+
+## Mixed `aov()`
+
+```{r}
+#| echo: true
+aov_anxiety <- aov(anxiety ~ group * time + Error(id/time),
+          data = anxiety_long)
+
+summary(aov_anxiety)
+
+```
+
+## Compare to Three-Way
+
+To understand where each component of the table compes from, we can compare to a model that has an interaction between `group` and `time` and a "main effect of `id`
+
+```{r}
+#| echo: true
+aov_anxiety_other <- aov(anxiety ~ group * time + id, anxiety_long)
+summary(aov_anxiety_other)
+
+```
+
+- **Residual for group:** `id`
+- **Residual for `time` and interaction:** `residual`
+
+## Using `ez`
+
+
+```{r}
+#| echo: true
+#| eval: false
+
+ezANOVA(data = anxiety_long, # dataset
+        dv = anxiety, # dependent variable
+        wid = id, # ID's for within-subject variable
+        between = group,
+        within = time) # repeated-measures IV
+```
+
+
+```{r}
+#| echo: false
+
+options(width = 120)
+
+ezANOVA(data = anxiety_long, # dataset
+        dv = anxiety, # dependent variable
+        wid = id, # ID's for within-subject variable
+        between = group,
+        within = time)$ANOVA # repeated-measures IV
+```
+
+## Visualize Results
+
+```{r}
+#| echo: true
+library(ggeffects)
+
+ggp1 <- ggemmeans(aov_anxiety, c("time","group"))
+plot(ggp1) + ylim(c(11, 20))
+
+```
+
+## APA Writeup
+
+Mixed ANOVA was conducted to test the effect of exercise over time. The interaction between exercise group and time was significant, $F(4, 84) = 110.19, p < .001, \eta^2 = .11$. Figure 1 indicates greater decrease over time in the high exercise group than other groups. 
+
+## Multilevel Models
+
+Arguably a more "modern" approach to violations of independence assumption. Basic idea
+
+- Each "person" gets their own intercept and slope(s).
+    - These are "random effects"
+    - Sometimes called "person level effects" (more Bayesian term)
+- Then we estimate the average intercept and slope(s) across all persons
+    - These are "fixed effects"
+    - Sometimes called "population level effects" (more Bayesian term)
+    
+## Multi(ple) Levels
+
+Clustering variable also doesn't have to be people! Multilevel models split observations into nested grouping structures. Another example:
+
+- Level 1: Observations for students across different homework assignments
+- Level 2: Average student assignment scores for students in different schools
+- Level 3: Average math scores for all students in different schools
+
+## Multilevel Visual
+
+```{r}
+
+#| echo: false
+#| fig-width: 10
+#| fig-height: 4.5
+#| fig-align: "center"
+
+library(ggplot2)
+
+# 1. Coordinates for diagram nodes
+nodes <- data.frame(
+  x = c(5, 2, 5, 8, 1.25, 2.75, 4.25, 5.75, 7.25, 8.75),
+  y = c(2, 0, 0, 0, -2, -2, -2, -2, -2, -2),
+  label = c("School", "Student 1", "Student 2", "Student 3", 
+            "Obs 1", "Obs 2", "Obs 1", "Obs 2", "Obs 1", "Obs 2")
+)
+
+# 2. Connecting arrow paths
+edges <- data.frame(
+  x    = c(5, 5, 5, 2, 2, 5, 5, 8, 8),
+  y    = c(2, 2, 2, 0, 0, 0, 0, 0, 0),
+  xend = c(2, 5, 8, 1.25, 2.75, 4.25, 5.75, 7.25, 8.75),
+  yend = c(0, 0, 0, -2, -2, -2, -2, -2, -2)
+)
+
+# 3. Level indicator labels on the right
+level_labels <- data.frame(
+  x = c(10.2, 10.2, 10.2),
+  y = c(2, 0, -2),
+  label = c("Level 3 (k)", "Level 2 (j)", "Level 1 (i)")
+)
+
+ggplot() +
+  # Directional arrows
+  geom_segment(
+    data = edges,
+    aes(x = x, y = y, xend = xend, yend = yend),
+    arrow = arrow(length = unit(0.2, "cm"), type = "closed"),
+    linewidth = 0.8,
+    color = "gray30"
+  ) +
+  # Node boxes
+  geom_label(
+    data = nodes,
+    aes(x = x, y = y, label = label),
+    fontface = "bold",
+    fill = "white",
+    color = "black",
+    size = 4,
+    label.padding = unit(0.5, "lines")
+  ) +
+  # Level annotations
+  geom_text(
+    data = level_labels,
+    aes(x = x, y = y, label = label),
+    fontface = "italic",
+    color = "#1a365d",
+    size = 4.5,
+    hjust = 0
+  ) +
+  scale_x_continuous(limits = c(0, 12.5)) +
+  scale_y_continuous(limits = c(-3, 3)) +
+  theme_void()
+```
+
+
+## Multilevel in `R`
+
+`R` has the `lme4` package and `lmerTest` extension for doing multilevel modeling using the `lmer()` function
+
+- Uses **restricted** maximum likelihood estimation
+  - Like maximum likelihood, but with a $df$-like adjustment so we don't "overfit" to the sample
+      - Can accommodate missing data, imbalanced designs
+      - Don't need every participant to be observed in every within subjects condition
+  - Needs a "hill climbing" algorithm. Can sometimes fail to converge if model is complex
+    - Means it doesn't find an appropriate peak of the hill
+    - Within/mixed ANOVA doesn't have this problem because it uses least-squares estimation
+    - Need more data than `anxiety` dataset
+- `lme4` does not produce NHST results by default, only parameter estimates
+  - `lmerTest` adds tests which include $df$ adjustments to deal with independence violations
+  
+
+
+
+## `lme4` example
+
+`lmer()` has traditional formula syntax, but we specify "random effects" structure with one extra piece at the end `(random slopes (beyond scope of class) | random intercepts (id variable))`
+
+- Need more data than we have to estimate random slopes
+- Same reason we can't estimate interaction effect with person (discussed earlier)
+- Will just specify `1` random slopes
+
+
+```{r}
+#| echo: TRUE
+library(lme4)
+library(lmerTest)
+options(contrasts = c("contr.sum", "contr.poly")) # For Type III Tests if needed
+
+lmer_anxiety <- lmer(anxiety ~ group * time + (1 | id), anxiety_long)
+
+```
+
+
+## `lme4` Output
+
+Anova-like table can be generated using `anova()` function specifying `ddf = "Satterthwaite"` (degrees of freedom adjustment) 
+
+```{r}
+#| echo: TRUE
+anova(lmer_anxiety, ddf = "Satterthwaite")
+```
+
+Results identical to "standard" repeated measures ANOVA due to fully balanced design!
+
+- $n = 15$ in every group 
+- No missing data over time
+
+## Bayesian Version
+
+The Bayesian approach to within subjects factors is a variation on the multilevel modeling approach. We can write an `rstanarm` model with `stan_lmer()` that mimics the `lmer()` syntax and structure. 
+
+- Caveat: Bayesian statistics don't differentiate "fixed" and "random" effects
+- If we don't specify, we'll get **every** person level intercept in the output
+- To only get population level effects, we can specify the parameters we want
+- Output will be as a dummy coded linear model
+- Due to small sample size and repeated measures, I need more iterations to achieve convergence
+
+
+## `rstanarm`
+
+```{r}
+#| echo: TRUE
+library(rstanarm)
+options(contrasts = c("contr.treatment", "contr.poly")) # Reset dummy coding
+options(mc.cores = parallel::detectCores())
+```
+```{r}
+#| echo: TRUE
+#| cache: TRUE
+stan_anxiety <- stan_lmer(anxiety ~ group * time + (1 | id), anxiety_long,
+                          seed = 1521,
+                          iter = 5000)
+
+
+```
+
+
+## Bayesian Output
+
+Specifying `pars =  c("alpha", "beta")` means I just want the results for the intercept and coefficients (not person level intercepts)
+
+```{r}
+#| echo: true
+#| cache: TRUE
+summary(stan_anxiety, pars = c("alpha", "beta"))
+```
+
+## `emmeans`
+
+If I want the means and credible intervals for each cell, I can use `emmeans()`
+
+```{r}
+#| echo: true
+#| cache: TRUE
+library(emmeans)
+emmeans(stan_anxiety, ~ group * time)
+
+```
+
+Instead of a full APA writeup, you might put these results in an APA table, or, even better...
+
+## Plot
+
+I can also plot my results to get a visual
+
+```{r}
+#| echo: true
+#| cache: TRUE
+#| message: false
+
+ggp_stan <- ggpredict(stan_anxiety, c("time","group"))
+plot(ggp_stan) + ylim(c(11, 20))
+```
+
