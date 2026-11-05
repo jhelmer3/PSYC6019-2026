@@ -1,0 +1,779 @@
+---
+title: "Covariance, Correlation, and Scatterplots"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2026-11-06 | Lab 11"
+author: "Jess Helmer"
+footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
+format: 
+  revealjs:
+    code-link: true
+    slide-number: true
+    code-line-numbers: false
+    theme: ../../gt-theme.scss
+    width: 1200
+execute: 
+  echo: true
+  dpi: 600
+  freeze: auto
+knitr:
+  opts_chunk:
+    dev: svg
+---
+
+## Outline
+
+- Correlation
+
+- Scatterplots
+
+- Scatterplot matrices
+
+```{r setup}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(gt)
+```
+
+
+
+# Correlation
+
+## Correlation
+
+So far, we've been talking about continuous outcomes as predicted by different **categorical** variables.
+
+But the world is not limited to categorical predictors!
+
+Today, we are going to talk about estimating associations between two continuous variables by examining their **correlation**.
+
+
+
+## Correlation
+
+Correlation is a measure of the **linear association** between two continuous variables. 
+
+Is a standardized version of **covariance**.
+
+
+
+## Covariance
+
+Covariance is an unstandardized index of the linear relationship between two continuous variables.
+
+$$ s_{xy} = \frac{\sum_{i = 1}^N (x_i - \bar{x}) (y_i - \bar{y}) }{N - 1} $$
+
+::: subpoint
+○ $x_i$: an observation of $x$
+:::
+
+::: subpoint
+○ $\bar{x}$: sample mean of $x$
+:::
+
+::: subpoint
+○ $y_i$: an observation of $y$
+:::
+
+::: subpoint
+○ $\bar{y}$: sample mean of $y$
+:::
+
+::: subpoint
+○ $N$: sample size
+:::
+
+*The deviations of each $x_i$ from its mean and the deviations of each $y_i$ from its mean, multiplied together, summed up, and divided by the sample size minus one.*
+
+
+## Covariance Visually
+
+```{r}
+#| echo: false
+library(tidyverse)
+
+# ---- Simulate data with an exact, chosen sample correlation -----------------
+set.seed(2026)
+n  <- 40
+zx <- as.numeric(scale(rnorm(n)))
+ze <- as.numeric(scale(rnorm(n)))
+ze <- as.numeric(scale(resid(lm(ze ~ zx))))   # orthogonal to zx, so cor = rho exactly
+
+make_df <- function(rho) {
+  tibble(
+    id = 1:n,
+    x  = 50 + 10 * zx,
+    y  = 50 + 10 * (rho * zx + sqrt(1 - rho^2) * ze)
+  )
+}
+
+df <- make_df(0.55)   # medium-ish positive correlation
+
+# ---- Style ------------------------------------------------------------------
+grey <- "grey25"
+cols <- c(pos = "#3F6E94", neg = "#C2623A")
+lims <- c(22, 78)
+
+# ---- Pick a handful of points to feature ------------------------------------
+mx <- mean(df$x); my <- mean(df$y)
+pick <- function(dx, dy) {
+  df |> slice_min((x - mx - dx)^2 + (y - my - dy)^2, n = 1) |> pull(id)
+}
+p1 <- pick( 12,  12)   # above on both
+p2 <- pick(-10, -10)   # below on both
+p3 <- pick(  6,   4)   # modestly above on both
+p4 <- pick(  9, -10)   # the exception: above on x, below on y
+
+# ---- Main plotting function -------------------------------------------------
+cov_plot <- function(df, focus = NULL, show_dx = FALSE, show_dy = FALSE,
+                     show_rect = FALSE, rect_all = FALSE, means = TRUE,
+                     title = NULL, label = TRUE) {
+
+  mx <- mean(df$x); my <- mean(df$y)
+
+  d <- df |>
+    mutate(dx = x - mx, dy = y - my,
+           sign = if_else(dx * dy >= 0, "pos", "neg"))
+
+  f <- d |> filter(id %in% focus)
+
+  p <- ggplot(d, aes(x, y)) +
+    geom_point(color = "grey40", alpha = 0.6, shape = 16, size = 2)
+
+  if (means) {
+    p <- p +
+      geom_vline(xintercept = mx, color = grey, linewidth = 0.4) +
+      geom_hline(yintercept = my, color = grey, linewidth = 0.4) +
+      annotate("text", x = mx + 0.8, y = lims[1] + 1, label = "bar(x)",
+               parse = TRUE, hjust = 0, color = grey, size = 4.5) +
+      annotate("text", x = lims[1] + 0.8, y = my + 2, label = "bar(y)",
+               parse = TRUE, hjust = 0, color = grey, size = 4.5)
+  }
+
+  # Rectangles: all points, or just the focus points
+  if (rect_all || show_rect) {
+    r <- if (rect_all) d else f
+    p <- p +
+      geom_rect(data = r,
+                aes(xmin = pmin(x, mx), xmax = pmax(x, mx),
+                    ymin = pmin(y, my), ymax = pmax(y, my), fill = sign),
+                alpha = if (rect_all) 0.10 else 0.18, inherit.aes = FALSE)
+  }
+
+  # Deviation error bars for focus points
+  if (nrow(f) > 0) {
+    if (show_dx) {
+      p <- p + geom_errorbar(data = f,
+                             aes(y = y, xmin = pmin(x, mx), xmax = pmax(x, mx),
+                                 color = sign),
+                             orientation = "y", width = 2.5, linewidth = 0.8,
+                             inherit.aes = FALSE)
+    }
+    if (show_dy) {
+      p <- p + geom_errorbar(data = f,
+                             aes(x = x, ymin = pmin(y, my), ymax = pmax(y, my),
+                                 color = sign),
+                             orientation = "x", width = 2.5, linewidth = 0.8,
+                             inherit.aes = FALSE)
+    }
+    p <- p + geom_point(data = f, aes(color = sign), shape = 16, size = 3.8)
+
+    # Labels only when a single point is featured
+    if (label && nrow(f) == 1) {
+      if (show_dx) {
+        p <- p + annotate("text", x = (f$x + mx) / 2, y = f$y + 2.5,
+                          label = "x[i] - bar(x)", parse = TRUE,
+                          color = cols[[f$sign]], size = 4.5)
+      }
+      if (show_dy) {
+        p <- p + annotate("text", x = f$x + 1.2, y = (f$y + my) / 2,
+                          label = "y[i] - bar(y)", parse = TRUE, hjust = 0,
+                          color = cols[[f$sign]], size = 4.5)
+      }
+    }
+  }
+
+  p +
+    scale_color_manual(values = cols) +
+    scale_fill_manual(values = cols) +
+    scale_x_continuous(breaks = seq(30, 70, 20)) +
+    scale_y_continuous(breaks = seq(30, 70, 20)) +
+    coord_cartesian(xlim = lims, ylim = lims) +
+    labs(x = "X", y = "Y", title = title) +
+    guides(x = guide_axis(cap = TRUE), y = guide_axis(cap = TRUE),
+           color = "none", fill = "none") +
+    theme_classic() +
+    theme(plot.title = element_text(hjust = 0.5, size = 11))
+}
+```
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4.5
+#| echo: false
+cov_plot(df, means = FALSE)
+```
+
+
+## Covariance Visually
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4.5
+#| echo: false
+cov_plot(df)
+```
+
+
+## Covariance Visually
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4.5
+#| echo: false
+cov_plot(df, focus = p1)
+```
+
+
+## Covariance Visually
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4.5
+#| echo: false
+cov_plot(df, focus = p1, show_dx = TRUE)
+```
+
+
+## Covariance Visually
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4.5
+#| echo: false
+cov_plot(df, focus = p1, show_dx = TRUE, show_dy = TRUE)
+```
+
+
+## Covariance Visually
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4.5
+#| echo: false
+cov_plot(df, focus = c(p1, p2), show_dx = TRUE, show_dy = TRUE)
+```
+
+
+## Covariance Visually
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4.5
+#| echo: false
+cov_plot(df, focus = c(p1, p2, p3), show_dx = TRUE, show_dy = TRUE)
+```
+
+
+## Covariance Visually
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4.5
+#| echo: false
+cov_plot(df, focus = c(p1, p2, p3, p4), show_dx = TRUE, show_dy = TRUE)
+```
+
+<!-- ## Every point's rectangle -->
+
+<!-- Covariance is the average signed area: blue rectangles add, orange rectangles subtract. -->
+
+<!-- ```{r} -->
+<!-- #| fig-width: 6 -->
+<!-- #| fig-height: 4.2 -->
+<!-- cov_plot(df, rect_all = TRUE) -->
+<!-- ``` -->
+
+## Covariance Visually
+
+Examples of positive, zero, and negative covariance:
+
+```{r}
+#| layout-ncol: 3
+#| fig-width: 4
+#| fig-height: 3.6
+#| fig-align: center
+#| echo: false
+panel <- function(rho, title) {
+  d <- make_df(rho)
+  feat <- d |> slice_max(abs(x - mean(x)), n = 6) |> pull(id)
+  cov_plot(d, focus = feat, show_dx = TRUE, show_dy = TRUE, title = title)
+}
+panel( 0.6, "Positive: bars mostly agree")
+panel(-0.6, "Negative: bars mostly disagree")
+panel( 0.0, "Zero: no consistent pattern")
+```
+
+
+
+## Correlation
+
+It's tricky to numerically interpret a covariance, because it is in a combination of x and y's units. Correlation standardizes covariance down to a single scale.
+
+$$ r_{xy} = \frac{s_{xy}}{s_{x} s_{y}}  $$
+
+::: subpoint
+○ $s_{xy}$: covariance between $x$ and $y$
+:::
+
+::: subpoint
+○ $s_x$: sample standard deviation of $x$
+:::
+
+::: subpoint
+○ $s_y$: sample standard deviation of $y$
+:::
+
+We standardize covariance into correlation just by dividing by the two variables' standard deviations!
+
+
+## Correlation
+
+It's tricky to numerically interpret a covariance, because it is in a combination of x and y's units. Correlation standardizes covariance down to a single scale.
+
+$$ r_{xy} = \frac{s_{xy}}{s_{x} s_{y}} = \frac{\sum_{i = 1}^N (x_i - \bar{x}) (y_i - \bar{y}) }{\sqrt{\sum_{i = 1}^N (x_i - \bar{x})^2} \sqrt{\sum_{i = 1}^N (y_i - \bar{y})^2}}$$
+Bounded from $[-1, \ 1]$
+
+::: subpoint
+○ $r_{xy} = -1$: strong negative correlation (when $x$ increases, $y$ tends to decrease)
+:::
+
+::: subpoint
+○ $r_{xy} = 0$: no correlation ($x$ increasing doesn't provide information about $y$)
+:::
+
+::: subpoint
+○ $r_{xy} = 1$: strong positive correlation (when $x$ increases, $y$ tends to increase)
+:::
+
+
+## Covariance in R
+
+`cov(x, y = NULL, use = "everything", method = "pearson")`
+
+::: subpoint
+○ `x` = numeric vector or dataframe
+:::
+
+::: subpoint
+○ `y` = if `x` is a numeric vector, can specify `y` as a numeric vector
+:::
+
+::: subpoint
+○ `use` = how to handle missing (`NA`) values
+:::
+
+::: subpoint
+○ `method` = which type of coefficient to compute
+:::
+
+
+## Covariance in R
+
+Need to `select()` down just to variables of interest.
+
+:::: {.columns}
+::: {.column .fragment width="50%"}
+```{r}
+library(palmerpenguins)
+
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  cov()
+```
+:::
+
+::: {.column .fragment width="50%"}
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  cov(use = "complete.obs")
+```
+:::
+::::
+
+
+## Correlation in R
+
+`cor(x, y = NULL, use = "everything", method = "pearson")`
+
+::: subpoint
+○ `x` = numeric vector or dataframe
+:::
+
+::: subpoint
+○ `y` = if `x` is a numeric vector, can specify `y` as a numeric vector
+:::
+
+::: subpoint
+○ `use` = how to handle missing (`NA`) values
+:::
+
+::: subpoint
+○ `method` = which type of coefficient to compute
+:::
+
+
+## Correlation in R
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  cor()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  cor(use = "complete.obs")
+```
+:::
+::::
+
+
+## Handling `NA`s
+
+`cov()` and `cor()` have different options for what to do if missing values (`NA`s) are present
+
+::: subpoint
+○ `"everything"` = use all values: if one is `NA`, result will be `NA`
+:::
+
+::: subpoint
+○ `"all.obs"` = use all values: if one is `NA` throw an error
+:::
+
+::: subpoint
+○ `"complete.obs"` = delete rows with any `NA` values at all: if no rows remaining, throw an error
+:::
+
+::: subpoint
+○ `"na.or.complete"` = delete rows with any `NA` values at all: if no rows remaining, result will be `NA`
+:::
+
+::: subpoint
+○ `"pairwise.complete.obs"` = for each pair of variables, delete rows if either of the pairs is `NA`: may result in correlations being computed on different sample sizes
+:::
+
+
+## Handling `NA`s
+
+:::: {.columns style="font-size:90%"}
+::: {.column width="33%"}
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  cor(use = "everything")
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+#| error: true
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  cor(use = "all.obs")
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  cor(use = "complete.obs")
+```
+:::
+::::
+
+
+:::: {.columns style="font-size:90%"}
+::: {.column width="17%"}
+
+:::
+
+::: {.column width="33%"}
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  cor(use = "na.or.complete")
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  cor(use = "pairwise.complete.obs")
+```
+:::
+
+::: {.column width="17%"}
+
+:::
+::::
+
+
+
+## Scatterplots
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  labs(y = "Body Mass", x = "Flipper Length") +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  labs(y = "Body Mass", x = "Flipper Length") +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+:::
+
+
+## Scatterplots
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  annotate(geom = "text", label = round(r, 2), x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T)) +
+  labs(y = "Body Mass", x = "Flipper Length") +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  annotate(geom = "text", label = round(r, 2), x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T)) +
+  labs(y = "Body Mass", x = "Flipper Length") +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+:::
+
+
+## Scatterplots
+
+:::: {.columns}
+::: {.column width="50%"}
+If there are lots of datapoints, may want to take down the `alpha` for clearer results.
+
+E.g., with the `tidyverse` `diamonds` dataset.
+:::
+
+::: {.column .fragment width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+diamonds |>
+  ggplot(aes(x = carat, y = price)) +
+  geom_point() +
+  labs(y = "Price", x = "Carat") +
+  scale_y_continuous(labels = scales::label_currency()) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+diamonds |>
+  ggplot(aes(x = carat, y = price)) +
+  geom_point() +
+  labs(y = "Price", x = "Carat") +
+  scale_y_continuous(labels = scales::label_currency()) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+:::
+
+:::
+::::
+
+
+## Scatterplots
+
+:::: {.columns}
+::: {.column width="50%"}
+If there are lots of datapoints, may want to take down the `alpha` for clearer results.
+
+E.g., with the `tidyverse` `diamonds` dataset.
+:::
+
+::: {.column width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+diamonds |>
+  ggplot(aes(x = carat, y = price)) +
+  geom_point(alpha = 0.025, shape = 16, size = 2) +
+  labs(y = "Price", x = "Carat") +
+  scale_y_continuous(labels = scales::label_currency()) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+diamonds |>
+  ggplot(aes(x = carat, y = price)) +
+  geom_point(alpha = 0.025, shape = 16, size = 2) +
+  labs(y = "Price", x = "Carat") +
+  scale_y_continuous(labels = scales::label_currency()) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+:::
+
+:::
+::::
+
+
+## Scatterplot Matrices
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+# install.packages("GGally")
+
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  GGally::ggpairs()
+```
+
+### Code
+```{r}
+#| eval: false
+# install.packages("GGally")
+
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  GGally::ggpairs()
+```
+:::
+
+
+## Scatterplot Matrices
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 6
+#| fig-align: center
+penguins |>
+  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  GGally::ggpairs() +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+penguins |>
+  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  GGally::ggpairs()
+```
+:::
+
+
+
+## Lab 12 Activity
+
+<!-- ## Ideas -->
+
+<!-- strength of correlation plots -->
+
+<!-- units above mean vs below mean to demonstrate covariance -->
+
+<!-- single regression on standardized variables will give cor -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
