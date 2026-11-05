@@ -22,6 +22,15 @@ list(
   tar_quarto(lab_index, "lab/lab-index.qmd"),
   
   
+  ## lab 12
+  tar_target(lab_12_slides_qmd, 
+             "lab/slides/lab_12.qmd", 
+             format = "file"),
+  tar_target(lab_12_slides, {
+    quarto::quarto_render(lab_12_slides_qmd, quiet = F)
+    qmd_out(lab_12_slides_qmd)
+  }, format = "file"),
+  
   ## lab 11
   tar_target(chick_week_data, make_chick_week_data()),
   tar_file(chick_week_data_file, 
