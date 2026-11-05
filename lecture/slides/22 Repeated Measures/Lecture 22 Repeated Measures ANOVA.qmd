@@ -55,6 +55,59 @@ my_yellow2 <- "#FFFFCC"
 ```
 
 
+## Jargon Refresher
+
+**Linear Model:**
+
+$${\color{blue}y_i} = \beta_0 + \sum_{p=1}^P \beta_p {\color{red}x_{ip}} + \epsilon_i$$
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+
+[**Left side variable terms**]{style="color: blue;"}
+
+
+- $y$
+- Dependent variable (DV)
+- Outcome variable
+- Response variable
+
+:::
+
+::: {.column width="50%"}
+[**Right side variable terms**]{style="color: red;"}
+
+- $x$
+- Independent variable(s) (IVs)
+- Predictor variable(s)
+
+:::
+:::::
+
+## Tests We Will Cover {.scrollable}
+
+
+::: {style="font-size: 0.8em;"}
+
+| IV(s) | DV | IV Status | Model Structure |
+| :--- | :--- | :--- | :--- |
+| — | One categorical | — | $\chi^2$ Goodness of Fit |
+| One Categorical | One categorical | — | $\chi^2$ Test of Independence |
+| — | One Continuous | — | One Sample $t$-Test |
+| One Binary | One Continuous | Dependent Groups | Paired Sample $t$-Test |
+| One Binary | One Continuous | Independent Groups | Independent Sample $t$-Test |
+| One Categorical | One Continuous | Independent Groups | One-Way ANOVA |
+| More than One Categorical | One Continuous | Independent Groups | Factorial ANOVA |
+| One Categorical | One Continuous | Dependent Groups | One-Way Repeated Measures ANOVA |
+| **More than One Categorical** | **One Continuous** | **Dependent Groups** | **Factorial Repeated Measures ANOVA** |
+| **More than One Categorical** | **One Continuous** | **Mixed Groups** | **Mixed ANOVA** |
+| One Continuous | One Continuous | — | Correlation or Simple Regression |
+| More than One Continuous | One Continuous | — | Multiple Regression |
+
+::: 
+
+
+
 
 ## Review
 
@@ -782,9 +835,15 @@ Arguably a more "modern" approach to violations of independence assumption. Basi
     - Sometimes called "person level effects" (more Bayesian term)
 - Then we estimate the average intercept and slope(s) across all persons
     - These are "fixed effects"
-    - Sometimes called "population level effects)" (more Bayesian term)
+    - Sometimes called "population level effects" (more Bayesian term)
     
-You can even have multiple levels of nesting, e.g. have random effects for persons nested within random effects for schools.
+## Multi(ple) Levels
+
+Clustering variable also doesn't have to be people! Multilevel models split observations into nested grouping structures. Another example:
+
+- Level 1: Observations for students across different homework assignments
+- Level 2: Average student assignment scores for students in different schools
+- Level 3: Average math scores for all students in different schools
 
 ## Multilevel Visual
 
@@ -916,11 +975,18 @@ The Bayesian approach to within subjects factors is a variation on the multileve
 - Output will be as a dummy coded linear model
 - Due to small sample size and repeated measures, I need more iterations to achieve convergence
 
+
+## `rstanarm`
+
 ```{r}
 #| echo: TRUE
 library(rstanarm)
 options(contrasts = c("contr.treatment", "contr.poly")) # Reset dummy coding
 options(mc.cores = parallel::detectCores())
+```
+```{r}
+#| echo: TRUE
+#| cache: TRUE
 stan_anxiety <- stan_lmer(anxiety ~ group * time + (1 | id), anxiety_long,
                           seed = 1521,
                           iter = 5000)
@@ -935,6 +1001,7 @@ Specifying `pars =  c("alpha", "beta")` means I just want the results for the in
 
 ```{r}
 #| echo: true
+#| cache: TRUE
 summary(stan_anxiety, pars = c("alpha", "beta"))
 ```
 
@@ -944,6 +1011,7 @@ If I want the means and credible intervals for each cell, I can use `emmeans()`
 
 ```{r}
 #| echo: true
+#| cache: TRUE
 library(emmeans)
 emmeans(stan_anxiety, ~ group * time)
 
@@ -957,6 +1025,7 @@ I can also plot my results to get a visual
 
 ```{r}
 #| echo: true
+#| cache: TRUE
 #| message: false
 
 ggp_stan <- ggpredict(stan_anxiety, c("time","group"))

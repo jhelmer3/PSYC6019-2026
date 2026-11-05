@@ -1,0 +1,229 @@
+---
+title: "Lecture 25: Review of Matrix Algebra"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(gganimate)
+library(gifski)
+
+options(width = 60)
+opts_chunk$set(out.width = '100%')
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, comment = '', class.output = 'sh',
+               fig.width = 8, fig.height = 5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+```
+
+
+## What is a Matrix?
+
+A **matrix** is an **array** with $R$ rows and $C$ columns. A matrix is typically denoted with an **upper case bolded** letter. For example
+
+$$\mathbf{X} = \begin{bmatrix} 5 & 3 & 6 \\ 12 & -4 & 2 \\ 7 & -15 & 72 \\ -4 & 0 & 1 \end{bmatrix}$$
+
+Is a $4 \times 3$ matrix.
+
+## Vectors and Scalars
+
+A vector is an $R \times 1$ matrix. You might think of a vector as being like a single column. A vector is typically denoted with a lower case **bolded** letter. For example
+
+$$\mathbf{x} = \begin{bmatrix} 5 \\ 12 \\ 7 \\ -4 \end{bmatrix}$$
+
+A single number is referred to as a **scalar**. It is typically denoted with an **un**bolded lower case letter. For example
+
+$$x = 5$$
+
+
+## Matrix Addition
+
+Matrices of the same size can be added element-wise
+
+Example: 
+
+$$\begin{bmatrix}1 & 4\\
+2 & 5\\
+3 & 6
+\end{bmatrix}+\begin{bmatrix}7 & 10\\
+8 & 11\\
+9 & 12
+\end{bmatrix}=\begin{bmatrix}1+7 & 4+10\\
+2+8 & 5+11\\
+3+9 & 6+12
+\end{bmatrix}=\begin{bmatrix}8 & 14\\
+10 & 16\\
+12 & 18
+\end{bmatrix}$$
+
+- Results in a matrix of the same size
+
+- Addition is not defined if matrices are not the same size
+
+
+## Matrix Multiplication
+
+Matrix multiplication is more complicated than matrix addition. 
+
+- DO NOT multiply element-wise
+
+- Order matters (commutative property does not hold) ($\mathbf{AB} \neq \mathbf{BA}$)
+  
+- The number of <u>columns</u> in the first matrix must equal the number of <u>rows</u> in the second matrix
+  
+- Results in a matrix with the same number of <u>rows</u> as the first matrix and the same number of <u>columns</u> as the second matrix
+
+::: columns
+
+:::: column
+
+If $\mathbf{A}_{2\times 3}$ and $\mathbf{B}_{3 \times 5}$:
+
+- $\mathbf{AB}$ has 2 rows, 5 columns
+
+- $\mathbf{BA}$ is not defined
+
+::::
+
+:::: column
+
+If $\mathbf{A}_{2\times 3}$ and $\mathbf{B}_{3 \times 2}$:
+
+- $\mathbf{AB}$ has 2 rows, 2 columns
+
+- $\mathbf{BA}$ has 3 rows, 3 columns
+
+::::
+
+:::
+
+## Matrix Multiplication
+
+Example: $\mathbf{A}_{2\times 3}$, $\mathbf{B}_{3\times 2}$
+
+$$\mathbf{AB} = \begin{bmatrix}1 & 3 & 5\\ 2 & 4 & 6 \end{bmatrix}\begin{bmatrix}7 & 10\\8 & 11\\9 & 12\end{bmatrix} = \\ \begin{bmatrix}1\times7+3\times8+5\times9 & 1\times10+3\times11+5\times12\\
+2\times7+4\times8+6\times9 & 2\times10+4\times11+6\times12
+\end{bmatrix} = \begin{bmatrix}76 & 103\\
+100 & 136
+\end{bmatrix}$$
+
+## Matrix Multiplication
+
+Example: $\mathbf{A}_{2\times 3}$, $\mathbf{B}_{3\times 2}$
+
+::: {style="font-size: 0.9em;"}
+
+$$\mathbf{BA} = \begin{bmatrix}7 & 10\\8 & 11\\9 & 12\end{bmatrix}\begin{bmatrix}1 & 3 & 5\\2 & 4 & 6\end{bmatrix} = \\ \begin{bmatrix}7\times1+10\times2 & 7\times3+10\times4 & 7\times5+10\times6\\
+8\times1+11\times2 & 8\times3+11\times4 & 8\times5+11\times6\\
+9\times1+12\times2 & 9\times3+12\times4 & 9\times5+12\times6
+\end{bmatrix} = \begin{bmatrix}27 & 61 & 95\\
+30 & 68 & 106\\
+33 & 75 & 117
+\end{bmatrix}$$
+
+:::
+
+```{r}
+#| eval: false
+
+A <- matrix(1:6, 2, 3)
+B <- matrix(7:12, 3, 2)
+A %*% B
+B %*% A
+```
+
+## Matrix Transpose
+
+::: {style="font-size: 0.8em;"}
+
+Matrix transpose: 
+
+- Rows become columns, columns become rows
+
+- Denoted with the "$T$" superscript: $\mathbf{A}^T$ is the transpose of $\mathbf{A}$
+
+$$\mathbf{A}=\begin{bmatrix}1 & 4\\
+2 & 5\\
+3 & 6
+\end{bmatrix} \qquad \mathbf{A}^T=\begin{bmatrix}1 & 2 & 3\\
+4 & 5 & 6
+\end{bmatrix}$$
+
+Multiplying a matrix by its transpose is a generalization of **squaring**
+
+A **symmetric** matrix is a square matrix for which $\mathbf{A}^T = \mathbf{A}$. Example:
+
+$$\begin{bmatrix}0 & 1 & 2 & 3\\
+1 & 4 & 5 & 6\\
+2 & 5 & 7 & 8\\
+3 & 6 & 8 & 9
+\end{bmatrix}$$
+
+::: 
+
+## Matrix Inverse
+
+$\mathbf{I}$ is an **identity matrix** (generalization of the number '1'), a square matrix with 1's on the main diagonal and 0's on the off-diagonals. Example:
+
+$$\begin{bmatrix}1 & 0 & 0\\
+0 & 1 & 0\\
+0 & 0 & 1
+\end{bmatrix}$$
+
+Matrix inverse:
+
+- Defined only for square matrices
+
+- $\mathbf{A}^{-1}$ is the matrix inverse of $\mathbf{A}$
+
+- $\mathbf{A}\mathbf{A}^{-1} = \mathbf{A}^{-1}\mathbf{A} = \mathbf{I}$
+
+## Inverse Example
+
+$$\begin{bmatrix}1 & 2\\
+2 & 5
+\end{bmatrix}\begin{bmatrix}5 & -2\\
+-2 & 1
+\end{bmatrix}=\begin{bmatrix}1 & 0\\
+0 & 1
+\end{bmatrix}$$
