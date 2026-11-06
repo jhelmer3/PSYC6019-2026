@@ -32,6 +32,8 @@ knitr:
 #| output: false
 library(tidyverse)
 library(gt)
+
+options(width = 150)
 ```
 
 
@@ -46,6 +48,10 @@ It is sometimes the case that we have *repeated measures* data
 ○ Responses collected on the same measure for the same subjects more than one time
 :::
 
+::: subpoint
+○ Responses collected on same measure under different conditions
+:::
+
 Some examples of repeated measures data are...
 
 ::: subpoint
@@ -53,27 +59,62 @@ Some examples of repeated measures data are...
 :::
 
 ::: subpoint
-○ A yearly customer satisfaction survey
+○ A yearly customer satisfaction survey sent to the same group of customers
+:::
+
+::: subpoint
+○ Score on a cognitive task performed under normal vs. stressful conditions
 :::
 
 For these designs, we have to consider if conditions are **between-person** or **within-person**.
 
 
-## Repeated Measures Model
+## Between- vs. Within-Person
+
+:::: {.columns}
+::: {.column width="50%"}
+### Between
+
+Each subject only experiences **one level** of the condition
+
+::: subpoint
+○ Participants randomized into either the control or experimental condition for a task
+:::
+
+::: subpoint
+○ Age (in a cross-sectional survey)
+:::
+:::
+
+::: {.column width="50%"}
+### Within
+
+Each subject experiences **more than one level** of the condition
+
+::: subpoint
+○ Participants rotating through conditions in a study
+:::
+
+::: subpoint
+○ Age (in a longitudinal survey)
+:::
+:::
+::::
+
 
 
 ## Repeated Measures Example
 
 :::: {.columns}
-::: {.column width="85%"}
+::: {.column width="80%"}
 Remember the chick dataset from Lab 06?
 
 We are going to use... another chick dataset!
 
-Instead of having one value of chick weight for each chick, this one tracks chicks over time. We will have weekly updates on each chick's weight.
+Instead of having one value of chick weight for each chick, this one tracks chicks over time, with weekly updates on each chick's weight (g).
 :::
 
-::: {.column width="15%"}
+::: {.column width="20%"}
 ![](https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489)
 :::
 ::::
@@ -101,14 +142,34 @@ We want to estimate the effect of week of the experiment on chick weight! Is `we
 ::: fragment
 Can see in the data that within every chick (`.by = chick`), there are four levels of week (`n_distinct(week)`) but only one level of diet (`n_distinct(diet)`).
 
+:::: {.columns}
+::: {.column width="50%"}
 ```{r}
 chick_data |>
   summarize(
     .by = chick,
     n_diets = n_distinct(diet),
     n_weeks = n_distinct(week)
-  )
+  ) |>
+  head()
 ```
+:::
+
+::: {.column width="50%"}
+```{r}
+chick_data |>
+  summarize(
+    .by = chick,
+    n_diets = n_distinct(diet),
+    n_weeks = n_distinct(week)
+  ) |>
+  summary()
+```
+:::
+::::
+
+
+
 :::
 
 
@@ -179,13 +240,13 @@ chick_data |>
 
 ### Anonymous Function
 
-::: {style="font-size:90%"}
+::: {style="font-size:85%"}
 Example of standardizing across all columns (not necessarily helpful here). Reminder: within `function()`, `column` just serves as a placeholder name for that column. You can name this whatever you want, as long as you use the same name within the actual function part.
 :::
 
 ```{r}
 chick_data |>
-  mutate(across(everything(), function(column) (column - mean(column)) / sd(column)))
+  mutate(across(everything(), function(column) (column - mean(column)) / sd(column), .names = "{.col}_z"))
 ```
 
 ### List of Functions
@@ -244,6 +305,10 @@ chick_cleaned
 
 `= NULL` means the default is set to `NULL`, and you do not necessarily need to input a value for that argument for the function to work. (May need to specify it for the function to work the way you *want*, though! Depends on your ANOVA goal.)
 
+::: fragment
+Reminder: our goal is to estimate the within-chick effect of time (`week`) on chick weight.
+:::
+
 
 ## Balanced or Unbalanced
 
@@ -268,6 +333,7 @@ What type of Sums of Squares should we use?
 
 `ez::ezANOVA(data, dv, wid, within = NULL, between = NULL, type = 2)`
 
+::: fragment
 ```{r}
 chick_weight_model <- ez::ezANOVA(
   data = chick_cleaned,
@@ -276,6 +342,16 @@ chick_weight_model <- ez::ezANOVA(
   within = week
 )
 chick_weight_model
+```
+:::
+
+
+## Repeated Measures Example
+
+```{r}
+chick_weight_model$ANOVA
+chick_weight_model$`Mauchly's Test for Sphericity`
+chick_weight_model$`Sphericity Corrections`
 ```
 
 
@@ -310,25 +386,28 @@ chick_weight_model$`Mauchly's Test for Sphericity`
 chick_weight_model$`Sphericity Corrections`
 ```
 
+`GGe` and `HFe` show $\hat{\epsilon} < .75$, so use Greenhouse-Geisser (`GGe`).
 
-## Results
+We still reject the null with $p < .001$. The model indicates significant variation in chick weight over weeks.
 
-```{r}
-chick_weight_model
-```
 
 We observe a significant effect of week on chick weight.
 
 
 ## Estimated Marginal Means
 
+::: fragment
 ```{r}
 #| error: true
 emmeans::emmeans(chick_weight_model)
 ```
+:::
 
+::: fragment
 `ezANOVA()` returns dataframes, and `emmeans()` isn't able to turn those into EMMS. You'd have to refit with `return_aov = T` and also make sure the contrasts have been set to orthogonal before (even if it is a balanced design!).
 
+:::: {.columns}
+::: {.column width="50%"}
 ```{r}
 options(contrasts = c("contr.sum", "contr.poly"))
 
@@ -339,23 +418,32 @@ chick_weight_model <- ez::ezANOVA(
   within = week,
   return_aov = T
 )
+```
+:::
+
+::: {.column width="50%"}
+```{r}
 chick_weight_model$aov |> emmeans::emmeans("week")
 ```
+:::
+::::
+:::
 
+::: fragment
 That's an annoying extra step to deal with...
-
-
-## Resetting
+:::
 
 ```{r}
+#| echo: false
 options(contrasts = c("contr.treatment", "contr.poly"))
 ```
 
 
-## `afex` ANOVAs
+## Enter `afex` ANOVAs
 
 Unfortunately, the `{ez}` package is not being maintained very much right now, so it is less equipped to integrate with other tools like `{emmeans}`. Another package with ANOVA functionality, `{afex}`, is! It has many ways of specifying the form of the ANOVA you want to estimate, including one very similar to the `ezANOVA()` syntax.
 
+::: fragment
 `afex::aov_ez(id, dv, data, between = NULL, within = NULL, type = 3)`
 
 ::: subpoint
@@ -377,9 +465,11 @@ Unfortunately, the `{ez}` package is not being maintained very much right now, s
 ::: subpoint
 ○ `type` = the sums of squares method used
 :::
+:::
 
+::: fragment
 Note that `afex::aov_ez()` uses Type III sums of squares by default.
-
+:::
 
 
 ## `afex` ANOVAs
@@ -431,7 +521,10 @@ chick_weight_model_afex <- afex::aov_ez(
   id = "chick",
   within = "week"
 )
-emms_week <- emmeans::emmeans(chick_weight_model_afex, specs = "week")
+emms_week <- emmeans::emmeans(
+  chick_weight_model_afex, 
+  specs = "week"
+)
 emms_week
 ```
 :::
@@ -440,6 +533,7 @@ emms_week
 
 ## Visualization
 
+::: fragment
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -461,7 +555,8 @@ emms_week |>
   geom_linerange() +
   scale_x_discrete(labels = parse_number) + # applying the `parse_number()` function to the labels
   labs(y = "Weight", x = "Week",
-       caption = "Line ranges represent 95% confidence intervals. Gray points represent observed data.") +
+       caption = "Line ranges represent 95% confidence intervals of the mean. Gray points represent observed data." |>
+         str_wrap(60)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
   theme_classic()
@@ -484,13 +579,14 @@ emms_week |>
   geom_linerange() +
   scale_x_discrete(labels = parse_number) + # applying the `parse_number()` function to the labels
   labs(y = "Weight", x = "Week",
-       caption = "Line ranges represent 95% confidence intervals. Gray points represent observed data.") +
+       caption = "Line ranges represent 95% confidence intervals of the mean. Gray points represent observed data." |>
+         str_wrap(60)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
   theme_classic()
 ```
 :::
-
+:::
 
 
 
@@ -505,6 +601,9 @@ We aren't just limited to between- **OR** within-subject factors, can also test 
 
 We can also consider the effect of diet given to the chicks on their weight!
 
+::: fragment
+:::: {.columns}
+::: {.column width="40%"}
 ```{r}
 chick_weight_diet_model <- afex::aov_ez(
   data = chick_cleaned,
@@ -513,8 +612,16 @@ chick_weight_diet_model <- afex::aov_ez(
   within = "week",
   between = "diet"
 )
+```
+:::
+
+::: {.column width="60%"}
+```{r}
 summary(chick_weight_diet_model)
 ```
+:::
+::::
+:::
 
 
 ## Balanced or Unbalanced
@@ -525,23 +632,26 @@ summary(chick_weight_diet_model)
 ```{r}
 chick_cleaned |> 
   count(week, diet) |>
-  pivot_wider(names_from = diet, names_prefix = "week_", values_from = n)
+  pivot_wider(
+    names_from = week, 
+    values_from = n
+  )
 ```
 :::
 
 ::: {.column width="50%"}
 What type of Sums of Squares should we use?
 
-[Do we think an interaction between week and diet would be negligible?]{.fragment} [Maybe not! Let's do Type III]{.fragment}
+[Do we think an interaction between week and diet would be negligible?]{.fragment} [Maybe not! Let's do Type III.]{.fragment}
 
 [`afex` does Type III sums of squares by default... and also automatically changes the contrasts to `contr.sum`!]{.fragment}
 :::
 ::::
 
 
-## Mixed ANOVA Example
+## Mixed ANOVA Example `{ez}`
 
-We can also consider the effect of diet given to the chicks on their weight!
+Here's the same model using the `ez` package.
 
 ```{r}
 options(contrasts = c("contr.sum", "contr.poly"))
@@ -568,6 +678,7 @@ emms_week_diet
 
 ## Visualization
 
+::: fragment
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -584,14 +695,16 @@ emms_week_diet |>
     data = chick_cleaned, 
     aes(x = week, y = weight, color = diet), 
     inherit.aes = F,
-    alpha = 0.4, position = position_dodge(.5)
+    alpha = 0.4, position = position_dodge(.5),
+    size = 2
   ) +
   geom_point(position = position_dodge(.5)) +
   geom_linerange(position = position_dodge(.5)) +
   geom_line(position = position_dodge(.5)) +
   scale_x_discrete(labels = parse_number) + # applying the `parse_number()` function to the labels
-  labs(y = "Weight", x = "Week", color = "Diet",
-       caption = "Line ranges represent 95% confidence intervals. Light points represent observed data.") +
+  labs(y = "Weight", x = "Week",
+       caption = "Line ranges represent 95% confidence intervals of the mean." |>
+         str_wrap(60)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
   theme_classic()
@@ -609,21 +722,23 @@ emms_week_diet |>
     data = chick_cleaned, 
     aes(x = week, y = weight, color = diet), 
     inherit.aes = F,
-    alpha = 0.4, position = position_dodge(.5)
+    alpha = 0.4, position = position_dodge(.5),
+    size = 2
   ) +
   geom_point(position = position_dodge(.5)) +
   geom_linerange(position = position_dodge(.5)) +
   geom_line(position = position_dodge(.5)) +
   scale_x_discrete(labels = parse_number) + # applying the `parse_number()` function to the labels
-  labs(y = "Weight", x = "Week", color = "Diet",
-       caption = "Line ranges represent 95% confidence intervals. Light points represent observed data.") +
+  labs(y = "Weight", x = "Week",
+       caption = "Line ranges represent 95% confidence intervals of the mean." |>
+         str_wrap(60)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
   theme_classic()
 ```
 :::
 
-
+:::
 
 ## Visualization
 
@@ -631,8 +746,8 @@ emms_week_diet |>
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
-#| fig-height: 4
+#| fig-width: 10
+#| fig-height: 3
 #| fig-align: center
 emms_week_diet |>
   as_tibble() |>
@@ -648,12 +763,13 @@ emms_week_diet |>
   geom_linerange(position = position_dodge(.5)) +
   geom_line(position = position_dodge(.5)) +
   scale_x_discrete(labels = parse_number) + # applying the `parse_number()` function to the labels
-  labs(y = "Weight", x = "Week", color = "Diet",
-       caption = "Line ranges represent 95% confidence intervals. Light points represent observed data.") +
+  labs(y = "Weight", x = "Week",
+       caption = "Line ranges represent 95% confidence intervals of the mean." |>
+         str_wrap(60)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T),
          color = guide_none()) +
-  facet_wrap("diet", labeller = "label_both") +
+  facet_wrap("diet", labeller = "label_both", ncol = 4) +
   theme_classic()
 ```
 
@@ -674,8 +790,9 @@ emms_week_diet |>
   geom_linerange(position = position_dodge(.5)) +
   geom_line(position = position_dodge(.5)) +
   scale_x_discrete(labels = parse_number) + # applying the `parse_number()` function to the labels
-  labs(y = "Weight", x = "Week", color = "Diet",
-       caption = "Line ranges represent 95% confidence intervals. Light points represent observed data.") +
+  labs(y = "Weight", x = "Week",
+       caption = "Line ranges represent 95% confidence intervals of the mean." |>
+         str_wrap(60)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T),
          color = guide_none()) +
@@ -684,6 +801,9 @@ emms_week_diet |>
 ```
 :::
 
+::: {style="font-size:90%"}
+Plotting technique called "small multiples." By separating factors into their own plots, you can sometimes see trends more clearly.
+:::
 
 
 # Multilevel Modeling
@@ -694,6 +814,17 @@ Multilevel Modeling (MLM) is a more flexible framework for examining between- an
 
 ANOVA can't handle missing cells (e.g., if we were missing weight observations for diet 3 in week 4), but MLM can! It can also handle uneven spaces between time intervals (e.g., if we had observations on day 1, day 5, day 6, day 8, and day 30).
 
+
+<!-- ## Multilevel Modeling Example -->
+
+<!-- With Multilevel Modeling, our time variable doesn't need to be categorical anymore! We can represent it as continuous. -->
+
+<!-- ```{r} -->
+<!-- chick_cleaned_mlm <- chick_data |> -->
+<!--   mutate( -->
+<!--     across(c(chick, diet), factor) -->
+<!--   ) -->
+<!-- ``` -->
 
 
 ## Multilevel Modeling Example
@@ -728,7 +859,6 @@ chick_weight_diet_model_bayes <- stan_lmer(
   weight ~ week * diet + (1 | chick), 
   data = chick_cleaned
 )
-
 summary(chick_weight_diet_model_bayes)
 ```
 
@@ -755,19 +885,21 @@ summary(chick_weight_diet_model_bayes, pars = c("alpha", "beta", "sigma", "Sigma
 ## Diagnostics
 
 ```{r}
-#| fig-width: 18
-#| fig-height: 8
+#| fig-width: 15
+#| fig-height: 6
+#| fig-align: center
 pars_for_trace_plot <- c(
   names(fixef(chick_weight_diet_model_bayes)),
   "sigma",
   "Sigma[chick:(Intercept),(Intercept)]"
 )
-
-bayesplot::mcmc_trace(chick_weight_diet_model_bayes, pars = pars_for_trace_plot, facet_args = list(ncol = 6))
+bayesplot::mcmc_trace(chick_weight_diet_model_bayes, pars = pars_for_trace_plot, facet_args = list(ncol = 5))
 ```
 
 
 ## Estimated Marginal Means
+
+Since we represented `week` as numeric, `emmeans` is showing us the EMM for each diet at the average of week. 
 
 ```{r}
 emms_bayes <- emmeans::emmeans(chick_weight_diet_model_bayes, specs = c("diet", "week"))
@@ -800,7 +932,8 @@ emms_bayes |>
   geom_line(position = position_dodge(.5)) +
   scale_x_discrete(labels = parse_number) + # applying the `parse_number()` function to the labels
   labs(y = "Weight", x = "Week", color = "Diet",
-       caption = "Line ranges represent 95% highest posterior density intervals. Light points represent observed data.") +
+       caption = "Line ranges represent 95% highest posterior density intervals. Light points represent observed data." |>
+         str_wrap(60)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T),
          color = guide_none()) +
@@ -825,7 +958,8 @@ emms_bayes |>
   geom_line(position = position_dodge(.5)) +
   scale_x_discrete(labels = parse_number) + # applying the `parse_number()` function to the labels
   labs(y = "Weight", x = "Week", color = "Diet",
-       caption = "Line ranges represent 95% highest posterior density intervals. Light points represent observed data.") +
+       caption = "Line ranges represent 95% highest posterior density intervals. Light points represent observed data." |>
+         str_wrap(60)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T),
          color = guide_none()) +
@@ -841,8 +975,8 @@ emms_bayes |>
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
-#| fig-height: 4
+#| fig-width: 10
+#| fig-height: 3
 #| fig-align: center
 emms_bayes |>
   as_tibble() |>
@@ -859,7 +993,8 @@ emms_bayes |>
   geom_line(position = position_dodge(.5)) +
   scale_x_discrete(labels = parse_number) + # applying the `parse_number()` function to the labels
   labs(y = "Weight", x = "Week", color = "Diet",
-       caption = "Line ranges represent 95% highest posterior density intervals. Light points represent observed data.") +
+       caption = "Line ranges represent 95% highest posterior density intervals. Light points represent observed data." |>
+         str_wrap(60)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T),
          color = guide_none()) +
@@ -885,7 +1020,8 @@ emms_bayes |>
   geom_line(position = position_dodge(.5)) +
   scale_x_discrete(labels = parse_number) + # applying the `parse_number()` function to the labels
   labs(y = "Weight", x = "Week", color = "Diet",
-       caption = "Line ranges represent 95% highest posterior density intervals. Light points represent observed data.") +
+       caption = "Line ranges represent 95% highest posterior density intervals. Light points represent observed data." |>
+         str_wrap(60)) +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T),
          color = guide_none()) +

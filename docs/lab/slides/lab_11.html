@@ -221,22 +221,48 @@ Jess Helmer
 <div class="subpoint">
 <p>○ Responses collected on the same measure for the same subjects more than one time</p>
 </div>
+<div class="subpoint">
+<p>○ Responses collected on same measure under different conditions</p>
+</div>
 <p>Some examples of repeated measures data are…</p>
 <div class="subpoint">
 <p>○ A mental health screening questionnaire given to participants once per day</p>
 </div>
 <div class="subpoint">
-<p>○ A yearly customer satisfaction survey</p>
+<p>○ A yearly customer satisfaction survey sent to the same group of customers</p>
+</div>
+<div class="subpoint">
+<p>○ Score on a cognitive task performed under normal vs.&nbsp;stressful conditions</p>
 </div>
 <p>For these designs, we have to consider if conditions are <strong>between-person</strong> or <strong>within-person</strong>.</p>
-</section><section id="repeated-measures-model" class="slide level2"><h2>Repeated Measures Model</h2>
+</section><section id="between--vs.-within-person" class="slide level2"><h2>Between- vs.&nbsp;Within-Person</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="between">Between</h3>
+<p>Each subject only experiences <strong>one level</strong> of the condition</p>
+<div class="subpoint">
+<p>○ Participants randomized into either the control or experimental condition for a task</p>
+</div>
+<div class="subpoint">
+<p>○ Age (in a cross-sectional survey)</p>
+</div>
+</div><div class="column" style="width:50%;">
+<h3 id="within">Within</h3>
+<p>Each subject experiences <strong>more than one level</strong> of the condition</p>
+<div class="subpoint">
+<p>○ Participants rotating through conditions in a study</p>
+</div>
+<div class="subpoint">
+<p>○ Age (in a longitudinal survey)</p>
+</div>
+</div></div>
 </section><section id="repeated-measures-example" class="slide level2"><h2>Repeated Measures Example</h2>
 <div class="columns">
-<div class="column" style="width:85%;">
+<div class="column" style="width:80%;">
 <p>Remember the chick dataset from Lab 06?</p>
 <p>We are going to use… another chick dataset!</p>
-<p>Instead of having one value of chick weight for each chick, this one tracks chicks over time. We will have weekly updates on each chick’s weight.</p>
-</div><div class="column" style="width:15%;">
+<p>Instead of having one value of chick weight for each chick, this one tracks chicks over time, with weekly updates on each chick’s weight (g).</p>
+</div><div class="column" style="width:20%;">
 <p><img data-src="https://mannapro.com/cdn/shop/articles/how-to-raise-baby-chickens_2x_b6a71ebc-2d08-4bdc-82b0-18ccf861c9bd.jpg?v=1740003489"></p>
 </div></div>
 </section><section id="repeated-measures-example-1" class="slide level2"><h2>Repeated Measures Example</h2>
@@ -247,16 +273,16 @@ Jess Helmer
 <pre><code># A tibble: 180 × 4
    chick  diet  week weight
    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
- 1    13     1     0     60
- 2    13     1     1     71
- 3    13     1     2     91
- 4    13     1     3     96
- 5     9     1     0     68
- 6     9     1     1     90
- 7     9     1     2    100
- 8     9     1     3     98
- 9    20     1     0     58
-10    20     1     1     77
+ 1     1     1     0     60
+ 2     1     1     1     71
+ 3     1     1     2     91
+ 4     1     1     3     96
+ 5     2     1     0     68
+ 6     2     1     1     90
+ 7     2     1     2    100
+ 8     2     1     3     98
+ 9     3     1     0     58
+10     3     1     1     77
 # ℹ 170 more rows</code></pre>
 </div>
 </div>
@@ -265,72 +291,85 @@ Jess Helmer
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("psych")</span></span>
 <span><span class="fu">psych</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/psych/man/describe.html">describe</a></span><span class="op">(</span><span class="va">chick_data</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>       vars   n   mean    sd median trimmed   mad min max range  skew kurtosis
-chick     1 180  26.09 14.56   27.0   26.24 19.27   1  50    49 -0.11    -1.18
-diet      2 180   2.27  1.15    2.0    2.21  1.48   1   4     3  0.27    -1.39
-week      3 180   1.50  1.12    1.5    1.50  1.48   0   3     3  0.00    -1.38
-weight    4 180 159.48 78.37  147.5  151.85 92.66  58 373   315  0.64    -0.55
-         se
-chick  1.09
-diet   0.09
-week   0.08
-weight 5.84</code></pre>
+<pre><code>       vars   n   mean    sd median trimmed   mad min max range skew kurtosis   se
+chick     1 180  23.00 13.02   23.0   23.00 16.31   1  45    44 0.00    -1.22 0.97
+diet      2 180   2.27  1.15    2.0    2.21  1.48   1   4     3 0.27    -1.39 0.09
+week      3 180   1.50  1.12    1.5    1.50  1.48   0   3     3 0.00    -1.38 0.08
+weight    4 180 159.48 78.37  147.5  151.85 92.66  58 373   315 0.64    -0.55 5.84</code></pre>
 </div>
 </div>
 </section><section id="repeated-measures-example-3" class="slide level2"><h2>Repeated Measures Example</h2>
 <p>We want to estimate the effect of week of the experiment on chick weight! Is <code>week</code> a between- or within-subject (chick) factor? <span class="fragment">Within!</span> <span class="fragment">What about diet?</span> <span class="fragment">Between!</span></p>
 <div class="fragment">
 <p>Can see in the data that within every chick (<code>.by = chick</code>), there are four levels of week (<code>n_distinct(week)</code>) but only one level of diet (<code>n_distinct(diet)</code>).</p>
+<div class="columns">
+<div class="column" style="width:50%;">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span></span>
 <span>    .by <span class="op">=</span> <span class="va">chick</span>,</span>
 <span>    n_diets <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">diet</span><span class="op">)</span>,</span>
 <span>    n_weeks <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">week</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 45 × 3
-   chick n_diets n_weeks
-   &lt;dbl&gt;   &lt;int&gt;   &lt;int&gt;
- 1    13       1       4
- 2     9       1       4
- 3    20       1       4
- 4    10       1       4
- 5    17       1       4
- 6    19       1       4
- 7     4       1       4
- 8     6       1       4
- 9    11       1       4
-10     3       1       4
-# ℹ 35 more rows</code></pre>
+<pre><code># A tibble: 6 × 3
+  chick n_diets n_weeks
+  &lt;dbl&gt;   &lt;int&gt;   &lt;int&gt;
+1     1       1       4
+2     2       1       4
+3     3       1       4
+4     4       1       4
+5     5       1       4
+6     6       1       4</code></pre>
 </div>
 </div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_data</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">summarize</span><span class="op">(</span></span>
+<span>    .by <span class="op">=</span> <span class="va">chick</span>,</span>
+<span>    n_diets <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">diet</span><span class="op">)</span>,</span>
+<span>    n_weeks <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">week</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     chick       n_diets     n_weeks 
+ Min.   : 1   Min.   :1   Min.   :4  
+ 1st Qu.:12   1st Qu.:1   1st Qu.:4  
+ Median :23   Median :1   Median :4  
+ Mean   :23   Mean   :1   Mean   :4  
+ 3rd Qu.:34   3rd Qu.:1   3rd Qu.:4  
+ Max.   :45   Max.   :1   Max.   :4  </code></pre>
+</div>
+</div>
+</div></div>
 </div>
 </section><section id="repeated-measures-example-4" class="slide level2"><h2>Repeated Measures Example</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 4
   chick  diet  week weight
   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-1    13     1     0     60
-2    13     1     1     71
-3    13     1     2     91
-4    13     1     3     96</code></pre>
+1     1     1     0     60
+2     1     1     1     71
+3     1     1     2     91
+4     1     1     3     96</code></pre>
 </div>
 </div>
 <p>Notice that all the variables in this dataset are <code>double</code>s (decimal point numbers). The ANOVA functions want to treat these as <code>factor</code>s.</p>
 <div class="columns">
 <div class="column fragment" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">&lt;-</span> <span class="va">chick_data</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">&lt;-</span> <span class="va">chick_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>chick <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">chick</span><span class="op">)</span>,</span>
 <span>         week <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">week</span><span class="op">)</span>,</span>
 <span>         diet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">diet</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div><div class="column fragment" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">&lt;-</span> <span class="va">chick_data</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">&lt;-</span> <span class="va">chick_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span></span>
 <span>    <span class="fu">across</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">chick</span>, <span class="va">week</span>, <span class="va">diet</span><span class="op">)</span>, <span class="va">factor</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -360,47 +399,47 @@ weight 5.84</code></pre>
 <div id="tabset-1-1">
 <p>Just like we did before</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_data</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">chick</span>, <span class="va">week</span>, <span class="va">diet</span><span class="op">)</span>, <span class="va">factor</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 180 × 4
    chick diet  week  weight
    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;  &lt;dbl&gt;
- 1 13    1     0         60
- 2 13    1     1         71
- 3 13    1     2         91
- 4 13    1     3         96
- 5 9     1     0         68
- 6 9     1     1         90
- 7 9     1     2        100
- 8 9     1     3         98
- 9 20    1     0         58
-10 20    1     1         77
+ 1 1     1     0         60
+ 2 1     1     1         71
+ 3 1     1     2         91
+ 4 1     1     3         96
+ 5 2     1     0         68
+ 6 2     1     1         90
+ 7 2     1     2        100
+ 8 2     1     3         98
+ 9 3     1     0         58
+10 3     1     1         77
 # ℹ 170 more rows</code></pre>
 </div>
 </div>
 </div>
 <div id="tabset-1-2">
-<div style="font-size:90%">
+<div style="font-size:85%">
 <p>Example of standardizing across all columns (not necessarily helpful here). Reminder: within <code>function()</code>, <code>column</code> just serves as a placeholder name for that column. You can name this whatever you want, as long as you use the same name within the actual function part.</p>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_data</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">column</span><span class="op">)</span> <span class="op">(</span><span class="va">column</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">column</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">column</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_data</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">column</span><span class="op">)</span> <span class="op">(</span><span class="va">column</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">column</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">column</span><span class="op">)</span>, .names <span class="op">=</span> <span class="st">"{.col}_z"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 180 × 4
-    chick  diet   week weight
-    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
- 1 -0.899 -1.11 -1.34  -1.27 
- 2 -0.899 -1.11 -0.446 -1.13 
- 3 -0.899 -1.11  0.446 -0.874
- 4 -0.899 -1.11  1.34  -0.810
- 5 -1.17  -1.11 -1.34  -1.17 
- 6 -1.17  -1.11 -0.446 -0.887
- 7 -1.17  -1.11  0.446 -0.759
- 8 -1.17  -1.11  1.34  -0.784
- 9 -0.418 -1.11 -1.34  -1.29 
-10 -0.418 -1.11 -0.446 -1.05 
+<pre><code># A tibble: 180 × 8
+   chick  diet  week weight chick_z diet_z week_z weight_z
+   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+ 1     1     1     0     60   -1.69  -1.11 -1.34    -1.27 
+ 2     1     1     1     71   -1.69  -1.11 -0.446   -1.13 
+ 3     1     1     2     91   -1.69  -1.11  0.446   -0.874
+ 4     1     1     3     96   -1.69  -1.11  1.34    -0.810
+ 5     2     1     0     68   -1.61  -1.11 -1.34    -1.17 
+ 6     2     1     1     90   -1.61  -1.11 -0.446   -0.887
+ 7     2     1     2    100   -1.61  -1.11  0.446   -0.759
+ 8     2     1     3     98   -1.61  -1.11  1.34    -0.784
+ 9     3     1     0     58   -1.54  -1.11 -1.34    -1.29 
+10     3     1     1     77   -1.54  -1.11 -0.446   -1.05 
 # ℹ 170 more rows</code></pre>
 </div>
 </div>
@@ -408,7 +447,7 @@ weight 5.84</code></pre>
 <div id="tabset-1-3">
 <p>Example of summarizing columns by multiple functions</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_data</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span></span>
 <span>      <span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>, </span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>min <span class="op">=</span> <span class="va">min</span>, </span>
@@ -417,11 +456,9 @@ weight 5.84</code></pre>
 <span>    <span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 12
-  chick_min chick_max chick_mean diet_min diet_max diet_mean week_min week_max
-      &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1         1        50       26.1        1        4      2.27        0        3
-# ℹ 4 more variables: week_mean &lt;dbl&gt;, weight_min &lt;dbl&gt;, weight_max &lt;dbl&gt;,
-#   weight_mean &lt;dbl&gt;</code></pre>
+  chick_min chick_max chick_mean diet_min diet_max diet_mean week_min week_max week_mean weight_min weight_max weight_mean
+      &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;
+1         1        45         23        1        4      2.27        0        3       1.5         58        373        159.</code></pre>
 </div>
 </div>
 </div>
@@ -431,7 +468,7 @@ weight 5.84</code></pre>
 </h2>
 <p>Our original <code>across()</code> method successfully converted the intended columns to <code><a href="https://rdrr.io/r/base/factor.html">factor()</a></code>s.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">&lt;-</span> <span class="va">chick_data</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">&lt;-</span> <span class="va">chick_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span></span>
 <span>    <span class="fu">across</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">chick</span>, <span class="va">week</span>, <span class="va">diet</span><span class="op">)</span>, <span class="va">factor</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
@@ -441,16 +478,16 @@ weight 5.84</code></pre>
 <pre><code># A tibble: 180 × 4
    chick diet  week  weight
    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;  &lt;dbl&gt;
- 1 13    1     0         60
- 2 13    1     1         71
- 3 13    1     2         91
- 4 13    1     3         96
- 5 9     1     0         68
- 6 9     1     1         90
- 7 9     1     2        100
- 8 9     1     3         98
- 9 20    1     0         58
-10 20    1     1         77
+ 1 1     1     0         60
+ 2 1     1     1         71
+ 3 1     1     2         91
+ 4 1     1     3         96
+ 5 2     1     0         68
+ 6 2     1     1         90
+ 7 2     1     2        100
+ 8 2     1     3         98
+ 9 3     1     0         58
+10 3     1     1         77
 # ℹ 170 more rows</code></pre>
 </div>
 </div>
@@ -472,11 +509,14 @@ weight 5.84</code></pre>
 <p>○ <code>type</code> = the sums of squares method used</p>
 </div>
 <p><code>= NULL</code> means the default is set to <code>NULL</code>, and you do not necessarily need to input a value for that argument for the function to work. (May need to specify it for the function to work the way you <em>want</em>, though! Depends on your ANOVA goal.)</p>
+<div class="fragment">
+<p>Reminder: our goal is to estimate the within-chick effect of time (<code>week</code>) on chick weight.</p>
+</div>
 </section><section id="balanced-or-unbalanced" class="slide level2"><h2>Balanced or Unbalanced</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">|&gt;</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">count</span><span class="op">(</span><span class="va">week</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 2
@@ -494,8 +534,9 @@ weight 5.84</code></pre>
 </div></div>
 </section><section id="repeated-measures-example-6" class="slide level2"><h2>Repeated Measures Example</h2>
 <p><code>ez::ezANOVA(data, dv, wid, within = NULL, between = NULL, type = 2)</code></p>
+<div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model</span> <span class="op">&lt;-</span> <span class="fu">ez</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ez/man/ezANOVA.html">ezANOVA</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model</span> <span class="op">&lt;-</span> <span class="fu">ez</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ez/man/ezANOVA.html">ezANOVA</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">chick_cleaned</span>,</span>
 <span>  dv <span class="op">=</span> <span class="va">weight</span>,</span>
 <span>  wid <span class="op">=</span> <span class="va">chick</span>,</span>
@@ -516,9 +557,28 @@ $`Sphericity Corrections`
 2   week 0.375836 2.894679e-19         * 0.3789365 2.103585e-19         *</code></pre>
 </div>
 </div>
+</div>
+</section><section id="repeated-measures-example-7" class="slide level2"><h2>Repeated Measures Example</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model</span><span class="op">$</span><span class="va">ANOVA</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Effect DFn DFd        F            p p&lt;.05       ges
+2   week   3 132 184.9641 4.388747e-47     * 0.5768658</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model</span><span class="op">$</span><span class="va">`Mauchly's Test for Sphericity`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Effect           W            p p&lt;.05
+2   week 0.006591028 2.933872e-44     *</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model</span><span class="op">$</span><span class="va">`Sphericity Corrections`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Effect      GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
+2   week 0.375836 2.894679e-19         * 0.3789365 2.103585e-19         *</code></pre>
+</div>
+</div>
 </section><section id="assumptions" class="slide level2"><h2>Assumptions</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">week</span>, </span>
 <span>              names_prefix <span class="op">=</span> <span class="st">"week_"</span>, </span>
 <span>              values_from <span class="op">=</span> <span class="va">weight</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -537,7 +597,7 @@ week_3 318.04848 1756.9066 4694.9864 5113.7192</code></pre>
 </section><section id="assumptions-1" class="slide level2"><h2>Assumptions</h2>
 <p>If assumption holds, <code>W</code> should be close to 1 and <code>p</code> will be large (<span class="math inline">\(p &gt; .05\)</span>).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model</span><span class="op">$</span><span class="va">`Mauchly's Test for Sphericity`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model</span><span class="op">$</span><span class="va">`Mauchly's Test for Sphericity`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Effect           W            p p&lt;.05
 2   week 0.006591028 2.933872e-44     *</code></pre>
@@ -545,42 +605,32 @@ week_3 318.04848 1756.9066 4694.9864 5113.7192</code></pre>
 </div>
 </section><section id="assumptions-corrections" class="slide level2"><h2>Assumptions Corrections</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model</span><span class="op">$</span><span class="va">`Sphericity Corrections`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model</span><span class="op">$</span><span class="va">`Sphericity Corrections`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Effect      GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
 2   week 0.375836 2.894679e-19         * 0.3789365 2.103585e-19         *</code></pre>
 </div>
 </div>
-</section><section id="results" class="slide level2"><h2>Results</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>$ANOVA
-  Effect DFn DFd        F            p p&lt;.05       ges
-2   week   3 132 184.9641 4.388747e-47     * 0.5768658
-
-$`Mauchly's Test for Sphericity`
-  Effect           W            p p&lt;.05
-2   week 0.006591028 2.933872e-44     *
-
-$`Sphericity Corrections`
-  Effect      GGe        p[GG] p[GG]&lt;.05       HFe        p[HF] p[HF]&lt;.05
-2   week 0.375836 2.894679e-19         * 0.3789365 2.103585e-19         *</code></pre>
-</div>
-</div>
+<p><code>GGe</code> and <code>HFe</code> show <span class="math inline">\(\hat{\epsilon} &lt; .75\)</span>, so use Greenhouse-Geisser (<code>GGe</code>).</p>
+<p>We still reject the null with <span class="math inline">\(p &lt; .001\)</span>. The model indicates significant variation in chick weight over weeks.</p>
 <p>We observe a significant effect of week on chick weight.</p>
 </section><section id="estimated-marginal-means" class="slide level2"><h2>Estimated Marginal Means</h2>
+<div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">chick_weight_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">chick_weight_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>Error:
 ! Can't handle an object of class  "list" 
  Use help("models", package = "emmeans") for information on supported models.</code></pre>
 </div>
 </div>
+</div>
+<div class="fragment">
 <p><code>ezANOVA()</code> returns dataframes, and <code>emmeans()</code> isn’t able to turn those into EMMS. You’d have to refit with <code>return_aov = T</code> and also make sure the contrasts have been set to orthogonal before (even if it is a balanced design!).</p>
+<div class="columns">
+<div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>contrasts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"contr.sum"</span>, <span class="st">"contr.poly"</span><span class="op">)</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>contrasts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"contr.sum"</span>, <span class="st">"contr.poly"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">chick_weight_model</span> <span class="op">&lt;-</span> <span class="fu">ez</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ez/man/ezANOVA.html">ezANOVA</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">chick_cleaned</span>,</span>
@@ -588,8 +638,11 @@ $`Sphericity Corrections`
 <span>  wid <span class="op">=</span> <span class="va">chick</span>,</span>
 <span>  within <span class="op">=</span> <span class="va">week</span>,</span>
 <span>  return_aov <span class="op">=</span> <span class="cn">T</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">chick_weight_model</span><span class="op">$</span><span class="va">aov</span> <span class="op">|&gt;</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="st">"week"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model</span><span class="op">$</span><span class="va">aov</span> <span class="op">|&gt;</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="st">"week"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> week emmean   SE   df lower.CL upper.CL
  0      74.9 7.66 89.5     59.6     90.1
@@ -601,14 +654,14 @@ Warning: EMMs are biased unless design is perfectly balanced
 Confidence level used: 0.95 </code></pre>
 </div>
 </div>
-<p>That’s an annoying extra step to deal with…</p>
-</section><section id="resetting" class="slide level2"><h2>Resetting</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>contrasts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"contr.treatment"</span>, <span class="st">"contr.poly"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
 </div>
-</section><section id="afex-anovas" class="slide level2"><h2>
-<code>afex</code> ANOVAs</h2>
+<div class="fragment">
+<p>That’s an annoying extra step to deal with…</p>
+</div>
+</section><section id="enter-afex-anovas" class="slide level2"><h2>Enter <code>afex</code> ANOVAs</h2>
 <p>Unfortunately, the <a href="https://github.com/bucky2177/ez">ez</a> package is not being maintained very much right now, so it is less equipped to integrate with other tools like <a href="https://rvlenth.github.io/emmeans/">emmeans</a>. Another package with ANOVA functionality, <a href="https://afex.singmann.science/">afex</a>, is! It has many ways of specifying the form of the ANOVA you want to estimate, including one very similar to the <code>ezANOVA()</code> syntax.</p>
+<div class="fragment">
 <p><code>afex::aov_ez(id, dv, data, between = NULL, within = NULL, type = 3)</code></p>
 <div class="subpoint">
 <p>○ <code>id</code> = <strong>character vector</strong> name of the column with subject identifier</p>
@@ -625,13 +678,16 @@ Confidence level used: 0.95 </code></pre>
 <div class="subpoint">
 <p>○ <code>type</code> = the sums of squares method used</p>
 </div>
+</div>
+<div class="fragment">
 <p>Note that <code><a href="https://rdrr.io/pkg/afex/man/aov_car.html">afex::aov_ez()</a></code> uses Type III sums of squares by default.</p>
-</section><section id="afex-anovas-1" class="slide level2"><h2>
+</div>
+</section><section id="afex-anovas" class="slide level2"><h2>
 <code>afex</code> ANOVAs</h2>
 <p>Unfortunately, the <a href="https://github.com/bucky2177/ez">ez</a> package is not being maintained very much right now, so it is less equipped to integrate with other tools like <a href="https://rvlenth.github.io/emmeans/">emmeans</a>. Another package with ANOVA functionality, <a href="https://afex.singmann.science/">afex</a>, is! It has many ways of specifying the form of the ANOVA you want to estimate, including one very similar to the <code>ezANOVA()</code> syntax.</p>
 <p><code>afex::aov_ez(id, dv, data, between = NULL, within = NULL, type = 3)</code></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model_afex</span> <span class="op">&lt;-</span> <span class="fu">afex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/afex/man/aov_car.html">aov_ez</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model_afex</span> <span class="op">&lt;-</span> <span class="fu">afex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/afex/man/aov_car.html">aov_ez</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">chick_cleaned</span>,</span>
 <span>  dv <span class="op">=</span> <span class="st">"weight"</span>,</span>
 <span>  id <span class="op">=</span> <span class="st">"chick"</span>,</span>
@@ -669,7 +725,7 @@ week 0.3789365 2.103585e-19</code></pre>
 </div>
 </section><section id="estimated-marginal-means-1" class="slide level2"><h2>Estimated Marginal Means</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_week</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">chick_weight_model_afex</span>, specs <span class="op">=</span> <span class="st">"week"</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_week</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">chick_weight_model_afex</span>, specs <span class="op">=</span> <span class="st">"week"</span><span class="op">)</span></span>
 <span><span class="va">emms_week</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> week emmean    SE df lower.CL upper.CL
@@ -686,7 +742,7 @@ Confidence level used: 0.95 </code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">&lt;-</span> <span class="va">chick_data</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">&lt;-</span> <span class="va">chick_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span></span>
 <span>    <span class="fu">across</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">chick</span>, <span class="va">week</span>, <span class="va">diet</span><span class="op">)</span>, <span class="va">factor</span><span class="op">)</span>,</span>
 <span>    week <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"week_"</span>, <span class="va">week</span><span class="op">)</span></span>
@@ -696,28 +752,31 @@ Confidence level used: 0.95 </code></pre>
 <pre><code># A tibble: 180 × 4
    chick diet  week   weight
    &lt;fct&gt; &lt;fct&gt; &lt;chr&gt;   &lt;dbl&gt;
- 1 13    1     week_0     60
- 2 13    1     week_1     71
- 3 13    1     week_2     91
- 4 13    1     week_3     96
- 5 9     1     week_0     68
- 6 9     1     week_1     90
- 7 9     1     week_2    100
- 8 9     1     week_3     98
- 9 20    1     week_0     58
-10 20    1     week_1     77
+ 1 1     1     week_0     60
+ 2 1     1     week_1     71
+ 3 1     1     week_2     91
+ 4 1     1     week_3     96
+ 5 2     1     week_0     68
+ 6 2     1     week_1     90
+ 7 2     1     week_2    100
+ 8 2     1     week_3     98
+ 9 3     1     week_0     58
+10 3     1     week_1     77
 # ℹ 170 more rows</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model_afex</span> <span class="op">&lt;-</span> <span class="fu">afex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/afex/man/aov_car.html">aov_ez</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_model_afex</span> <span class="op">&lt;-</span> <span class="fu">afex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/afex/man/aov_car.html">aov_ez</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">chick_cleaned</span>,</span>
 <span>  dv <span class="op">=</span> <span class="st">"weight"</span>,</span>
 <span>  id <span class="op">=</span> <span class="st">"chick"</span>,</span>
 <span>  within <span class="op">=</span> <span class="st">"week"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">emms_week</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">chick_weight_model_afex</span>, specs <span class="op">=</span> <span class="st">"week"</span><span class="op">)</span></span>
+<span><span class="va">emms_week</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span></span>
+<span>  <span class="va">chick_weight_model_afex</span>, </span>
+<span>  specs <span class="op">=</span> <span class="st">"week"</span></span>
+<span><span class="op">)</span></span>
 <span><span class="va">emms_week</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> week   emmean    SE df lower.CL upper.CL
@@ -731,6 +790,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div></div>
 </section><section id="visualization" class="slide level2"><h2>Visualization</h2>
+<div class="fragment">
 <div class="panel-tabset">
 <ul id="tabset-2" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-2-1">Plot</a></li>
@@ -741,7 +801,7 @@ Confidence level used: 0.95 </code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_11_files/figure-revealjs/unnamed-chunk-24-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+<figure><p><img data-src="lab_11_files/figure-revealjs/unnamed-chunk-26-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -749,7 +809,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-2-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("ggdist")</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("ggdist")</span></span>
 <span></span>
 <span><span class="va">emms_week</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -763,10 +823,12 @@ Confidence level used: 0.95 </code></pre>
 <span>  <span class="fu">geom_linerange</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_x_discrete</span><span class="op">(</span>labels <span class="op">=</span> <span class="va">parse_number</span><span class="op">)</span> <span class="op">+</span> <span class="co"># applying the `parse_number()` function to the labels</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Weight"</span>, x <span class="op">=</span> <span class="st">"Week"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Line ranges represent 95% confidence intervals. Gray points represent observed data."</span><span class="op">)</span> <span class="op">+</span></span>
+<span>       caption <span class="op">=</span> <span class="st">"Line ranges represent 95% confidence intervals of the mean. Gray points represent observed data."</span> <span class="op">|&gt;</span></span>
+<span>         <span class="fu">str_wrap</span><span class="op">(</span><span class="fl">60</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
 <span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </div>
 </div>
 </div>
@@ -777,15 +839,21 @@ Confidence level used: 0.95 </code></pre>
 <p>We aren’t just limited to between- <strong>OR</strong> within-subject factors, can also test combinations of both.</p>
 </section><section id="mixed-anova-example" class="slide level2"><h2>Mixed ANOVA Example</h2>
 <p>We can also consider the effect of diet given to the chicks on their weight!</p>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:40%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_diet_model</span> <span class="op">&lt;-</span> <span class="fu">afex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/afex/man/aov_car.html">aov_ez</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_weight_diet_model</span> <span class="op">&lt;-</span> <span class="fu">afex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/afex/man/aov_car.html">aov_ez</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">chick_cleaned</span>,</span>
 <span>  dv <span class="op">=</span> <span class="st">"weight"</span>,</span>
 <span>  id <span class="op">=</span> <span class="st">"chick"</span>,</span>
 <span>  within <span class="op">=</span> <span class="st">"week"</span>,</span>
 <span>  between <span class="op">=</span> <span class="st">"diet"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">chick_weight_diet_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:60%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">chick_weight_diet_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Univariate Type III Repeated-Measures ANOVA Assuming Sphericity
@@ -820,32 +888,38 @@ week      0.387433 8.827052e-21
 diet:week 0.387433 1.379698e-02</code></pre>
 </div>
 </div>
+</div></div>
+</div>
 </section><section id="balanced-or-unbalanced-1" class="slide level2"><h2>Balanced or Unbalanced</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">|&gt;</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chick_cleaned</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">count</span><span class="op">(</span><span class="va">week</span>, <span class="va">diet</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">diet</span>, names_prefix <span class="op">=</span> <span class="st">"week_"</span>, values_from <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span>  <span class="fu">pivot_wider</span><span class="op">(</span></span>
+<span>    names_from <span class="op">=</span> <span class="va">week</span>, </span>
+<span>    values_from <span class="op">=</span> <span class="va">n</span></span>
+<span>  <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 5
-  week   week_1 week_2 week_3 week_4
-  &lt;chr&gt;   &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
-1 week_0     16     10     10      9
-2 week_1     16     10     10      9
-3 week_2     16     10     10      9
-4 week_3     16     10     10      9</code></pre>
+  diet  week_0 week_1 week_2 week_3
+  &lt;fct&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
+1 1         16     16     16     16
+2 2         10     10     10     10
+3 3         10     10     10     10
+4 4          9      9      9      9</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <p>What type of Sums of Squares should we use?</p>
-<p><span class="fragment">Do we think an interaction between week and diet would be negligible?</span> <span class="fragment">Maybe not! Let’s do Type III</span></p>
+<p><span class="fragment">Do we think an interaction between week and diet would be negligible?</span> <span class="fragment">Maybe not! Let’s do Type III.</span></p>
 <p><span class="fragment"><code>afex</code> does Type III sums of squares by default… and also automatically changes the contrasts to <code>contr.sum</code>!</span></p>
 </div></div>
-</section><section id="mixed-anova-example-1" class="slide level2"><h2>Mixed ANOVA Example</h2>
-<p>We can also consider the effect of diet given to the chicks on their weight!</p>
+</section><section id="mixed-anova-example-ez" class="slide level2"><h2>Mixed ANOVA Example <code>{ez}</code>
+</h2>
+<p>Here’s the same model using the <code>ez</code> package.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>contrasts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"contr.sum"</span>, <span class="st">"contr.poly"</span><span class="op">)</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>contrasts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"contr.sum"</span>, <span class="st">"contr.poly"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">chick_weight_diet_model_ez</span> <span class="op">&lt;-</span> <span class="fu">ez</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ez/man/ezANOVA.html">ezANOVA</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">chick_cleaned</span>,</span>
 <span>  dv <span class="op">=</span> <span class="va">weight</span>,</span>
@@ -871,7 +945,7 @@ Sphericity correction method: GG </code></pre>
 </div>
 </section><section id="visualization-1" class="slide level2"><h2>Visualization</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_week_diet</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">chick_weight_diet_model</span>, specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"diet"</span>, <span class="st">"week"</span><span class="op">)</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_week_diet</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">chick_weight_diet_model</span>, specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"diet"</span>, <span class="st">"week"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">emms_week_diet</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> diet week   emmean    SE df lower.CL upper.CL
@@ -896,6 +970,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </section><section id="visualization-2" class="slide level2"><h2>Visualization</h2>
+<div class="fragment">
 <div class="panel-tabset">
 <ul id="tabset-3" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-3-1">Plot</a></li>
@@ -906,7 +981,7 @@ Confidence level used: 0.95 </code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_11_files/figure-revealjs/unnamed-chunk-30-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+<figure><p><img data-src="lab_11_files/figure-revealjs/unnamed-chunk-33-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -914,7 +989,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-3-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_week_diet</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_week_diet</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">week</span>, y <span class="op">=</span> <span class="va">emmean</span>, </span>
 <span>             ymin <span class="op">=</span> <span class="va">lower.CL</span>, ymax <span class="op">=</span> <span class="va">upper.CL</span>, </span>
@@ -923,17 +998,20 @@ Confidence level used: 0.95 </code></pre>
 <span>    data <span class="op">=</span> <span class="va">chick_cleaned</span>, </span>
 <span>    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">week</span>, y <span class="op">=</span> <span class="va">weight</span>, color <span class="op">=</span> <span class="va">diet</span><span class="op">)</span>, </span>
 <span>    inherit.aes <span class="op">=</span> <span class="cn">F</span>,</span>
-<span>    alpha <span class="op">=</span> <span class="fl">0.4</span>, position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span></span>
+<span>    alpha <span class="op">=</span> <span class="fl">0.4</span>, position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">2</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_linerange</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_x_discrete</span><span class="op">(</span>labels <span class="op">=</span> <span class="va">parse_number</span><span class="op">)</span> <span class="op">+</span> <span class="co"># applying the `parse_number()` function to the labels</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Weight"</span>, x <span class="op">=</span> <span class="st">"Week"</span>, color <span class="op">=</span> <span class="st">"Diet"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Line ranges represent 95% confidence intervals. Light points represent observed data."</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Weight"</span>, x <span class="op">=</span> <span class="st">"Week"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Line ranges represent 95% confidence intervals of the mean."</span> <span class="op">|&gt;</span></span>
+<span>         <span class="fu">str_wrap</span><span class="op">(</span><span class="fl">60</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
 <span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </div>
 </div>
 </div>
@@ -949,7 +1027,7 @@ Confidence level used: 0.95 </code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_11_files/figure-revealjs/unnamed-chunk-32-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+<figure><p><img data-src="lab_11_files/figure-revealjs/unnamed-chunk-35-1.svg" class="quarto-figure quarto-figure-center" width="960"></p>
 </figure>
 </div>
 </div>
@@ -957,7 +1035,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-4-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_week_diet</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_week_diet</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">week</span>, y <span class="op">=</span> <span class="va">emmean</span>, </span>
 <span>             ymin <span class="op">=</span> <span class="va">lower.CL</span>, ymax <span class="op">=</span> <span class="va">upper.CL</span>, </span>
@@ -971,8 +1049,9 @@ Confidence level used: 0.95 </code></pre>
 <span>  <span class="fu">geom_linerange</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_x_discrete</span><span class="op">(</span>labels <span class="op">=</span> <span class="va">parse_number</span><span class="op">)</span> <span class="op">+</span> <span class="co"># applying the `parse_number()` function to the labels</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Weight"</span>, x <span class="op">=</span> <span class="st">"Week"</span>, color <span class="op">=</span> <span class="st">"Diet"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Line ranges represent 95% confidence intervals. Light points represent observed data."</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Weight"</span>, x <span class="op">=</span> <span class="st">"Week"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Line ranges represent 95% confidence intervals of the mean."</span> <span class="op">|&gt;</span></span>
+<span>         <span class="fu">str_wrap</span><span class="op">(</span><span class="fl">60</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
 <span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
 <span>         color <span class="op">=</span> <span class="fu">guide_none</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -982,15 +1061,26 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
+<div style="font-size:90%">
+<p>Plotting technique called “small multiples.” By separating factors into their own plots, you can sometimes see trends more clearly.</p>
+</div>
 </section></section><section><section id="multilevel-modeling" class="title-slide slide level1 center"><h1>Multilevel Modeling</h1>
 
 </section><section id="multilevel-modeling-1" class="slide level2"><h2>Multilevel Modeling</h2>
 <p>Multilevel Modeling (MLM) is a more flexible framework for examining between- and within-subject variation!</p>
 <p>ANOVA can’t handle missing cells (e.g., if we were missing weight observations for diet 3 in week 4), but MLM can! It can also handle uneven spaces between time intervals (e.g., if we had observations on day 1, day 5, day 6, day 8, and day 30).</p>
+<!-- ## Multilevel Modeling Example -->
+<!-- With Multilevel Modeling, our time variable doesn't need to be categorical anymore! We can represent it as continuous. -->
+<!-- ```{r} -->
+<!-- chick_cleaned_mlm <- chick_data |> -->
+<!--   mutate( -->
+<!--     across(c(chick, diet), factor) -->
+<!--   ) -->
+<!-- ``` -->
 </section><section id="multilevel-modeling-example" class="slide level2"><h2>Multilevel Modeling Example</h2>
 <p>Just within factor…</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("lme4")</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("lme4")</span></span>
 <span><span class="va">chick_weight_model_lmer</span> <span class="op">&lt;-</span> <span class="fu">lme4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span><span class="op">(</span><span class="va">weight</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">+</span> <span class="va">week</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">chick</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">chick_cleaned</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">chick_weight_model_lmer</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1027,7 +1117,7 @@ week3  0.000 -0.333 -0.333</code></pre>
 </section><section id="multilevel-modeling-example-1" class="slide level2"><h2>Multilevel Modeling Example</h2>
 <p>Within and between factor…</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("lme4")</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("lme4")</span></span>
 <span><span class="va">chick_weight_diet_model_lmer</span> <span class="op">&lt;-</span> <span class="fu">lme4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span><span class="op">(</span><span class="va">weight</span> <span class="op">~</span> <span class="va">week</span> <span class="op">*</span> <span class="va">diet</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">chick</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">chick_cleaned</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">chick_weight_diet_model_lmer</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1069,12 +1159,11 @@ week3:diet3   16.981      7.288   2.330</code></pre>
 </div>
 </section><section id="bayesian-multilevel-modeling" class="slide level2"><h2>Bayesian Multilevel Modeling</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/rstanarm/">rstanarm</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb66"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/rstanarm/">rstanarm</a></span><span class="op">)</span></span>
 <span><span class="va">chick_weight_diet_model_bayes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mc-stan.org/rstanarm/reference/stan_glmer.html">stan_lmer</a></span><span class="op">(</span></span>
 <span>  <span class="va">weight</span> <span class="op">~</span> <span class="va">week</span> <span class="op">*</span> <span class="va">diet</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">chick</span><span class="op">)</span>, </span>
 <span>  data <span class="op">=</span> <span class="va">chick_cleaned</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">chick_weight_diet_model_bayes</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
@@ -1092,150 +1181,150 @@ Model Info:
 
 Estimates:
                                        mean   sd     10%    50%    90% 
-(Intercept)                           164.0    5.6  156.7  164.0  171.2
-week1                                 -87.7    4.2  -92.9  -87.7  -82.4
-week2                                 -27.9    4.2  -33.2  -27.9  -22.6
-week3                                  54.1    4.2   48.9   54.2   59.5
-diet1                                 -30.6    8.7  -41.7  -30.6  -19.4
-diet2                                  -7.0   10.4  -20.2   -7.1    6.5
-diet3                                  23.8   10.0   11.1   23.8   36.6
-week1:diet1                            22.1    6.4   13.9   22.2   30.3
-week2:diet1                             8.9    6.2    0.8    8.8   17.2
-week3:diet1                           -14.1    6.4  -22.5  -14.0   -5.9
-week1:diet2                             6.4    7.6   -3.3    6.5   16.3
-week2:diet2                             2.4    7.5   -7.3    2.5   12.1
-week3:diet2                            -5.4    7.5  -14.8   -5.4    4.0
-week1:diet3                           -22.2    7.3  -31.7  -22.3  -12.7
-week2:diet3                           -15.8    7.3  -25.0  -16.0   -6.4
-week3:diet3                            17.1    7.3    7.8   17.0   26.2
-b[(Intercept) chick:1]                  8.4   16.1  -12.5    8.6   29.2
-b[(Intercept) chick:2]                 17.5   16.1   -2.7   17.6   37.8
-b[(Intercept) chick:3]                 10.1   16.4  -11.4   10.3   31.3
-b[(Intercept) chick:4]                 -9.9   16.0  -30.5  -10.0   10.7
-b[(Intercept) chick:5]                 22.5   16.0    1.7   22.5   43.0
-b[(Intercept) chick:6]                 -0.4   15.7  -20.5   -0.2   19.6
-b[(Intercept) chick:7]                 56.3   16.3   35.2   56.2   77.1
-b[(Intercept) chick:9]                -36.3   16.2  -57.4  -35.9  -15.4
-b[(Intercept) chick:10]               -27.8   16.1  -48.8  -27.6   -7.1
-b[(Intercept) chick:11]                15.2   16.5   -5.7   15.2   36.1
-b[(Intercept) chick:12]                 9.9   16.0  -10.3    9.7   30.2
-b[(Intercept) chick:13]               -43.7   16.8  -65.7  -43.3  -22.0
-b[(Intercept) chick:14]                47.8   16.4   26.9   47.8   68.9
-b[(Intercept) chick:17]               -17.9   16.1  -38.4  -17.9    2.9
-b[(Intercept) chick:19]               -17.9   16.3  -38.7  -17.9    3.0
-b[(Intercept) chick:20]               -34.0   16.1  -54.7  -34.1  -13.8
-b[(Intercept) chick:21]                65.9   17.7   43.0   65.8   88.4
-b[(Intercept) chick:22]               -22.9   17.5  -45.2  -22.8   -0.8
-b[(Intercept) chick:23]               -16.9   17.7  -39.6  -17.3    5.8
-b[(Intercept) chick:24]               -68.1   18.0  -91.0  -67.7  -45.8
-b[(Intercept) chick:25]                24.4   17.6    2.0   24.3   47.0
-b[(Intercept) chick:26]                14.0   16.8   -7.4   14.2   35.2
-b[(Intercept) chick:27]               -13.0   17.5  -35.2  -13.0    9.0
-b[(Intercept) chick:28]                 7.0   17.4  -15.2    7.1   29.5
-b[(Intercept) chick:29]                34.2   17.3   11.9   34.1   56.4
-b[(Intercept) chick:30]               -27.7   17.6  -50.1  -27.6   -5.3
-b[(Intercept) chick:31]               -13.2   17.4  -35.5  -12.7    9.2
-b[(Intercept) chick:32]                17.5   17.1   -4.4   17.5   39.5
-b[(Intercept) chick:33]               -48.2   17.3  -70.4  -47.9  -26.1
-b[(Intercept) chick:34]                34.0   17.4   11.8   33.8   56.5
-b[(Intercept) chick:35]                55.4   17.2   33.5   55.5   77.3
-b[(Intercept) chick:36]               -17.3   17.6  -39.8  -17.4    5.5
-b[(Intercept) chick:37]               -47.9   17.0  -70.1  -47.7  -26.7
-b[(Intercept) chick:38]                 4.3   17.3  -17.7    4.3   26.6
-b[(Intercept) chick:39]                -4.3   17.0  -26.0   -4.6   17.9
-b[(Intercept) chick:40]                19.7   17.2   -2.6   20.1   41.9
-b[(Intercept) chick:41]               -14.1   17.6  -36.0  -14.1    8.5
-b[(Intercept) chick:42]                16.9   17.6   -6.0   16.7   39.5
-b[(Intercept) chick:43]                -6.4   17.6  -28.8   -6.7   16.2
-b[(Intercept) chick:45]               -21.5   17.2  -43.6  -21.4    0.2
-b[(Intercept) chick:46]                -3.3   17.9  -26.5   -3.2   19.9
-b[(Intercept) chick:47]               -13.9   17.8  -37.2  -14.0    8.7
-b[(Intercept) chick:48]                30.2   17.5    7.6   30.1   52.1
-b[(Intercept) chick:49]                -0.7   17.7  -23.8   -0.7   22.3
-b[(Intercept) chick:50]                11.7   17.6  -10.8   11.3   34.5
-sigma                                  31.4    2.0   28.9   31.4   34.0
-Sigma[chick:(Intercept),(Intercept)] 1174.9  321.9  803.3 1136.2 1596.2
+(Intercept)                           163.9    5.9  156.5  163.8  171.4
+week1                                 -87.7    4.1  -92.8  -87.6  -82.4
+week2                                 -27.7    4.0  -32.9  -27.7  -22.6
+week3                                  53.9    4.0   48.8   53.9   59.2
+diet1                                 -30.6    8.6  -41.6  -30.6  -19.6
+diet2                                  -7.2   10.0  -19.8   -7.2    5.3
+diet3                                  23.9   10.1   11.0   24.1   36.5
+week1:diet1                            22.1    6.5   13.7   22.1   30.2
+week2:diet1                             8.9    6.4    0.8    8.9   17.3
+week3:diet1                           -14.0    6.4  -22.2  -14.0   -6.0
+week1:diet2                             6.3    7.3   -3.1    6.2   15.7
+week2:diet2                             2.2    7.6   -7.5    2.4   11.8
+week3:diet2                            -5.0    7.3  -14.5   -5.0    4.3
+week1:diet3                           -22.4    7.4  -32.0  -22.5  -12.9
+week2:diet3                           -15.6    7.5  -25.0  -15.5   -6.0
+week3:diet3                            16.9    7.3    7.6   17.0   26.3
+b[(Intercept) chick:1]                -44.0   16.3  -65.0  -43.9  -23.3
+b[(Intercept) chick:2]                -36.4   16.2  -57.1  -36.6  -15.9
+b[(Intercept) chick:3]                -34.0   16.5  -55.1  -33.7  -13.6
+b[(Intercept) chick:4]                -28.2   16.2  -49.0  -28.1   -7.7
+b[(Intercept) chick:5]                -18.1   16.6  -39.5  -18.1    3.2
+b[(Intercept) chick:6]                -18.1   16.3  -39.0  -18.1    3.1
+b[(Intercept) chick:7]                 -9.7   15.5  -29.6   -9.5    9.9
+b[(Intercept) chick:8]                 -0.2   16.1  -20.6   -0.1   19.7
+b[(Intercept) chick:9]                 15.3   15.9   -5.0   15.2   35.6
+b[(Intercept) chick:10]                 9.8   16.2  -10.8   10.0   30.5
+b[(Intercept) chick:11]                 8.1   16.3  -12.8    8.0   28.8
+b[(Intercept) chick:12]                 9.7   16.1  -11.0    9.8   30.0
+b[(Intercept) chick:13]                17.0   16.2   -4.0   16.9   37.8
+b[(Intercept) chick:14]                22.6   16.1    2.2   22.2   43.1
+b[(Intercept) chick:15]                48.2   16.1   26.8   48.3   68.6
+b[(Intercept) chick:16]                56.9   16.1   36.3   56.8   78.0
+b[(Intercept) chick:17]               -68.0   17.7  -91.2  -67.9  -45.2
+b[(Intercept) chick:18]               -27.3   16.9  -49.3  -27.5   -5.4
+b[(Intercept) chick:19]               -22.6   17.5  -45.2  -22.4   -0.7
+b[(Intercept) chick:20]               -16.8   16.9  -38.6  -16.6    4.8
+b[(Intercept) chick:21]               -12.6   17.1  -34.4  -12.6    9.2
+b[(Intercept) chick:22]                 7.3   17.1  -14.9    7.1   29.5
+b[(Intercept) chick:23]                14.5   17.1   -7.3   14.5   36.5
+b[(Intercept) chick:24]                25.1   17.0    3.1   25.4   46.7
+b[(Intercept) chick:25]                34.7   17.2   12.7   35.2   56.7
+b[(Intercept) chick:26]                66.4   17.6   43.9   66.4   89.1
+b[(Intercept) chick:27]               -48.0   17.5  -70.6  -48.0  -25.7
+b[(Intercept) chick:28]               -47.7   17.7  -70.7  -47.6  -25.4
+b[(Intercept) chick:29]               -17.4   17.4  -39.2  -17.3    4.6
+b[(Intercept) chick:30]               -13.2   16.9  -35.2  -12.9    8.1
+b[(Intercept) chick:31]                -3.9   17.8  -26.4   -3.9   18.9
+b[(Intercept) chick:32]                 4.2   17.3  -17.4    3.9   26.5
+b[(Intercept) chick:33]                17.6   17.1   -4.3   17.8   38.7
+b[(Intercept) chick:34]                20.1   17.0   -1.6   20.1   42.0
+b[(Intercept) chick:35]                33.7   17.0   11.7   33.8   55.2
+b[(Intercept) chick:36]                55.5   17.7   33.2   55.6   78.3
+b[(Intercept) chick:37]               -21.5   17.7  -44.4  -21.3    0.7
+b[(Intercept) chick:38]                -6.5   17.3  -29.0   -6.3   15.4
+b[(Intercept) chick:39]               -13.7   17.6  -35.8  -13.6    8.7
+b[(Intercept) chick:40]               -14.0   18.0  -37.5  -13.8    8.9
+b[(Intercept) chick:41]                -0.8   17.6  -22.8   -0.9   21.9
+b[(Intercept) chick:42]                -3.0   17.9  -26.4   -2.8   19.4
+b[(Intercept) chick:43]                11.9   17.5  -10.5   12.2   34.0
+b[(Intercept) chick:44]                17.3   17.7   -5.4   16.8   40.2
+b[(Intercept) chick:45]                30.2   17.6    8.1   30.1   52.6
+sigma                                  31.4    2.0   28.9   31.3   34.0
+Sigma[chick:(Intercept),(Intercept)] 1183.0  324.1  816.7 1136.9 1606.8
 
 Fit Diagnostics:
            mean   sd    10%   50%   90%
-mean_PPD 159.5    3.3 155.2 159.5 163.8
+mean_PPD 159.4    3.3 155.2 159.4 163.7
 
 The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).
 
 MCMC diagnostics
                                      mcse Rhat n_eff
-(Intercept)                          0.1  1.0  1786 
-week1                                0.1  1.0  5352 
-week2                                0.1  1.0  5820 
-week3                                0.1  1.0  4932 
-diet1                                0.2  1.0  1849 
-diet2                                0.2  1.0  1801 
-diet3                                0.3  1.0  1564 
-week1:diet1                          0.1  1.0  5309 
-week2:diet1                          0.1  1.0  4602 
-week3:diet1                          0.1  1.0  5512 
-week1:diet2                          0.1  1.0  5336 
-week2:diet2                          0.1  1.0  4887 
-week3:diet2                          0.1  1.0  5379 
-week1:diet3                          0.1  1.0  5208 
-week2:diet3                          0.1  1.0  5213 
-week3:diet3                          0.1  1.0  5185 
-b[(Intercept) chick:1]               0.2  1.0  4200 
-b[(Intercept) chick:2]               0.2  1.0  4210 
-b[(Intercept) chick:3]               0.3  1.0  3903 
-b[(Intercept) chick:4]               0.3  1.0  3839 
-b[(Intercept) chick:5]               0.3  1.0  3680 
-b[(Intercept) chick:6]               0.2  1.0  4142 
-b[(Intercept) chick:7]               0.3  1.0  4060 
-b[(Intercept) chick:9]               0.3  1.0  3986 
-b[(Intercept) chick:10]              0.3  1.0  4112 
-b[(Intercept) chick:11]              0.3  1.0  4246 
-b[(Intercept) chick:12]              0.3  1.0  3916 
-b[(Intercept) chick:13]              0.3  1.0  3666 
-b[(Intercept) chick:14]              0.3  1.0  3840 
-b[(Intercept) chick:17]              0.2  1.0  4306 
-b[(Intercept) chick:19]              0.3  1.0  3950 
-b[(Intercept) chick:20]              0.3  1.0  3686 
-b[(Intercept) chick:21]              0.3  1.0  3135 
-b[(Intercept) chick:22]              0.3  1.0  3413 
-b[(Intercept) chick:23]              0.3  1.0  3473 
-b[(Intercept) chick:24]              0.3  1.0  2916 
-b[(Intercept) chick:25]              0.3  1.0  3515 
-b[(Intercept) chick:26]              0.3  1.0  3078 
-b[(Intercept) chick:27]              0.3  1.0  3418 
-b[(Intercept) chick:28]              0.3  1.0  3163 
-b[(Intercept) chick:29]              0.3  1.0  3100 
-b[(Intercept) chick:30]              0.3  1.0  3443 
-b[(Intercept) chick:31]              0.3  1.0  2967 
-b[(Intercept) chick:32]              0.3  1.0  3110 
-b[(Intercept) chick:33]              0.3  1.0  2651 
-b[(Intercept) chick:34]              0.3  1.0  3077 
-b[(Intercept) chick:35]              0.3  1.0  3190 
-b[(Intercept) chick:36]              0.3  1.0  3105 
-b[(Intercept) chick:37]              0.3  1.0  3027 
-b[(Intercept) chick:38]              0.3  1.0  3103 
-b[(Intercept) chick:39]              0.3  1.0  3279 
-b[(Intercept) chick:40]              0.3  1.0  3147 
-b[(Intercept) chick:41]              0.3  1.0  3444 
-b[(Intercept) chick:42]              0.3  1.0  3427 
-b[(Intercept) chick:43]              0.3  1.0  3153 
-b[(Intercept) chick:45]              0.3  1.0  3317 
-b[(Intercept) chick:46]              0.3  1.0  3321 
-b[(Intercept) chick:47]              0.3  1.0  3226 
-b[(Intercept) chick:48]              0.3  1.0  3148 
-b[(Intercept) chick:49]              0.3  1.0  3445 
-b[(Intercept) chick:50]              0.3  1.0  3784 
-sigma                                0.0  1.0  3075 
-Sigma[chick:(Intercept),(Intercept)] 8.3  1.0  1507 
-mean_PPD                             0.1  1.0  4011 
-log-posterior                        0.3  1.0   889 
+(Intercept)                          0.1  1.0  1613 
+week1                                0.1  1.0  5587 
+week2                                0.1  1.0  5502 
+week3                                0.0  1.0  6681 
+diet1                                0.2  1.0  1496 
+diet2                                0.2  1.0  1712 
+diet3                                0.2  1.0  1760 
+week1:diet1                          0.1  1.0  4703 
+week2:diet1                          0.1  1.0  5020 
+week3:diet1                          0.1  1.0  5165 
+week1:diet2                          0.1  1.0  5217 
+week2:diet2                          0.1  1.0  4580 
+week3:diet2                          0.1  1.0  4847 
+week1:diet3                          0.1  1.0  5358 
+week2:diet3                          0.1  1.0  5063 
+week3:diet3                          0.1  1.0  4958 
+b[(Intercept) chick:1]               0.3  1.0  2906 
+b[(Intercept) chick:2]               0.3  1.0  3151 
+b[(Intercept) chick:3]               0.3  1.0  2968 
+b[(Intercept) chick:4]               0.3  1.0  3235 
+b[(Intercept) chick:5]               0.3  1.0  3077 
+b[(Intercept) chick:6]               0.3  1.0  3096 
+b[(Intercept) chick:7]               0.3  1.0  3076 
+b[(Intercept) chick:8]               0.3  1.0  3377 
+b[(Intercept) chick:9]               0.3  1.0  3764 
+b[(Intercept) chick:10]              0.3  1.0  3284 
+b[(Intercept) chick:11]              0.3  1.0  3670 
+b[(Intercept) chick:12]              0.3  1.0  3094 
+b[(Intercept) chick:13]              0.3  1.0  3417 
+b[(Intercept) chick:14]              0.3  1.0  3645 
+b[(Intercept) chick:15]              0.3  1.0  3197 
+b[(Intercept) chick:16]              0.3  1.0  3038 
+b[(Intercept) chick:17]              0.3  1.0  2701 
+b[(Intercept) chick:18]              0.3  1.0  2979 
+b[(Intercept) chick:19]              0.3  1.0  3001 
+b[(Intercept) chick:20]              0.3  1.0  2980 
+b[(Intercept) chick:21]              0.3  1.0  2973 
+b[(Intercept) chick:22]              0.3  1.0  3003 
+b[(Intercept) chick:23]              0.3  1.0  2887 
+b[(Intercept) chick:24]              0.3  1.0  2937 
+b[(Intercept) chick:25]              0.3  1.0  2946 
+b[(Intercept) chick:26]              0.3  1.0  2839 
+b[(Intercept) chick:27]              0.3  1.0  2864 
+b[(Intercept) chick:28]              0.3  1.0  2562 
+b[(Intercept) chick:29]              0.3  1.0  3257 
+b[(Intercept) chick:30]              0.3  1.0  2774 
+b[(Intercept) chick:31]              0.3  1.0  3339 
+b[(Intercept) chick:32]              0.3  1.0  3007 
+b[(Intercept) chick:33]              0.3  1.0  3048 
+b[(Intercept) chick:34]              0.3  1.0  3141 
+b[(Intercept) chick:35]              0.3  1.0  3030 
+b[(Intercept) chick:36]              0.3  1.0  2797 
+b[(Intercept) chick:37]              0.3  1.0  3248 
+b[(Intercept) chick:38]              0.3  1.0  3152 
+b[(Intercept) chick:39]              0.3  1.0  3435 
+b[(Intercept) chick:40]              0.3  1.0  3469 
+b[(Intercept) chick:41]              0.3  1.0  3453 
+b[(Intercept) chick:42]              0.3  1.0  3370 
+b[(Intercept) chick:43]              0.3  1.0  3360 
+b[(Intercept) chick:44]              0.3  1.0  3542 
+b[(Intercept) chick:45]              0.3  1.0  3402 
+sigma                                0.0  1.0  2609 
+Sigma[chick:(Intercept),(Intercept)] 8.4  1.0  1480 
+mean_PPD                             0.1  1.0  3752 
+log-posterior                        0.3  1.0   715 
 
 For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
 </div>
 </section><section id="bayesian-multilevel-modeling-1" class="slide level2"><h2>Bayesian Multilevel Modeling</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">chick_weight_diet_model_bayes</span>, pars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"alpha"</span>, <span class="st">"beta"</span>, <span class="st">"sigma"</span>, <span class="st">"Sigma[chick:(Intercept),(Intercept)]"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb68"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">chick_weight_diet_model_bayes</span>, pars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"alpha"</span>, <span class="st">"beta"</span>, <span class="st">"sigma"</span>, <span class="st">"Sigma[chick:(Intercept),(Intercept)]"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Model Info:
@@ -1250,82 +1339,82 @@ Model Info:
 
 Estimates:
                                        mean   sd     10%    50%    90% 
-(Intercept)                           164.0    5.6  156.7  164.0  171.2
-week1                                 -87.7    4.2  -92.9  -87.7  -82.4
-week2                                 -27.9    4.2  -33.2  -27.9  -22.6
-week3                                  54.1    4.2   48.9   54.2   59.5
-diet1                                 -30.6    8.7  -41.7  -30.6  -19.4
-diet2                                  -7.0   10.4  -20.2   -7.1    6.5
-diet3                                  23.8   10.0   11.1   23.8   36.6
-week1:diet1                            22.1    6.4   13.9   22.2   30.3
-week2:diet1                             8.9    6.2    0.8    8.8   17.2
-week3:diet1                           -14.1    6.4  -22.5  -14.0   -5.9
-week1:diet2                             6.4    7.6   -3.3    6.5   16.3
-week2:diet2                             2.4    7.5   -7.3    2.5   12.1
-week3:diet2                            -5.4    7.5  -14.8   -5.4    4.0
-week1:diet3                           -22.2    7.3  -31.7  -22.3  -12.7
-week2:diet3                           -15.8    7.3  -25.0  -16.0   -6.4
-week3:diet3                            17.1    7.3    7.8   17.0   26.2
-sigma                                  31.4    2.0   28.9   31.4   34.0
-Sigma[chick:(Intercept),(Intercept)] 1174.9  321.9  803.3 1136.2 1596.2
+(Intercept)                           163.9    5.9  156.5  163.8  171.4
+week1                                 -87.7    4.1  -92.8  -87.6  -82.4
+week2                                 -27.7    4.0  -32.9  -27.7  -22.6
+week3                                  53.9    4.0   48.8   53.9   59.2
+diet1                                 -30.6    8.6  -41.6  -30.6  -19.6
+diet2                                  -7.2   10.0  -19.8   -7.2    5.3
+diet3                                  23.9   10.1   11.0   24.1   36.5
+week1:diet1                            22.1    6.5   13.7   22.1   30.2
+week2:diet1                             8.9    6.4    0.8    8.9   17.3
+week3:diet1                           -14.0    6.4  -22.2  -14.0   -6.0
+week1:diet2                             6.3    7.3   -3.1    6.2   15.7
+week2:diet2                             2.2    7.6   -7.5    2.4   11.8
+week3:diet2                            -5.0    7.3  -14.5   -5.0    4.3
+week1:diet3                           -22.4    7.4  -32.0  -22.5  -12.9
+week2:diet3                           -15.6    7.5  -25.0  -15.5   -6.0
+week3:diet3                            16.9    7.3    7.6   17.0   26.3
+sigma                                  31.4    2.0   28.9   31.3   34.0
+Sigma[chick:(Intercept),(Intercept)] 1183.0  324.1  816.7 1136.9 1606.8
 
 MCMC diagnostics
                                      mcse Rhat n_eff
-(Intercept)                          0.1  1.0  1786 
-week1                                0.1  1.0  5352 
-week2                                0.1  1.0  5820 
-week3                                0.1  1.0  4932 
-diet1                                0.2  1.0  1849 
-diet2                                0.2  1.0  1801 
-diet3                                0.3  1.0  1564 
-week1:diet1                          0.1  1.0  5309 
-week2:diet1                          0.1  1.0  4602 
-week3:diet1                          0.1  1.0  5512 
-week1:diet2                          0.1  1.0  5336 
-week2:diet2                          0.1  1.0  4887 
-week3:diet2                          0.1  1.0  5379 
-week1:diet3                          0.1  1.0  5208 
-week2:diet3                          0.1  1.0  5213 
-week3:diet3                          0.1  1.0  5185 
-sigma                                0.0  1.0  3075 
-Sigma[chick:(Intercept),(Intercept)] 8.3  1.0  1507 
+(Intercept)                          0.1  1.0  1613 
+week1                                0.1  1.0  5587 
+week2                                0.1  1.0  5502 
+week3                                0.0  1.0  6681 
+diet1                                0.2  1.0  1496 
+diet2                                0.2  1.0  1712 
+diet3                                0.2  1.0  1760 
+week1:diet1                          0.1  1.0  4703 
+week2:diet1                          0.1  1.0  5020 
+week3:diet1                          0.1  1.0  5165 
+week1:diet2                          0.1  1.0  5217 
+week2:diet2                          0.1  1.0  4580 
+week3:diet2                          0.1  1.0  4847 
+week1:diet3                          0.1  1.0  5358 
+week2:diet3                          0.1  1.0  5063 
+week3:diet3                          0.1  1.0  4958 
+sigma                                0.0  1.0  2609 
+Sigma[chick:(Intercept),(Intercept)] 8.4  1.0  1480 
 
 For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1).</code></pre>
 </div>
 </div>
 </section><section id="diagnostics" class="slide level2"><h2>Diagnostics</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">pars_for_trace_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb70"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">pars_for_trace_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nlme/man/fixed.effects.html">fixef</a></span><span class="op">(</span><span class="va">chick_weight_diet_model_bayes</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="st">"sigma"</span>,</span>
 <span>  <span class="st">"Sigma[chick:(Intercept),(Intercept)]"</span></span>
 <span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_trace</a></span><span class="op">(</span><span class="va">chick_weight_diet_model_bayes</span>, pars <span class="op">=</span> <span class="va">pars_for_trace_plot</span>, facet_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="fu">bayesplot</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/MCMC-traces.html">mcmc_trace</a></span><span class="op">(</span><span class="va">chick_weight_diet_model_bayes</span>, pars <span class="op">=</span> <span class="va">pars_for_trace_plot</span>, facet_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
-<img data-src="lab_11_files/figure-revealjs/unnamed-chunk-39-1.svg" width="1728" class="r-stretch"></section><section id="estimated-marginal-means-3" class="slide level2"><h2>Estimated Marginal Means</h2>
+<img data-src="lab_11_files/figure-revealjs/unnamed-chunk-42-1.svg" class="quarto-figure quarto-figure-center r-stretch" width="1440"></section><section id="estimated-marginal-means-3" class="slide level2"><h2>Estimated Marginal Means</h2>
+<p>Since we represented <code>week</code> as numeric, <code>emmeans</code> is showing us the EMM for each diet at the average of week.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_bayes</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">chick_weight_diet_model_bayes</span>, specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"diet"</span>, <span class="st">"week"</span><span class="op">)</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_bayes</span> <span class="op">&lt;-</span> <span class="fu">emmeans</span><span class="fu">::</span><span class="fu"><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html">emmeans</a></span><span class="op">(</span><span class="va">chick_weight_diet_model_bayes</span>, specs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"diet"</span>, <span class="st">"week"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">emms_bayes</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> diet week   emmean lower.HPD upper.HPD
- 1    week_0   67.7      46.0      90.7
- 2    week_0   75.9      44.9     104.8
- 3    week_0   77.9      47.0     103.5
- 4    week_0   83.6      54.4     115.7
- 1    week_1  114.0      91.7     136.8
- 2    week_1  131.5     102.8     159.3
- 3    week_1  144.0     116.1     172.4
- 4    week_1  154.1     122.3     184.5
- 1    week_2  173.4     149.7     195.6
- 2    week_2  205.6     177.0     236.8
- 3    week_2  258.9     231.2     287.5
- 4    week_2  234.0     201.6     262.5
- 1    week_3  177.9     156.1     201.1
- 2    week_3  214.9     185.1     242.4
- 3    week_3  270.1     240.6     297.4
- 4    week_3  238.6     207.4     268.5
+ 1    week_0   67.9      45.5      90.7
+ 2    week_0   75.3      47.2     104.1
+ 3    week_0   77.8      48.6     107.5
+ 4    week_0   84.1      52.1     112.8
+ 1    week_1  114.6      92.0     137.9
+ 2    week_1  131.4     103.3     159.6
+ 3    week_1  144.6     115.8     174.9
+ 4    week_1  154.8     124.6     184.5
+ 1    week_2  173.1     151.3     195.5
+ 2    week_2  205.5     176.3     232.9
+ 3    week_2  258.5     231.3     289.2
+ 4    week_2  233.9     204.5     264.4
+ 1    week_3  177.8     153.9     198.9
+ 2    week_3  214.6     185.6     241.6
+ 3    week_3  270.0     239.9     296.6
+ 4    week_3  238.7     206.7     268.0
 
 Point estimate displayed: median 
 HPD interval probability: 0.95 </code></pre>
@@ -1342,7 +1431,7 @@ HPD interval probability: 0.95 </code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_11_files/figure-revealjs/unnamed-chunk-41-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+<figure><p><img data-src="lab_11_files/figure-revealjs/unnamed-chunk-44-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -1350,7 +1439,7 @@ HPD interval probability: 0.95 </code></pre>
 </div>
 <div id="tabset-5-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb66"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_bayes</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb73"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_bayes</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">week</span>, y <span class="op">=</span> <span class="va">emmean</span>, </span>
 <span>             ymin <span class="op">=</span> <span class="va">lower.HPD</span>, ymax <span class="op">=</span> <span class="va">upper.HPD</span>, </span>
@@ -1365,7 +1454,8 @@ HPD interval probability: 0.95 </code></pre>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_x_discrete</span><span class="op">(</span>labels <span class="op">=</span> <span class="va">parse_number</span><span class="op">)</span> <span class="op">+</span> <span class="co"># applying the `parse_number()` function to the labels</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Weight"</span>, x <span class="op">=</span> <span class="st">"Week"</span>, color <span class="op">=</span> <span class="st">"Diet"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Line ranges represent 95% highest posterior density intervals. Light points represent observed data."</span><span class="op">)</span> <span class="op">+</span></span>
+<span>       caption <span class="op">=</span> <span class="st">"Line ranges represent 95% highest posterior density intervals. Light points represent observed data."</span> <span class="op">|&gt;</span></span>
+<span>         <span class="fu">str_wrap</span><span class="op">(</span><span class="fl">60</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
 <span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
 <span>         color <span class="op">=</span> <span class="fu">guide_none</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1385,7 +1475,7 @@ HPD interval probability: 0.95 </code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_11_files/figure-revealjs/unnamed-chunk-43-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+<figure><p><img data-src="lab_11_files/figure-revealjs/unnamed-chunk-46-1.svg" class="quarto-figure quarto-figure-center" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1393,7 +1483,7 @@ HPD interval probability: 0.95 </code></pre>
 </div>
 <div id="tabset-6-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_bayes</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb74"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">emms_bayes</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">week</span>, y <span class="op">=</span> <span class="va">emmean</span>, </span>
 <span>             ymin <span class="op">=</span> <span class="va">lower.HPD</span>, ymax <span class="op">=</span> <span class="va">upper.HPD</span>, </span>
@@ -1408,7 +1498,8 @@ HPD interval probability: 0.95 </code></pre>
 <span>  <span class="fu">geom_line</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_dodge</span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_x_discrete</span><span class="op">(</span>labels <span class="op">=</span> <span class="va">parse_number</span><span class="op">)</span> <span class="op">+</span> <span class="co"># applying the `parse_number()` function to the labels</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Weight"</span>, x <span class="op">=</span> <span class="st">"Week"</span>, color <span class="op">=</span> <span class="st">"Diet"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Line ranges represent 95% highest posterior density intervals. Light points represent observed data."</span><span class="op">)</span> <span class="op">+</span></span>
+<span>       caption <span class="op">=</span> <span class="st">"Line ranges represent 95% highest posterior density intervals. Light points represent observed data."</span> <span class="op">|&gt;</span></span>
+<span>         <span class="fu">str_wrap</span><span class="op">(</span><span class="fl">60</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
 <span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
 <span>         color <span class="op">=</span> <span class="fu">guide_none</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
