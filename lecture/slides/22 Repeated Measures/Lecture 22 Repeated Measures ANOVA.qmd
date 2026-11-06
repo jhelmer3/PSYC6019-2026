@@ -111,6 +111,7 @@ $${\color{blue}y_i} = \beta_0 + \sum_{p=1}^P \beta_p {\color{red}x_{ip}} + \epsi
 
 ## Review
 
+::: {style="font-size: 0.95em;"}
 
 - Independent Sample $t$-tests let us compare the means of two different groups
 - One way ANOVA lets us compare the means of more than two different groups
@@ -121,6 +122,8 @@ Put another way
 - Independent Sample $t$-tests let us test one between subjects factor with exactly two levels
 - One way ANOVA lets us test one between subjects factor with more than two levels
 - Factorial ANOVA lets us test more than one between subjects factor
+
+:::
 
 ## Between vs. Within 
 
@@ -290,7 +293,7 @@ $$SSR = SST - SSS - SSA$$
 
 ## Refactor!
 
-::: {style="font-size: 0.7em;"}
+::: {style="font-size: 0.67em;"}
 
 What if we wanted to test the effect of subject and condition? Then we would have a two-way ANOVA (without interaction) where we treat subjects as a second factor 
 
@@ -488,7 +491,7 @@ ezANOVA(data = dat_long, # dataset
 2. Covariance structure for the within-subjects factor
   
     - Compound symmetry (stronger)
-      - Take the variance-covariance matrix of treatment effects
+      - Take the covariance matrix of treatment effects
       - Equal variances: same number on the diagonal of the matrix
       - Equal covariances: same number on the off-diagonals
     - Sphericity (weaker)
@@ -517,7 +520,7 @@ round(cov(dat[, -1]), 5)
 **Compound symmetry**: sphericity + off-diagonal elements are equal (in the population)
 
 
-## Mauchly's Test of Sphericity
+## Mauchly's Test
 
 
 ::: {style="font-size: 0.8em;"}
@@ -544,7 +547,7 @@ Recommended to use adjustments instead of bothering with Mauchly's test
 
 :::
 
-## Adjustment for Non-Sphericity
+## Adjustments
 
 
 ::: {style="font-size: 0.8em;"}
@@ -614,7 +617,7 @@ One major difference:
 #| echo: true
 
 pairwise.t.test(x = dat_long$PropError, 
-                g = dat_long$ContingencyLevel, 
+                g = dat_long$Contingency, 
                 paired = TRUE)
 ```
 
@@ -772,7 +775,7 @@ summary(aov_anxiety)
 
 ## Compare to Three-Way
 
-To understand where each component of the table compes from, we can compare to a model that has an interaction between `group` and `time` and a "main effect of `id`
+To understand where each component of the table compes from, we can compare to a model that has an interaction between `group` and `time` and a "main" effect of `id`
 
 ```{r}
 #| echo: true
@@ -782,7 +785,7 @@ summary(aov_anxiety_other)
 ```
 
 - **Residual for group:** `id`
-- **Residual for `time` and interaction:** `residual`
+- **Residual for `time` and `interaction`:** `residual`
 
 ## Using `ez`
 
@@ -813,6 +816,16 @@ ezANOVA(data = anxiety_long, # dataset
 
 ## Visualize Results
 
+One package I like a lot for easily generating factorial plots (between, within, or mixed) is `ggeffects`
+
+- Fit model
+- Create plottable object with `ggemmeans()` (for `aov()` based models) or `ggpredict()` or `predict_response()` (for most other models)
+- Automatically plot models
+
+
+
+## Easy Visual
+
 ```{r}
 #| echo: true
 library(ggeffects)
@@ -828,7 +841,7 @@ Mixed ANOVA was conducted to test the effect of exercise over time. The interact
 
 ## Multilevel Models
 
-Arguably a more "modern" approach to violations of independence assumption. Basic idea
+A more "modern" approach to violations of independence assumption. Basic idea
 
 - Each "person" gets their own intercept and slope(s).
     - These are "random effects"
@@ -915,6 +928,8 @@ ggplot() +
 
 ## Multilevel in `R`
 
+::: {style="font-size: 0.77em;"}
+
 `R` has the `lme4` package and `lmerTest` extension for doing multilevel modeling using the `lmer()` function
 
 - Uses **restricted** maximum likelihood estimation
@@ -929,7 +944,7 @@ ggplot() +
   - `lmerTest` adds tests which include $df$ adjustments to deal with independence violations
   
 
-
+:::
 
 ## `lme4` example
 
@@ -967,13 +982,21 @@ Results identical to "standard" repeated measures ANOVA due to fully balanced de
 
 ## Bayesian Version
 
+::: {style="font-size: 0.85em;"}
+
+
 The Bayesian approach to within subjects factors is a variation on the multilevel modeling approach. We can write an `rstanarm` model with `stan_lmer()` that mimics the `lmer()` syntax and structure. 
 
-- Caveat: Bayesian statistics don't differentiate "fixed" and "random" effects
+- Caveat: Bayesian statistics don't differentiate "fixed" and "random" effects. Instead:
+    - **Population** level effects: effects that govern the full population
+    - **Cluster** level effects: effects that govern specific clusters (e.g. individual people)
+      - Population level effects serve as priors for each individual cluster level effect
 - If we don't specify, we'll get **every** person level intercept in the output
 - To only get population level effects, we can specify the parameters we want
 - Output will be as a dummy coded linear model
 - Due to small sample size and repeated measures, I need more iterations to achieve convergence
+
+:::
 
 
 ## `rstanarm`

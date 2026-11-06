@@ -339,6 +339,7 @@ Mark Himmelstein
 </section>
 <section id="review" class="slide level2">
 <h2>Review</h2>
+<div style="font-size: 0.95em;">
 <ul>
 <li>Independent Sample <span class="math inline">\(t\)</span>-tests let us compare the means of two different groups</li>
 <li>One way ANOVA lets us compare the means of more than two different groups</li>
@@ -350,6 +351,7 @@ Mark Himmelstein
 <li>One way ANOVA lets us test one between subjects factor with more than two levels</li>
 <li>Factorial ANOVA lets us test more than one between subjects factor</li>
 </ul>
+</div>
 </section>
 <section id="between-vs.-within" class="slide level2">
 <h2>Between vs.&nbsp;Within</h2>
@@ -487,7 +489,7 @@ Mark Himmelstein
 </section>
 <section id="refactor" class="slide level2">
 <h2>Refactor!</h2>
-<div style="font-size: 0.7em;">
+<div style="font-size: 0.67em;">
 <p>What if we wanted to test the effect of subject and condition? Then we would have a two-way ANOVA (without interaction) where we treat subjects as a second factor</p>
 <p>Total sum of squares:</p>
 <p><span class="math display">\[SST = \sum_i\sum_j(y_{ij} - \bar{y})^2\]</span></p>
@@ -769,7 +771,7 @@ Mark Himmelstein
 <ul>
 <li>Compound symmetry (stronger)
 <ul>
-<li>Take the variance-covariance matrix of treatment effects</li>
+<li>Take the covariance matrix of treatment effects</li>
 <li>Equal variances: same number on the diagonal of the matrix</li>
 <li>Equal covariances: same number on the off-diagonals</li>
 </ul></li>
@@ -798,8 +800,8 @@ Mark Himmelstein
 <p><strong>Sphericity</strong>: diagonal elements are equal (in the population)</p>
 <p><strong>Compound symmetry</strong>: sphericity + off-diagonal elements are equal (in the population)</p>
 </section>
-<section id="mauchlys-test-of-sphericity" class="slide level2">
-<h2>Mauchly’s Test of Sphericity</h2>
+<section id="mauchlys-test" class="slide level2">
+<h2>Mauchly’s Test</h2>
 <div style="font-size: 0.8em;">
 <p>If sphericity assumption is not met, <span class="math inline">\(F\)</span> is positively biased (Box, 1954)</p>
 <ul>
@@ -823,8 +825,8 @@ Mark Himmelstein
 </ul>
 </div>
 </section>
-<section id="adjustment-for-non-sphericity" class="slide level2">
-<h2>Adjustment for Non-Sphericity</h2>
+<section id="adjustments" class="slide level2">
+<h2>Adjustments</h2>
 <div style="font-size: 0.8em;">
 <p>Greenhouse-Geisser (GG) or Huynh-Feldt (HF) adjusted <span class="math inline">\(F\)</span>-test:</p>
 <ul>
@@ -887,17 +889,19 @@ df_{den, adj}  = \hat{\epsilon} \times df_{den}\]</span></p></li>
 <h2>Post-hoc Tests</h2>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-label="1"></a><span class="fu">pairwise.t.test</span>(<span class="at">x =</span> dat_long<span class="sc">$</span>PropError, </span>
-<span id="cb13-2"><a aria-label="2"></a>                <span class="at">g =</span> dat_long<span class="sc">$</span>ContingencyLevel, </span>
+<span id="cb13-2"><a aria-label="2"></a>                <span class="at">g =</span> dat_long<span class="sc">$</span>Contingency, </span>
 <span id="cb13-3"><a aria-label="3"></a>                <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a aria-label="1"></a></span>
 <span id="cb14-2"><a aria-label="2"></a>    <span class="ex">Pairwise</span> comparisons using paired t tests </span>
 <span id="cb14-3"><a aria-label="3"></a></span>
-<span id="cb14-4"><a aria-label="4"></a><span class="ex">data:</span>  dat_long<span class="va">$PropError</span> and dat_long<span class="va">$ContingencyLevel</span> </span>
+<span id="cb14-4"><a aria-label="4"></a><span class="ex">data:</span>  dat_long<span class="va">$PropError</span> and dat_long<span class="va">$Contingency</span> </span>
 <span id="cb14-5"><a aria-label="5"></a></span>
-<span id="cb14-6"><a aria-label="6"></a><span class="op">&lt;</span>0 <span class="ex">x</span> 0 matrix<span class="op">&gt;</span></span>
-<span id="cb14-7"><a aria-label="7"></a></span>
-<span id="cb14-8"><a aria-label="8"></a><span class="ex">P</span> value adjustment method: holm </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-6"><a aria-label="6"></a>       <span class="ex">High</span>    Low  </span>
+<span id="cb14-7"><a aria-label="7"></a><span class="ex">Low</span>    2.3e-10 <span class="at">-</span>    </span>
+<span id="cb14-8"><a aria-label="8"></a><span class="ex">Medium</span> 0.001   0.001</span>
+<span id="cb14-9"><a aria-label="9"></a></span>
+<span id="cb14-10"><a aria-label="10"></a><span class="ex">P</span> value adjustment method: holm </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </section>
@@ -1065,7 +1069,7 @@ df_{den, adj}  = \hat{\epsilon} \times df_{den}\]</span></p></li>
 </section>
 <section id="compare-to-three-way" class="slide level2">
 <h2>Compare to Three-Way</h2>
-<p>To understand where each component of the table compes from, we can compare to a model that has an interaction between <code>group</code> and <code>time</code> and a “main effect of <code>id</code></p>
+<p>To understand where each component of the table compes from, we can compare to a model that has an interaction between <code>group</code> and <code>time</code> and a “main” effect of <code>id</code></p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-label="1"></a>aov_anxiety_other <span class="ot">&lt;-</span> <span class="fu">aov</span>(anxiety <span class="sc">~</span> group <span class="sc">*</span> time <span class="sc">+</span> id, anxiety_long)</span>
 <span id="cb21-2"><a aria-label="2"></a><span class="fu">summary</span>(aov_anxiety_other)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1082,7 +1086,7 @@ df_{den, adj}  = \hat{\epsilon} \times df_{den}\]</span></p></li>
 </div>
 <ul>
 <li><strong>Residual for group:</strong> <code>id</code></li>
-<li><strong>Residual for <code>time</code> and interaction:</strong> <code>residual</code></li>
+<li><strong>Residual for <code>time</code> and <code>interaction</code>:</strong> <code>residual</code></li>
 </ul>
 </section>
 <section id="using-ez" class="slide level2">
@@ -1105,6 +1109,15 @@ df_{den, adj}  = \hat{\epsilon} \times df_{den}\]</span></p></li>
 </section>
 <section id="visualize-results" class="slide level2">
 <h2>Visualize Results</h2>
+<p>One package I like a lot for easily generating factorial plots (between, within, or mixed) is <code>ggeffects</code></p>
+<ul>
+<li>Fit model</li>
+<li>Create plottable object with <code>ggemmeans()</code> (for <code>aov()</code> based models) or <code>ggpredict()</code> or <code>predict_response()</code> (for most other models)</li>
+<li>Automatically plot models</li>
+</ul>
+</section>
+<section id="easy-visual" class="slide level2">
+<h2>Easy Visual</h2>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-label="1"></a><span class="fu">library</span>(ggeffects)</span>
 <span id="cb25-2"><a aria-label="2"></a></span>
@@ -1119,7 +1132,7 @@ df_{den, adj}  = \hat{\epsilon} \times df_{den}\]</span></p></li>
 </section>
 <section id="multilevel-models" class="slide level2">
 <h2>Multilevel Models</h2>
-<p>Arguably a more “modern” approach to violations of independence assumption. Basic idea</p>
+<p>A more “modern” approach to violations of independence assumption. Basic idea</p>
 <ul>
 <li>Each “person” gets their own intercept and slope(s).
 <ul>
@@ -1148,6 +1161,7 @@ df_{den, adj}  = \hat{\epsilon} \times df_{den}\]</span></p></li>
 <img data-src="Lecture-22-Repeated-Measures-ANOVA_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="multilevel-in-r" class="slide level2">
 <h2>Multilevel in <code>R</code></h2>
+<div style="font-size: 0.77em;">
 <p><code>R</code> has the <code>lme4</code> package and <code>lmerTest</code> extension for doing multilevel modeling using the <code>lmer()</code> function</p>
 <ul>
 <li>Uses <strong>restricted</strong> maximum likelihood estimation
@@ -1169,6 +1183,7 @@ df_{den, adj}  = \hat{\epsilon} \times df_{den}\]</span></p></li>
 <li><code>lmerTest</code> adds tests which include <span class="math inline">\(df\)</span> adjustments to deal with independence violations</li>
 </ul></li>
 </ul>
+</div>
 </section>
 <section id="lme4-example" class="slide level2">
 <h2><code>lme4</code> example</h2>
@@ -1209,14 +1224,23 @@ df_{den, adj}  = \hat{\epsilon} \times df_{den}\]</span></p></li>
 </section>
 <section id="bayesian-version" class="slide level2">
 <h2>Bayesian Version</h2>
+<div style="font-size: 0.85em;">
 <p>The Bayesian approach to within subjects factors is a variation on the multilevel modeling approach. We can write an <code>rstanarm</code> model with <code>stan_lmer()</code> that mimics the <code>lmer()</code> syntax and structure.</p>
 <ul>
-<li>Caveat: Bayesian statistics don’t differentiate “fixed” and “random” effects</li>
+<li>Caveat: Bayesian statistics don’t differentiate “fixed” and “random” effects. Instead:
+<ul>
+<li><strong>Population</strong> level effects: effects that govern the full population</li>
+<li><strong>Cluster</strong> level effects: effects that govern specific clusters (e.g.&nbsp;individual people)
+<ul>
+<li>Population level effects serve as priors for each individual cluster level effect</li>
+</ul></li>
+</ul></li>
 <li>If we don’t specify, we’ll get <strong>every</strong> person level intercept in the output</li>
 <li>To only get population level effects, we can specify the parameters we want</li>
 <li>Output will be as a dummy coded linear model</li>
 <li>Due to small sample size and repeated measures, I need more iterations to achieve convergence</li>
 </ul>
+</div>
 </section>
 <section id="rstanarm" class="slide level2">
 <h2><code>rstanarm</code></h2>
