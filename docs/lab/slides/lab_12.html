@@ -199,7 +199,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center"><h1 class="title">Covariance, Correlation, and Scatterplots</h1>
-  <p class="subtitle">PSYC 6019-A01 / PSYC 6022-A01 <br> 2026-11-06 | Lab 11</p>
+  <p class="subtitle">PSYC 6019-A01 / PSYC 6022-A01 <br> 2026-11-13 | Lab 12</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -214,6 +214,7 @@ Jess Helmer
 <li><p>Correlation</p></li>
 <li><p>Scatterplots</p></li>
 <li><p>Scatterplot matrices</p></li>
+<li><p>Simple regression</p></li>
 </ul></section><section><section id="correlation" class="title-slide slide level1 center"><h1>Correlation</h1>
 
 </section><section id="correlation-1" class="slide level2"><h2>Correlation</h2>
@@ -267,7 +268,7 @@ Jess Helmer
 <!-- ``` -->
 <img data-src="lab_12_files/figure-revealjs/unnamed-chunk-9-1.svg" width="576" class="r-stretch"></section><section id="covariance-visually-8" class="slide level2"><h2>Covariance Visually</h2>
 <p>Examples of positive, zero, and negative covariance:</p>
-<div class="cell quarto-layout-panel" data-layout-align="center" data-layout-ncol="3">
+<div class="cell quarto-layout-panel" data-layout-ncol="3" data-layout-align="center">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
@@ -475,7 +476,109 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 </div><div class="column" style="width:17%;">
 
 </div></div>
+</section><section id="testing-correlations" class="slide level2"><h2>Testing Correlations</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("rstatix")</span></span>
+<span></span>
+<span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">flipper_length_mm</span>, <span class="va">body_mass_g</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">rstatix</span><span class="fu">::</span><span class="fu"><a href="https://rpkgs.datanovia.com/rstatix/reference/cor_test.html">cor_test</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 9
+  var1           var2    cor statistic    df         p conf.low conf.high method
+  &lt;chr&gt;          &lt;chr&gt; &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt; 
+1 flipper_lengt… body…  0.87      32.7   340 4.37e-107    0.843     0.895 Pears…</code></pre>
+</div>
+</div>
+</section><section id="ordinal-correlations" class="slide level2"><h2>Ordinal Correlations</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_ordinal</span> <span class="op">&lt;-</span> <span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    <span class="fu">across</span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">bill_length_mm</span>, <span class="va">bill_depth_mm</span><span class="op">)</span>,</span>
+<span>      <span class="kw">function</span><span class="op">(</span><span class="va">bill_column</span><span class="op">)</span> <span class="fu">case_when</span><span class="op">(</span></span>
+<span>        <span class="va">bill_column</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">bill_column</span>, <span class="fl">.33</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">~</span> <span class="st">"low"</span>,</span>
+<span>        <span class="fu">between</span><span class="op">(</span></span>
+<span>          <span class="va">bill_column</span>, </span>
+<span>          <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">bill_column</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">3</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>, </span>
+<span>          <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">bill_column</span>, <span class="fl">2</span><span class="op">/</span><span class="fl">3</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span>        <span class="op">)</span> <span class="op">~</span> <span class="st">"med"</span>,</span>
+<span>        <span class="va">bill_column</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">bill_column</span>, <span class="fl">.66</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">~</span> <span class="st">"high"</span></span>
+<span>      <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span>levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"med"</span>, <span class="st">"high"</span><span class="op">)</span>, ordered <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>      .names <span class="op">=</span> <span class="st">"{.col}_ordinal"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="fu">ends_with</span><span class="op">(</span><span class="st">"_ordinal"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">penguins_ordinal</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  bill_length_mm_ordinal bill_depth_mm_ordinal
+  &lt;ord&gt;                  &lt;ord&gt;                
+1 low                    high                 
+2 low                    med                  
+3 low                    med                  
+4 &lt;NA&gt;                   &lt;NA&gt;                 
+5 low                    high                 
+6 low                    high                 </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_ordinal</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">count</span><span class="op">(</span><span class="va">bill_length_mm_ordinal</span>, <span class="va">bill_depth_mm_ordinal</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 3
+   bill_length_mm_ordinal bill_depth_mm_ordinal     n
+   &lt;ord&gt;                  &lt;ord&gt;                 &lt;int&gt;
+ 1 low                    low                       5
+ 2 low                    med                      59
+ 3 low                    high                     49
+ 4 med                    low                      53
+ 5 med                    med                      30
+ 6 med                    high                     32
+ 7 high                   low                      55
+ 8 high                   med                      28
+ 9 high                   high                     31
+10 &lt;NA&gt;                   &lt;NA&gt;                      2</code></pre>
+</div>
+</div>
+</div></div>
+</section><section id="ordinal-correlations-1" class="slide level2"><h2>Ordinal Correlations</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_ordinal</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, <span class="va">as.numeric</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span>use <span class="op">=</span> <span class="st">"complete.obs"</span>,</span>
+<span>      method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                       bill_length_mm_ordinal bill_depth_mm_ordinal
+bill_length_mm_ordinal              1.0000000            -0.3009783
+bill_depth_mm_ordinal              -0.3009783             1.0000000</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_ordinal</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, <span class="va">as.numeric</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span>use <span class="op">=</span> <span class="st">"complete.obs"</span>,</span>
+<span>      method <span class="op">=</span> <span class="st">"kendall"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                       bill_length_mm_ordinal bill_depth_mm_ordinal
+bill_length_mm_ordinal              1.0000000            -0.2676226
+bill_depth_mm_ordinal              -0.2676226             1.0000000</code></pre>
+</div>
+</div>
+</div></div>
 </section><section id="scatterplots" class="slide level2"><h2>Scatterplots</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+
+</div><div class="column" style="width:50%;">
 <div class="panel-tabset">
 <ul id="tabset-1" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-1-1">Plot</a></li>
@@ -486,7 +589,7 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-20-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-25-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -494,7 +597,7 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 </div>
 <div id="tabset-1-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">flipper_length_mm</span>, y <span class="op">=</span> <span class="va">body_mass_g</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Body Mass"</span>, x <span class="op">=</span> <span class="st">"Flipper Length"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -505,7 +608,13 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 </div>
 </div>
 </div>
+</div></div>
 </section><section id="scatterplots-1" class="slide level2"><h2>Scatterplots</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>If there are lots of datapoints, may want to take down the <code>alpha</code> for clearer results.</p>
+<p>E.g., with the <code>tidyverse</code> <code>diamonds</code> dataset.</p>
+</div><div class="column" style="width:50%;">
 <div class="panel-tabset">
 <ul id="tabset-2" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-2-1">Plot</a></li>
@@ -516,7 +625,7 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-22-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-27-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -524,7 +633,43 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 </div>
 <div id="tabset-2-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">$</span><span class="va">flipper_length_mm</span>, <span class="va">penguins</span><span class="op">$</span><span class="va">body_mass_g</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">diamonds</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">carat</span>, y <span class="op">=</span> <span class="va">price</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.025</span>, shape <span class="op">=</span> <span class="fl">16</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Price"</span>, x <span class="op">=</span> <span class="st">"Carat"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_currency.html">label_currency</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
+<span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="scatterplots-2" class="slide level2"><h2>Scatterplots</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-3-1">Plot</a></li>
+<li><a href="#tabset-3-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-3-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-29-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-3-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">$</span><span class="va">flipper_length_mm</span>, <span class="va">penguins</span><span class="op">$</span><span class="va">body_mass_g</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">flipper_length_mm</span>, y <span class="op">=</span> <span class="va">body_mass_g</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -539,48 +684,11 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 </div>
 </div>
 </div>
-</section><section id="scatterplots-2" class="slide level2"><h2>Scatterplots</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>If there are lots of datapoints, may want to take down the <code>alpha</code> for clearer results.</p>
-<p>E.g., with the <code>tidyverse</code> <code>diamonds</code> dataset.</p>
-</div><div class="column fragment" style="width:50%;">
-<div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby">
-<li><a data-tabby-default="" href="#tabset-3-1">Plot</a></li>
-<li><a href="#tabset-3-2">Code</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-3-1">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-24-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-3-2">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">diamonds</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">carat</span>, y <span class="op">=</span> <span class="va">price</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Price"</span>, x <span class="op">=</span> <span class="st">"Carat"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_currency.html">label_currency</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
-<span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
 </div></div>
 </section><section id="scatterplots-3" class="slide level2"><h2>Scatterplots</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<p>If there are lots of datapoints, may want to take down the <code>alpha</code> for clearer results.</p>
-<p>E.g., with the <code>tidyverse</code> <code>diamonds</code> dataset.</p>
+
 </div><div class="column" style="width:50%;">
 <div class="panel-tabset">
 <ul id="tabset-4" class="panel-tabset-tabby">
@@ -592,7 +700,7 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-26-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-31-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -600,11 +708,15 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 </div>
 <div id="tabset-4-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">diamonds</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">carat</span>, y <span class="op">=</span> <span class="va">price</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.025</span>, shape <span class="op">=</span> <span class="fl">16</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Price"</span>, x <span class="op">=</span> <span class="st">"Carat"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_currency.html">label_currency</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">$</span><span class="va">flipper_length_mm</span>, <span class="va">penguins</span><span class="op">$</span><span class="va">body_mass_g</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span></span>
+<span><span class="va">r_label</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"italic(r) =="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">r</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">flipper_length_mm</span>, y <span class="op">=</span> <span class="va">body_mass_g</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, label <span class="op">=</span> <span class="va">r_label</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">$</span><span class="va">flipper_length_mm</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
+<span>           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">$</span><span class="va">body_mass_g</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>, parse <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Body Mass"</span>, x <span class="op">=</span> <span class="st">"Flipper Length"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
 <span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -613,7 +725,18 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 </div>
 </div>
 </div></div>
-</section><section id="scatterplot-matrices" class="slide level2"><h2>Scatterplot Matrices</h2>
+</section><section id="scatterplots-4" class="slide level2"><h2>Scatterplots</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Adding a <strong>regression line</strong>.</p>
+<p>Defines the relationship between the variables as <span class="math inline">\(y = mx + b\)</span></p>
+<div class="subpoint-narrow">
+<p>○ <span class="math inline">\(b\)</span>: intercept, <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0\)</span></p>
+</div>
+<div class="subpoint-narrow">
+<p>○ <span class="math inline">\(m\)</span>: slope, change in <span class="math inline">\(y\)</span> with unit increase in <span class="math inline">\(x\)</span></p>
+</div>
+</div><div class="column" style="width:50%;">
 <div class="panel-tabset">
 <ul id="tabset-5" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-5-1">Plot</a></li>
@@ -624,7 +747,7 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-28-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-33-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -632,16 +755,29 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 </div>
 <div id="tabset-5-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("GGally")</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">$</span><span class="va">flipper_length_mm</span>, <span class="va">penguins</span><span class="op">$</span><span class="va">body_mass_g</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span></span>
+<span><span class="va">r_label</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"italic(r) =="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">r</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">flipper_length_mm</span>, <span class="va">body_mass_g</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">GGally</span><span class="fu">::</span><span class="fu"><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">flipper_length_mm</span>, y <span class="op">=</span> <span class="va">body_mass_g</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_smooth</span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span>, color <span class="op">=</span> <span class="st">"seagreen"</span>, fill <span class="op">=</span> <span class="st">"seagreen"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, label <span class="op">=</span> <span class="va">r_label</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">$</span><span class="va">flipper_length_mm</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
+<span>           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">$</span><span class="va">body_mass_g</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>, parse <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Body Mass"</span>, x <span class="op">=</span> <span class="st">"Flipper Length"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
+<span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </div>
-</section><section id="scatterplot-matrices-1" class="slide level2"><h2>Scatterplot Matrices</h2>
+</div></div>
+</section><section id="scatterplot-matrices" class="slide level2"><h2>Scatterplot Matrices</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+
+</div></div><div class="column" style="width:50%;">
 <div class="panel-tabset">
 <ul id="tabset-6" class="panel-tabset-tabby">
 <li><a data-tabby-default="" href="#tabset-6-1">Plot</a></li>
@@ -652,7 +788,7 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-30-1.svg" class="quarto-figure quarto-figure-center" width="576"></p>
+<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-35-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
 </figure>
 </div>
 </div>
@@ -660,13 +796,921 @@ body_mass_g               0.8712018   1.0000000</code></pre>
 </div>
 <div id="tabset-6-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">flipper_length_mm</span>, <span class="va">body_mass_g</span>, <span class="va">bill_length_mm</span>, <span class="va">bill_depth_mm</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># install.packages("GGally")</span></span>
+<span></span>
+<span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">flipper_length_mm</span>, <span class="va">body_mass_g</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">GGally</span><span class="fu">::</span><span class="fu"><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </div>
+</div><p>::::</p>
+</section><section id="scatterplot-matrices-1" class="slide level2"><h2>Scatterplot Matrices</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+
+</div></div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-7" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-7-1">Plot</a></li>
+<li><a href="#tabset-7-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-7-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-37-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-7-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">flipper_length_mm</span>, <span class="va">body_mass_g</span>, <span class="va">bill_length_mm</span>, <span class="va">bill_depth_mm</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">GGally</span><span class="fu">::</span><span class="fu"><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div><p>::::</p>
+</section><section id="scatterplot-matrices-2" class="slide level2"><h2>Scatterplot Matrices</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Adding a LOESS line…</p>
+</div></div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-8" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-8-1">Plot</a></li>
+<li><a href="#tabset-8-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-8-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-39-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-8-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">flipper_length_mm</span>, <span class="va">body_mass_g</span>, <span class="va">bill_length_mm</span>, <span class="va">bill_depth_mm</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">GGally</span><span class="fu">::</span><span class="fu"><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div><p>::::</p>
+</section><section id="scatterplot-matrices-3" class="slide level2"><h2>Scatterplot Matrices</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+
+</div></div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-9" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-9-1">Plot</a></li>
+<li><a href="#tabset-9-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-9-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-41-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-9-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">custom_trendline</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">mapping</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, mapping <span class="op">=</span> <span class="va">mapping</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_smooth</span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span>, se <span class="op">=</span> <span class="cn">FALSE</span>, color <span class="op">=</span> <span class="st">"steelblue"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">flipper_length_mm</span>, <span class="va">body_mass_g</span>, <span class="va">bill_length_mm</span>, <span class="va">bill_depth_mm</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">GGally</span><span class="fu">::</span><span class="fu"><a href="https://ggobi.github.io/ggally/reference/ggpairs.html">ggpairs</a></span><span class="op">(</span>lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>continuous <span class="op">=</span> <span class="va">custom_trendline</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div><p>::::</p>
+</section></section><section><section id="simple-regression" class="title-slide slide level1 center"><h1>Simple Regression</h1>
+
+</section><section id="simple-regression-1" class="slide level2"><h2>Simple Regression</h2>
+<p>When we added trendlines (<code>method = "lm"</code>) onto our scatterplots, we were performing a <strong>regression</strong>.</p>
+<div class="columns">
+<div class="column" style="width:75%;">
+<div class="panel-tabset">
+<ul id="tabset-10" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-10-1">Plot</a></li>
+<li><a href="#tabset-10-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-10-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-43-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-10-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tibble</span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">5</span>, <span class="fl">1.5</span><span class="op">)</span>,</span>
+<span>  y <span class="op">=</span> <span class="fl">3</span> <span class="op">+</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">x</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span>, by <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">25</span>, by <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">25</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span>
+<span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:75%;">
+<p>We are representing the relationship between the variables as <span class="math inline">\(y = mx + b\)</span>.</p>
+<div class="subpoint-narrow">
+<p>○ <span class="math inline">\(b\)</span>: intercept, <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0\)</span></p>
+</div>
+<div class="subpoint-narrow">
+<p>○ <span class="math inline">\(m\)</span>: slope, change in <span class="math inline">\(y\)</span> with unit increase in <span class="math inline">\(x\)</span></p>
+</div>
+</div></div>
+</section><section id="simple-regression-2" class="slide level2"><h2>Simple Regression</h2>
+<p>When we added trendlines (<code>method = "lm"</code>) onto our scatterplots, we were performing a <strong>regression</strong>.</p>
+<div class="columns">
+<div class="column" style="width:75%;">
+<div class="panel-tabset">
+<ul id="tabset-11" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-11-1">Plot</a></li>
+<li><a href="#tabset-11-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-11-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_12_files/figure-revealjs/unnamed-chunk-45-1.svg" class="quarto-figure quarto-figure-center" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-11-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">5</span>, <span class="fl">1.5</span><span class="op">)</span>,</span>
+<span>  y <span class="op">=</span> <span class="fl">3</span> <span class="op">+</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">x</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, data <span class="op">=</span> <span class="va">d</span><span class="op">)</span></span>
+<span><span class="va">b0</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">b1</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">grey</span> <span class="op">&lt;-</span> <span class="st">"grey25"</span></span>
+<span><span class="va">arr</span>  <span class="op">&lt;-</span> <span class="fu">arrow</span><span class="op">(</span>length <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fl">0.09</span>, <span class="st">"inches"</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"closed"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># One-unit run (x = 8 to 9) and the corresponding rise</span></span>
+<span><span class="va">x0</span> <span class="op">&lt;-</span> <span class="fl">7</span></span>
+<span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fl">8</span></span>
+<span><span class="va">y0</span> <span class="op">&lt;-</span> <span class="va">b0</span> <span class="op">+</span> <span class="va">b1</span> <span class="op">*</span> <span class="va">x0</span></span>
+<span><span class="va">y1</span> <span class="op">&lt;-</span> <span class="va">b0</span> <span class="op">+</span> <span class="va">b1</span> <span class="op">*</span> <span class="va">x1</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">d</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.6</span>, shape <span class="op">=</span> <span class="fl">16</span>, size <span class="op">=</span> <span class="fl">1.8</span>, color <span class="op">=</span> <span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_abline</span><span class="op">(</span>intercept <span class="op">=</span> <span class="va">b0</span>, slope <span class="op">=</span> <span class="va">b1</span>, color <span class="op">=</span> <span class="st">"pink3"</span>, linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  </span>
+<span>  <span class="co"># Intercept: point where the line crosses x = 0, with a curved arrow and label</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"point"</span>, x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="va">b0</span>, color <span class="op">=</span> <span class="st">"black"</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"curve"</span>, x <span class="op">=</span> <span class="fl">1.6</span>, xend <span class="op">=</span> <span class="fl">0.15</span>, y <span class="op">=</span> <span class="va">b0</span> <span class="op">+</span> <span class="fl">6</span>, yend <span class="op">=</span> <span class="va">b0</span> <span class="op">+</span> <span class="fl">0.5</span>,</span>
+<span>           curvature <span class="op">=</span> <span class="fl">0.35</span>, arrow <span class="op">=</span> <span class="va">arr</span>, color <span class="op">=</span> <span class="va">grey</span>, linewidth <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">1.7</span>, y <span class="op">=</span> <span class="va">b0</span> <span class="op">+</span> <span class="fl">6.8</span>, hjust <span class="op">=</span> <span class="fl">0</span>, color <span class="op">=</span> <span class="va">grey</span>, size <span class="op">=</span> <span class="fl">4.5</span>,</span>
+<span>           parse <span class="op">=</span> <span class="cn">TRUE</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"beta[0] == %.2f"</span>, <span class="va">b0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  </span>
+<span>  <span class="co"># Slope: one-unit run, then the rise over that run</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"segment"</span>, x <span class="op">=</span> <span class="va">x0</span>, xend <span class="op">=</span> <span class="va">x1</span>, y <span class="op">=</span> <span class="va">y0</span>, yend <span class="op">=</span> <span class="va">y0</span>,</span>
+<span>           linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="va">grey</span>, linewidth <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_errorbar</span><span class="op">(</span>data <span class="op">=</span> <span class="fu">tibble</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x1</span> <span class="op">+</span> <span class="fl">0.12</span>, ymin <span class="op">=</span> <span class="va">y0</span>, ymax <span class="op">=</span> <span class="va">y1</span><span class="op">)</span>,</span>
+<span>                <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, ymin <span class="op">=</span> <span class="va">ymin</span>, ymax <span class="op">=</span> <span class="va">ymax</span><span class="op">)</span>,</span>
+<span>                width <span class="op">=</span> <span class="fl">0.15</span>, color <span class="op">=</span> <span class="va">grey</span>, linewidth <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>                inherit.aes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="va">x1</span> <span class="op">+</span> <span class="fl">0.3</span>, y <span class="op">=</span> <span class="op">(</span><span class="va">y0</span> <span class="op">+</span> <span class="va">y1</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span>, hjust <span class="op">=</span> <span class="fl">0</span>, color <span class="op">=</span> <span class="va">grey</span>,</span>
+<span>           size <span class="op">=</span> <span class="fl">4.5</span>, parse <span class="op">=</span> <span class="cn">TRUE</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"beta[1] == %.2f"</span>, <span class="va">b1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  </span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span>, by <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">25</span>, by <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">25</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">guides</span><span class="op">(</span>x <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>         y <span class="op">=</span> <span class="fu">guide_axis</span><span class="op">(</span>cap <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:75%;">
+<p>We are representing the relationship between the variables as <span class="math inline">\(y = mx + b\)</span>.</p>
+<div class="subpoint-narrow">
+<p>○ <span class="math inline">\(b\)</span>: intercept, <span class="math inline">\(y\)</span> when <span class="math inline">\(x = 0\)</span></p>
+</div>
+<div class="subpoint-narrow">
+<p>○ <span class="math inline">\(m\)</span>: slope, change in <span class="math inline">\(y\)</span> with unit increase in <span class="math inline">\(x\)</span></p>
+</div>
+<p>In modeling, you more often see this as <span class="math inline">\(y = \beta_0 + \beta_1 x\)</span></p>
+<div class="subpoint-narrow">
+<p>○ General linear model</p>
+</div>
+</div></div>
+</section><section id="regression-example" class="slide level2"><h2>Regression Example</h2>
+<p>Let’s regress penguin bill length (<span class="math inline">\(x\)</span>) on penguin bill depth (<span class="math inline">\(y\)</span>).</p>
+<p><span class="math display">\[\text{bill depth}_i = \beta_0 + \beta_1 \text{bill length}_i + \epsilon_i\]</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bill_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">bill_depth_mm</span> <span class="op">~</span> <span class="va">bill_length_mm</span>, data <span class="op">=</span> <span class="va">penguins</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bill_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = bill_depth_mm ~ bill_length_mm, data = penguins)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.1381 -1.4263  0.0164  1.3841  4.5255 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    20.88547    0.84388  24.749  &lt; 2e-16 ***
+bill_length_mm -0.08502    0.01907  -4.459 1.12e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.922 on 340 degrees of freedom
+  (2 observations deleted due to missingness)
+Multiple R-squared:  0.05525,   Adjusted R-squared:  0.05247 
+F-statistic: 19.88 on 1 and 340 DF,  p-value: 1.12e-05</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><span class="math inline">\(R^2 = \frac{\mathrm{SS}_\mathrm{regression}}{\mathrm{SS}_y} = \frac{\sum(\hat{y}_i - \bar{y})}{\sum(\hat{y}_i- \bar{y})}\)</span></p>
+<div class="subpoint-narrow">
+<p>○ Proportion of variance in <span class="math inline">\(y\)</span> explained by the model (predicted values <span class="math inline">\(\hat{y}\)</span>)</p>
+</div>
+</div></div>
+</section><section id="lm-objects" class="slide level2"><h2>
+<code>lm()</code> Objects</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bill_model_tidy</span> <span class="op">&lt;-</span> <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">bill_model</span><span class="op">)</span></span>
+<span><span class="va">bill_model_tidy</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term           estimate std.error statistic  p.value
+  &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)     20.9       0.844      24.7  4.72e-78
+2 bill_length_mm  -0.0850    0.0191     -4.46 1.12e- 5</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bill_model</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">gtsummary</span><span class="fu">::</span><span class="fu"><a href="https://www.danieldsjoberg.com/gtsummary/reference/tbl_regression.html">tbl_regression</a></span><span class="op">(</span>intercept <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="maszwdpqyg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#maszwdpqyg table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#maszwdpqyg thead, #maszwdpqyg tbody, #maszwdpqyg tfoot, #maszwdpqyg tr, #maszwdpqyg td, #maszwdpqyg th {
+  border-style: none;
+}
+
+#maszwdpqyg p {
+  margin: 0;
+  padding: 0;
+}
+
+#maszwdpqyg .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#maszwdpqyg .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#maszwdpqyg .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#maszwdpqyg .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#maszwdpqyg .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#maszwdpqyg .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#maszwdpqyg .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#maszwdpqyg .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#maszwdpqyg .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#maszwdpqyg .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#maszwdpqyg .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#maszwdpqyg .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#maszwdpqyg .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#maszwdpqyg .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#maszwdpqyg .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#maszwdpqyg .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#maszwdpqyg .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#maszwdpqyg .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#maszwdpqyg .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#maszwdpqyg .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#maszwdpqyg .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#maszwdpqyg .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#maszwdpqyg .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#maszwdpqyg .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#maszwdpqyg .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#maszwdpqyg .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#maszwdpqyg .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#maszwdpqyg .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#maszwdpqyg .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#maszwdpqyg .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#maszwdpqyg .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#maszwdpqyg .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#maszwdpqyg .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#maszwdpqyg .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#maszwdpqyg .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#maszwdpqyg .gt_left {
+  text-align: left;
+}
+
+#maszwdpqyg .gt_center {
+  text-align: center;
+}
+
+#maszwdpqyg .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#maszwdpqyg .gt_font_normal {
+  font-weight: normal;
+}
+
+#maszwdpqyg .gt_font_bold {
+  font-weight: bold;
+}
+
+#maszwdpqyg .gt_font_italic {
+  font-style: italic;
+}
+
+#maszwdpqyg .gt_super {
+  font-size: 65%;
+}
+
+#maszwdpqyg .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#maszwdpqyg .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#maszwdpqyg .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#maszwdpqyg .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#maszwdpqyg .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#maszwdpqyg .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#maszwdpqyg .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#maszwdpqyg .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#maszwdpqyg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table caption-top" data-quarto-bootstrap="false">
+<thead><tr class="gt_col_headings header">
+<th id="label" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"><strong>Characteristic</strong></th>
+<th id="estimate" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>Beta</strong></th>
+<th id="conf.low" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>95% CI</strong></th>
+<th id="p.value" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>p-value</strong></th>
+</tr></thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">(Intercept)</td>
+<td class="gt_row gt_center" headers="estimate">21</td>
+<td class="gt_row gt_center" headers="conf.low">19, 23</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">bill_length_mm</td>
+<td class="gt_row gt_center" headers="estimate">-0.09</td>
+<td class="gt_row gt_center" headers="conf.low">-0.12, -0.05</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+</tbody>
+<tfoot><tr class="gt_sourcenotes odd">
+<td colspan="4" class="gt_sourcenote">Abbreviation: CI = Confidence Interval</td>
+</tr></tfoot>
+</table>
+</div>
+</div>
+</div>
+</div></div>
+<div class="columns">
+<div class="column" style="width:33%;">
+<p>Coefficients</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coefficients</a></span><span class="op">(</span><span class="va">bill_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept) bill_length_mm 
+   20.88546832    -0.08502128 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coefficients</a></span><span class="op">(</span><span class="va">bill_model</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept) 
+   20.88547 </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:33%;">
+<p>Residual variance</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/sigma.html">sigma</a></span><span class="op">(</span><span class="va">bill_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.922285</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bill_model</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.05524985</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bill_model</span><span class="op">)</span><span class="op">$</span><span class="va">adj.r.squared</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.05247117</code></pre>
+</div>
+</div>
+</div></div>
+</section><section id="regression-interpretation" class="slide level2"><h2>Regression Interpretation</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">bill_model</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = bill_depth_mm ~ bill_length_mm, data = penguins)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.1381 -1.4263  0.0164  1.3841  4.5255 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    20.88547    0.84388  24.749  &lt; 2e-16 ***
+bill_length_mm -0.08502    0.01907  -4.459 1.12e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.922 on 340 degrees of freedom
+  (2 observations deleted due to missingness)
+Multiple R-squared:  0.05525,   Adjusted R-squared:  0.05247 
+F-statistic: 19.88 on 1 and 340 DF,  p-value: 1.12e-05</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><strong>Intercept</strong>: The expected value of bill depth when bill length is zero is 20.89.</p>
+<div class="subpoint-narrow fragment">
+<p>○ Do we even care about bill length being zero? 🤔</p>
+</div>
+<p><strong>Slope</strong>: The expected increase in bill depth with a one unit increase in bill length is 20.89.</p>
+</div></div>
+</section><section id="standardizing-variables" class="slide level2"><h2>Standardizing Variables</h2>
+<p>We can convert the variables to <em>z</em>-scores. Now, <span class="math inline">\(\text{bill length} = 0\)</span> means the <em>average</em> bill length across penguins.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_cleaned</span> <span class="op">&lt;-</span> <span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"bill_"</span><span class="op">)</span><span class="op">)</span>, <span class="va">scale</span>, .names <span class="op">=</span> <span class="st">"{.col}_z"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">penguins_cleaned</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"bill_"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 344 × 4
+   bill_length_mm bill_depth_mm bill_length_mm_z[,1] bill_depth_mm_z[,1]
+            &lt;dbl&gt;         &lt;dbl&gt;                &lt;dbl&gt;               &lt;dbl&gt;
+ 1           39.1          18.7               -0.883               0.784
+ 2           39.5          17.4               -0.810               0.126
+ 3           40.3          18                 -0.663               0.430
+ 4           NA            NA                 NA                  NA    
+ 5           36.7          19.3               -1.32                1.09 
+ 6           39.3          20.6               -0.847               1.75 
+ 7           38.9          17.8               -0.920               0.329
+ 8           39.2          19.6               -0.865               1.24 
+ 9           34.1          18.1               -1.80                0.480
+10           42            20.2               -0.352               1.54 
+# ℹ 334 more rows</code></pre>
+</div>
+</div>
+</section><section id="standardized-regression" class="slide level2"><h2>Standardized Regression</h2>
+<div class="columns">
+<div class="column" style="width:66%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>scipen <span class="op">=</span> <span class="fl">999</span><span class="op">)</span></span>
+<span><span class="va">bill_model_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">bill_depth_mm_z</span> <span class="op">~</span> <span class="va">bill_length_mm_z</span>, data <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">)</span></span>
+<span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">bill_model_z</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu">where</span><span class="op">(</span><span class="va">is.numeric</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term             estimate std.error statistic p.value
+  &lt;chr&gt;               &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 (Intercept)         0         0.053      0          1
+2 bill_length_mm_z   -0.235     0.053     -4.46       0</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span></span>
+<span>  <span class="va">penguins_cleaned</span><span class="op">$</span><span class="va">bill_length_mm</span>,</span>
+<span>  <span class="va">penguins_cleaned</span><span class="op">$</span><span class="va">bill_depth_mm</span>,</span>
+<span>  use <span class="op">=</span> <span class="st">"complete.obs"</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.2350529</code></pre>
+</div>
+</div>
+</div></div>
+<p><span class="fragment" data-fragment-index="1">Simple regression slope coefficient is just the correlation!</span></p>
+<p><img data-src="https://i.pinimg.com/736x/a2/42/d8/a242d89f5bfca11a69c2f0a4fa3fb995.jpg">{.absolute bottom = 0, right = 0 .fragment fragment-index=1}</p>
+</section><section id="next-week" class="slide level2"><h2>Next Week</h2>
+<p>More regression!</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Visualizing regression predictions</p>
+<p>Assumption checking</p>
+<p>Regression diagnostics</p>
+<p>Confounders</p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="https://64.media.tumblr.com/6509cc0d5bcf66cb1bc671048246d312/bfe1c51976b5c5ed-2a/s540x810/c7f448c88271b7cc79d3e005d1e50c5e83a56312.gifv"></p>
+</div></div>
 </section><section id="lab-12-activity" class="slide level2"><h2>Lab 12 Activity</h2>
 <!-- ## Ideas -->
 <!-- strength of correlation plots -->
