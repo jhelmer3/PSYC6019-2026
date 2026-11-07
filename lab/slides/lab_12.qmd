@@ -1,6 +1,6 @@
 ---
 title: "Covariance, Correlation, and Scatterplots"
-subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2026-11-06 | Lab 11"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2026-11-13 | Lab 12"
 author: "Jess Helmer"
 footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
 format: 
@@ -26,6 +26,8 @@ knitr:
 - Scatterplots
 
 - Scatterplot matrices
+
+- Simple regression
 
 ```{r setup}
 #| echo: false
@@ -92,7 +94,7 @@ $$ s_{xy} = \frac{\sum_{i = 1}^N (x_i - \bar{x}) (y_i - \bar{y}) }{N - 1} $$
 library(tidyverse)
 
 # ---- Simulate data with an exact, chosen sample correlation -----------------
-set.seed(2026)
+set.seed(2027)
 n  <- 40
 zx <- as.numeric(scale(rnorm(n)))
 ze <- as.numeric(scale(rnorm(n)))
@@ -308,8 +310,8 @@ panel <- function(rho, title) {
   feat <- d |> slice_max(abs(x - mean(x)), n = 6) |> pull(id)
   cov_plot(d, focus = feat, show_dx = TRUE, show_dy = TRUE, title = title)
 }
-panel( 0.6, "Positive: bars mostly agree")
-panel(-0.6, "Negative: bars mostly disagree")
+panel( 0.6, "Positive: bars mostly have same sign")
+panel(-0.6, "Negative: bars mostly have different signs")
 panel( 0.0, "Zero: no consistent pattern")
 ```
 
@@ -526,91 +528,86 @@ penguins |>
 ::::
 
 
+## Testing Correlations
 
-## Scatterplots
-
-::: {.panel-tabset}
-### Plot
 ```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
+# install.packages("rstatix")
+
 penguins |>
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
-  geom_point() +
-  labs(y = "Body Mass", x = "Flipper Length") +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic()
+  select(flipper_length_mm, body_mass_g) |>
+  rstatix::cor_test()
 ```
 
-### Code
+
+## Ordinal Correlations
+
+:::: {.columns}
+::: {.column width="50%"}
 ```{r}
-#| eval: false
-penguins |>
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
-  geom_point() +
-  labs(y = "Body Mass", x = "Flipper Length") +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic()
-```
-:::
+penguins_ordinal <- penguins |>
+  mutate(
+    across(
+      c(bill_length_mm, bill_depth_mm),
+      function(bill_column) case_when(
+        bill_column < quantile(bill_column, .33, na.rm = T) ~ "low",
+        between(
+          bill_column, 
+          quantile(bill_column, 1/3, na.rm = T), 
+          quantile(bill_column, 2/3, na.rm = T)
+        ) ~ "med",
+        bill_column > quantile(bill_column, .66, na.rm = T) ~ "high"
+      ) |>
+        factor(levels = c("low", "med", "high"), ordered = TRUE),
+      .names = "{.col}_ordinal"
+    )
+  ) |>
+  select(ends_with("_ordinal"))
 
-
-## Scatterplots
-
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-
-r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
-
-penguins |>
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
-  geom_point() +
-  annotate(geom = "text", label = round(r, 2), x = mean(penguins$flipper_length_mm, na.rm = T),
-           y = max(penguins$body_mass_g, na.rm = T)) +
-  labs(y = "Body Mass", x = "Flipper Length") +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic()
-```
-
-### Code
-```{r}
-#| eval: false
-r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
-
-penguins |>
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
-  geom_point() +
-  annotate(geom = "text", label = round(r, 2), x = mean(penguins$flipper_length_mm, na.rm = T),
-           y = max(penguins$body_mass_g, na.rm = T)) +
-  labs(y = "Body Mass", x = "Flipper Length") +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T)) +
-  theme_classic()
+head(penguins_ordinal)
 ```
 :::
+
+::: {.column width="50%"}
+```{r}
+penguins_ordinal |>
+  count(bill_length_mm_ordinal, bill_depth_mm_ordinal)
+```
+:::
+::::
+
+
+## Ordinal Correlations
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+penguins_ordinal |>
+  mutate(across(everything(), as.numeric)) |>
+  cor(use = "complete.obs",
+      method = "spearman")
+```
+
+:::
+
+::: {.column width="50%"}
+```{r}
+penguins_ordinal |>
+  mutate(across(everything(), as.numeric)) |>
+  cor(use = "complete.obs",
+      method = "kendall")
+```
+:::
+::::
 
 
 ## Scatterplots
 
 :::: {.columns}
 ::: {.column width="50%"}
-If there are lots of datapoints, may want to take down the `alpha` for clearer results.
 
-E.g., with the `tidyverse` `diamonds` dataset.
 :::
 
-::: {.column .fragment width="50%"}
-
+::: {.column width="50%"}
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -618,11 +615,10 @@ E.g., with the `tidyverse` `diamonds` dataset.
 #| fig-width: 5
 #| fig-height: 4
 #| fig-align: center
-diamonds |>
-  ggplot(aes(x = carat, y = price)) +
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point() +
-  labs(y = "Price", x = "Carat") +
-  scale_y_continuous(labels = scales::label_currency()) +
+  labs(y = "Body Mass", x = "Flipper Length") +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
   theme_classic()
@@ -631,17 +627,15 @@ diamonds |>
 ### Code
 ```{r}
 #| eval: false
-diamonds |>
-  ggplot(aes(x = carat, y = price)) +
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point() +
-  labs(y = "Price", x = "Carat") +
-  scale_y_continuous(labels = scales::label_currency()) +
+  labs(y = "Body Mass", x = "Flipper Length") +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
   theme_classic()
 ```
 :::
-
 :::
 ::::
 
@@ -692,8 +686,178 @@ diamonds |>
 ::::
 
 
+
+## Scatterplots
+
+:::: {.columns}
+::: {.column width="50%"}
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  annotate(geom = "text", label = round(r, 2), x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T)) +
+  labs(y = "Body Mass", x = "Flipper Length") +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  annotate(geom = "text", label = round(r, 2), x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T)) +
+  labs(y = "Body Mass", x = "Flipper Length") +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+:::
+:::
+::::
+
+
+## Scatterplots
+
+:::: {.columns}
+::: {.column width="50%"}
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+r_label <- paste("italic(r) ==", round(r, 2))
+
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  annotate(geom = "text", label = r_label, x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T), parse = T) +
+  labs(y = "Body Mass", x = "Flipper Length") +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+r_label <- paste("italic(r) ==", round(r, 2))
+
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  annotate(geom = "text", label = r_label, x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T), parse = T) +
+  labs(y = "Body Mass", x = "Flipper Length") +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+:::
+:::
+::::
+
+
+## Scatterplots
+
+:::: {.columns}
+::: {.column width="50%"}
+Adding a **regression line**.
+
+Defines the relationship between the variables as $y = mx + b$
+
+::: subpoint-narrow
+○ $b$: intercept, $y$ when $x = 0$
+:::
+
+::: subpoint-narrow
+○ $m$: slope, change in $y$ with unit increase in $x$
+:::
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+r_label <- paste("italic(r) ==", round(r, 2))
+
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm", color = "seagreen", fill = "seagreen") +
+  annotate(geom = "text", label = r_label, x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T), parse = T) +
+  labs(y = "Body Mass", x = "Flipper Length") +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+r_label <- paste("italic(r) ==", round(r, 2))
+
+penguins |>
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm", color = "seagreen", fill = "seagreen") +
+  annotate(geom = "text", label = r_label, x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T), parse = T) +
+  labs(y = "Body Mass", x = "Flipper Length") +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+:::
+:::
+::::
+
+
 ## Scatterplot Matrices
 
+:::: {.columns}
+::: {.column width="50%"}
+
+:::
+
+:::
+
+::: {.column width="50%"}
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -718,16 +882,26 @@ penguins |>
   GGally::ggpairs()
 ```
 :::
+:::
+::::
 
 
 ## Scatterplot Matrices
 
+:::: {.columns}
+::: {.column width="50%"}
+
+:::
+
+:::
+
+::: {.column width="50%"}
 ::: {.panel-tabset}
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 6
-#| fig-height: 6
+#| fig-width: 5
+#| fig-height: 4
 #| fig-align: center
 penguins |>
   select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
@@ -740,9 +914,467 @@ penguins |>
 #| eval: false
 penguins |>
   select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
-  GGally::ggpairs()
+  GGally::ggpairs() +
+  theme_classic()
 ```
 :::
+:::
+::::
+
+
+
+## Scatterplot Matrices
+
+:::: {.columns}
+::: {.column width="50%"}
+Adding a LOESS line...
+:::
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+penguins |>
+  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  GGally::ggpairs(
+    lower = list(continuous = "smooth")
+  ) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+penguins |>
+  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  GGally::ggpairs() +
+  theme_classic()
+```
+:::
+:::
+::::
+
+
+
+## Scatterplot Matrices
+
+:::: {.columns}
+::: {.column width="50%"}
+
+:::
+
+:::
+
+::: {.column width="50%"}
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+custom_trendline <- function(data, mapping, ...) {
+  ggplot(data = data, mapping = mapping) +
+    geom_point(...) +
+    geom_smooth(method = "lm", se = FALSE, color = "steelblue")
+}
+
+penguins |>
+  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  GGally::ggpairs(lower = list(continuous = custom_trendline)) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+custom_trendline <- function(data, mapping, ...) {
+  ggplot(data = data, mapping = mapping) +
+    geom_point(...) +
+    geom_smooth(method = "lm", se = FALSE, color = "steelblue")
+}
+
+penguins |>
+  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  GGally::ggpairs(lower = list(continuous = custom_trendline)) +
+  theme_classic()
+```
+:::
+:::
+::::
+
+
+
+
+# Simple Regression
+
+## Simple Regression
+
+When we added trendlines (`method = "lm"`) onto our scatterplots, we were performing a **regression**.
+
+:::: {.columns}
+::: {.column width="75%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+set.seed(1)
+
+tibble(
+  x = rnorm(100, 5, 1.5),
+  y = 3 + 2 * x + rnorm(100, 0, 3)
+) |>
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  scale_x_continuous(breaks = seq(0, 10, by = 2), limits = c(0, 10)) +
+  scale_y_continuous(breaks = seq(0, 25, by = 5), limits = c(0, 25)) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+set.seed(1)
+
+tibble(
+  x = rnorm(100, 5, 1.5),
+  y = 3 + 2 * x + rnorm(100, 0, 3)
+) |>
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  scale_x_continuous(breaks = seq(0, 10, by = 2), limits = c(0, 10)) +
+  scale_y_continuous(breaks = seq(0, 25, by = 5), limits = c(0, 25)) +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic()
+```
+:::
+
+:::
+
+::: {.column width="75%"}
+We are representing the relationship between the variables as $y = mx + b$.
+
+::: subpoint-narrow
+○ $b$: intercept, $y$ when $x = 0$
+:::
+
+::: subpoint-narrow
+○ $m$: slope, change in $y$ with unit increase in $x$
+:::
+:::
+::::
+
+
+## Simple Regression
+
+When we added trendlines (`method = "lm"`) onto our scatterplots, we were performing a **regression**.
+
+:::: {.columns}
+::: {.column width="75%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+set.seed(1)
+
+d <- tibble(
+  x = rnorm(100, 5, 1.5),
+  y = 3 + 2 * x + rnorm(100, 0, 3)
+)
+
+fit <- lm(y ~ x, data = d)
+b0  <- coef(fit)[[1]]
+b1  <- coef(fit)[[2]]
+
+grey <- "grey25"
+arr  <- arrow(length = unit(0.09, "inches"), type = "closed")
+
+# One-unit run (x = 8 to 9) and the corresponding rise
+x0 <- 7
+x1 <- 8
+y0 <- b0 + b1 * x0
+y1 <- b0 + b1 * x1
+
+ggplot(d, aes(x = x, y = y)) +
+  geom_point(alpha = 0.6, shape = 16, size = 1.8, color = "steelblue") +
+  geom_abline(intercept = b0, slope = b1, color = "pink3", linewidth = 0.8) +
+  
+  # Intercept: point where the line crosses x = 0, with a curved arrow and label
+  annotate("point", x = 0, y = b0, color = "black", size = 3) +
+  annotate("curve", x = 1.6, xend = 0.15, y = b0 + 6, yend = b0 + 0.5,
+           curvature = 0.35, arrow = arr, color = grey, linewidth = 0.5) +
+  annotate("text", x = 1.7, y = b0 + 6.8, hjust = 0, color = grey, size = 4.5,
+           parse = TRUE, label = sprintf("beta[0] == %.2f", b0)) +
+  
+  # Slope: one-unit run, then the rise over that run
+  annotate("segment", x = x0, xend = x1, y = y0, yend = y0,
+           linetype = "dashed", color = grey, linewidth = 0.4) +
+  geom_errorbar(data = tibble(x = x1 + 0.12, ymin = y0, ymax = y1),
+                aes(x = x, ymin = ymin, ymax = ymax),
+                width = 0.15, color = grey, linewidth = 0.6,
+                inherit.aes = FALSE) +
+  annotate("text", x = x1 + 0.3, y = (y0 + y1) / 2, hjust = 0, color = grey,
+           size = 4.5, parse = TRUE, label = sprintf("beta[1] == %.2f", b1)) +
+  
+  scale_x_continuous(breaks = seq(0, 10, by = 2), limits = c(0, 10)) +
+  scale_y_continuous(breaks = seq(0, 25, by = 5), limits = c(0, 25)) +
+  guides(x = guide_axis(cap = TRUE),
+         y = guide_axis(cap = TRUE)) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+set.seed(1)
+
+d <- tibble(
+  x = rnorm(100, 5, 1.5),
+  y = 3 + 2 * x + rnorm(100, 0, 3)
+)
+
+fit <- lm(y ~ x, data = d)
+b0  <- coef(fit)[[1]]
+b1  <- coef(fit)[[2]]
+
+grey <- "grey25"
+arr  <- arrow(length = unit(0.09, "inches"), type = "closed")
+
+# One-unit run (x = 8 to 9) and the corresponding rise
+x0 <- 7
+x1 <- 8
+y0 <- b0 + b1 * x0
+y1 <- b0 + b1 * x1
+
+ggplot(d, aes(x = x, y = y)) +
+  geom_point(alpha = 0.6, shape = 16, size = 1.8, color = "steelblue") +
+  geom_abline(intercept = b0, slope = b1, color = "pink3", linewidth = 0.8) +
+  
+  # Intercept: point where the line crosses x = 0, with a curved arrow and label
+  annotate("point", x = 0, y = b0, color = "black", size = 3) +
+  annotate("curve", x = 1.6, xend = 0.15, y = b0 + 6, yend = b0 + 0.5,
+           curvature = 0.35, arrow = arr, color = grey, linewidth = 0.5) +
+  annotate("text", x = 1.7, y = b0 + 6.8, hjust = 0, color = grey, size = 4.5,
+           parse = TRUE, label = sprintf("beta[0] == %.2f", b0)) +
+  
+  # Slope: one-unit run, then the rise over that run
+  annotate("segment", x = x0, xend = x1, y = y0, yend = y0,
+           linetype = "dashed", color = grey, linewidth = 0.4) +
+  geom_errorbar(data = tibble(x = x1 + 0.12, ymin = y0, ymax = y1),
+                aes(x = x, ymin = ymin, ymax = ymax),
+                width = 0.15, color = grey, linewidth = 0.6,
+                inherit.aes = FALSE) +
+  annotate("text", x = x1 + 0.3, y = (y0 + y1) / 2, hjust = 0, color = grey,
+           size = 4.5, parse = TRUE, label = sprintf("beta[1] == %.2f", b1)) +
+  
+  scale_x_continuous(breaks = seq(0, 10, by = 2), limits = c(0, 10)) +
+  scale_y_continuous(breaks = seq(0, 25, by = 5), limits = c(0, 25)) +
+  guides(x = guide_axis(cap = TRUE),
+         y = guide_axis(cap = TRUE)) +
+  theme_classic()
+```
+:::
+
+:::
+
+::: {.column width="75%"}
+We are representing the relationship between the variables as $y = mx + b$.
+
+::: subpoint-narrow
+○ $b$: intercept, $y$ when $x = 0$
+:::
+
+::: subpoint-narrow
+○ $m$: slope, change in $y$ with unit increase in $x$
+:::
+
+In modeling, you more often see this as $y = \beta_0 + \beta_1 x$
+
+::: subpoint-narrow
+○ General linear model
+:::
+
+:::
+::::
+
+
+## Regression Example
+
+Let's regress penguin bill length ($x$) on penguin bill depth ($y$). 
+
+$$\text{bill depth}_i = \beta_0 + \beta_1 \text{bill length}_i + \epsilon_i$$
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+bill_model <- lm(bill_depth_mm ~ bill_length_mm, data = penguins)
+summary(bill_model)
+```
+:::
+
+::: {.column width="50%"}
+$R^2 = \frac{\mathrm{SS}_\mathrm{regression}}{\mathrm{SS}_y} = \frac{\sum(\hat{y}_i - \bar{y})}{\sum(\hat{y}_i- \bar{y})}$
+
+::: subpoint-narrow
+○ Proportion of variance in $y$ explained by the model (predicted values $\hat{y}$)
+:::
+
+:::
+::::
+
+
+## `lm()` Objects
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+bill_model_tidy <- broom::tidy(bill_model)
+bill_model_tidy
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+bill_model |>
+  gtsummary::tbl_regression(intercept = T)
+```
+
+:::
+::::
+
+
+
+:::: {.columns}
+::: {.column width="33%"}
+Coefficients 
+
+```{r}
+coefficients(bill_model)
+
+coefficients(bill_model)[1]
+```
+
+:::
+
+::: {.column width="33%"}
+Residual variance
+
+```{r}
+sigma(bill_model)
+```
+
+:::
+
+::: {.column width="33%"}
+```{r}
+summary(bill_model)$r.squared
+
+summary(bill_model)$adj.r.squared
+```
+
+:::
+::::
+
+
+## Regression Interpretation
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+summary(bill_model)
+```
+
+:::
+
+::: {.column width="50%"}
+**Intercept**: The expected value of bill depth when bill length is zero is `r coefficients(bill_model)[[1]] |> round(2)`.
+
+::: {.subpoint-narrow .fragment}
+○ Do we even care about bill length being zero? 🤔
+:::
+
+**Slope**: The expected increase in bill depth with a one unit increase in bill length is `r coefficients(bill_model)[[1]] |> round(2)`.
+:::
+::::
+
+
+## Standardizing Variables
+
+We can convert the variables to *z*-scores. Now, $\text{bill length} = 0$ means the *average* bill length across penguins.
+
+```{r}
+penguins_cleaned <- penguins |>
+  mutate(across(c(starts_with("bill_")), scale, .names = "{.col}_z"))
+penguins_cleaned |>
+  select(starts_with("bill_"))
+```
+
+
+## Standardized Regression
+
+:::: {.columns}
+::: {.column width="66%"}
+```{r}
+options(scipen = 999)
+bill_model_z <- lm(bill_depth_mm_z ~ bill_length_mm_z, data = penguins_cleaned)
+broom::tidy(bill_model_z) |>
+  mutate(across(where(is.numeric), function(x) round(x, 3)))
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+cor(
+  penguins_cleaned$bill_length_mm,
+  penguins_cleaned$bill_depth_mm,
+  use = "complete.obs"
+)
+```
+:::
+::::
+
+[Simple regression slope coefficient is just the correlation!]{.fragment fragment-index=1}
+
+![](https://i.pinimg.com/736x/a2/42/d8/a242d89f5bfca11a69c2f0a4fa3fb995.jpg){.absolute bottom = 0, right = 0 .fragment fragment-index=1}
+
+
+
+## Next Week
+
+More regression!
+
+:::: {.columns}
+::: {.column width="50%"}
+Visualizing regression predictions
+
+Assumption checking
+
+Regression diagnostics
+
+Confounders
+:::
+
+::: {.column width="50%"}
+![](https://64.media.tumblr.com/6509cc0d5bcf66cb1bc671048246d312/bfe1c51976b5c5ed-2a/s540x810/c7f448c88271b7cc79d3e005d1e50c5e83a56312.gifv)
+:::
+::::
 
 
 

@@ -7,5 +7,7 @@ make_chick_week_data <- function() {
     complete(chick, week) |>
     filter_out(.by = chick, sum(is.na(weight)) > 0) |>
     select(chick, diet, week, weight) |>
+    mutate(.by = chick,
+           chick = cur_group_id()) |>
     arrange(chick)
 }
