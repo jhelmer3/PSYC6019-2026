@@ -34,6 +34,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-15d324c2aafc27a03d2c3a1c4b493f27.css">
   <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -281,6 +347,279 @@ Mark Himmelstein
 \end{bmatrix}=\begin{bmatrix}1 &amp; 0\\
 0 &amp; 1
 \end{bmatrix}\]</span></p>
+</section>
+<section id="practice-matrix-addition" class="slide level2">
+<h2>Practice: Matrix Addition</h2>
+<p>Compute <span class="math inline">\(\mathbf{A} + \mathbf{B}\)</span>.</p>
+<p><span class="math display">\[\mathbf{A} = \begin{bmatrix} 2 &amp; -1 &amp; 4 \\ 0 &amp; 3 &amp; 5 \end{bmatrix} \qquad \mathbf{B} = \begin{bmatrix} 1 &amp; 6 &amp; -2 \\ 7 &amp; -3 &amp; 0 \end{bmatrix}\]</span></p>
+<div class="answer">
+<div class="fragment">
+<p><span class="math display">\[\mathbf{A} + \mathbf{B} = \begin{bmatrix} 2+1 &amp; -1+6 &amp; 4+(-2) \\ 0+7 &amp; 3+(-3) &amp; 5+0 \end{bmatrix} = \begin{bmatrix} 3 &amp; 5 &amp; 2 \\ 7 &amp; 0 &amp; 5 \end{bmatrix}\]</span></p>
+</div>
+</div>
+</section>
+<section id="answer-in-r" class="slide level2">
+<h2>Answer in <code>R</code></h2>
+<div class="answer">
+<div class="fragment">
+<p>We can create matrices in <code>R</code> with the <code>matrix()</code> function.</p>
+<ul>
+<li>Wrap it around a vector with <code>c()</code></li>
+<li>Specify how many rows/columns to use</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-label="1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">4</span>,</span>
+<span id="cb1-2"><a aria-label="2"></a>              <span class="dv">0</span>,  <span class="dv">3</span>, <span class="dv">5</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-3"><a aria-label="3"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,  <span class="dv">6</span>, <span class="sc">-</span><span class="dv">2</span>,</span>
+<span id="cb1-4"><a aria-label="4"></a>              <span class="dv">7</span>, <span class="sc">-</span><span class="dv">3</span>,  <span class="dv">0</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-5"><a aria-label="5"></a>A <span class="sc">+</span> B</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">,3</span><span class="pp">]</span></span>
+<span id="cb2-2"><a aria-label="2"></a><span class="ex">[1,]</span>    3    5    2</span>
+<span id="cb2-3"><a aria-label="3"></a><span class="ex">[2,]</span>    7    0    5</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="practice-multiplication" class="slide level2">
+<h2>Practice: Multiplication</h2>
+<p>Let <span class="math inline">\(\mathbf{A}\)</span> be <span class="math inline">\(2 \times 3\)</span> and <span class="math inline">\(\mathbf{B}\)</span> be <span class="math inline">\(3 \times 2\)</span>. Compute <span class="math inline">\(\mathbf{AB}\)</span> and <span class="math inline">\(\mathbf{BA}\)</span>.</p>
+<p><span class="math display">\[\mathbf{A} = \begin{bmatrix} 2 &amp; 1 &amp; 0 \\ -1 &amp; 3 &amp; 4 \end{bmatrix} \qquad \mathbf{B} = \begin{bmatrix} 1 &amp; 2 \\ 0 &amp; -1 \\ 5 &amp; 3 \end{bmatrix}\]</span></p>
+</section>
+<section id="practice-matrix-multiplication-answer" class="slide level2">
+<h2>Practice: Matrix Multiplication (Answer)</h2>
+<div class="answer">
+<div class="fragment">
+<div style="font-size: 0.8em;">
+<p><span class="math display">\[\mathbf{AB} = \begin{bmatrix} 2\times1+1\times0+0\times5 &amp; 2\times2+1\times(-1)+0\times3 \\ -1\times1+3\times0+4\times5 &amp; -1\times2+3\times(-1)+4\times3 \end{bmatrix} = \begin{bmatrix} 2 &amp; 3 \\ 19 &amp; 7 \end{bmatrix}\]</span></p>
+<p><span class="math display">\[\mathbf{BA} = \begin{bmatrix} 1\times2+2\times(-1) &amp; 1\times1+2\times3 &amp; 1\times0+2\times4 \\ 0\times2+(-1)\times(-1) &amp; 0\times1+(-1)\times3 &amp; 0\times0+(-1)\times4 \\ 5\times2+3\times(-1) &amp; 5\times1+3\times3 &amp; 5\times0+3\times4 \end{bmatrix} = \begin{bmatrix} 0 &amp; 7 &amp; 8 \\ 1 &amp; -3 &amp; -4 \\ 7 &amp; 14 &amp; 12 \end{bmatrix}\]</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="in-r" class="slide level2">
+<h2>In <code>R</code></h2>
+<div class="answer">
+<div class="fragment">
+<p>In <code>R</code> matrix multiplication has a special operator: <code>%*%</code></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-label="1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>( <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>,</span>
+<span id="cb3-2"><a aria-label="2"></a>              <span class="sc">-</span><span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">4</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-3"><a aria-label="3"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,  <span class="dv">2</span>,</span>
+<span id="cb3-4"><a aria-label="4"></a>              <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb3-5"><a aria-label="5"></a>              <span class="dv">5</span>,  <span class="dv">3</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-6"><a aria-label="6"></a>A <span class="sc">%*%</span> B   <span class="co"># 2 x 2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb4-2"><a aria-label="2"></a><span class="ex">[1,]</span>    2    3</span>
+<span id="cb4-3"><a aria-label="3"></a><span class="ex">[2,]</span>   19    7</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-label="1"></a>B <span class="sc">%*%</span> A   <span class="co"># 3 x 3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">,3</span><span class="pp">]</span></span>
+<span id="cb6-2"><a aria-label="2"></a><span class="ex">[1,]</span>    0    7    8</span>
+<span id="cb6-3"><a aria-label="3"></a><span class="ex">[2,]</span>    1   <span class="at">-3</span>   <span class="at">-4</span></span>
+<span id="cb6-4"><a aria-label="4"></a><span class="ex">[3,]</span>    7   14   12</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="practice-transposition" class="slide level2">
+<h2>Practice: Transposition</h2>
+<p>Find <span class="math inline">\(\mathbf{X}^T\)</span>.</p>
+<p><span class="math display">\[\mathbf{X} = \begin{bmatrix} 3 &amp; -1 &amp; 2 \\ 0 &amp; 4 &amp; 7 \\ 5 &amp; 1 &amp; -6 \\ 2 &amp; 8 &amp; 9 \end{bmatrix}\]</span></p>
+<div class="answer">
+<div class="fragment">
+<p><span class="math inline">\(\mathbf{X}\)</span> is <span class="math inline">\(4 \times 3\)</span>, so <span class="math inline">\(\mathbf{X}^T\)</span> is <span class="math inline">\(3 \times 4\)</span>:</p>
+<p><span class="math display">\[\mathbf{X}^T = \begin{bmatrix} 3 &amp; 0 &amp; 5 &amp; 2 \\ -1 &amp; 4 &amp; 1 &amp; 8 \\ 2 &amp; 7 &amp; -6 &amp; 9 \end{bmatrix}\]</span></p>
+</div>
+</div>
+</section>
+<section id="transpose-in-r" class="slide level2">
+<h2>Transpose in <code>R</code></h2>
+<div class="answer">
+<div class="fragment">
+<p>In <code>R</code>, we can transpose a matrix with <code>t()</code></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-label="1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span>,  <span class="dv">2</span>,</span>
+<span id="cb7-2"><a aria-label="2"></a>              <span class="dv">0</span>,  <span class="dv">4</span>,  <span class="dv">7</span>,</span>
+<span id="cb7-3"><a aria-label="3"></a>              <span class="dv">5</span>,  <span class="dv">1</span>, <span class="sc">-</span><span class="dv">6</span>,</span>
+<span id="cb7-4"><a aria-label="4"></a>              <span class="dv">2</span>,  <span class="dv">8</span>,  <span class="dv">9</span>), <span class="at">nrow =</span> <span class="dv">4</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-5"><a aria-label="5"></a>X</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">,3</span><span class="pp">]</span></span>
+<span id="cb8-2"><a aria-label="2"></a><span class="ex">[1,]</span>    3   <span class="at">-1</span>    2</span>
+<span id="cb8-3"><a aria-label="3"></a><span class="ex">[2,]</span>    0    4    7</span>
+<span id="cb8-4"><a aria-label="4"></a><span class="ex">[3,]</span>    5    1   <span class="at">-6</span></span>
+<span id="cb8-5"><a aria-label="5"></a><span class="ex">[4,]</span>    2    8    9</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-label="1"></a><span class="fu">t</span>(X)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">,3</span><span class="pp">]</span> <span class="pp">[</span><span class="ss">,4</span><span class="pp">]</span></span>
+<span id="cb10-2"><a aria-label="2"></a><span class="ex">[1,]</span>    3    0    5    2</span>
+<span id="cb10-3"><a aria-label="3"></a><span class="ex">[2,]</span>   <span class="at">-1</span>    4    1    8</span>
+<span id="cb10-4"><a aria-label="4"></a><span class="ex">[3,]</span>    2    7   <span class="at">-6</span>    9</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="practice-squaring" class="slide level2">
+<h2>Practice: Squaring</h2>
+<p>Compute <span class="math inline">\(\mathbf{A}^T\mathbf{A}\)</span>. What do you notice about the result?</p>
+<p><span class="math display">\[\mathbf{A} = \begin{bmatrix} 1 &amp; 2 \\ 3 &amp; 0 \\ -1 &amp; 4 \end{bmatrix}\]</span></p>
+<div class="answer">
+<div class="fragment">
+<div style="font-size: 0.8em;">
+<p><span class="math display">\[\mathbf{A}^T\mathbf{A} = \begin{bmatrix} 1 &amp; 3 &amp; -1 \\ 2 &amp; 0 &amp; 4 \end{bmatrix}\begin{bmatrix} 1 &amp; 2 \\ 3 &amp; 0 \\ -1 &amp; 4 \end{bmatrix} = \begin{bmatrix} 1+9+1 &amp; 2+0-4 \\ 2+0-4 &amp; 4+0+16 \end{bmatrix} = \begin{bmatrix} 11 &amp; -2 \\ -2 &amp; 20 \end{bmatrix}\]</span></p>
+</div>
+<p>The result is a square, <strong>symmetric</strong> matrix: <span class="math inline">\((\mathbf{A}^T\mathbf{A})^T = \mathbf{A}^T\mathbf{A}\)</span>. The diagonal entries are sums of squares.</p>
+</div>
+</div>
+</section>
+<section id="squaring-in-r" class="slide level2">
+<h2>Squaring in <code>R</code></h2>
+<div class="answer">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-label="1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>( <span class="dv">1</span>, <span class="dv">2</span>,</span>
+<span id="cb11-2"><a aria-label="2"></a>               <span class="dv">3</span>, <span class="dv">0</span>,</span>
+<span id="cb11-3"><a aria-label="3"></a>              <span class="sc">-</span><span class="dv">1</span>, <span class="dv">4</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-4"><a aria-label="4"></a><span class="fu">t</span>(A) <span class="sc">%*%</span> A</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb12-2"><a aria-label="2"></a><span class="ex">[1,]</span>   11   <span class="at">-2</span></span>
+<span id="cb12-3"><a aria-label="3"></a><span class="ex">[2,]</span>   <span class="at">-2</span>   20</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-label="1"></a><span class="fu">crossprod</span>(A)   <span class="co"># equivalent shortcut for t(A) %*% A</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb14-2"><a aria-label="2"></a><span class="ex">[1,]</span>   11   <span class="at">-2</span></span>
+<span id="cb14-3"><a aria-label="3"></a><span class="ex">[2,]</span>   <span class="at">-2</span>   20</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="practice-are-these-matrices-inverses-1" class="slide level2">
+<h2>Practice: Are These Matrices Inverses? (1)</h2>
+<p>Determine whether <span class="math inline">\(\mathbf{B}\)</span> is the inverse of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+<p><span class="math display">\[\mathbf{A} = \begin{bmatrix} 3 &amp; 1 \\ 5 &amp; 2 \end{bmatrix} \qquad \mathbf{B} = \begin{bmatrix} 2 &amp; -1 \\ -5 &amp; 3 \end{bmatrix}\]</span></p>
+<div class="answer">
+<div class="fragment">
+<p><span class="math display">\[\mathbf{AB} = \begin{bmatrix} 3\times2+1\times(-5) &amp; 3\times(-1)+1\times3 \\ 5\times2+2\times(-5) &amp; 5\times(-1)+2\times3 \end{bmatrix} = \begin{bmatrix} 1 &amp; 0 \\ 0 &amp; 1 \end{bmatrix} = \mathbf{I}\]</span></p>
+<p>The product is the identity matrix, so <strong>yes</strong>, <span class="math inline">\(\mathbf{B} = \mathbf{A}^{-1}\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="answer-1-in-r" class="slide level2">
+<h2>Answer (1) in <code>R</code></h2>
+<div class="answer">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a aria-label="1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>,</span>
+<span id="cb15-2"><a aria-label="2"></a>              <span class="dv">5</span>, <span class="dv">2</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-3"><a aria-label="3"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>( <span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb15-4"><a aria-label="4"></a>              <span class="sc">-</span><span class="dv">5</span>,  <span class="dv">3</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-5"><a aria-label="5"></a>A <span class="sc">%*%</span> B</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb16-2"><a aria-label="2"></a><span class="ex">[1,]</span>    1    0</span>
+<span id="cb16-3"><a aria-label="3"></a><span class="ex">[2,]</span>    0    1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-label="1"></a>B <span class="sc">%*%</span> A      <span class="co"># order doesn't matter for an inverse</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb18-2"><a aria-label="2"></a><span class="ex">[1,]</span>    1    0</span>
+<span id="cb18-3"><a aria-label="3"></a><span class="ex">[2,]</span>    0    1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-label="1"></a><span class="fu">solve</span>(A)     <span class="co"># R computes the inverse directly</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb20-2"><a aria-label="2"></a><span class="ex">[1,]</span>    2   <span class="at">-1</span></span>
+<span id="cb20-3"><a aria-label="3"></a><span class="ex">[2,]</span>   <span class="at">-5</span>    3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="inverting-in-r" class="slide level2">
+<h2>Inverting in <code>R</code></h2>
+<p>Finding a matrix inverse by hand is <strong>hard</strong>, but <code>R</code> can do it!</p>
+<div class="answer">
+<div class="fragment">
+<p>We use <code>solve()</code></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb21-2"><a aria-label="2"></a><span class="ex">[1,]</span>    2   <span class="at">-1</span></span>
+<span id="cb21-3"><a aria-label="3"></a><span class="ex">[2,]</span>   <span class="at">-5</span>    3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb22-2"><a aria-label="2"></a><span class="ex">[1,]</span>    1    0</span>
+<span id="cb22-3"><a aria-label="3"></a><span class="ex">[2,]</span>    0    1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="practice-are-these-matrices-inverses-2" class="slide level2">
+<h2>Practice: Are These Matrices Inverses? (2)</h2>
+<p>Determine whether <span class="math inline">\(\mathbf{D}\)</span> is the inverse of <span class="math inline">\(\mathbf{C}\)</span>.</p>
+<p><span class="math display">\[\mathbf{C} = \begin{bmatrix} 1 &amp; 2 \\ 3 &amp; 4 \end{bmatrix} \qquad \mathbf{D} = \begin{bmatrix} 4 &amp; 2 \\ 3 &amp; 1 \end{bmatrix}\]</span></p>
+<div class="answer">
+<div class="fragment">
+<p><span class="math display">\[\mathbf{CD} = \begin{bmatrix} 1\times4+2\times3 &amp; 1\times2+2\times1 \\ 3\times4+4\times3 &amp; 3\times2+4\times1 \end{bmatrix} = \begin{bmatrix} 10 &amp; 4 \\ 24 &amp; 10 \end{bmatrix} \neq \mathbf{I}\]</span></p>
+<p>The product is not the identity matrix, so <strong>no</strong>, <span class="math inline">\(\mathbf{D}\)</span> is not the inverse of <span class="math inline">\(\mathbf{C}\)</span>.</p>
+</div>
+</div>
+</section>
+<section id="answer-2-in-r" class="slide level2">
+<h2>Answer (2) in <code>R</code></h2>
+<div class="answer">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a aria-label="1"></a>C <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>,</span>
+<span id="cb23-2"><a aria-label="2"></a>              <span class="dv">3</span>, <span class="dv">4</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb23-3"><a aria-label="3"></a>D <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">2</span>,</span>
+<span id="cb23-4"><a aria-label="4"></a>              <span class="dv">3</span>, <span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb23-5"><a aria-label="5"></a>C <span class="sc">%*%</span> D</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb24-2"><a aria-label="2"></a><span class="ex">[1,]</span>   10    4</span>
+<span id="cb24-3"><a aria-label="3"></a><span class="ex">[2,]</span>   24   10</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-label="1"></a><span class="fu">solve</span>(C)     <span class="co"># the actual inverse of C</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb26-2"><a aria-label="2"></a><span class="ex">[1,]</span> <span class="at">-2.0</span>  1.0</span>
+<span id="cb26-3"><a aria-label="3"></a><span class="ex">[2,]</span>  1.5 <span class="at">-0.5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="finding-inverses" class="slide level2">
+<h2>Finding Inverses</h2>
+<div class="answer">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb27-2"><a aria-label="2"></a><span class="ex">[1,]</span> <span class="at">-2.0</span>  1.0</span>
+<span id="cb27-3"><a aria-label="3"></a><span class="ex">[2,]</span>  1.5 <span class="at">-0.5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb28-2"><a aria-label="2"></a><span class="ex">[1,]</span> <span class="at">-0.5</span>    1</span>
+<span id="cb28-3"><a aria-label="3"></a><span class="ex">[2,]</span>  1.5   <span class="at">-2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
 
 
 </section>

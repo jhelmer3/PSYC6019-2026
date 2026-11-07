@@ -53,6 +53,61 @@ my_orange2 <- "#FED9A6"
 my_yellow2 <- "#FFFFCC"
 
 ```
+
+
+## Jargon Refresher
+
+**Linear Model:**
+
+$${\color{blue}y_i} = \beta_0 + \sum_{p=1}^P \beta_p {\color{red}x_{ip}} + \epsilon_i$$
+
+::::: {.columns .v-center-container}
+::: {.column width="50%"}
+
+[**Left side variable terms**]{style="color: blue;"}
+
+
+- $y$
+- Dependent variable (DV)
+- Outcome variable
+- Response variable
+
+:::
+
+::: {.column width="50%"}
+[**Right side variable terms**]{style="color: red;"}
+
+- $x$
+- Independent variable(s) (IVs)
+- Predictor variable(s)
+
+:::
+:::::
+
+## Tests We Will Cover {.scrollable}
+
+
+::: {style="font-size: 0.8em;"}
+
+| IV(s) | DV | IV Status | Model Structure |
+| :--- | :--- | :--- | :--- |
+| — | One categorical | — | $\chi^2$ Goodness of Fit |
+| One Categorical | One categorical | — | $\chi^2$ Test of Independence |
+| — | One Continuous | — | One Sample $t$-Test |
+| One Binary | One Continuous | Dependent Groups | Paired Sample $t$-Test |
+| One Binary | One Continuous | Independent Groups | Independent Sample $t$-Test |
+| One Categorical | One Continuous | Independent Groups | One-Way ANOVA |
+| More than One Categorical | One Continuous | Independent Groups | Factorial ANOVA |
+| One Categorical | One Continuous | Dependent Groups | One-Way Repeated Measures ANOVA |
+| More than One Categorical | One Continuous| Dependent Groups | Factorial Repeated Measures ANOVA |
+| More than One Categorical | One Continuous | Mixed Groups | Mixed ANOVA |
+| **One Continuous** | **One Continuous** | — | **Correlation or Simple Regression** |
+| More than One Continuous | One Continuous | — | Multiple Regression |
+
+::: 
+
+
+
 ## Regression Line
 
 Last time, we saw that we can help summarize a scatterplot with a regression line
@@ -76,7 +131,7 @@ ggplot(dat, aes(KC, polydrug)) + geom_point() + stat_smooth(method = "lm") +
 - Best fitting "straight" line
 - What is a line?
     - [Has slope and intercept]{.answer .fragment .content-visible unless-meta="params.v0"}
-      - [$y = mx + b]{.answer .fragment .content-visible unless-meta="params.v0"}
+      - [$y = mx + b$]{.answer .fragment .content-visible unless-meta="params.v0"}
     - [**Intercept:** Value of $y$ when $x = 0$]{.answer .fragment .content-visible unless-meta="params.v0"}
     - [**Slope:** For one unit increase in $x$, how many units increase in $y$?]{.answer .fragment .content-visible unless-meta="params.v0"}
     - [How do we find this line?]{.answer .fragment .content-visible unless-meta="params.v0"}
@@ -121,13 +176,13 @@ The form of the simple linear regression model is as follows:
 
 | Population | Sample |
 | :--- | :--- |
-| $y_{i} \mid x_{i} = b_{0} + b_{1}x_{i} + e_{i}$ | $y_{i} \mid x_{i} = \hat{b}_{0} + \hat{b}_{1}x_{i} + e_{i}$ |
-| $\hat{y}_{i} = b_{0} + b_{1}x_{i}$ | $\hat{y}_{i} = \hat{b}_{0} + \hat{b}_{1}x_{i}$ |
+| $y_{i} \mid x_{i} = \beta_{0} + \beta_{1}x_{i} + e_{i}$ | $y_{i} \mid x_{i} = b_{0} + b_{1}x_{i} + e_{i}$ |
+| $\hat{y}_{i} = \beta_{0} + \beta_{1}x_{i}$ | $\hat{y}_{i} = b_{0} + b_{1}x_{i}$ |
 
 1. $y_i \mid x_i$: The **conditional** mean value of $y_i$ given a fixed/specific value of $x_i$
 2. $\hat{y}_i$: Estimated outcome ($\hat{\,\,\,}$: an estimated value)
-3. $b_0$ ($\hat{b}_0$): The (estimated) intercept (predicted value of $y_i$ when $x_i = 0$)
-4. $b_1$ ($\hat{b}_1$): The (estimated) slope (predicted increase in $y_i$ for a one-unit increase in $x_i$)
+3. $b_0$: The (estimated) intercept (predicted value of $y_i$ when $x_i = 0$)
+4. $b_1$: The (estimated) slope (predicted increase in $y_i$ for a one-unit increase in $x_i$)
 5. $e_i = y - \hat{y}$:
     + The **residual** or **error** when predicting $y_i$ from $x_i$
     + The **difference** between a particular point and the regression line
@@ -373,7 +428,7 @@ $$\hat{y}_i = 9.75 + 4.51x_i$$
 - [**(0.50, 12.00)**]{style="color: #E41A1C;"} is a point on the best fit line
 - For all cases where $x = 0.50$, our estimated mean of $\bar{y} | (x = 0.50) = 12.00$ 
     - The standard deviation of $y$ when $x = 0.50$ is $s_y | (x = 0.50) = \color{#984EA3} s_{\epsilon} = 3.27$
-      - In fact, this what we are saying the SD of $y$ is for **any** value of $x$, $\sy |x= \color{#984EA3} s_{\epsilon} = 3.27$ 
+      - In fact, this what we are saying the SD of $y$ is for **any** value of $x$, $s_y |x= \color{#984EA3} s_{\epsilon} = 3.27$ 
 - For any given $x$, the regression line tells us the expected mean of $y$, with constant SD
 
 :::
@@ -388,13 +443,13 @@ $$\hat{y}_i = 9.75 + 4.51x_i$$
 
 The best-fit line follows the form:
 
-$$\hat{y}_i = \hat{b}_0 + \hat{b}_1 x_i$$
+$$\hat{y}_i = b_0 + b_1 x_i$$
 
-The estimated regression coefficients ($\hat{b}_0$ and $\hat{b}_1$) are functions of familiar descriptive statistics:
+The estimated regression coefficients ($b_0$ and $b_1$) are functions of familiar descriptive statistics:
 
-$$\hat{b}_1 = \frac{s_{xy}}{s^2_{x}}$$
+$$b_1 = \frac{s_{xy}}{s^2_{x}}$$
 
-$$\hat{b}_0 = \bar{y} - \hat{b}_1 \bar{x}$$
+$$b_0 = \bar{y} - b_1 \bar{x}$$
 
 These are known as the **normal equations**
 
@@ -411,10 +466,10 @@ Method of **ordinary least squares** (OLS):
 - Find $b_0$ and $b_1$ that minimize the sum of squared differences between $y_i$ and $\hat{y}$
 - In symbols:
 
-$$(\hat{b}_0, \hat{b}_1)^\prime  = \underset{b_{0},b_{1}}{\text{argmin}}\left[\sum_{i=1}^N(y_i - \hat{y}_i)^2\right] \\
+$$(b_0, b_1)^\prime  = \underset{b_{0},b_{1}}{\text{argmin}}\left[\sum_{i=1}^N(y_i - \hat{y}_i)^2\right] \\
    = \underset{b_{0},b_{1}}{\text{argmin}}\left[\sum_{i=1}^N(y_i - b_0 - b_1x_i)^2\right]$$
 
-OLS is the same **loss function** we use in ANOVA: minimize (sums of) squared errors between $\hat{y}_i$'s and the observed $y_i$'s
+OLS is the same **loss function** we use in one-way and factorial ANOVA: minimize (sums of) squared errors between $\hat{y}_i$'s and the observed $y_i$'s
 
 
 :::
@@ -664,11 +719,11 @@ What is standardization?
 
 **Standardized regression coefficients** are those that describe the relationship between standardized variables
 
-Standardized $\hat{b}_0 = 0$ and $\hat{b}_1 = r_{xy}$.
+Standardized $b_0 = 0$ and $b_1 = r_{xy}$.
 
-Unstandardized $\hat{b}_1 = \frac{r_{xy}s_y}{s_x}$
+Unstandardized $b_1 = \frac{r_{xy}s_y}{s_x}$
 
-Unstandardized $\hat{b}_0 = \bar{y} - \hat{b}_1\bar{x}$ (unstandardized $\hat{b}_1$)
+Unstandardized $b_0 = \bar{y} - b_1\bar{x}$ (unstandardized $b_1$)
 
 
 ## Test for Intercept
@@ -679,9 +734,9 @@ Unstandardized $\hat{b}_0 = \bar{y} - \hat{b}_1\bar{x}$ (unstandardized $\hat{b}
 
 - $H_0: b_0 = 0$
 - $H_1: b_0 \neq 0$
-- $b_0$ is population regression intercept (sample statistic = $\hat{b}_0$)
+- $b_0$ is population regression intercept (sample statistic = $b_0$)
 
-$$t_{\text{obs}}(df) = \frac{\hat{b}_0}{s_{\hat{b}_0}} \hspace{1cm}   s_{\hat{b}_0}= \sqrt{\left(\frac{(1 - r^2_{xy})\times\sum(y_i - \bar{y})^2}{df}\right)\left(\frac{1}{N} + \frac{\bar{x}^2}{(N-1)\times s^2_{x}}\right)}$$
+$$t_{\text{obs}}(df) = \frac{b_0}{s_{b_0}} \hspace{1cm}   s_{b_0}= \sqrt{\left(\frac{(1 - r^2_{xy})\times\sum(y_i - \bar{y})^2}{df}\right)\left(\frac{1}{N} + \frac{\bar{x}^2}{(N-1)\times s^2_{x}}\right)}$$
 
 :::
 
@@ -697,7 +752,7 @@ Under $H_0$, $t_{\text{obs}}(df)$ is $t$-distributed with $df = N - 2$ degrees o
 
 Confidence interval:
 
-$$\hat{b}_0 \pm t(df)_{\alpha/2} \times s_{\hat{b}_0}$$
+$$b_0 \pm t(df)_{\alpha/2} \times s_{b_0}$$
 
 ## Why Care?
 
@@ -716,16 +771,16 @@ What is the interpretation of the intercept?
 
 * $H_0: b_1 = 0$
 * $H_1: b_1 \neq 0$
-* $b_1$ is population regression slope of $x$ on $y$ (sample statistic = $\hat{b}_1$)
+* $b_1$ is population regression slope of $x$ on $y$ (sample statistic = $b_1$)
 
 ::: {.columns}
 
 ::: {.column width="50%"}
-$$t_{\text{obs}}(df) = \frac{\hat{b}_1}{s_{\hat{b}_1}}$$
+$$t_{\text{obs}}(df) = \frac{b_1}{s_{b_1}}$$
 :::
 
 ::: {.column width="50%"}
-$$s_{\hat{b}_1}= \frac{s_y}{s_x}\sqrt{\frac{1 - r^2_{xy}}{df}}$$
+$$s_{b_1}= \frac{s_y}{s_x}\sqrt{\frac{1 - r^2_{xy}}{df}}$$
 :::
 
 :::
@@ -741,7 +796,7 @@ Under $H_0$, $t_{\text{obs}}(df)$ is $t$-distributed with $df = N - 2$ degrees o
 
 Confidence interval:
 
-$$\hat{b}_1 \pm t(df)_{\alpha/2} \times s_{\hat{b}_1}$$
+$$b_1 \pm t(df)_{\alpha/2} \times s_{b_1}$$
 
 
 ## Hypothesis Tests for $R^2$
@@ -996,7 +1051,7 @@ Game play:
 
 ## Details
 
-::: {style="font-size: 0.8em;"}
+::: {style="font-size: 0.7em;"}
 
 **Conditions**:
 
@@ -1044,12 +1099,12 @@ summary(lm1)
 ```
 ## Results
 
-$$\widehat{\text{polydrug}} = \hat{b}_0 + \hat{b}_1 \text{KC}$$
+$$\widehat{\text{polydrug}} = b_0 + b_1 \text{KC}$$
 
 | Coefficient | Estimate | SE | $t$ | $p$ |
 | :--- | :--- | :--- | :--- | :--- |
-| **Intercept ($\hat{b}_0$)** | 7.46 | 1.01 | 7.41 | <.001 |
-| **KC ($\hat{b}_1$)** | -0.01 | 0.02 | -0.56 | .574 |
+| **Intercept ($b_0$)** | 7.46 | 1.01 | 7.41 | <.001 |
+| **KC ($b_1$)** | -0.01 | 0.02 | -0.56 | .574 |
 
 $R^2 = 0.002, F(1, 151) = 0.32, p = .57$
     
