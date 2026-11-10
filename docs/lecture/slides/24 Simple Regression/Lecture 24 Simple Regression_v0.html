@@ -411,7 +411,7 @@ Mark Himmelstein
 <li><span class="math inline">\(\hat{y}_i\)</span>: Estimated outcome (<span class="math inline">\(\hat{\,\,\,}\)</span>: an estimated value)</li>
 <li><span class="math inline">\(b_0\)</span>: The (estimated) intercept (predicted value of <span class="math inline">\(y_i\)</span> when <span class="math inline">\(x_i = 0\)</span>)</li>
 <li><span class="math inline">\(b_1\)</span>: The (estimated) slope (predicted increase in <span class="math inline">\(y_i\)</span> for a one-unit increase in <span class="math inline">\(x_i\)</span>)</li>
-<li><span class="math inline">\(e_i = y - \hat{y}\)</span>:
+<li><span class="math inline">\(e_i = y_i - \hat{y}_i\)</span>:
 <ul>
 <li>The <strong>residual</strong> or <strong>error</strong> when predicting <span class="math inline">\(y_i\)</span> from <span class="math inline">\(x_i\)</span></li>
 <li>The <strong>difference</strong> between a particular point and the regression line</li>
@@ -464,7 +464,7 @@ Mark Himmelstein
 <div class="column" style="width:60%;">
 <p><img data-src="Regression5.png"></p>
 </div><div class="column" style="width:40%;">
-<div style="font-size: 0.78em;">
+<div style="font-size: 0.75em;">
 <ul>
 <li><span style="color: #E41A1C;"><strong>(0.50, 12.00)</strong></span> is a point on the best fit line</li>
 <li>For all cases where <span class="math inline">\(x = 0.50\)</span>, our estimated mean of <span class="math inline">\(\bar{y} | (x = 0.50) = 12.00\)</span>
@@ -474,8 +474,10 @@ Mark Himmelstein
 <li>In fact, this what we are saying the SD of <span class="math inline">\(y\)</span> is for <strong>any</strong> value of <span class="math inline">\(x\)</span>, <span class="math inline">\(s_y |x= \color{#984EA3} s_{\epsilon} = 3.27\)</span></li>
 </ul></li>
 </ul></li>
-<li>For any given <span class="math inline">\(x\)</span>, the regression line tells us the expected mean of <span class="math inline">\(y\)</span>, with constant SD</li>
 </ul>
+<div style="text-align: center;">
+<p><strong>For any given <span class="math inline">\(x\)</span>, the regression line tells us the expected mean of <span class="math inline">\(y\)</span>, with constant SD</strong></p>
+</div>
 </div>
 </div></div>
 </section>
@@ -617,7 +619,7 @@ Mark Himmelstein
 <section id="map-to-correlation" class="slide level2">
 <h2>Map to Correlation</h2>
 <p><strong>Standardized regression coefficients</strong> are those that describe the relationship between standardized variables</p>
-<p>Standardized <span class="math inline">\(b_0 = 0\)</span> and <span class="math inline">\(b_1 = r_{xy}\)</span>.</p>
+<p>Standardized <span class="math inline">\(b_0 = 0\)</span> and <span class="math inline">\(b_1 = r_{xy}\)</span></p>
 <p>Unstandardized <span class="math inline">\(b_1 = \frac{r_{xy}s_y}{s_x}\)</span></p>
 <p>Unstandardized <span class="math inline">\(b_0 = \bar{y} - b_1\bar{x}\)</span> (unstandardized <span class="math inline">\(b_1\)</span>)</p>
 </section>
@@ -724,9 +726,8 @@ Mark Himmelstein
 </ul>
 <ol start="2" type="1">
 <li>No outliers</li>
-<li>Across each predictor value, <strong>residuals</strong> are normally distributed with mean 0 and constant variance (homoscedasticity)
+<li><strong>Homoscedasticity:</strong> Across each predictor value, <strong>residuals</strong> are normally distributed with mean 0 and constant variance
 <ul>
-<li>Equivalently put: There is a linear relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></li>
 <li>New version of the normality and homogeneity of variance assumptions</li>
 </ul></li>
 </ol>
@@ -949,23 +950,25 @@ Mark Himmelstein
 </section>
 <section id="map-to-correlation-1" class="slide level2">
 <h2>Map to Correlation</h2>
-<p>Note that in the standardized result: - <span class="math inline">\(b_0 \approx 0\)</span> (slightly different due to rounding) - <span class="math inline">\(b_1 = r_{\text{KC, polydrug}}\)</span>*</p>
+<p>Note that in the standardized result:</p>
+<ul>
+<li><span class="math inline">\(b_0 \approx 0\)</span> (slightly different due to rounding)</li>
+<li><span class="math inline">\(b_1 = r_{\text{KC, polydrug}}\)</span>*</li>
+</ul>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-label="1"></a><span class="fu">cor</span>(dat<span class="sc">$</span>KC, dat<span class="sc">$</span>polydrug)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-label="1"></a><span class="ex">[1]</span> <span class="at">-0.04576666</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<ul>
-<li>Only for regression with a single predictor!</li>
-</ul>
+<p>* Only for regression with a single predictor!</p>
 </section>
 <section id="assumption-checks" class="slide level2">
 <h2>Assumption Checks</h2>
 <p>Assumptions are typically check graphically</p>
 <ul>
 <li><strong>Normality:</strong> QQ Plot of <strong>residuals</strong></li>
-<li><strong>homoscedasticity:</strong>
+<li><strong>Homoscedasticity:</strong>
 <ul>
 <li>Plot <span class="math inline">\(x\)</span> variable along <span class="math inline">\(x\)</span>-axis</li>
 <li>Plot residuals along <span class="math inline">\(y\)</span>-axis</li>

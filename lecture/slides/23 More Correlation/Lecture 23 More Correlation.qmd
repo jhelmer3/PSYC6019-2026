@@ -142,7 +142,7 @@ In hypothesis testing, we use sample statistics to estimate population parameter
 - $\bar{x}$ is an estimate of $\mu$
 - $s_{x}$ is an estimate of $\sigma_x$
 - $r_{xy}$ is an estimate of $\rho_{xy}$
-- $\hat{b}_0$ and $\hat{b}_1$ are estimates of $b_0$ and $b_1$
+- ${b}_0$ and ${b}_1$ are estimates of $\beta_0$ and $\beta_1$
 
 
 ## Testing $\rho$
@@ -155,8 +155,8 @@ Null hypotheses involving correlations we can test include:
 - $H_0$: $\rho_{xy} = 0$
 - $H_0$: $\rho_{xy} = \#$ (specific number other than zero)
 - $H_0$: population $R^2 = 0$
-- $H_0$: $b_1 = 0$
-- $H_0$: $b_0 = 0$ (usually not substantively interesting)
+- $H_0$: $\beta_1 = 0$
+- $H_0$: $\beta_0 = 0$ (usually not substantively interesting)
 
 
 ## Hypothesis Test for $r_{xy}$
@@ -402,6 +402,7 @@ $$t_{\text{obs}}(df) = \frac{r_{xy}\sqrt{N-2}}{\sqrt{1 - r_{xy}^2}}=$$
 $$t_{\text{obs}}(153 - 2) = \frac{-0.046\sqrt{153 - 2}}{\sqrt{1 - -0.046^2}} = -0.564$$
 
 ```{r}
+#| echo: true
 pt(-0.564, df = 153 - 2) * 2
 ```
 
@@ -485,7 +486,7 @@ ggpairs(dat, columns = c("polydrug", "KS", "KC", "RS","RC"))
 
 You can modify the elements of the SPLOM. Here I 
 
-- Add Loess line to the scatterplots (below diagnonal)
+- Add LOESS line to the scatterplots (below diagnonal)
 - Change the diagonal to histograms instead of kernel density plots
 
 ```{r}
@@ -515,7 +516,7 @@ lower = list(continuous = "smooth_loess"),
 
 ## Extrapolation
 
-A regression equation only applies to data like those used to create it
+A correlation only applies to data like those used to create it
 
 ```{r}
 #| fig.height: 4.5
@@ -531,7 +532,7 @@ labs(x = "age (months)", y = "foot length (cm)") +
 geom_smooth(method = lm, se = FALSE, col = my_blue)
 ```
 
-Should predictions from this regression be applied to adults? babies?
+Should predictions from this relationship be applied to adults? babies?
 
 
 
@@ -592,16 +593,124 @@ par(pty = "m")
 ```
 
 
-
 ## Range Restriction
 
-Correlations can change if selecting on one variable (Taylor & Russell, 1936)
+Correlations can change if selecting on one variable
 
 ```{r}
+#| fig-width: 7
+#| fig-height: 7
+#| out-width: "42%"
 
-knitr::include_graphics("../../Figs/taylor-russell.png")
+# ---- settings ----
+n_rr    <- 1000   # applicants
+rho_rr  <- .70    # population correlation, test score with performance
+keep_rr <- .05    # proportion selected (top 5% on the test)
+
+# expected correlation in the selected group (selection on x only)
+c_rr   <- qnorm(1 - keep_rr)
+lam_rr <- dnorm(c_rr) / keep_rr
+u2_rr  <- 1 + c_rr * lam_rr - lam_rr^2          # variance ratio of x after selection
+r_exp  <- rho_rr * sqrt(u2_rr) / sqrt(1 - rho_rr^2 + rho_rr^2 * u2_rr)  # about .34
+
+# ---- simulate applicants: test score (x) and job performance (y) ----
+rr_sim <- function(seed) {
+  set.seed(seed)
+  z_test <- rnorm(n_rr)
+  z_perf <- rho_rr * z_test + sqrt(1 - rho_rr^2) * rnorm(n_rr)
+  d <- tibble(test = 50 + 10 * z_test,
+              perf = 50 + 10 * z_perf)
+  cut <- quantile(d$test, 1 - keep_rr)
+  d |> mutate(status = if_else(test >= cut, "Selected", "Rejected"))
+}
+
+rr_cors <- function(d) {
+  c(all = cor(d$test, d$perf),
+    sel = with(filter(d, status == "Selected"), cor(test, perf)))
+}
+
+# only ~50 people are selected, so one random draw can land far from the
+# expected value; use the seed whose sample best matches the population values
+rr_fit  <- sapply(1:300, function(s) {
+  r <- rr_cors(rr_sim(s))
+  abs(r["all"] - rho_rr) + abs(r["sel"] - r_exp)
+})
+rr_dat  <- rr_sim(which.min(rr_fit))
+rr_cut  <- quantile(rr_dat$test, 1 - keep_rr)
+
+# correlations, formatted APA-style (no leading zero)
+fmt_r <- function(r) sub("^(-?)0\\.", "\\1.", sprintf("%.2f", r))
+r_all <- rr_cors(rr_dat)[["all"]]
+r_sel <- rr_cors(rr_dat)[["sel"]]
+
+# shared axis limits so the two slides line up exactly
+rr_xlim <- range(rr_dat$test) + c(-2, 2)
+rr_ylim <- range(rr_dat$perf) + c(-2, 6)
+
+rr_theme <- theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1,
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
+
+# ---- slide 1: everyone looks the same ----
+ggplot(rr_dat, aes(test, perf)) +
+  geom_point(color = my_red, size = 1.6, alpha = .5) +
+  geom_smooth(method = "lm", se = FALSE, color = my_red,
+              linetype = "dashed", linewidth = 1) +
+  annotate("text", x = rr_xlim[1], y = rr_ylim[2], hjust = 0, vjust = 1,
+           label = paste0("italic(r) == '", fmt_r(r_all), "'"),
+           parse = TRUE, color = my_red, size = 8) +
+  coord_cartesian(xlim = rr_xlim, ylim = rr_ylim, expand = FALSE) +
+  labs(x = "Test Score", y = "Job Performance") +
+  rr_theme
 ```
 
+
+
+## Restriction Revealed
+
+Correlations can change if selecting on one variable
+
+```{r}
+#| fig-width: 7
+#| fig-height: 7
+#| out-width: "42%"
+
+ggplot(rr_dat, aes(test, perf)) +
+  # shade the selected region
+  annotate("rect", xmin = rr_cut, xmax = Inf, ymin = -Inf, ymax = Inf,
+           fill = my_blue2, alpha = .5) +
+  geom_vline(xintercept = rr_cut, linewidth = 1) +
+  # rejected applicants fade into the background
+  geom_point(data = filter(rr_dat, status == "Rejected"),
+             color = "grey70", size = 1.6, alpha = .35) +
+  # selected applicants pop
+  geom_point(data = filter(rr_dat, status == "Selected"),
+             color = my_blue, size = 3) +
+  # full-sample line (faded) vs. selected-only line
+  geom_smooth(method = "lm", se = FALSE, color = my_red, alpha = .5,
+              linetype = "dashed", linewidth = .8) +
+  geom_smooth(data = filter(rr_dat, status == "Selected"),
+              method = "lm", se = FALSE, fullrange = FALSE,
+              color = my_blue, linewidth = 1.5) +
+  # region labels
+  annotate("text", x = (rr_xlim[1] + rr_cut) / 2, y = rr_ylim[1] + 1,
+           label = "REJECTED", vjust = 0, size = 6, color = "grey45",
+           fontface = "bold") +
+  annotate("text", x = (rr_cut + rr_xlim[2]) / 2, y = rr_ylim[1] + 1,
+           label = "SELECTED", vjust = 0, size = 6, color = my_blue,
+           fontface = "bold") +
+  # correlations
+  annotate("text", x = rr_xlim[1], y = rr_ylim[2], hjust = 0, vjust = 1,
+           label = paste0("italic(r)[all] == '", fmt_r(r_all), "'"),
+           parse = TRUE, color = my_red, size = 8) +
+  annotate("text", x = rr_xlim[2], y = rr_ylim[2], hjust = 1, vjust = 1,
+           label = paste0("italic(r)[selected] == '", fmt_r(r_sel), "'"),
+           parse = TRUE, color = my_blue, size = 8) +
+  coord_cartesian(xlim = rr_xlim, ylim = rr_ylim, expand = FALSE) +
+  labs(x = "Test Score", y = "Job Performance") +
+  rr_theme
+```
 
 ## And Others!
 

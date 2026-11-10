@@ -183,7 +183,7 @@ The form of the simple linear regression model is as follows:
 2. $\hat{y}_i$: Estimated outcome ($\hat{\,\,\,}$: an estimated value)
 3. $b_0$: The (estimated) intercept (predicted value of $y_i$ when $x_i = 0$)
 4. $b_1$: The (estimated) slope (predicted increase in $y_i$ for a one-unit increase in $x_i$)
-5. $e_i = y - \hat{y}$:
+5. $e_i = y_i - \hat{y}_i$:
     + The **residual** or **error** when predicting $y_i$ from $x_i$
     + The **difference** between a particular point and the regression line
     
@@ -421,7 +421,7 @@ $$\hat{y}_i = 9.75 + 4.51x_i$$
 ::: {.column width="40%"}
 
 
-::: {style="font-size: 0.78em;"}
+::: {style="font-size: 0.75em;"}
 
 
 
@@ -429,8 +429,12 @@ $$\hat{y}_i = 9.75 + 4.51x_i$$
 - For all cases where $x = 0.50$, our estimated mean of $\bar{y} | (x = 0.50) = 12.00$ 
     - The standard deviation of $y$ when $x = 0.50$ is $s_y | (x = 0.50) = \color{#984EA3} s_{\epsilon} = 3.27$
       - In fact, this what we are saying the SD of $y$ is for **any** value of $x$, $s_y |x= \color{#984EA3} s_{\epsilon} = 3.27$ 
-- For any given $x$, the regression line tells us the expected mean of $y$, with constant SD
 
+::: {style="text-align: center;"}
+
+**For any given $x$, the regression line tells us the expected mean of $y$, with constant SD**
+
+:::
 :::
 
 :::
@@ -719,7 +723,7 @@ What is standardization?
 
 **Standardized regression coefficients** are those that describe the relationship between standardized variables
 
-Standardized $b_0 = 0$ and $b_1 = r_{xy}$.
+Standardized $b_0 = 0$ and $b_1 = r_{xy}$
 
 Unstandardized $b_1 = \frac{r_{xy}s_y}{s_x}$
 
@@ -833,8 +837,7 @@ For **simple** regression (just one $x$), the following tests are all equivalent
 1. All observations are **conditionally** independent
   - Nothing about one observation of $x$ tells you anything about any other observation of $x$ that $y$ doesn't already tell you (and vice versa)
 2. No outliers
-3. Across each predictor value, **residuals** are normally distributed with mean 0 and constant variance (homoscedasticity)
-    - Equivalently put: There is a linear relationship between $x$ and $y$
+3. **Homoscedasticity:** Across each predictor value, **residuals** are normally distributed with mean 0 and constant variance
     - New version of the normality and homogeneity of variance assumptions
 
 
@@ -1150,6 +1153,7 @@ summary(std_lm1)
 ## Map to Correlation
 
 Note that in the standardized result:
+
 - $b_0 \approx 0$ (slightly different due to rounding) 
 - $b_1 = r_{\text{KC, polydrug}}$*
 
@@ -1159,14 +1163,14 @@ Note that in the standardized result:
 cor(dat$KC, dat$polydrug)
 ```
 
-* Only for regression with a single predictor!
+\* Only for regression with a single predictor!
     
 ## Assumption Checks
 
 Assumptions are typically check graphically
 
 - **Normality:** QQ Plot of **residuals**
-- **homoscedasticity:** 
+- **Homoscedasticity:** 
     - Plot $x$ variable along $x$-axis
     - Plot residuals along $y$-axis
     - Spread of residuals (vertically) should be uniform for different values of $x$ variable (horizontal)
