@@ -1,0 +1,316 @@
+---
+title: "Multiple Regression"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2026-11-20 | Lab 13"
+author: "Jess Helmer"
+footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
+format: 
+  revealjs:
+    code-link: true
+    slide-number: true
+    code-line-numbers: false
+    theme: ../../gt-theme.scss
+    width: 1200
+execute: 
+  echo: true
+  dpi: 600
+  freeze: auto
+knitr:
+  opts_chunk:
+    dev: svg
+---
+
+## Outline
+
+- Visualizing regression predictions
+
+- Assumption checking
+
+- Regression diagnostics
+
+- Confounders
+
+```{r setup}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(gt)
+```
+
+
+
+# Multiple Regression
+
+## Multiple Regression
+
+So far, we've only examined the relationship between a continuous outcome and continuous predictor one at a time with *simple regression*. With *multiple regression*, we can examine these relationships **jointly**: looking at one relationship while adjusting for the relationships of other variables.
+
+$$y_i = \beta_0 \, + \, \beta_1 x_{1i} \, + \, \beta_2 x_{2i} \, + \, ... \, + \, \beta_p x_{2i} \, + \, \epsilon$$
+
+::: subpoint
+○ $\beta_0$: value of $y$ when *all predictors* $x = 0$
+:::
+
+::: subpoint
+○ $\beta_1$: slope of $x_{1i}$ adjusted for the effect of $x_{2i}, \, ..., \,x_{pi}$ 
+:::
+
+
+## Simple Regression
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+library(palmerpenguins)
+
+m1 <- lm(body_mass_g ~ bill_length_mm, data = penguins) 
+summary(m1)
+```
+:::
+
+::: {.column width="50%"}
+Coefficient interpretations
+:::
+::::
+
+
+## Standardizing
+
+```{r}
+penguins_cleaned <- penguins |>
+  mutate(across(ends_with("_mm"), scale))
+penguins_cleaned
+```
+
+## Simple Regression
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+m1 <- lm(body_mass_g ~ bill_length_mm, data = penguins_cleaned) 
+summary(m1)
+```
+:::
+
+::: {.column width="50%"}
+Coefficient interpretations
+:::
+::::
+
+
+## Multiple Regression
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+m2 <- lm(body_mass_g ~ bill_length_mm + bill_depth_mm, data = penguins_cleaned) 
+summary(m2)
+```
+:::
+
+::: {.column width="50%"}
+After adjusting for bill depth, an increase in 1 SD in bill length is associated with an `r coef(m2)["bill_length_mm"] |> round(2)` g increase in body mass.
+:::
+::::
+
+
+## Multiple Regression
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+m3 <- lm(body_mass_g ~ bill_length_mm + bill_depth_mm + flipper_length_mm, data = penguins) 
+summary(m3)
+```
+:::
+
+::: {.column width="50%"}
+Coefficient interpretations
+:::
+::::
+
+
+
+## Regression Diagnostics
+
+With multiple regression, we want to check on...
+
+- Normality of residuals
+
+  + Relationships with other variables
+
+- Multicollinearity among predictors
+
+- Outliers
+
+
+## Normality of Residuals
+
+
+
+# Multicollinearity
+
+## Multicollinearity
+
+Multicollinearity refers to the ability of *predictors* to be associated with *each other*.
+
+High multicollinearity: when the predictors in the model can explain a high amount of variance in another predictor. 
+
+![](../media/lab_13/multicollinearity_gossip.png)
+
+::: footer
+Image made with GPT-6 on 2026-11-12 (may or may not try to make my own to replace).
+:::
+
+
+## Multicollinearity Bad
+
+Sim demoing misinterpretations, variance inflation bc multicollinearity
+
+
+
+## Superficial Check
+
+```{r}
+penguins |>
+  select(bill_length_mm, bill_depth_mm, flipper_length_mm) |>
+  cor(use = "pairwise.complete.obs")
+```
+
+## Why Superficial? 
+
+Sim showing that variables can have small bivariate cors but in total explain a lot of the variance in y
+
+```{r}
+
+```
+
+
+
+
+
+## Squared Multiple Correlations
+
+For each predictor, we need to examine the *total amount of variance* that the remaining predictors can explain of it.
+
+$$\text{body mass} = \beta_0 + \beta_1\text{bill length} + \beta_2\text{bill depth} + \beta_3\text{flipper length} + \epsilon$$
+
+In the models
+
+::: subpoint
+$\text{bill length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{flipper length} + \epsilon$
+:::
+
+::: subpoint
+$\text{bill depth} = \beta_0 + \beta_1\text{bill length} + \beta_2\text{flipper length} + \epsilon$
+:::
+
+::: subpoint
+$\text{flipper length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{bill length} + \epsilon$
+:::
+
+what is the amount of variance the predictors (i.e., the *other predictors* in the model of interest)? 
+
+We can assess the amount of variance predictors can account for in an outcome with $R^2$.
+
+
+## Squared Multiple Correlations
+
+The $R^2$ of these models (again, predictors in the model of interest trying to predict each other) is called *squared multiple correlations*, $SMC$s. 
+
+::: subpoint
+$\text{bill length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{flipper length} + \epsilon$
+:::
+
+::: subpoint
+$\text{bill depth} = \beta_0 + \beta_1\text{bill length} + \beta_2\text{flipper length} + \epsilon$
+:::
+
+::: subpoint
+$\text{flipper length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{bill length} + \epsilon$
+:::
+
+
+## Squared Multiple Correlations
+
+```{r}
+multicoll_m1 <- lm(bill_length_mm ~ bill_depth_mm + flipper_length_mm, data = penguins)
+summary(multicoll_m1)$r.squared
+
+multicoll_m2 <- lm(bill_depth_mm ~ bill_length_mm + flipper_length_mm, data = penguins)
+summary(multicoll_m2)$r.squared
+
+multicoll_m3 <- lm(flipper_length_mm ~ bill_depth_mm + bill_length_mm, data = penguins)
+summary(multicoll_m3)$r.squared
+```
+
+
+## Variance Inflation Factor
+
+The presence of multicollinearity among predictors in the model increases the variance of the model estimates. We can examine this effect with Variance Inflation Factors ($VIF$s).
+
+$$VIF_p = \frac{1}{1 - SMC_p}$$
+
+```{r}
+car::vif(m3)
+```
+
+VIF suggested cutoffs
+
+
+## Tolerance
+
+An alternative way of looking at this is with *tolerance*, which is just the inverse of $VIF$.
+
+$$tolerance = \frac{1}{VIF}$$
+
+```{r}
+1 / car::vif(m3)
+```
+
+
+
+## All At Once
+
+```{r}
+olsrr::ols_coll_diag(m3)
+```
+
+
+## Variance Inflation Factor
+
+
+# Outliers
+
+
+
+## Outlier Detection
+
+
+
+## Outlier vs Leverage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
