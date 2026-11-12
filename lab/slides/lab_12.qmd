@@ -93,8 +93,10 @@ $$ s_{xy} = \frac{\sum_{i = 1}^N (x_i - \bar{x}) (y_i - \bar{y}) }{N - 1} $$
 #| echo: false
 library(tidyverse)
 
+## Made with Claude 5.5 Medium on 2026-11-05
+
 # ---- Simulate data with an exact, chosen sample correlation -----------------
-set.seed(2027)
+set.seed(2019)
 n  <- 40
 zx <- as.numeric(scale(rnorm(n)))
 ze <- as.numeric(scale(rnorm(n)))
@@ -211,6 +213,7 @@ cov_plot <- function(df, focus = NULL, show_dx = FALSE, show_dy = FALSE,
 ```{r}
 #| fig-width: 6
 #| fig-height: 4.5
+#| fig-align: center
 #| echo: false
 cov_plot(df, means = FALSE)
 ```
@@ -221,6 +224,7 @@ cov_plot(df, means = FALSE)
 ```{r}
 #| fig-width: 6
 #| fig-height: 4.5
+#| fig-align: center
 #| echo: false
 cov_plot(df)
 ```
@@ -231,6 +235,7 @@ cov_plot(df)
 ```{r}
 #| fig-width: 6
 #| fig-height: 4.5
+#| fig-align: center
 #| echo: false
 cov_plot(df, focus = p1)
 ```
@@ -241,6 +246,7 @@ cov_plot(df, focus = p1)
 ```{r}
 #| fig-width: 6
 #| fig-height: 4.5
+#| fig-align: center
 #| echo: false
 cov_plot(df, focus = p1, show_dx = TRUE)
 ```
@@ -251,6 +257,7 @@ cov_plot(df, focus = p1, show_dx = TRUE)
 ```{r}
 #| fig-width: 6
 #| fig-height: 4.5
+#| fig-align: center
 #| echo: false
 cov_plot(df, focus = p1, show_dx = TRUE, show_dy = TRUE)
 ```
@@ -261,6 +268,7 @@ cov_plot(df, focus = p1, show_dx = TRUE, show_dy = TRUE)
 ```{r}
 #| fig-width: 6
 #| fig-height: 4.5
+#| fig-align: center
 #| echo: false
 cov_plot(df, focus = c(p1, p2), show_dx = TRUE, show_dy = TRUE)
 ```
@@ -271,6 +279,7 @@ cov_plot(df, focus = c(p1, p2), show_dx = TRUE, show_dy = TRUE)
 ```{r}
 #| fig-width: 6
 #| fig-height: 4.5
+#| fig-align: center
 #| echo: false
 cov_plot(df, focus = c(p1, p2, p3), show_dx = TRUE, show_dy = TRUE)
 ```
@@ -281,6 +290,7 @@ cov_plot(df, focus = c(p1, p2, p3), show_dx = TRUE, show_dy = TRUE)
 ```{r}
 #| fig-width: 6
 #| fig-height: 4.5
+#| fig-align: center
 #| echo: false
 cov_plot(df, focus = c(p1, p2, p3, p4), show_dx = TRUE, show_dy = TRUE)
 ```
@@ -855,8 +865,6 @@ penguins |>
 
 :::
 
-:::
-
 ::: {.column width="50%"}
 ::: {.panel-tabset}
 ### Plot
@@ -890,8 +898,6 @@ penguins |>
 
 :::: {.columns}
 ::: {.column width="50%"}
-
-:::
 
 :::
 
@@ -930,8 +936,6 @@ penguins |>
 Adding a LOESS line...
 :::
 
-:::
-
 ::: {.column width="50%"}
 ::: {.panel-tabset}
 ### Plot
@@ -966,8 +970,6 @@ penguins |>
 
 :::: {.columns}
 ::: {.column width="50%"}
-
-:::
 
 :::
 
@@ -1019,7 +1021,7 @@ penguins |>
 When we added trendlines (`method = "lm"`) onto our scatterplots, we were performing a **regression**.
 
 :::: {.columns}
-::: {.column width="75%"}
+::: {.column width="25%"}
 
 ::: {.panel-tabset}
 ### Plot
@@ -1083,7 +1085,7 @@ We are representing the relationship between the variables as $y = mx + b$.
 When we added trendlines (`method = "lm"`) onto our scatterplots, we were performing a **regression**.
 
 :::: {.columns}
-::: {.column width="75%"}
+::: {.column width="25%"}
 
 ::: {.panel-tabset}
 ### Plot
@@ -1255,7 +1257,6 @@ bill_model_tidy
 bill_model |>
   gtsummary::tbl_regression(intercept = T)
 ```
-
 :::
 ::::
 
@@ -1263,7 +1264,8 @@ bill_model |>
 
 :::: {.columns}
 ::: {.column width="33%"}
-Coefficients 
+
+### Coefficients 
 
 ```{r}
 coefficients(bill_model)
@@ -1274,7 +1276,8 @@ coefficients(bill_model)[1]
 :::
 
 ::: {.column width="33%"}
-Residual variance
+
+### Residual variance
 
 ```{r}
 sigma(bill_model)
@@ -1283,9 +1286,10 @@ sigma(bill_model)
 :::
 
 ::: {.column width="33%"}
+### $R^2$
+
 ```{r}
 summary(bill_model)$r.squared
-
 summary(bill_model)$adj.r.squared
 ```
 
@@ -1317,7 +1321,7 @@ summary(bill_model)
 
 ## Standardizing Variables
 
-We can convert the variables to *z*-scores. Now, $\text{bill length} = 0$ means the *average* bill length across penguins.
+We can convert the variables to *z*-scores. Now, $\text{bill length} = 0$ means the *average* bill length across penguins and $\text{bill length} = 1$ means a bill length of $1 SD$ above average.
 
 ```{r}
 penguins_cleaned <- penguins |>
@@ -1352,7 +1356,7 @@ cor(
 
 [Simple regression slope coefficient is just the correlation!]{.fragment fragment-index=1}
 
-![](https://i.pinimg.com/736x/a2/42/d8/a242d89f5bfca11a69c2f0a4fa3fb995.jpg){.absolute bottom = 0, right = 0 .fragment fragment-index=1}
+![](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.nicepng.com%2Fpng%2Ffull%2F433-4338371_surprised-pikachu-meme.png&f=1&nofb=1&ipt=ebcec30cdbcafd45e013a6d03fe07307ba3be7e4051799669f25f82dbf247672&ipo=images){.absolute bottom = 0 right = 0 .fragment fragment-index=1 height=5% width=5%}
 
 
 
