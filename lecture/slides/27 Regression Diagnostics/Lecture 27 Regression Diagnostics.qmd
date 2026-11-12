@@ -1,0 +1,1530 @@
+---
+title: "Lecture 27: More Regression and Diagnostics"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+library(knitr)
+library(formatR)
+library(readxl)
+library(tidyverse)
+library(ggtext)
+library(gridExtra, warn.conflicts = FALSE)
+
+options(width = 60)
+opts_chunk$set(out.width = '100%')
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, comment = '', class.output = 'sh',
+               fig.width = 8, fig.height = 5, fig.align = "center")
+
+options(useFancyQuotes = FALSE)
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+
+# ---------------------------------------------------------------------------
+# Helper functions (these replace the TikZ drawing / overlay code in the .Rmd)
+# ---------------------------------------------------------------------------
+
+# --- Venn diagrams (replaces the TikZ circles) ------------------------------
+# y circle is fixed at (0, 0); x1 and x2 circles sit at (-d, -1.5) and (d, -1.5)
+make_venn <- function(d, x1_lab, x2_lab, arrow_x,
+                      bottom = c("Variance of <i>y</i> predicted",
+                                 "by both <i>x</i><sub>1</sub> and <i>x</i><sub>2</sub>"),
+                      note = NULL, note_x = 4, note_y = c(-3, -3.5),
+                      r = 1.5, n = 600) {
+
+  cy  <- c(0, 0)
+  cx1 <- c(-d, -1.5)
+  cx2 <- c(d, -1.5)
+
+  # circle outlines
+  tt <- seq(0, 2 * pi, length.out = 300)
+  circ <- function(cc, g) data.frame(x = cc[1] + r * cos(tt), y = cc[2] + r * sin(tt), group = g)
+  circles <- rbind(circ(cy, "y"), circ(cx1, "x1"), circ(cx2, "x2"))
+
+  # fill each distinct region on a fine grid
+  grid <- expand.grid(x = seq(-3, 3, length.out = n), y = seq(-3.2, 1.7, length.out = n))
+  in_y  <- (grid$x - cy[1])^2  + (grid$y - cy[2])^2  <= r^2
+  in_x1 <- (grid$x - cx1[1])^2 + (grid$y - cx1[2])^2 <= r^2
+  in_x2 <- (grid$x - cx2[1])^2 + (grid$y - cx2[2])^2 <= r^2
+  fill <- rep(NA_character_, nrow(grid))
+  fill[in_x1 & !in_y & !in_x2] <- my_red
+  fill[in_x2 & !in_y & !in_x1] <- my_yellow
+  fill[in_y & !in_x1 & !in_x2] <- my_blue
+  fill[in_y & in_x1 & !in_x2]  <- my_purple   # y and x1 only
+  fill[in_y & in_x2 & !in_x1]  <- my_green    # y and x2 only
+  fill[in_x1 & in_x2 & !in_y]  <- my_orange   # x1 and x2 only
+  fill[in_y & in_x1 & in_x2]   <- "#808080"   # all three
+  grid$fill <- fill
+
+  # labels inside the circles
+  labs_df <- data.frame(
+    x = c(0, x1_lab[1], x2_lab[1]),
+    y = c(0.3, x1_lab[2], x2_lab[2]),
+    label = c("<b><i>y</i></b>", "<b><i>x</i><sub>1</sub></b>", "<b><i>x</i><sub>2</sub></b>")
+  )
+
+  # annotation text (one row per line of text, as in the TikZ nodes)
+  txt <- data.frame(
+    x = c(0, 0, -4, -4, 4, 4),
+    y = c(3, 2.5, 1, 0.5, 1, 0.5),
+    label = c("Variance of <i>y</i> not",
+              "predicted by <i>x</i><sub>1</sub> or <i>x</i><sub>2</sub>",
+              "Variance of <i>y</i> uniquely",
+              "predicted by <i>x</i><sub>1</sub>",
+              "Variance of <i>y</i> uniquely",
+              "predicted by <i>x</i><sub>2</sub>"),
+    color = "black"
+  )
+  txt <- rbind(txt, data.frame(x = 0, y = c(-4, -4.5)[seq_along(bottom)],
+                               label = bottom, color = "black"))
+  if (!is.null(note)) {
+    txt <- rbind(txt, data.frame(x = note_x, y = note_y[seq_along(note)],
+                                 label = note, color = my_blue))
+  }
+
+  arrows <- data.frame(
+    x    = c(0, -3.5, 3.5, 0),
+    y    = c(2.25, 0.25, 0.25, -3.7),
+    xend = c(0, -arrow_x, arrow_x, 0),
+    yend = c(1, -0.5, -0.5, -1)
+  )
+
+  ggplot() +
+    geom_raster(data = grid, aes(x = x, y = y, fill = fill)) +
+    scale_fill_identity(na.value = "transparent") +
+    geom_path(data = circles, aes(x = x, y = y, group = group),
+              color = "grey20", linewidth = 0.3) +
+    geom_richtext(data = labs_df, aes(x = x, y = y, label = label),
+                  size = 7, fill = NA, label.color = NA) +
+    geom_richtext(data = txt, aes(x = x, y = y, label = label, color = color),
+                  size = 4.3, fill = NA, label.color = NA) +
+    scale_color_identity() +
+    geom_segment(data = arrows, aes(x = x, y = y, xend = xend, yend = yend),
+                 linewidth = 0.8, arrow = arrow(length = unit(0.3, "cm"), angle = 20)) +
+    coord_fixed(xlim = c(-6.3, 6.3), ylim = c(-5, 3.6), clip = "off") +
+    theme_void() +
+    theme(legend.position = "none", plot.margin = margin(5, 5, 5, 5))
+}
+
+# --- Custom HTML for annotated R output (replaces TikZ overlays on output) ----
+
+emit_html <- function(x) cat("```{=html}\n", x, "\n```\n", sep = "")
+
+# an outlined, rounded highlight around a piece of text
+hl_span <- function(txt, color) {
+  sprintf('<span style="box-shadow: 0 0 0 3px %s; border-radius: 0.6em; padding: 0 2px;">%s</span>',
+          color, htmltools::htmlEscape(txt))
+}
+
+# R console-style output block built from HTML lines (one <span> per line)
+out_block <- function(lines_html, font_px = NULL, line_px = NULL) {
+  st <- ""
+  if (!is.null(font_px)) st <- sprintf("font-size:%spx; line-height:%spx;", font_px, line_px)
+  lines_html[lines_html == ""] <- "&nbsp;"
+  paste0('<div class="cell-output cell-output-stdout"><pre style="', st, '">',
+         '<code style="max-height:none; overflow:visible;">',
+         paste0('<span style="display:block;">', lines_html, '</span>', collapse = ""),
+         '</code></pre></div>')
+}
+
+# circle the printed value that belongs to `name` in a printed named vector
+hl_named_vector <- function(out, name, color) {
+  html <- htmltools::htmlEscape(out)
+  for (i in seq_len(length(out) - 1)) {
+    m <- regexpr(paste0("(?<![A-Za-z0-9])", name, "(?![A-Za-z0-9])"), out[i], perl = TRUE)
+    if (m > 0) {
+      e <- as.integer(m) + nchar(name) - 1
+      v <- out[i + 1]
+      left <- substr(v, 1, e)
+      ts <- as.integer(regexpr("[^ ]+$", left))
+      html[i + 1] <- paste0(htmltools::htmlEscape(substr(v, 1, ts - 1)),
+                            hl_span(substr(left, ts, e), color),
+                            htmltools::htmlEscape(substr(v, e + 1, nchar(v))))
+    }
+  }
+  html
+}
+
+# line + arrowhead (arrowhead sits at the start point x0, y0)
+arrow_svg <- function(x0, y0, x1, y1, color, len = 18, half_w = 8) {
+  ang <- atan2(y1 - y0, x1 - x0)
+  bx <- x0 + len * cos(ang); by <- y0 + len * sin(ang)
+  px <- -sin(ang); py <- cos(ang)
+  sprintf('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="%s" stroke-width="3"/><polygon points="%.1f,%.1f %.1f,%.1f %.1f,%.1f" fill="%s"/>',
+          x0, y0, x1, y1, color,
+          x0, y0, bx + half_w * px, by + half_w * py, bx - half_w * px, by - half_w * py, color)
+}
+```
+
+## Categorical Predictors
+
+::: {style="font-size: 0.85em;"}
+
+So far, we have discussed regression with continuous predictors
+
+It is also possible to use categorical predictors in regression models, or both categorical and continuous predictors
+
+A regression model with **only** categorical predictors is identical to a technique we have already learned. What is it?
+
+- [One-way or factorial ANOVA!]{.answer .fragment .content-visible unless-meta="params.v0"}
+- [**Technically:**]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [ANOVA refers to the method of comparing variance attributable to different predictors/IVs (hence Analysis of Variance)]{.answer .fragment .content-visible unless-meta="params.v0"}
+      - [One-way and factorial ANOVA are specific types of ANOVA for one or more categorical IVs]{.answer .fragment .content-visible unless-meta="params.v0"}
+    - [Regression refers to the method of estimating a general linear model (usually ordinary least squares)]{.answer .fragment .content-visible unless-meta="params.v0"}
+      - [General linear models can have any mix of continuous or categorical predictors]{.answer .fragment .content-visible unless-meta="params.v0"}
+      - [Comparing regression models by adding or removing predictors is also a type of ANOVA]{.answer .fragment .content-visible unless-meta="params.v0"}
+      
+:::
+
+## Example
+
+::: {style="font-size: 0.85em;"}
+
+
+Performance (math) IQ predicted by verbal IQ and sex (among patients recovering from a coma)
+
+* criterion: performance (math) IQ---continuous
+
+* predictor 1: verbal IQ---continuous
+
+* predictor 2: sex (female, male)---categorical
+
+Solution: code females as '0', males as '1' (could also be the other way around)
+
+* Could also use different numbers, but '0' and '1' lend to the easiest interpretations
+
+:::
+
+## Categorical Predictors
+
+```{r}
+#| echo: true
+#| eval: false
+
+library(carData)
+data("Wong")
+summary(lm(piq ~ viq + sex, Wong))
+```
+
+```{r}
+#| include: false
+
+library(carData)
+data("Wong")
+```
+
+:::: {style="position: relative; height: 520px;"}
+
+```{r}
+#| results: asis
+
+# Annotated regression output: highlighted coefficient rows, arrows, and callouts
+options(width = 60)
+fit_wong <- lm(piq ~ viq + sex, Wong)
+out <- gsub("\t", "  ", capture.output(summary(fit_wong)))
+out <- out[cumsum(nzchar(out)) > 0]            # drop leading blank line(s)
+out <- out[seq_len(max(which(nzchar(out))))]   # drop trailing blank line(s)
+
+lh <- 24            # line height (px)
+fs <- 17            # font size (px)
+w  <- 660           # width of the output box (px)
+callout_x <- 730    # left edge of the callouts (px)
+
+pats     <- c("^\\(Intercept\\)", "^viq", "^sexMale")
+cols     <- c(my_blue, my_orange, my_purple)
+idx      <- sapply(pats, function(p) grep(p, out)[1])
+target_y <- c(192, 300, 408)     # vertical centre of each callout (px)
+
+line_html <- vapply(seq_along(out), function(i) {
+  txt <- if (nchar(out[i]) == 0) "&nbsp;" else htmltools::htmlEscape(out[i])
+  k <- match(i, idx)
+  extra <- if (is.na(k)) "" else
+    sprintf("box-shadow: inset 0 0 0 3px %s; background: %s26;", cols[k], cols[k])
+  sprintf('<div style="height:%dpx; line-height:%dpx; %s">%s</div>', lh, lh, extra, txt)
+}, character(1))
+
+arrows_html <- paste(
+  mapply(function(i, ty, col) arrow_svg(w, (i - 0.5) * lh, callout_x - 10, ty, col),
+         idx, target_y, cols),
+  collapse = "")
+
+callouts <- c("Intercept:<br>Predicted PIQ for<br>female with VIQ = 0",
+              "Predicted increase in PIQ for a<br>one-point increase in VIQ,<br>holding sex constant",
+              "Predicted decrease in<br>PIQ for males, holding<br>VIQ constant")
+callout_html <- sprintf(
+  '<div style="position:absolute; left:%dpx; top:%dpx; color:%s; font-size:20px; line-height:28px; white-space:nowrap;">%s</div>',
+  callout_x, target_y - 42, cols, callouts)
+
+emit_html(paste0(
+  '<div style="position:absolute; left:0; top:0; width:', w,
+  'px; box-sizing:border-box; padding:0 10px; background:#f5f5f5; border-radius:6px; ',
+  'font-family:SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:', fs,
+  'px; white-space:pre; overflow:hidden;">', paste(line_html, collapse = ""), '</div>',
+  '<svg width="1500" height="520" style="position:absolute; left:0; top:0; pointer-events:none; overflow:visible;">',
+  arrows_html, '</svg>',
+  paste(callout_html, collapse = "")
+))
+```
+
+::: {style="position: absolute; left: 730px; top: 0; color: #4DAF4A; font-size: 0.55em; line-height: 1.5; white-space: nowrap;"}
+For VIQ = 100:
+
+$\widehat{\text{PIQ}}_{\text{female}} = 22.88 + .7\times 100 = \boldsymbol{92.88}$
+
+$\widehat{\text{PIQ}}_{\text{male}} = 92.88 - 2.62 = \boldsymbol{90.26}$
+:::
+
+::::
+
+## Dummy Coding Review
+
+For $k$ groups, we can represent group membership with ($k-1$) dichotomous dummy variables
+
+For each dummy variable, assign '1' to members of one group and '0' to all others
+
+One group (called the reference group) is coded '0' on all dummy variables
+
+Example:
+
+| Group | $x_{1}$ | $x_{2}$ | $x_{3}$ |
+|:----------------|:---:|:---:|:---:|
+| Control | 0 | 0 | 0 |
+| Drug | 1 | 0 | 0 |
+| Therapy | 0 | 1 | 0 |
+| Drug + Therapy | 0 | 0 | 1 |
+
+## Dummy Coded Model
+
+::: {style="font-size: 0.77em;"}
+
+Regression model:
+
+$$\hat{y} = \hat{b}_0 + \hat{b}_1x_1 + \hat{b}_2x_2 + \hat{b}_3x_3$$
+
+::::: columns
+
+:::: column
+
+* Control: $\hat{y} = \hat{b}_0$
+
+* Drug: $\hat{y} = \hat{b}_0 + \hat{b}_1x_1$
+
+* Therapy: $\hat{y} = \hat{b}_0 + \hat{b}_2x_2$
+
+* D + T: $\hat{y} = \hat{b}_0 + \hat{b}_3x_3$
+
+::::
+
+:::: column
+
+| Group | $x_{1}$ | $x_{2}$ | $x_{3}$ |
+|:----------------|:---:|:---:|:---:|
+| Control | 0 | 0 | 0 |
+| Drug | 1 | 0 | 0 |
+| Therapy | 0 | 1 | 0 |
+| Drug + Therapy | 0 | 0 | 1 |
+
+::::
+
+:::::
+
+Interpretation:
+
+* $\hat{b}_0$: predicted $\hat{y}$ for control group
+* $\hat{b}_1$: difference in $\hat{y}$ between (drug) and (control)
+* $\hat{b}_2$: difference in $\hat{y}$ between (therapy) and (control)
+* $\hat{b}_3$: difference in $\hat{y}$ between (drug + therapy) and (control)
+
+<!-- Cool side effect: $x_1$, $x_2$, and $x_3$ are uncorrelated! -->
+
+<!-- * If $n$ is equal for each group -->
+
+:::
+
+## Dummy Coded Tests
+
+Test of individual predictors:
+
+* If $\hat{b}_1$ is significant, then the $x_1$ group (drug group) differs significantly from the control group (contrast coding, excluding other groups)
+
+* Degrees of freedom for the one-way ANOVA ( = #groups - 1) are divided into (#groups - 1) contrasts comparing each group to the reference group
+
+Test of $R^2$
+
+* Equivalent to the omnibus test for the one-way ANOVA!
+
+* Test the hypothesis that all coefficients are simultaneously zero
+
+## Effects Coding Review
+
+As with dummy variables, for $k$ groups, we need $k-1$ effect variables
+
+Each effect code consists of '1' for members of one group, '-1' for members of another group, and '0' for the remaining groups
+
+The same group receives the '-1' effect for each effect variables
+
+For example:
+
+| Group | $x_{1}$ | $x_{2}$ | $x_{3}$ |
+|:----------------|:---:|:---:|:---:|
+| Control | -1 | -1 | -1 |
+| Drug | 1 | 0 | 0 |
+| Therapy | 0 | 1 | 0 |
+| Drug + Therapy | 0 | 0 | 1 |
+
+## Effects Coded Model
+
+::: {style="font-size: 0.85em;"}
+
+Regression model:
+
+$$\hat{y} = \hat{b}_0 + \hat{b}_1x_1 + \hat{b}_2x_2 + \hat{b}_3x_3$$
+
+Interpretation:
+
+* $\hat{b}_0$: grand mean of $y$
+
+* $\hat{b}_1$: difference in $\hat{y}$ between drug and grand mean
+
+* $\hat{b}_2$: difference in $\hat{y}$ between therapy and grand mean
+
+* $\hat{b}_3$: difference in $\hat{y}$ between (drug + therapy) and grand mean
+
+Omnibus test of $R^2$ is equivalent to simultaneously testing main effects in ANOVA
+
+ANOVA interaction corresponds to **moderation** effects---stay tuned!
+
+:::
+
+## Model Selection Revisited
+
+Last time, we got a taste of the multiple ways to specify a model
+
+Model building using regression is an art:
+
+* We should include ("control for") relevant predictors
+  
+* We should also strive for the simplest model possible
+  
+* Don't want to include redundant (or nearly redundant) predictors
+
+## Multiple Correlation Venn
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5.4
+
+make_venn(d = 1, x1_lab = c(-1.4, -1.5), x2_lab = c(1.4, -1.5), arrow_x = 0.75)
+```
+
+## More Overlap
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5.4
+
+make_venn(d = 0.5, x1_lab = c(-1.5, -2), x2_lab = c(1.5, -2), arrow_x = 0.9,
+          note = c("What if <i>x</i><sub>1</sub> and <i>x</i><sub>2</sub>",
+                   "overlap even more?"))
+```
+
+## Even More Overlap
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5.4
+
+make_venn(d = 0.1, x1_lab = c(-1.35, -2), x2_lab = c(1.35, -2), arrow_x = 1.1,
+          note = c("What happens to our",
+                   "ability to estimate <i>b</i><sub>1</sub> and <i>b</i><sub>0</sub>?"))
+```
+
+## Multicolinearity
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5.4
+
+make_venn(d = 0.1, x1_lab = c(-1.35, -2), x2_lab = c(1.35, -2), arrow_x = 1.1,
+          bottom = "<b>MULTICOLLINEARITY</b>",
+          note = c("They become increasingly difficult",
+                   "to separate from one another"),
+          note_x = 3.8)
+```
+
+## SAT Example Revisited
+
+Last time we looked at a model predicting average SAT scores from educational expenditures and the (log of) the percentage of students in each state who took the SAT.
+
+* 50 observations (one for each U.S. state)
+
+* Data from the 1994-1995 school year
+
+```{r}
+#| message: false
+
+library(tidyverse)
+dat <- readxl::read_xlsx("../../data/States.xlsx", sheet = 1)
+dat <- dat |> mutate(logPctSAT = log(PctSAT)) 
+```
+
+```{r}
+#| echo: true
+
+lm2 <- lm(SAT ~ Expend + logPctSAT, dat)
+coef(lm2)
+```
+
+## A Ridiculous Example
+
+What if we add a bunch of other state-level predictors?
+
+```{r}
+#| fig-width: 11
+#| fig-height: 5
+
+# library(readxl)
+# dat <- read_xlsx("~/Dropbox/Teaching/Fordham/Grad Intro Stats/Lectures/Data/States.xlsx")
+subdat <- dat |> dplyr::select(-State, -Abbreviation, -PctBiden2020)
+r2 <- numeric(51)
+for(i in 1:51){
+  r2[i] <- summary(lm(dat$PctBiden2020 ~ as.matrix(subdat[, 1:i])))$r.squared
+}
+r2 <- tibble(p = 1:51, R2 = r2)
+
+ggplot(r2, aes(p, R2)) + geom_point() + geom_path() + 
+  labs(x = "number of predictors", y = "R-Squared") + 
+  theme_minimal() +
+  annotate("richtext", x = 18, y = 0.50, hjust = 0, size = 6, fill = NA, label.color = NA,
+           label = "<i>R</i><sup>2</sup> must always increase with more predictors") +
+  annotate("richtext", x = 18, y = 0.43, hjust = 0, size = 6, fill = NA, label.color = NA,
+           label = "If the number of estimated coefficients ≥ <i>N</i>,") +
+  annotate("richtext", x = 18, y = 0.36, hjust = 0, size = 6, fill = NA, label.color = NA,
+           label = "then <i>R</i><sup>2</sup> <b>must</b> equal 1")
+```
+
+## $p = 54$, $N = 50$
+
+```{r}
+#| results: asis
+
+# Coefficients from a model with more predictors than observations; the last
+# rows (all NA) are boxed in green, as in the original TikZ overlay.
+options(width = 110)
+out <- capture.output(
+  print(round(coef(lm(SAT ~ ., dat |> dplyr::select(-State, -Abbreviation))), 3)[-1])
+)
+options(width = 60)
+
+n <- length(out)
+body_html <- htmltools::htmlEscape(out)
+body_html[body_html == ""] <- "&nbsp;"
+plain <- paste0('<span style="display:block;">', body_html[seq_len(n - 4)], '</span>', collapse = "")
+boxed <- paste0('<span style="display:block; box-shadow: 0 0 0 3px ', my_green,
+                '; border-radius: 4px;">',
+                paste0('<span style="display:block;">', body_html[(n - 3):n], '</span>', collapse = ""),
+                '</span>')
+
+emit_html(paste0(
+  '<div class="cell-output cell-output-stdout"><pre style="font-size:17px; line-height:21px;">',
+  '<code style="max-height:none; overflow:visible;">', plain, boxed, '</code></pre></div>'
+))
+```
+
+## Consequences
+
+::: {style="font-size: 0.8em;"}
+
+Multicollinearity is the extent to which predictors are correlated with other predictors in a regression model
+
+Consequences of severe (high) multicollinearity:
+
+1. Partial regression coefficients have large standard errors
+  
+    + Consider:
+
+    $$s_{\hat{b}_1} = \frac{s_y}{s_{x_1}}\sqrt{\frac{1-R^2}{(N-p-1){\color{#377EB8}\boxed{(1-r_{x_1,x_2}^2)}}}} \qquad {\color{#377EB8}\begin{array}{l}\text{When } r_{x_1,x_2} \text{ is large,} \\ s_{\hat{b}_1} \text{ is large}\end{array}}$$
+
+    + Low statistical power of partial regression coefficients
+    
+2.  In extreme cases, results cannot be calculated (no unique solution to the OLS equations)
+  
+    + This will always occur if $p > N - 1$, and sometimes with fewer predictors
+
+:::
+
+## Variance Inflation Factor
+
+::: {style="font-size: 0.75em;"}
+
+Two collinearity statistics:
+
+* Variance Inflation Factor (VIF)
+
+* Tolerance = 1 / VIF
+
+* Just different ways of framing the same statistic
+
+VIF for $x_j = \frac{1}{1 - R^2_j}$
+
+* $R^2_j$, $j = 1, \ldots, p$ is the $R^2$ value from the regression of $x_j$ (treating $x_j$ as the DV) on all other predictors in the regression model
+
+If the model we care about is
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \epsilon$$
+
+Then $R^2_1$ is the $R^2$ for this model:
+
+$$x_1 = \beta_{(1),0} +  \beta_{(1),1} x_2 + \beta_{(1),2}x_3 + \epsilon_{(1)}$$
+
+:::
+
+## VIF And Tolerance
+
+* VIF is how much the standard error increases due to multicolinearity for that predictor
+
+    - Example: VIF = 1.057 means that our estimate for $s_{\hat{b}_1}$ is 1.057 times as large as it would be if $x_1$ were uncorrelated with the other predictors ($R^2_1 = 0$)
+
+* Tolerance is the inverse of VIF: proportion of variance of $x_j$ that is independent of other predictors
+
+
+Rules of thumb:
+
+* VIF > 5 (tolerance < .2) indicates high multicollinearity
+* VIF > 10 (tolerance < .1) indicates serious multicollinearity
+
+
+
+## Variance in `R`
+
+For only two predictors, the VIF associated with each predictor will be the same
+
+```{r}
+#| echo: true
+#| message: false
+
+library(car)
+lm1 <- lm(SAT ~ Expend + PctSAT, dat)
+vif(lm1)
+```
+
+For three or more predictors, the VIF is usually unique for each predictor
+
+```{r}
+#| echo: true
+
+lm2 <- lm(SAT ~ Expend + PctSAT + Salary, dat)
+vif(lm2)
+```
+
+```{r}
+#| eval: false
+
+mod <- lm(SAT ~ Expend + PctSAT + Salary, dat)
+vif(mod)
+spcor(dat[, c("Expend", "PctSAT", "Salary")])$estimate
+1 / (1 - .3905570^2)
+```
+
+## Tolerance
+
+Two equivalent ways of calculating the tolerance:
+
+1. Take the inverse of the VIF
+
+```{r}
+#| echo: true
+
+1 / vif(lm2)
+```
+
+2. Take 1 - $R^2$ from separate linear regression models
+
+```{r}
+#| echo: true
+
+1 - summary(lm(Expend ~ PctSAT + Salary, dat))$r.squared
+1 - summary(lm(PctSAT ~ Expend + Salary, dat))$r.squared
+1 - summary(lm(Salary ~ Expend + PctSAT, dat))$r.squared
+```
+
+## Assumptions
+
+1. Fixed effects model
+
+2. Conditional distributions are normally distributed with constant variance (homoscedasticity)
+
+3. Independent and normally distributed residuals
+
+4. Correct model specification
+
+5. Perfectly reliable predictors
+
+6. No multivariate outliers
+
+
+## Model Usage Review
+
+What are the three things we typically use models for? (Way back in lecture 12!)
+
+1.  [**Describe:** A statistical model can help us understand data by summarizing variables or mapping relationships between different variables]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+2.  [**Predict:** A statistical model can help us anticipate how we expect **new** observations, which were not in our initial sample that we used to estimate the model, to look]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+3.  [**Decide:** A statistical model can guide how we choose to behave by helping us understand the likelihood of different consequences of our choices]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+
+
+
+## Assumption Impacts
+
+
+
+Assumptions (esp. 1 and 2) are the necessary conditions for **hypothesis tests** to have known properties (e.g., Type I error rate)
+
+- Biggest impact on our **decision rules** for frequentist inference
+  
+- A bit less relevant when regression is used for description
+
+- Can be relevant for prediction and non-frequentist decision-making
+
+- All of these can affect results, so they are important to be aware and understand consequences of
+
+
+
+## Fixed Effects Model
+
+::: {style="font-size: 0.85em;"}
+
+The multiple regression model treats predictors as **fixed**
+
+* Interest is in specific predictors
+* Predictors are systematically included in the sample and would be included in all sample replications
+* e.g., attractiveness ratings on a *specific* photograph (rather than a randomly sampled photograph)
+
+In contrast, **random effects models**
+
+* Predictors are sampled from a distribution
+* Examples: 
+  
+    + Attractiveness ratings on one of many photographs that could have been used
+    + Time points in repeated-measures design
+
+* Can be accommodated with multilevel regression models
+
+:::
+
+## Conditional Distributions
+
+In fixed effects regression, we assume that predictors are fixed constants
+
+For every combination of predictors, we have a distribution of $y$
+
+* "Conditional distribution of $y$"
+
+Assume that each conditional distribution
+
+* Is normally distributed
+
+* Has constant variance 
+
+* Known as **homoscedasticity**
+    - Extension of homogeneity of variance for **all values** of a continuous predictor rather than **discrete groups**
+
+## With One Predictor
+
+```{r}
+set.seed(30)
+n <- 100
+x <- runif(n, 0, 10)
+y <- 2 + .5 * x + rnorm(n, sd = 1)
+y1 <- seq(-2, 2, by = .1)
+ggplot() + geom_point(aes(x, y)) + geom_abline(intercept = 2, slope = .5, color = my_green) +
+  geom_path(aes(x = 2 + 2 * dnorm(y1), y = 2 + .5 * 2 + y1), color = my_blue) + 
+  geom_path(aes(x = 4 + 2 * dnorm(y1), y = 2 + .5 * 4 + y1), color = my_blue) + 
+  geom_path(aes(x = 6 + 2 * dnorm(y1), y = 2 + .5 * 6 + y1), color = my_blue) + 
+  geom_path(aes(x = 8 + 2 * dnorm(y1), y = 2 + .5 * 8 + y1), color = my_blue) + 
+  geom_segment(aes(x = 2, xend = 2 + 2 * dnorm(0), y = 3, yend = 3), color = my_blue, lty = 3) + 
+  geom_segment(aes(x = 4, xend = 4 + 2 * dnorm(0), y = 4, yend = 4), color = my_blue, lty = 3) + 
+  geom_segment(aes(x = 6, xend = 6 + 2 * dnorm(0), y = 5, yend = 5), color = my_blue, lty = 3) + 
+  geom_segment(aes(x = 8, xend = 8 + 2 * dnorm(0), y = 6, yend = 6), color = my_blue, lty = 3) +
+  geom_segment(aes(x = 2, xend = 2, y = 1, yend = 5), color = my_blue, lty = 3) +
+  geom_segment(aes(x = 4, xend = 4, y = 2, yend = 6), color = my_blue, lty = 3) +
+  geom_segment(aes(x = 6, xend = 6, y = 3, yend = 7), color = my_blue, lty = 3) +
+  geom_segment(aes(x = 8, xend = 8, y = 4, yend = 8), color = my_blue, lty = 3) + 
+  geom_point(aes(x = c(2, 4, 6, 8), y = c(3, 4, 5, 6)), color = my_red, size = 4, pch = 7) + 
+  theme_light()
+```
+
+## Evaluation
+
+**Homoscedasticity:** Scatterplot of residuals against each predictor separately
+
+* If no heteroscedasticity, then residuals scatter uniformly across $x$ axis
+
+* Loess lines with standard error band can be informative
+
+**Normality:** Usual methods
+
+* Skewness and kurtosis
+  
+* Histogram or kernel density plot with normal curve imposed
+  
+* QQ-plot
+
+As $N$ increases, worry less about violations of normality
+
+## Evaluating Homoscedasticity
+
+```{r}
+#| fig-width: 11
+#| fig-height: 5
+
+mod <- lm(SAT ~ Expend + logPctSAT, dat |> mutate(logPctSAT = log(PctSAT)))
+p1 <- ggplot() + geom_point(aes(x = mod$model$Expend, y = mod$residuals), color = my_purple) + theme_light() + 
+  labs(x = "Expenditure", y = "Residuals") + 
+  geom_smooth(aes(x = mod$model$Expend, y = mod$residuals), method = "loess", col = my_blue) 
+p2 <- ggplot() + geom_point(aes(x = mod$model$logPctSAT, y = mod$residuals), color = my_purple) + 
+  theme_light() + labs(x = "log Percent SAT", y = "Residuals") + 
+  geom_smooth(aes(x = mod$model$logPctSAT, y = mod$residuals), method = "loess", col = my_blue)
+grid.arrange(p1, p2, nrow = 1)
+
+
+
+```
+
+## Interpretation
+
+- The residuals (purple dots) have a larger spread in the middle range of `Expenditure`
+- Tend to be smaller for large and small values
+- Residuals much more homogenous across `log Percent SAT`
+
+## QQ Plot
+
+```{r}
+ggplot() + geom_qq_line(aes(sample = mod$residuals), col = my_red) + 
+  geom_qq(aes(sample = mod$residuals)) + theme_minimal() + 
+  labs(x = "", y = "")
+```
+
+Thoughts? [Normality of residuals seems OK]{.answer .fragment .content-visible unless-meta="params.v0"}
+
+## Conditional Distributions
+
+::: {style="font-size: 0.8em;"}
+
+What if **normality** is violated?
+
+* Nonnormality does not bias estimated regression coefficients
+* Nonnormality can increase standard errors of regression coefficients
+* For small samples, $t$ tests (for regression coefficients) and $F$ test (for $R^2$) may be biased
+* For moderate to large samples, effects of nonnormality on significance testing is small
+
+What if **homoscedasticity** is violated?
+
+* Heteroscedasticity *does not* bias estimated regression coefficients
+* Heteroscedasticity *does* bias standard errors of regression coefficients
+* Direction of bias depends on the relationship of the conditional variances to the predictor
+    + If variance increases as predictor increases, standard error is underestimated and Type I error rates are inflated
+    + If variance decreases as predictor increases, standard error is overestimated and Type I error rates are too low
+
+:::
+
+## Residuals
+
+::: {style="font-size: 0.8em;"}
+
+We also assume that **all residuals are independent of each other**
+
+If observations are random, then residuals shouldn't be correlated
+
+In some situations, residuals might be correlated. Examples:
+
+* Observations from the same person at different times
+
+    + Observations closer in time may be more related than those farther in time
+    + Known as **temporal autocorrelation**
+    + Repeated measures nested within individuals
+
+* Observations from individuals in the same community
+
+    + Observations from people who are geographically closer together may be more related than those from those from diverse geographic locations
+    + Known as **spatial autocorrelation**
+    + Individuals nested within communities
+
+**Multilevel modeling** is a better method to handle these types of data
+
+:::
+
+## Residuals
+
+What are the consequences of autocorrelation among residuals across observations?
+
+* Autocorrelation does not bias estimated regression coefficients
+
+  + However, multilevel models can also help understand effects single level models cannot when there is autocorrelation
+  
+* Standard errors of regression coefficients can be underestimated, leading to inflated Type I error rates for $t$ tests of regression coefficients
+
+* Can inflate Type I error rate of $F$ test for $R^2$
+
+
+## Model Specification
+
+* Scatterplots of residuals ($y$-axis) against predicted outcome values ($x$-axis) with loess line imposed
+
+* Scatterplots of residuals ($y$-axis) against each predictor ($x$-axis) separately, with loess lines imposed
+  
+* If forms of relationships are properly specified, then loess lines should not exhibit large or systematic deviations from the $y=0$ horizontal line
+
+## Example
+
+```{r}
+
+library(patchwork)
+
+# 1. Simulate data with diminishing returns (logarithmic relationship)
+set.seed(101)
+n <- 300
+x <- runif(n, 1, 10)
+y <- 4 * log(x) + rnorm(n, sd = 0.75)
+df <- data.frame(x = x, y = y)
+
+# 2. Fit models
+# Correctly specified: Account for diminishing returns using log(x)
+mod_correct <- lm(y ~ log(x), data = df)
+df$res_correct <- residuals(mod_correct)
+
+# Misspecified: Naively fit a simple linear term (lm(y ~ x))
+mod_misspec <- lm(y ~ x, data = df)
+df$res_misspec <- residuals(mod_misspec)
+
+# Shared theme setup
+theme_residual <- function() {
+  theme_minimal(base_size = 12) +
+    theme(
+      plot.title = element_text(face = "bold", size = 12),
+      plot.subtitle = element_text(size = 10, color = "grey30"),
+      panel.grid.minor = element_blank()
+    )
+}
+
+# 3. Left Panel: Correct Model Residuals vs. Predictor
+p_correct <- ggplot(df, aes(x = x, y = res_correct)) +
+  geom_point(alpha = 0.4, color = "#2c7bb6") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "firebrick", linewidth = 0.8) +
+  geom_smooth(method = "loess", color = "#2c7bb6", se = FALSE, linewidth = 1) +
+  labs(
+    title = "Correct Specification: log(x)",
+    x = "Predictor: log(x)",
+    y = "Residuals (y - ŷ)"
+  ) +
+  coord_cartesian(ylim = c(-3.5, 3.5)) +
+  theme_residual()
+
+# 4. Right Panel: Misspecified Model Residuals vs. Predictor
+p_misspec <- ggplot(df, aes(x = x, y = res_misspec)) +
+  geom_point(alpha = 0.4, color = "#d7191c") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "firebrick", linewidth = 0.8) +
+  geom_smooth(method = "loess", color = "#d7191c", se = FALSE, linewidth = 1) +
+  labs(
+    title = "Misspecified Model: Linear x",
+    x = "Predictor: x",
+    y = "Residuals (y - ŷ)"
+  ) +
+  coord_cartesian(ylim = c(-3.5, 3.5)) +
+  theme_residual()
+
+# 5. Assemble side-by-side plot
+p_correct + p_misspec
+```
+
+## Interpretation
+
+The correct relationship between $x$ and $y$ was not linear for $x$, but was linear for $\text{log}(x)$. If we failed to account for this transformation:
+
+
+- For small and large values of $x$, residuals tend to be negative
+  - We are **overpredicting** $y$
+- For medium values of $x$ we are **underpredicting** $y$
+- Same pattern (but negative so curve is inverted) can be seen if we don't correctly specify the log of percent SAT in SAT model
+
+## SAT Example
+
+```{r}
+
+mod2 <- lm(SAT ~ Expend + PctSAT + Salary, dat)
+
+
+p3 <- ggplot() + geom_point(aes(x = mod2$model$PctSAT, y = mod2$residuals), color = my_purple) + 
+  theme_light() + labs(x = "Percent SAT", y = "Residuals") + 
+  geom_smooth(aes(x = mod2$model$PctSAT, y = mod2$residuals), method = "loess", col = my_blue)
+
+grid.arrange(p2, p3, nrow = 1)
+```
+
+
+## Model Spec. Errors
+
+::: {style="font-size: 0.7em;"}
+
+| Error | Corr with Outcome | Corr with at least one predictor | Effect on reg coefficients? | Effect on standard errors? |
+|:-------------------------|:--------:|:--------:|:--------:|:----------------------------|
+| Relevant variable omitted (1) | Yes | No | No | Biased standard errors (too large) |
+| Relevant variable omitted (2) | Yes | Yes | Yes | Biased standard errors (too small) |
+| Irrelevant variable included | No | No | No | Increases standard errors |
+
+Wrong form of relationships fitted:
+
+1. If the relationship is linear, but you add a quadratic term ($x_1^2$), you have added an irrelevant variable
+
+2. If the relationship is quadratic and you omit the quadratic term:
+
+    + If $x_1$ is symmetric, $x_1$ is not correlated with $x_1^2$ $\rightarrow$ "relevant variable omitted (1)"
+
+    + If $x_1$ is very skewed, $x_1$ is correlated with $x_1^2$ $\rightarrow$ "relevant variable omitted (2)"
+
+:::
+
+## Additivity
+
+::: {style="font-size: 0.8em;"}
+
+* Regression coefficient: relationship of one predictor to the outcome, when all other predictors are held constant (i.e., partialing out other predictors)
+  
+* We do not indicate at what specific value each variable is held constant
+  
+* Rather, the partial relationships should be constant regardless of the values of the other variables that are being held constant
+  
+* This is called **additivity**, that the relationship of one predictor to the outcome does not depend on specific values of the other variables
+  
+* Example of non-additivity: moderation (interaction, coming soon!):
+  
+$$\hat{y} = \hat{b}_0 + \hat{b}_1x_1 + \hat{b}_2x_2 + \hat{b}_3 (x_1 \times x_2)$$
+
+* Regression slope of $y$ on $x_1$ depends on the value of $x_2$
+
+* Define a new variable ($x_1 \times x_2$) and enter into the regression model that is linear in coefficients
+
+:::
+
+## CTT
+
+
+
+Regression (and the other methods we've learned so far) assume that the variables are **perfectly reliable**
+
+The concept of reliability is based on classical test theory (CTT):
+
+$$X = T + e$$
+
+* $X$: Observed score
+* $T$: True score (perfectly reliable)
+* $e$: Random measurement error
+
+## Reliability
+
+Quantifies proportion of observed score attributable to true score
+
+- Put another way: how free from measurement error is observed score?
+
+$$\text{Reliability } = \sigma^2_T / \sigma^2_X$$
+
+
+
+* $\sigma^2_X$: variance of observed $X$ scores
+* $\sigma^2_T$: variance of true scores
+
+Reliability ranges from 0 to 1 (perfectly reliable)
+
+
+
+## Perfectly Reliability
+
+::: {style="font-size: 0.85em;"}
+
+Unreliable predictors bias regression coefficients
+  
+The direction of bias is not always predictable in advance
+
+Single predictor:
+
+* If the predictor is unreliable, its regression coefficient will be closer to zero than in the population
+
+* Underestimated effect size and low statistical power
+
+* Correlations involving an unreliable variable are lower than if the variable is perfectly reliable
+
+Multiple predictors
+
+* Typical, but not necessary, that regression coefficients will be closer to zero
+
+Methods such as **structural equation modeling** often better accommodate variables that are not perfectly reliable
+
+:::
+
+## Multivariate Outliers
+
+We have an intuition as to what constitutes univariate outliers
+
+* A 4'10" adult human
+
+* A 400lb adult human
+
+It is also possible to have **multivariate outliers** - values that are not necessarily unusual for individual variables, but whose combination is unusual
+
+* An adult human who is 6'2" and 120 lbs
+
+## Regression Diagnostics
+
+::: {style="font-size: 0.8em;"}
+
+Multiple regression is **not** robust to:
+
+* Stray data points that fall far from the swarm of points in the predictor space
+* Outcome $y$ values that are unusual, given values of the predictors
+
+These errant points are called **outliers**
+
+* They may have no effect on the regression analysis results
+* They may drastically affect the regression analysis results
+
+Three characteristics of data points:
+
+1. **Leverage**: extent to which observation is close to or far from the rest of other observations, [in terms of scores on the predictors only]{.underline}
+2. **Distance**: extent to which the observation's score on the [outcome]{.underline} is extreme, [given the values on the set of predictors]{.underline}
+3. **Influence**: extent to which a single data point changes the outcome of the regression analysis
+
+:::
+
+## Leverage
+
+::: {style="font-size: 0.85em;"}
+
+* Leverage does not consider any information about the outcome
+
+* Leverage reflects the distance of an observation from the centroid of the predictor space
+
+* Leverage reflects the **potential** of the observation to affect the regression results
+
+Leverage statistic $h$ (or "hat"):
+
+* Measure of how far each observation is from the centroid of the predictors
+
+* Think: a $p$-dimensional scatterplot - how far is each observation from the center of mass?
+
+* Leverage values range from $1/N$  to 1
+
+* Take a closer look at leverage values > $3(p+1) / N$
+
+:::
+
+## Leverage
+
+```{r}
+dat <- dat |> mutate(logPctSAT = log(PctSAT)) |> column_to_rownames("Abbreviation")  
+```
+
+```{r}
+#| echo: true
+
+lm2 <- lm(SAT ~ Expend + logPctSAT, dat)
+round(hatvalues(lm2), 2)
+3 * (2 + 1) / 50 # leverage cutoff when p = 2, N = 50
+```
+
+Notice any states with high $h$ values?
+
+## Leverage
+
+```{r}
+#| echo: true
+#| eval: false
+
+
+lm2 <- lm(SAT ~ Expend + logPctSAT, dat)
+round(hatvalues(lm2), 2)
+3 * (2 + 1) / 50 # leverage cutoff when p = 2, N = 50
+```
+
+```{r}
+#| results: asis
+
+# Same output as above, with the high-leverage state (NJ) circled in orange
+options(width = 60)
+out <- capture.output({
+  print(round(hatvalues(lm2), 2))
+  print(3 * (2 + 1) / 50)
+})
+emit_html(out_block(hl_named_vector(out, "NJ", my_orange)))
+```
+
+Notice any states with high $h$ values?
+
+## Leverage
+
+::: {style="font-size: 0.9em;"}
+
+One potential outlier in New Jersey - likely flagged for high expenditures
+
+```{r}
+#| echo: true
+
+dat |> summarize(Expend_mean = round(mean(Expend),2),
+                 logPctSAT_mean = round(mean(logPctSAT),2), 
+                 r = round(cor(Expend, logPctSAT),2))
+
+dat |> filter(State == "New Jersey") |> select(Expend, logPctSAT)
+
+
+```
+
+:::
+
+```{r}
+#| eval: false
+
+library(car)
+
+leveragePlots(lm(SAT ~ Expend + logPctSAT, subdat))
+
+hatvalues(lm(SAT ~ Expend + logPctSAT, subdat))
+cutoff <- 3 / 50
+which(hatvalues(lm(SAT ~ Expend + logPctSAT, subdat)) > cutoff)
+
+
+influence_results <- influence(lm(SAT ~ Expend + logPctSAT, subdat))
+names(influence_results)
+# hat: diagonal of the "hat" matrix
+# coefficients: change in estimated coefficients when ith case is dropped
+# sigma: standard deviation when ith case is omitted
+# wt.res: weighted residuals
+```
+
+## Distance
+
+
+
+High distance reflects unusual $y$ scores, given predictor scores
+
+Measures of distance are based on the **residuals**
+
+Distance measures (for each observation):
+
+* Raw/unstandardized residuals ($y - \hat{y}$)
+
+    + Not very informative because no suggested cutoff recommended
+    + No general cutoff because residuals are in the units of $y$
+    + Not suggested
+    
+## Standardized Distance
+
+Two Types:
+
+* Internally studentized residuals
+
+$$\frac{y - \hat{y}}{\sqrt{MS_{\text{residual}}\times (1 - h)}}$$
+
+* Externally studentized residuals
+  
+$$\frac{y - \hat{y}}{\sqrt{MS_{\text{residual}(i)}\times (1 - h)}}$$
+
+
+
+## Internal Studentization
+
+
+
+
+::::: columns
+
+:::: {.column width="70%"}
+
+$$\frac{y - \hat{y}}{\sqrt{MS_{\text{residual}}\times (1 - h)}}$$
+
+::::
+
+:::: {.column width="30%"}
+
+::: {style="border: 3px solid #4DAF4A; color: #4DAF4A; padding: 0.3em 0.6em;"}
+$h$: leverage values
+:::
+::: {style="border: 3px solid #377EB8; color: #377EB8; padding: 0.3em 0.6em;"}
+$MS_{\text{residual}}$ is the squared residual standard error
+:::
+
+
+::::
+
+:::::
+
+* Numerator ($y - \hat{y}$) and denominator ($MS_\text{residual}$) are not independent
+* If observation greatly affects regression, $MS_\text{residual}$ will be affected
+* Not recommended
+
+
+
+## External Studentization
+
+
+
+::::: columns
+
+:::: {.column width="70%"}
+
+$$\frac{y - \hat{y}}{\sqrt{MS_{\text{residual}(i)}\times (1 - h)}}$$
+
+::::
+
+:::: {.column width="30%"}
+
+::: {style="border: 3px solid #4DAF4A; color: #4DAF4A; padding: 0.3em 0.6em;"}
+$h$: leverage values
+:::
+::: {style="border: 3px solid #377EB8; color: #377EB8; padding: 0.3em 0.6em;"}
+$MS_{\text{residual}}$ is the squared residual standard error
+:::
+::::
+
+:::::
+  
+* $MS_{\text{residual}(i)} = MS_{\text{residual}}$ using dataset without target observation $i$
+* Independent numerator and denominator
+* Suggested cutoff: if > 2.5 in absolute value, outstanding distance
+* Recommended distance measure
+
+
+## Distance
+
+::: {style="font-size: 0.85em;"}
+
+Raw residuals (output omitted):
+
+```{r}
+#| echo: true
+#| eval: false
+
+residuals(lm2)
+```
+
+Internally studentized residuals (output omitted):
+
+```{r}
+#| echo: true
+#| eval: false
+
+rstandard(lm2)
+```
+
+Externally studentized residuals:
+
+```{r}
+#| echo: true
+#| eval: false
+
+(distance_measure <- rstudent(lm2))
+```
+
+```{r}
+#| results: asis
+
+# Output of the code above, with the state flagged for distance (WV) circled in orange
+distance_measure <- rstudent(lm2)
+op <- options(width = 70, digits = 2)
+out <- capture.output(print(distance_measure))
+options(op)
+emit_html(out_block(hl_named_vector(out, "WV", my_orange)))
+```
+
+:::
+
+## Influence
+
+An observation might have high leverage or high distance and still not affect the position of the regression plane
+
+Influence is the extent to which an observation actually changes the regression results
+
+Influence is a function of both leverage and distance
+
+Influence measures:
+
+* DFFITS
+
+* DFBETA
+
+* Cook's distance
+
+* COVRATIO
+
+## DFFITS
+
+::: {style="font-size: 0.8em;"}
+
+Influence measures (for each observation):
+  
+DFFITS: global measure of standardized change in predicted scores
+
+$$\text{DFFITS} = \frac{\hat{y} - \hat{y}_{(i)}}{s_{\hat{y}_{(i)}}}$$
+
+* $\hat{y}$: predicted outcome for observation $i$ when observation $i$ is included in the regression
+* $\hat{y}_{(i)}$: predicted outcome for observation $i$ when observation $i$ is excluded from the regression (use fitted model to predict the outcome)
+* $s_{\hat{y}_{(i)}}$ standard error of $\hat{y}_{(i)}$
+* DFFITS reflects how much the regression line changes if observation $i$ is deleted
+* Suggested cutoffs:
+    + Moderate $N$: absolute DFFITS > 1, outstanding influence
+    + Large $N$: absolute DFFITS > $2\sqrt{(p+1)/N}$, outstanding influence
+
+:::
+
+## DFFITS Viz
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5.5
+
+ggplot(tibble(index = 1:50, DFFITS = dffits(mod), Abbr = rownames(dat)), aes(index, DFFITS)) + 
+  geom_blank() + theme_minimal() + 
+  geom_text(aes(label = Abbr), hjust = 0, vjust = 0, size = 4) + 
+  geom_hline(aes(yintercept = .4898979), col = my_blue) + 
+  geom_hline(aes(yintercept = -.4898979), col = my_blue) +
+  annotate("text", x = 1, y = 0.57, hjust = 0, size = 6, color = my_green, parse = TRUE,
+           label = "bold(2*sqrt((p+1)/N) ~ '=' ~ 2*sqrt(3/50) ~ '=' ~ '.49')")
+```
+
+## DFBETAS
+
+::: {style="font-size: 0.8em;"}
+
+Influence measures (for each observation):
+  
+DFBETAS: measures the standardized change in regression coefficients
+
+$$\text{DFBETAS} = \frac{\hat{b} - \hat{b}_{(i)}}{s_{\hat{b}_{(i)}}}$$
+
+* $\hat{b}$: regression coefficient when observation $i$ is included in the regression
+
+* $\hat{b}_{(i)}$: regression coefficient when observation $i$ is excluded from the regression
+
+* $s_{\hat{b}_{(i)}}$ standard error of $\hat{b}_{(i)}$
+
+Suggested cutoffs:
+  
+* Moderate sample size: absolute DFBETAS > 1, outstanding influence
+
+* Large sample size: absolute DFBETAS > $2/\sqrt{N}$, outstanding influence
+
+:::
+
+## DFBETAS viz
+
+```{r}
+#| fig-width: 12
+#| fig-height: 5.5
+
+DFBETAS <- as.data.frame(dfbetas(mod))
+DFBETAS <- DFBETAS |> 
+  pivot_longer("(Intercept)":"logPctSAT", names_to = "Coefficient", values_to = "DFBETAS") |>
+  mutate(index = rep(1:50, 3), Abbr = rep(rownames(dat), 3))
+ggplot(DFBETAS, aes(index, DFBETAS)) + 
+  geom_blank() + theme_minimal() + 
+  geom_text(aes(label = Abbr), hjust = 0, vjust = 0, size = 3.5) + 
+  facet_wrap(~Coefficient) + 
+  geom_hline(aes(yintercept = 0.2828427), col = my_blue) + 
+  geom_hline(aes(yintercept = -0.2828427), col = my_blue)
+```
+
+## Others
+
+::: {style="font-size: 0.85em;"}
+
+Influence measures (for each observation):
+
+* Cook's Distance: Global measure of influence
+  
+    + Closely related to DFFITS, but with squared differences
+
+    + Suggested cutoff: $D > 1$ indicates influential point
+
+* COVRATIO
+
+    + Global measure of influence based on sizes of standard error of each regression coefficient when observation $i$ is included/excluded from regression analysis
+
+    + Smaller covratio, more stable regression coefficients (smaller standard errors)
+
+    + Suggested cutoff: |covratio - 1|$\geq 3p/N$  indicates less stable regression coefficients
+
+:::
+
+## Influence
+
+```{r}
+#| fig-width: 12
+#| fig-height: 5.5
+
+p1 <- ggplot(tibble(index = 1:50, Cook = cooks.distance(mod), Abbr = rownames(dat)), aes(index, Cook)) + 
+  geom_blank() + theme_minimal() + 
+  geom_text(aes(label = Abbr), hjust = 0, vjust = 0, size = 3.5)
+
+p2 <- ggplot(tibble(index = 1:50, COVRATIO = covratio(mod), Abbr = rownames(dat)), aes(index, COVRATIO)) + 
+  geom_blank() + theme_minimal() + 
+  geom_text(aes(label = Abbr), hjust = 0, vjust = 0, size = 3.5) + 
+  geom_hline(yintercept = 1.12, col = my_blue)
+
+gridExtra::grid.arrange(p1, p2, nrow = 1)
+```
+
+## Summary
+
+
+
+Diagnostics usually consider one observation at a time
+
+Some suggested strategies:
+
+* Look at global influence DFFITS first. Look for observations with DFFITS > $2 \sqrt{(p+1)/N}$
+
+* For these observations, look at all the DFBETAS. Be concerned if DFBETAS > 1
+  
+* Examine these observations for data entry errors (or other errors unrelated to the study)
+  
+* Unless a strong case can be made for deleting the observation, the observation stays
+
+
