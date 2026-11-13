@@ -34,6 +34,8 @@ knitr:
 #| output: false
 library(tidyverse)
 library(gt)
+
+options(width = 150)
 ```
 
 
@@ -68,7 +70,9 @@ summary(m1)
 :::
 
 ::: {.column width="50%"}
-Coefficient interpretations
+The estimated penguin body mass when bill length is zero is `r coef(m1)["(Intercept)"] |> round(2)`.
+
+An increase in 1 mm in bill length is associated with an `r coef(m1)["bill_length_mm"] |> round(2)` g increase in body mass.
 :::
 ::::
 
@@ -77,9 +81,12 @@ Coefficient interpretations
 
 ```{r}
 penguins_cleaned <- penguins |>
-  mutate(across(ends_with("_mm"), scale))
+  filter_out(when_any(is.na(bill_length_mm), is.na(bill_depth_mm), 
+                      is.na(flipper_length_mm), is.na(body_mass_g))) |>
+    mutate(across(ends_with("_mm"), function(col) (col - mean(col)) / sd(col)))
 penguins_cleaned
 ```
+
 
 ## Simple Regression
 
@@ -92,7 +99,9 @@ summary(m1)
 :::
 
 ::: {.column width="50%"}
-Coefficient interpretations
+The estimated penguin body mass for penguins with average bill length is `r coef(m1)["(Intercept)"] |> round(2)`.
+
+An increase in 1 SD in bill length is associated with an `r coef(m1)["bill_length_mm"] |> round(2)` g increase in body mass.
 :::
 ::::
 
@@ -118,13 +127,13 @@ After adjusting for bill depth, an increase in 1 SD in bill length is associated
 :::: {.columns}
 ::: {.column width="50%"}
 ```{r}
-m3 <- lm(body_mass_g ~ bill_length_mm + bill_depth_mm + flipper_length_mm, data = penguins) 
+m3 <- lm(body_mass_g ~ bill_length_mm + bill_depth_mm + flipper_length_mm, data = penguins_cleaned) 
 summary(m3)
 ```
 :::
 
 ::: {.column width="50%"}
-Coefficient interpretations
+After adjusting for bill depth and flipper length, an increase in 1 SD in bill length is associated with an `r coef(m3)["bill_length_mm"] |> round(2)` g increase in body mass.
 :::
 ::::
 
@@ -143,7 +152,146 @@ With multiple regression, we want to check on...
 - Outliers
 
 
-## Normality of Residuals
+# Residuals
+
+## Residuals
+
+We want to see that our residuals are **normally distributed** and have constant variance across all levels of the predictors.
+
+Can extract residuals from a model with `resid(lm_model)` or `residuals(lm_model)`.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+residuals(m3) |>
+  head()
+```
+
+:::
+
+::: {.column width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+penguins_cleaned |>
+  add_column(residuals = residuals(m3)) |>
+  ggplot(aes(x = residuals)) +
+  geom_density() +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+penguins_cleaned |>
+  add_column(residuals = residuals(m3)) |>
+  ggplot(aes(x = bill_length_mm, y = residuals)) +
+  geom_density() +
+  theme_classic()
+```
+:::
+
+
+:::
+::::
+
+
+## Residuals
+
+We want to see that our residuals are normally distributed and have **constant variance across all levels of the predictors**.
+
+Can extract residuals from a model with `resid(lm_model)` or `residuals(lm_model)`.
+
+:::: {.columns}
+::: {.column width="50%"}
+Could specify the plots manually per each predictor or...
+
+:::
+
+::: {.column width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+penguins_cleaned |>
+  add_column(residuals = residuals(m3)) |>
+  ggplot(aes(x = bill_length_mm, y = residuals)) +
+  geom_point() +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+penguins_cleaned |>
+  add_column(residuals = residuals(m3)) |>
+  ggplot(aes(x = bill_length_mm, y = residuals)) +
+  geom_point() +
+  theme_classic()
+```
+:::
+
+
+:::
+::::
+
+
+## Residuals
+
+We want to see that our residuals are normally distributed and have **constant variance across all levels of the predictors**.
+
+Can extract residuals from a model with `resid(lm_model)` or `residuals(lm_model)`.
+
+:::: {.columns}
+::: {.column width="33%"}
+... `pivot_longer()` the columns with the predictor values (`names(coef(lm_model))`) so each predictor has a row: then you can just `facet_wrap()` by the predictor name!
+:::
+
+::: {.column width="66%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 6.5
+#| fig-height: 3
+#| fig-align: center
+penguins_cleaned |>
+  add_column(residuals = residuals(m3)) |>
+  pivot_longer(any_of(names(coef(m3))),
+               names_to = "predictor", values_to = "x") |>
+  ggplot(aes(x = x, y = residuals)) +
+  geom_point() +
+  facet_wrap("predictor") +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+penguins_cleaned |>
+  add_column(residuals = residuals(m3)) |>
+  pivot_longer(any_of(names(coef(m3))),
+               names_to = "predictor", values_to = "x") |>
+  ggplot(aes(x = x, y = residuals)) +
+  geom_point() +
+  facet_wrap("predictor") +
+  theme_classic()
+```
+:::
+
+
+:::
+::::
 
 
 
@@ -162,7 +310,128 @@ Image made with GPT-6 on 2026-11-12 (may or may not try to make my own to replac
 :::
 
 
-## Multicollinearity Bad
+## Multicollinearity
+
+<div>
+```{=html}
+<iframe class="slide-deck" src="https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/27%20Regression%20Diagnostics/Lecture%2027%20Regression%20Diagnostics.html#/multicolinearity"></iframe>
+```
+</div>
+
+::: footer
+From Mark's [Lecture 27: More Regression and Diagnostics, Slide 14](https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/27%20Regression%20Diagnostics/Lecture%2027%20Regression%20Diagnostics.html#/multicolinearity) accessed on 2026-11-12
+:::
+
+## Multicollinearity Consequences
+
+Inflated standard errors on partial regression coefficients
+
+::: panel-tabset
+
+### Tables
+
+```{r}
+#| echo: false
+#| layout-ncol: 4
+n <- 100
+sim_dat <- tibble(
+  pred_cor = c(0, 0.33, 0.66, 0.99)
+) |>
+  mutate(
+    xs = map(
+      pred_cor, 
+      \(pred_cor) MASS::mvrnorm(
+        n = n,
+        mu = c(0, 0),
+        Sigma = matrix(
+          c(1, pred_cor, 
+            pred_cor, 1), 
+          nrow = 2, byrow = T)
+      ) |> 
+        as_tibble() |>
+        set_names(c("x1", "x2")) |>
+        mutate(y = rnorm(n, 4 * x1 + x2))
+    ),
+    res = map(
+      xs, \(xs) lm(y ~ x1 + x2, data = xs) |>
+        broom::tidy(conf.int = T)
+    )
+  ) 
+
+sim_dat |>
+  select(pred_cor, res) |>
+  pmap(
+    \(pred_cor, res) res |>
+         mutate(p.value = gtsummary::style_pvalue(p.value)) |>
+        select(-c(statistic, conf.low, conf.high)) |>
+        gt() |>
+        fmt_number(columns = c(estimate, std.error), decimals = 2) |>
+        tab_header(glue::glue("Predictor correlation: {pred_cor}")) |>
+        cols_label(
+          term = "Term",
+          estimate = "Estimate",
+          std.error = "SE",
+          p.value = "p"
+        ) |>
+        tab_style(
+          style = cell_text(weight = "bold"),
+          locations = cells_column_labels()
+        )
+    )
+```
+
+### Code
+
+```{r}
+#| eval: false
+n <- 100
+sim_dat <- tibble(
+  pred_cor = c(0, 0.33, 0.66, 0.99)
+) |>
+  mutate(
+    xs = map(
+      pred_cor, 
+      \(pred_cor) MASS::mvrnorm(
+        n = n,
+        mu = c(0, 0),
+        Sigma = matrix(
+          c(1, pred_cor, 
+            pred_cor, 1), 
+          nrow = 2, byrow = T)
+      ) |> 
+        as_tibble() |>
+        set_names(c("x1", "x2")) |>
+        mutate(y = rnorm(n, 4 * x1 + x2))
+    ),
+    res = map(
+      xs, \(xs) lm(y ~ x1 + x2, data = xs) |>
+        broom::tidy(conf.int = T)
+    )
+  ) 
+
+sim_dat |>
+  select(pred_cor, res) |>
+  pmap(
+    \(pred_cor, res) res |>
+         mutate(p.value = gtsummary::style_pvalue(p.value)) |>
+        select(-c(statistic, conf.low, conf.high)) |>
+        gt() |>
+        fmt_number(columns = c(estimate, std.error), decimals = 2) |>
+        tab_header(glue::glue("Predictor correlation: {pred_cor}")) |>
+        cols_label(
+          term = "Term",
+          estimate = "Estimate",
+          std.error = "SE",
+          p.value = "p"
+        ) |>
+        tab_style(
+          style = cell_text(weight = "bold"),
+          locations = cells_column_labels()
+        )
+    )
+```
+:::
+
 
 Sim demoing misinterpretations, variance inflation bc multicollinearity
 
@@ -176,16 +445,60 @@ penguins |>
   cor(use = "pairwise.complete.obs")
 ```
 
+
 ## Why Superficial? 
 
 Sim showing that variables can have small bivariate cors but in total explain a lot of the variance in y
 
-```{r}
+Suppose you have this dataset:
 
+```{r}
+#| echo: false
+set.seed(1)
+
+n <- 10000
+d <- tibble(
+  x1 = 5 + rnorm(n),
+  x2 = 10 + rnorm(n),
+  x3 = 2 * rnorm(n),
+  x4 = 3 + 2 * rnorm(n),
+  x5 = 4 + rnorm(n, 2),
+  x6 = 8 + rnorm(n, x1 + x2 + x3 + x4 + x5, 0.2),
+  y = rnorm(n, x6)
+) |>
+  round(1)
+head(d)
+```
+
+And you fit this model:
+
+```{r}
+m <- lm(y ~ x1 + x2 + x3 + x4 + x5 + x6, data = d)
 ```
 
 
+## Why Superficial?
 
+If we just look at the bivariate correlations, we get this correlation matrix:
+
+```{r}
+d |>
+  select(-y) |>
+  cor() |> 
+  round(2)
+```
+
+Not too bad, right?
+
+Well, multicollinearity isn't just about the bivariate relationships of predictors, it's about the total amount of variance other predictors can explain in a predictor.
+
+What if we estimate a model of other predictors predicting `x6`?
+
+```{r}
+summary(lm(x6 ~ x1 + x2 + x3 + x4 + x5, data = d))$r.squared
+```
+
+...that's a lot of explained variance.
 
 
 ## Squared Multiple Correlations
@@ -248,35 +561,81 @@ summary(multicoll_m3)$r.squared
 
 The presence of multicollinearity among predictors in the model increases the variance of the model estimates. We can examine this effect with Variance Inflation Factors ($VIF$s).
 
-$$VIF_p = \frac{1}{1 - SMC_p}$$
+$$\mathrm{VIF_p} = \frac{1}{1 - \mathrm{SMC_p}}$$
 
+where $p$ is a given model predictor.
+
+:::: {.columns}
+::: {.column width="50%"}
+Our penguin model:
+:::
+
+::: {.column width="50%"}
 ```{r}
 car::vif(m3)
 ```
+:::
+::::
 
-VIF suggested cutoffs
+
+Variance Inflation Factors indicate the factor by which the standard error has increased because of multicollinearity for that predictor.
 
 
 ## Tolerance
 
 An alternative way of looking at this is with *tolerance*, which is just the inverse of $VIF$.
 
-$$tolerance = \frac{1}{VIF}$$
+$$\mathrm{tolerance_p} = \frac{1}{\mathrm{VIF_p}}$$
 
+:::: {.columns}
+::: {.column width="50%"}
+Our penguin model:
+:::
+
+::: {.column width="50%"}
 ```{r}
 1 / car::vif(m3)
 ```
+:::
+::::
+
+Tolerance indicates the proportion of variance in a given predictor that is independent of other predictors.
 
 
+## Why Superficial?
 
-## All At Once
+Let's check back in with our other dataset:
 
 ```{r}
-olsrr::ols_coll_diag(m3)
+d |>
+  select(-y) |>
+  cor() |> 
+  round(2)
+```
+
+:::: {.columns .fragment}
+::: {.column width="50%"}
+### VIF
+
+```{r}
+car::vif(m)
 ```
 
 
-## Variance Inflation Factor
+:::
+
+::: {.column width="50%"}
+### Tolerance
+
+```{r}
+1 / car::vif(m)
+```
+
+:::
+::::
+
+
+
 
 
 # Outliers
@@ -292,7 +651,12 @@ olsrr::ols_coll_diag(m3)
 
 
 
+# Confounders
 
+##
+
+
+## Lab 13 Activity
 
 
 
