@@ -326,6 +326,7 @@ Mark Himmelstein
 </section>
 <section id="matrix-inverse" class="slide level2">
 <h2>Matrix Inverse</h2>
+<div style="font-size: 0.95em;">
 <p><span class="math inline">\(\mathbf{I}\)</span> is an <strong>identity matrix</strong> (generalization of the number ‘1’), a square matrix with 1’s on the main diagonal and 0’s on the off-diagonals. Example:</p>
 <p><span class="math display">\[\begin{bmatrix}1 &amp; 0 &amp; 0\\
 0 &amp; 1 &amp; 0\\
@@ -335,8 +336,12 @@ Mark Himmelstein
 <ul>
 <li><p>Defined only for square matrices</p></li>
 <li><p><span class="math inline">\(\mathbf{A}^{-1}\)</span> is the matrix inverse of <span class="math inline">\(\mathbf{A}\)</span></p></li>
-<li><p><span class="math inline">\(\mathbf{A}\mathbf{A}^{-1} = \mathbf{A}^{-1}\mathbf{A} = \mathbf{I}\)</span></p></li>
+<li><p><span class="math inline">\(\mathbf{A}\mathbf{A}^{-1} = \mathbf{A}^{-1}\mathbf{A} = \mathbf{I}\)</span></p>
+<ul>
+<li>Multiplying a matrix by the inverse of another matrix is the matrix version of <em>dividing</em> the first matrix by the second</li>
+</ul></li>
 </ul>
+</div>
 </section>
 <section id="inverse-example" class="slide level2">
 <h2>Inverse Example</h2>
@@ -535,12 +540,6 @@ Mark Himmelstein
 <span id="cb18-2"><a aria-label="2"></a><span class="ex">[1,]</span>    1    0</span>
 <span id="cb18-3"><a aria-label="3"></a><span class="ex">[2,]</span>    0    1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-label="1"></a><span class="fu">solve</span>(A)     <span class="co"># R computes the inverse directly</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
-<span id="cb20-2"><a aria-label="2"></a><span class="ex">[1,]</span>    2   <span class="at">-1</span></span>
-<span id="cb20-3"><a aria-label="3"></a><span class="ex">[2,]</span>   <span class="at">-5</span>    3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 </div>
 </div>
 </div>
@@ -552,11 +551,13 @@ Mark Himmelstein
 <div class="fragment">
 <p>We use <code>solve()</code></p>
 <div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-label="1"></a><span class="fu">solve</span>(A)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
-<span id="cb21-2"><a aria-label="2"></a><span class="ex">[1,]</span>    2   <span class="at">-1</span></span>
-<span id="cb21-3"><a aria-label="3"></a><span class="ex">[2,]</span>   <span class="at">-5</span>    3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb20-2"><a aria-label="2"></a><span class="ex">[1,]</span>    2   <span class="at">-1</span></span>
+<span id="cb20-3"><a aria-label="3"></a><span class="ex">[2,]</span>   <span class="at">-5</span>    3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-label="1"></a><span class="fu">round</span>(A <span class="sc">%*%</span> <span class="fu">solve</span>(A),<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
 <span id="cb22-2"><a aria-label="2"></a><span class="ex">[1,]</span>    1    0</span>
@@ -592,12 +593,6 @@ Mark Himmelstein
 <span id="cb24-2"><a aria-label="2"></a><span class="ex">[1,]</span>   10    4</span>
 <span id="cb24-3"><a aria-label="3"></a><span class="ex">[2,]</span>   24   10</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-label="1"></a><span class="fu">solve</span>(C)     <span class="co"># the actual inverse of C</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
-<span id="cb26-2"><a aria-label="2"></a><span class="ex">[1,]</span> <span class="at">-2.0</span>  1.0</span>
-<span id="cb26-3"><a aria-label="3"></a><span class="ex">[2,]</span>  1.5 <span class="at">-0.5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 </div>
 </div>
 </div>
@@ -607,11 +602,13 @@ Mark Himmelstein
 <div class="answer">
 <div class="fragment">
 <div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-label="1"></a><span class="fu">solve</span>(C)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
-<span id="cb27-2"><a aria-label="2"></a><span class="ex">[1,]</span> <span class="at">-2.0</span>  1.0</span>
-<span id="cb27-3"><a aria-label="3"></a><span class="ex">[2,]</span>  1.5 <span class="at">-0.5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
+<span id="cb26-2"><a aria-label="2"></a><span class="ex">[1,]</span> <span class="at">-2.0</span>  1.0</span>
+<span id="cb26-3"><a aria-label="3"></a><span class="ex">[2,]</span>  1.5 <span class="at">-0.5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a aria-label="1"></a><span class="fu">solve</span>(D)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a aria-label="1"></a>     <span class="ex">[,1]</span> <span class="pp">[</span><span class="ss">,2</span><span class="pp">]</span></span>
 <span id="cb28-2"><a aria-label="2"></a><span class="ex">[1,]</span> <span class="at">-0.5</span>    1</span>
