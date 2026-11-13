@@ -41,6 +41,15 @@ list(
     qmd_out(lab_12_slides_qmd)
   }, format = "file"),
   
+  tar_target(lab_12_activity_key_qmd,
+             "lab/activities/activity-keys/lab_12_activity_key.qmd",
+             format = "file"),
+  tar_target(lab_12_activity_key, {
+    pixarfilms_data_file
+    quarto::quarto_render(lab_12_activity_key_qmd)
+    qmd_out(lab_12_activity_key_qmd)
+  }, format = "file"),
+  
   ## lab 11
   tar_target(chick_week_data, make_chick_week_data()),
   tar_file(chick_week_data_file, 
@@ -53,6 +62,15 @@ list(
     chick_week_data
     quarto::quarto_render(lab_11_slides_qmd, quiet = F)
     qmd_out(lab_11_slides_qmd)
+  }, format = "file"),
+  
+  tar_target(lab_11_activity_key_qmd,
+             "lab/activities/activity-keys/lab_11_activity_key.qmd",
+             format = "file"),
+  tar_target(lab_11_activity_key, {
+    pixarfilms_data_file
+    quarto::quarto_render(lab_11_activity_key_qmd)
+    qmd_out(lab_11_activity_key_qmd)
   }, format = "file"),
   
   # tar_target(lab_11_activity_key_qmd,
