@@ -34,6 +34,8 @@ knitr:
 #| output: false
 library(tidyverse)
 library(gt)
+
+options(width = 150)
 ```
 
 
@@ -307,7 +309,7 @@ cov_plot(df, focus = c(p1, p2, p3, p4), show_dx = TRUE, show_dy = TRUE)
 
 ## Covariance Visually
 
-Examples of positive, zero, and negative covariance:
+Examples of positive, negative, and zero covariance:
 
 ```{r}
 #| layout-ncol: 3
@@ -346,6 +348,69 @@ $$ r_{xy} = \frac{s_{xy}}{s_{x} s_{y}}  $$
 :::
 
 We standardize covariance into correlation just by dividing by the two variables' standard deviations!
+
+::: fragment
+If two variables were already *z*-scores, their covariance and correlation would be the same.
+:::
+
+
+## Increasing Covariance
+
+Covariance can increase for two different reasons:
+
+1. **Strength of the relationship** (fewer points in the mismatched-sign quadrants)
+2. **Scale of the variables** (larger spread)
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5
+#| fig-align: center
+#| echo: false
+## Made with Claude Sonnet 5.5 on 2026-11-13
+
+library(patchwork)
+
+# Same construction as make_df(), but with an adjustable scale (sd)
+make_df2 <- function(rho, sd = 10) {
+  tibble(
+    x = 50 + sd * zx,
+    y = 50 + sd * (rho * zx + sqrt(1 - rho^2) * ze)
+  )
+}
+
+# Title is the description; covariance is annotated inside the plot
+cov_panel <- function(rho, sd, label) {
+  d  <- make_df2(rho, sd)
+  mx <- mean(d$x); my <- mean(d$y)
+  d  <- d |> mutate(sign = if_else((x - mx) * (y - my) >= 0, "pos", "neg"))
+
+  ggplot(d, aes(x, y)) +
+    geom_vline(xintercept = mx, color = grey, linewidth = 0.4) +
+    geom_hline(yintercept = my, color = grey, linewidth = 0.4) +
+    geom_point(aes(color = sign), shape = 16, size = 1.8, alpha = 0.8) +
+    annotate("text", x = 2, y = 98, hjust = 0, vjust = 1, size = 5,
+             color = grey, parse = TRUE,
+             label = paste0("s[xy] == ", round(cov(d$x, d$y)))) +
+    scale_color_manual(values = cols) +
+    scale_x_continuous(breaks = seq(0, 100, 25)) +
+    scale_y_continuous(breaks = seq(0, 100, 25)) +
+    coord_cartesian(xlim = c(0, 100), ylim = c(0, 100)) +
+    labs(x = "X", y = "Y", title = label) +
+    guides(x = guide_axis(cap = TRUE), y = guide_axis(cap = TRUE),
+           color = "none") +
+    theme_classic() +
+    theme(plot.title = element_text(hjust = 0.5, size = 11),
+          aspect.ratio = 1)
+}
+
+pA <- cov_panel(0.55, 10, "Baseline")
+pB <- cov_panel(0.90, 10, "Stronger relationship")
+pC <- cov_panel(0.55, 20, "Larger scale")
+
+# "#" is an empty column between A and the B/C stack
+pA + pB + pC +
+  plot_layout(design = "A#B\nA#C", widths = c(1, 0.4, 1))
+```
 
 
 ## Correlation
@@ -388,16 +453,39 @@ Bounded from $[-1, \ 1]$
 ○ `method` = which type of coefficient to compute
 :::
 
+::: fragment
+Let's examine the covariances and correlations of some of the variables in the `palmerpenguins` data.
+:::
+
 
 ## Covariance in R
 
-Need to `select()` down just to variables of interest.
+We can start with the covariance between flipper length and body mass. For just two variables, we can pull out each vector in the function.
 
 :::: {.columns}
 ::: {.column .fragment width="50%"}
 ```{r}
 library(palmerpenguins)
 
+cov(penguins$flipper_length_mm, penguins$body_mass_g)
+```
+:::
+
+::: {.column .fragment width="50%"}
+```{r}
+cov(penguins$flipper_length_mm, penguins$body_mass_g, 
+    use = "complete.obs")
+```
+:::
+::::
+
+::: fragment
+Or, we can pipe in: just need to `select()` down just to variables of interest.
+:::
+
+:::: {.columns}
+::: {.column .fragment width="50%"}
+```{r}
 penguins |>
   select(flipper_length_mm, body_mass_g) |>
   cov()
@@ -412,6 +500,10 @@ penguins |>
 ```
 :::
 ::::
+
+::: fragment
+**Diagonals**: variable variances, **off-diagonals**: covariances between variables.
+:::
 
 
 ## Correlation in R
@@ -438,7 +530,26 @@ penguins |>
 ## Correlation in R
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
+```{r}
+cor(penguins$flipper_length_mm, penguins$body_mass_g)
+```
+:::
+
+::: {.column .fragment width="50%"}
+```{r}
+cor(penguins$flipper_length_mm, penguins$body_mass_g, 
+    use = "complete.obs")
+```
+:::
+::::
+
+::: fragment
+Or, we can pipe in: just need to `select()` down just to variables of interest.
+:::
+
+:::: {.columns}
+::: {.column .fragment width="50%"}
 ```{r}
 penguins |>
   select(flipper_length_mm, body_mass_g) |>
@@ -446,7 +557,7 @@ penguins |>
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
 penguins |>
   select(flipper_length_mm, body_mass_g) |>
@@ -454,6 +565,11 @@ penguins |>
 ```
 :::
 ::::
+
+::: fragment
+**Diagonals**: ones (covariance with self is variance... divided by variance), **off-diagonals**: correlations between variables.
+:::
+
 
 
 ## Handling `NA`s
@@ -483,7 +599,7 @@ penguins |>
 
 ## Handling `NA`s
 
-:::: {.columns style="font-size:90%"}
+:::: {.columns style="font-size:80%"}
 ::: {.column width="33%"}
 ```{r}
 penguins |>
@@ -511,7 +627,7 @@ penguins |>
 ::::
 
 
-:::: {.columns style="font-size:90%"}
+:::: {.columns style="font-size:80%"}
 ::: {.column width="17%"}
 
 :::
@@ -549,75 +665,157 @@ penguins |>
 ```
 
 
+## Correlation Matrices
+
+When we pipe into `cor()`, it's much easier to expand into a correlation matrix.
+
+:::: {.columns style="font-size:75%"}
+::: {.column width="50%"}
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  cor(use = "pairwise.complete.obs") |>
+  round(2)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  cor(use = "complete.obs") |>
+  round(2)
+```
+:::
+::::
+
+::: fragment
+These correlation matrices being the same tells us that the missing data pattern may be the same across all these variables.
+:::
+
+
+## Testing Multiple Correlations
+
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g) |>
+  rstatix::cor_test()
+```
+
+:::: {.columns tyle="font-size:85%"}
+::: {.column width="50%"}
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g, bill_length_mm) |>
+  rstatix::cor_test() |>
+  select(var1, var2, cor, p)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g, bill_length_mm) |>
+  rstatix::cor_test() |>
+  filter(var1 < var2) |>
+  select(var1, var2, cor, p)
+```
+:::
+::::
+
+
+## Testing Multiple Correlations
+
+```{r}
+penguins |>
+  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  rstatix::cor_test() |>
+  filter(var1 < var2)
+```
+
+
 ## Ordinal Correlations
 
-:::: {.columns}
-::: {.column width="50%"}
+Artifically creating an ordinal variable in the penguins dataset by binning values of `bill_length_mm` and `bill_depth_mm` into thirds
+
+::::: {.columns}
+:::: {.column width="50%"}
+
+::: panel-tabset
+### Code
+::: {style="font-size:80%"}
 ```{r}
 penguins_ordinal <- penguins |>
   mutate(
     across(
       c(bill_length_mm, bill_depth_mm),
-      function(bill_column) case_when(
-        bill_column < quantile(bill_column, .33, na.rm = T) ~ "low",
-        between(
-          bill_column, 
-          quantile(bill_column, 1/3, na.rm = T), 
-          quantile(bill_column, 2/3, na.rm = T)
-        ) ~ "med",
-        bill_column > quantile(bill_column, .66, na.rm = T) ~ "high"
-      ) |>
-        factor(levels = c("low", "med", "high"), ordered = TRUE),
+      \(bill_column) cut_number(
+        bill_column,
+        n = 3,
+        labels = c("low", "med", "high"),
+        ordered_result = TRUE
+      ),
       .names = "{.col}_ordinal"
     )
   ) |>
   select(ends_with("_ordinal"))
+```
+:::
 
+### Data
+```{r}
 head(penguins_ordinal)
 ```
 :::
 
-::: {.column width="50%"}
+::::
+
+:::: {.column width="50%"}
 ```{r}
 penguins_ordinal |>
   count(bill_length_mm_ordinal, bill_depth_mm_ordinal)
 ```
-:::
 ::::
+:::::
 
 
 ## Ordinal Correlations
 
-:::: {.columns}
+:::: {.columns style="font-size:80%"}
 ::: {.column width="50%"}
+### Spearman
+
 ```{r}
 penguins_ordinal |>
   mutate(across(everything(), as.numeric)) |>
-  cor(use = "complete.obs",
-      method = "spearman")
+  cor(use = "complete.obs", method = "spearman")
 ```
 
 :::
 
 ::: {.column width="50%"}
+### Kendall
+
 ```{r}
 penguins_ordinal |>
   mutate(across(everything(), as.numeric)) |>
-  cor(use = "complete.obs",
-      method = "kendall")
+  cor(use = "complete.obs", method = "kendall")
 ```
 :::
 ::::
 
+
+
+# Scatterplots
 
 ## Scatterplots
 
 :::: {.columns}
 ::: {.column width="50%"}
-
+Scatterplot of flipper length and body mass
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -712,12 +910,14 @@ diamonds |>
 #| fig-width: 5
 #| fig-height: 4
 #| fig-align: center
-r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, 
+         use = "complete.obs")
 
 penguins |>
   ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point() +
-  annotate(geom = "text", label = round(r, 2), x = mean(penguins$flipper_length_mm, na.rm = T),
+  annotate(geom = "text", label = round(r, 2), 
+           x = mean(penguins$flipper_length_mm, na.rm = T),
            y = max(penguins$body_mass_g, na.rm = T)) +
   labs(y = "Body Mass", x = "Flipper Length") +
   guides(x = guide_axis(cap = T),
@@ -728,12 +928,14 @@ penguins |>
 ### Code
 ```{r}
 #| eval: false
-r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, 
+         use = "complete.obs")
 
 penguins |>
   ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point() +
-  annotate(geom = "text", label = round(r, 2), x = mean(penguins$flipper_length_mm, na.rm = T),
+  annotate(geom = "text", label = round(r, 2), 
+           x = mean(penguins$flipper_length_mm, na.rm = T),
            y = max(penguins$body_mass_g, na.rm = T)) +
   labs(y = "Body Mass", x = "Flipper Length") +
   guides(x = guide_axis(cap = T),
@@ -749,7 +951,9 @@ penguins |>
 
 :::: {.columns}
 ::: {.column width="50%"}
+Make the italics with `plotmath`, a system for including mathematical expressions in plots.
 
+[Documentation here](https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/plotmath.html).
 :::
 
 ::: {.column width="50%"}
@@ -760,14 +964,17 @@ penguins |>
 #| fig-width: 5
 #| fig-height: 4
 #| fig-align: center
-r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, 
+         use = "complete.obs")
 r_label <- paste("italic(r) ==", round(r, 2))
 
 penguins |>
   ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point() +
-  annotate(geom = "text", label = r_label, x = mean(penguins$flipper_length_mm, na.rm = T),
-           y = max(penguins$body_mass_g, na.rm = T), parse = T) +
+  annotate(geom = "text", label = r_label, 
+           x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T),
+           parse = T) +
   labs(y = "Body Mass", x = "Flipper Length") +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
@@ -777,14 +984,17 @@ penguins |>
 ### Code
 ```{r}
 #| eval: false
-r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, 
+         use = "complete.obs")
 r_label <- paste("italic(r) ==", round(r, 2))
 
 penguins |>
   ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point() +
-  annotate(geom = "text", label = r_label, x = mean(penguins$flipper_length_mm, na.rm = T),
-           y = max(penguins$body_mass_g, na.rm = T), parse = T) +
+  annotate(geom = "text", label = r_label, 
+           x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T),
+           parse = T) +
   labs(y = "Body Mass", x = "Flipper Length") +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
@@ -821,15 +1031,18 @@ Defines the relationship between the variables as $y = mx + b$
 #| fig-width: 5
 #| fig-height: 4
 #| fig-align: center
-r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, 
+         use = "complete.obs")
 r_label <- paste("italic(r) ==", round(r, 2))
 
 penguins |>
   ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point() +
-  geom_smooth(method = "lm", color = "seagreen", fill = "seagreen") +
-  annotate(geom = "text", label = r_label, x = mean(penguins$flipper_length_mm, na.rm = T),
-           y = max(penguins$body_mass_g, na.rm = T), parse = T) +
+  geom_smooth(method = "lm", color = "steelblue", fill = "steelblue") +
+  annotate(geom = "text", label = r_label, 
+           x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T), 
+           parse = T) +
   labs(y = "Body Mass", x = "Flipper Length") +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
@@ -839,15 +1052,18 @@ penguins |>
 ### Code
 ```{r}
 #| eval: false
-r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, use = "complete.obs")
+r <- cor(penguins$flipper_length_mm, penguins$body_mass_g, 
+         use = "complete.obs")
 r_label <- paste("italic(r) ==", round(r, 2))
 
 penguins |>
   ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point() +
-  geom_smooth(method = "lm", color = "seagreen", fill = "seagreen") +
-  annotate(geom = "text", label = r_label, x = mean(penguins$flipper_length_mm, na.rm = T),
-           y = max(penguins$body_mass_g, na.rm = T), parse = T) +
+  geom_smooth(method = "lm", color = "steelblue", fill = "steelblue") +
+  annotate(geom = "text", label = r_label, 
+           x = mean(penguins$flipper_length_mm, na.rm = T),
+           y = max(penguins$body_mass_g, na.rm = T), 
+           parse = T) +
   labs(y = "Body Mass", x = "Flipper Length") +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
@@ -862,16 +1078,18 @@ penguins |>
 
 :::: {.columns}
 ::: {.column width="50%"}
+Can make scatterplot matrices with the `ggpairs()` function from the `{GGally}` package.
 
+[Documentation here](https://ggobi.github.io/ggally/reference/ggpairs.html)
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ::: {.panel-tabset}
 ### Plot
 ```{r}
 #| echo: false
 #| fig-width: 5
-#| fig-height: 4
+#| fig-height: 5
 #| fig-align: center
 # install.packages("GGally")
 
@@ -907,10 +1125,11 @@ penguins |>
 ```{r}
 #| echo: false
 #| fig-width: 5
-#| fig-height: 4
+#| fig-height: 5
 #| fig-align: center
 penguins |>
-  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  select(flipper_length_mm, body_mass_g, 
+         bill_length_mm, bill_depth_mm) |>
   GGally::ggpairs() +
   theme_classic()
 ```
@@ -919,7 +1138,8 @@ penguins |>
 ```{r}
 #| eval: false
 penguins |>
-  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  select(flipper_length_mm, body_mass_g, 
+         bill_length_mm, bill_depth_mm) |>
   GGally::ggpairs() +
   theme_classic()
 ```
@@ -942,10 +1162,11 @@ Adding a LOESS line...
 ```{r}
 #| echo: false
 #| fig-width: 5
-#| fig-height: 4
+#| fig-height: 5
 #| fig-align: center
 penguins |>
-  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
+  select(flipper_length_mm, body_mass_g, 
+         bill_length_mm, bill_depth_mm) |>
   GGally::ggpairs(
     lower = list(continuous = "smooth")
   ) +
@@ -956,8 +1177,11 @@ penguins |>
 ```{r}
 #| eval: false
 penguins |>
-  select(flipper_length_mm, body_mass_g, bill_length_mm, bill_depth_mm) |>
-  GGally::ggpairs() +
+  select(flipper_length_mm, body_mass_g, 
+         bill_length_mm, bill_depth_mm) |>
+  GGally::ggpairs(
+    lower = list(continuous = "smooth")
+  ) +
   theme_classic()
 ```
 :::
@@ -970,7 +1194,7 @@ penguins |>
 
 :::: {.columns}
 ::: {.column width="50%"}
-
+Swapping to a linear regression (`method = "lm"`) line and changing color
 :::
 
 ::: {.column width="50%"}
@@ -979,12 +1203,12 @@ penguins |>
 ```{r}
 #| echo: false
 #| fig-width: 5
-#| fig-height: 4
+#| fig-height: 5
 #| fig-align: center
 custom_trendline <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) +
     geom_point(...) +
-    geom_smooth(method = "lm", se = FALSE, color = "steelblue")
+    geom_smooth(method = "lm", color = "steelblue")
 }
 
 penguins |>
@@ -999,7 +1223,7 @@ penguins |>
 custom_trendline <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) +
     geom_point(...) +
-    geom_smooth(method = "lm", se = FALSE, color = "steelblue")
+    geom_smooth(method = "lm", color = "steelblue")
 }
 
 penguins |>
@@ -1091,8 +1315,8 @@ When we added trendlines (`method = "lm"`) onto our scatterplots, we were perfor
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 4
-#| fig-height: 4
+#| fig-width: 3.5
+#| fig-height: 3.5
 #| fig-align: center
 set.seed(1)
 
@@ -1115,7 +1339,7 @@ y0 <- b0 + b1 * x0
 y1 <- b0 + b1 * x1
 
 ggplot(d, aes(x = x, y = y)) +
-  geom_point(alpha = 0.6, shape = 16, size = 1.8, color = "steelblue") +
+  geom_point() +
   geom_abline(intercept = b0, slope = b1, color = "pink3", linewidth = 0.8) +
   
   # Intercept: point where the line crosses x = 0, with a curved arrow and label
@@ -1166,7 +1390,7 @@ y0 <- b0 + b1 * x0
 y1 <- b0 + b1 * x1
 
 ggplot(d, aes(x = x, y = y)) +
-  geom_point(alpha = 0.6, shape = 16, size = 1.8, color = "steelblue") +
+  geom_point() +
   geom_abline(intercept = b0, slope = b1, color = "pink3", linewidth = 0.8) +
   
   # Intercept: point where the line crosses x = 0, with a curved arrow and label
@@ -1207,7 +1431,7 @@ We are representing the relationship between the variables as $y = mx + b$.
 ○ $m$: slope, change in $y$ with unit increase in $x$
 :::
 
-In modeling, you more often see this as $y = \beta_0 + \beta_1 x$
+In modeling, you more often see this as $y = \beta_0 + \beta_1 x + \epsilon$
 
 ::: subpoint-narrow
 ○ General linear model
@@ -1224,14 +1448,15 @@ Let's regress penguin bill length ($x$) on penguin bill depth ($y$).
 $$\text{bill depth}_i = \beta_0 + \beta_1 \text{bill length}_i + \epsilon_i$$
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column width="66%"}
 ```{r}
-bill_model <- lm(bill_depth_mm ~ bill_length_mm, data = penguins)
+bill_model <- lm(bill_depth_mm ~ bill_length_mm, 
+                 data = penguins)
 summary(bill_model)
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column width="33%"}
 $R^2 = \frac{\mathrm{SS}_\mathrm{regression}}{\mathrm{SS}_y} = \frac{\sum(\hat{y}_i - \bar{y})}{\sum(\hat{y}_i- \bar{y})}$
 
 ::: subpoint-narrow
@@ -1270,7 +1495,9 @@ bill_model |>
 ```{r}
 coefficients(bill_model)
 
-coefficients(bill_model)[1]
+coef(bill_model)
+
+coef(bill_model)["(Intercept)"]
 ```
 
 :::
@@ -1308,24 +1535,25 @@ summary(bill_model)
 :::
 
 ::: {.column width="50%"}
-**Intercept**: The expected value of bill depth when bill length is zero is `r coefficients(bill_model)[[1]] |> round(2)`.
+**Intercept**: The expected value of bill depth when bill length is zero is `r coefficients(bill_model)[[1]] |> round(2)` mm.
 
 ::: {.subpoint-narrow .fragment}
 ○ Do we even care about bill length being zero? 🤔
 :::
 
-**Slope**: The expected increase in bill depth with a one unit increase in bill length is `r coefficients(bill_model)[[1]] |> round(2)`.
+**Slope**: The expected increase in bill depth with one mm increase in bill length is `r coefficients(bill_model)[[2]] |> round(2)` mm.
 :::
 ::::
 
 
 ## Standardizing Variables
 
-We can convert the variables to *z*-scores. Now, $\text{bill length} = 0$ means the *average* bill length across penguins and $\text{bill length} = 1$ means a bill length of $1 SD$ above average.
+We can convert the variables to *z*-scores. Now, $\text{bill length} = 0$ means the *average* bill length across penguins and $\text{bill length} = 1$ means a bill length of $1 \, \mathrm{SD}$ above average.
 
 ```{r}
 penguins_cleaned <- penguins |>
-  mutate(across(c(starts_with("bill_")), scale, .names = "{.col}_z"))
+  mutate(across(starts_with("bill_"), 
+                function(col) (col - mean(col, na.rm = T)) / sd(col, na.rm = T), .names = "{.col}_z"))
 penguins_cleaned |>
   select(starts_with("bill_"))
 ```
@@ -1334,7 +1562,7 @@ penguins_cleaned |>
 ## Standardized Regression
 
 :::: {.columns}
-::: {.column width="66%"}
+::: {.column .fragment fragment-index=1 width="66%"}
 ```{r}
 options(scipen = 999)
 bill_model_z <- lm(bill_depth_mm_z ~ bill_length_mm_z, data = penguins_cleaned)
@@ -1343,7 +1571,7 @@ broom::tidy(bill_model_z) |>
 ```
 :::
 
-::: {.column width="33%"}
+::: {.column .fragment fragment-index=2 width="33%"}
 ```{r}
 cor(
   penguins_cleaned$bill_length_mm,
@@ -1354,25 +1582,37 @@ cor(
 :::
 ::::
 
-[Simple regression slope coefficient is just the correlation!]{.fragment fragment-index=1}
+[Simple regression slope coefficient is just the correlation!]{.fragment fragment-index=3}
 
-![](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.nicepng.com%2Fpng%2Ffull%2F433-4338371_surprised-pikachu-meme.png&f=1&nofb=1&ipt=ebcec30cdbcafd45e013a6d03fe07307ba3be7e4051799669f25f82dbf247672&ipo=images){.absolute bottom = 0 right = 0 .fragment fragment-index=1 height=5% width=5%}
+![](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.nicepng.com%2Fpng%2Ffull%2F433-4338371_surprised-pikachu-meme.png&f=1&nofb=1&ipt=ebcec30cdbcafd45e013a6d03fe07307ba3be7e4051799669f25f82dbf247672&ipo=images){.absolute bottom=0 right=0 .fragment fragment-index=3 height=20% width=20%}
 
 
 
 ## Next Week
 
-More regression!
+More regression! Now with more than one predictor variable (i.e., "**multiple regresion**").
 
 :::: {.columns}
 ::: {.column width="50%"}
-Visualizing regression predictions
 
-Assumption checking
+Coming up: 
 
-Regression diagnostics
+::: subpoint-narrow
+○ Visualizing regression predictions
+:::
 
-Confounders
+::: subpoint-narrow
+○ Assumption checking
+:::
+
+::: subpoint-narrow
+○ Regression diagnostics
+:::
+
+::: subpoint-narrow
+○ Confounders
+:::
+
 :::
 
 ::: {.column width="50%"}

@@ -257,29 +257,31 @@ F-statistic: 186.4 on 1 and 340 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
-<p>Coefficient interpretations</p>
+<p>The estimated penguin body mass when bill length is zero is 362.31.</p>
+<p>An increase in 1 mm in bill length is associated with an 87.42 g increase in body mass.</p>
 </div></div>
 </section><section id="standardizing" class="slide level2"><h2>Standardizing</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_cleaned</span> <span class="op">&lt;-</span> <span class="va">penguins</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu">ends_with</span><span class="op">(</span><span class="st">"_mm"</span><span class="op">)</span>, <span class="va">scale</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">filter_out</span><span class="op">(</span><span class="fu">when_any</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">bill_length_mm</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">bill_depth_mm</span><span class="op">)</span>, </span>
+<span>                      <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">flipper_length_mm</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">body_mass_g</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu">ends_with</span><span class="op">(</span><span class="st">"_mm"</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">col</span><span class="op">)</span> <span class="op">(</span><span class="va">col</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">col</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">col</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">penguins_cleaned</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 344 × 8
-   species island    bill_length_mm[,1] bill_depth_mm[,1] flipper_length_mm[,1]
-   &lt;fct&gt;   &lt;fct&gt;                  &lt;dbl&gt;             &lt;dbl&gt;                 &lt;dbl&gt;
- 1 Adelie  Torgersen             -0.883             0.784                -1.42 
- 2 Adelie  Torgersen             -0.810             0.126                -1.06 
- 3 Adelie  Torgersen             -0.663             0.430                -0.421
- 4 Adelie  Torgersen             NA                NA                    NA    
- 5 Adelie  Torgersen             -1.32              1.09                 -0.563
- 6 Adelie  Torgersen             -0.847             1.75                 -0.776
- 7 Adelie  Torgersen             -0.920             0.329                -1.42 
- 8 Adelie  Torgersen             -0.865             1.24                 -0.421
- 9 Adelie  Torgersen             -1.80              0.480                -0.563
-10 Adelie  Torgersen             -0.352             1.54                 -0.776
-# ℹ 334 more rows
-# ℹ 3 more variables: body_mass_g &lt;int&gt;, sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
+<pre><code># A tibble: 342 × 8
+   species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g sex     year
+   &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;dbl&gt;       &lt;int&gt; &lt;fct&gt;  &lt;int&gt;
+ 1 Adelie  Torgersen         -0.883        0.784             -1.42         3750 male    2007
+ 2 Adelie  Torgersen         -0.810        0.126             -1.06         3800 female  2007
+ 3 Adelie  Torgersen         -0.663        0.430             -0.421        3250 female  2007
+ 4 Adelie  Torgersen         -1.32         1.09              -0.563        3450 female  2007
+ 5 Adelie  Torgersen         -0.847        1.75              -0.776        3650 male    2007
+ 6 Adelie  Torgersen         -0.920        0.329             -1.42         3625 female  2007
+ 7 Adelie  Torgersen         -0.865        1.24              -0.421        4675 male    2007
+ 8 Adelie  Torgersen         -1.80         0.480             -0.563        3475 &lt;NA&gt;    2007
+ 9 Adelie  Torgersen         -0.352        1.54              -0.776        4250 &lt;NA&gt;    2007
+10 Adelie  Torgersen         -1.12        -0.0259            -1.06         3300 &lt;NA&gt;    2007
+# ℹ 332 more rows</code></pre>
 </div>
 </div>
 </section><section id="simple-regression-1" class="slide level2"><h2>Simple Regression</h2>
@@ -305,13 +307,13 @@ bill_length_mm   477.25      34.95   13.65   &lt;2e-16 ***
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Residual standard error: 645.4 on 340 degrees of freedom
-  (2 observations deleted due to missingness)
 Multiple R-squared:  0.3542,    Adjusted R-squared:  0.3523 
 F-statistic: 186.4 on 1 and 340 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
-<p>Coefficient interpretations</p>
+<p>The estimated penguin body mass for penguins with average bill length is 4201.75.</p>
+<p>An increase in 1 SD in bill length is associated with an 477.25 g increase in body mass.</p>
 </div></div>
 </section><section id="multiple-regression-2" class="slide level2"><h2>Multiple Regression</h2>
 <div class="columns">
@@ -337,7 +339,6 @@ bill_depth_mm   -281.85      32.60  -8.646   &lt;2e-16 ***
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Residual standard error: 585.1 on 339 degrees of freedom
-  (2 observations deleted due to missingness)
 Multiple R-squared:  0.4708,    Adjusted R-squared:  0.4677 
 F-statistic: 150.8 on 2 and 339 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
@@ -349,35 +350,34 @@ F-statistic: 150.8 on 2 and 339 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">body_mass_g</span> <span class="op">~</span> <span class="va">bill_length_mm</span> <span class="op">+</span> <span class="va">bill_depth_mm</span> <span class="op">+</span> <span class="va">flipper_length_mm</span>, data <span class="op">=</span> <span class="va">penguins</span><span class="op">)</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">body_mass_g</span> <span class="op">~</span> <span class="va">bill_length_mm</span> <span class="op">+</span> <span class="va">bill_depth_mm</span> <span class="op">+</span> <span class="va">flipper_length_mm</span>, data <span class="op">=</span> <span class="va">penguins_cleaned</span><span class="op">)</span> </span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
 lm(formula = body_mass_g ~ bill_length_mm + bill_depth_mm + flipper_length_mm, 
-    data = penguins)
+    data = penguins_cleaned)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
 -1054.94  -290.33   -21.91   239.04  1276.64 
 
 Coefficients:
-                   Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)       -6424.765    561.469 -11.443   &lt;2e-16 ***
-bill_length_mm        4.162      5.329   0.781    0.435    
-bill_depth_mm        20.050     13.694   1.464    0.144    
-flipper_length_mm    50.269      2.477  20.293   &lt;2e-16 ***
+                  Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)        4201.75      21.27 197.517   &lt;2e-16 ***
+bill_length_mm       22.72      29.09   0.781    0.435    
+bill_depth_mm        39.59      27.04   1.464    0.144    
+flipper_length_mm   706.87      34.83  20.293   &lt;2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Residual standard error: 393.4 on 338 degrees of freedom
-  (2 observations deleted due to missingness)
 Multiple R-squared:  0.7615,    Adjusted R-squared:  0.7594 
 F-statistic: 359.7 on 3 and 338 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
-<p>Coefficient interpretations</p>
+<p>After adjusting for bill depth and flipper length, an increase in 1 SD in bill length is associated with an 22.72 g increase in body mass.</p>
 </div></div>
 </section><section id="regression-diagnostics" class="slide level2"><h2>Regression Diagnostics</h2>
 <p>With multiple regression, we want to check on…</p>
@@ -390,7 +390,123 @@ F-statistic: 359.7 on 3 and 338 DF,  p-value: &lt; 2.2e-16</code></pre>
 </li>
 <li><p>Multicollinearity among predictors</p></li>
 <li><p>Outliers</p></li>
-</ul></section><section id="normality-of-residuals" class="slide level2"><h2>Normality of Residuals</h2>
+</ul></section></section><section><section id="residuals" class="title-slide slide level1 center"><h1>Residuals</h1>
+
+</section><section id="residuals-1" class="slide level2"><h2>Residuals</h2>
+<p>We want to see that our residuals are <strong>normally distributed</strong> and have constant variance across all levels of the predictors.</p>
+<p>Can extract residuals from a model with <code>resid(lm_model)</code> or <code>residuals(lm_model)</code>.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/residuals.html">residuals</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         1          2          3          4          5          6 
+ 538.38213  361.43569 -656.34648 -366.88988  -52.96734  432.25908 </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-1-1">Plot</a></li>
+<li><a href="#tabset-1-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_13_files/figure-revealjs/unnamed-chunk-7-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_cleaned</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">add_column</span><span class="op">(</span>residuals <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html">residuals</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">bill_length_mm</span>, y <span class="op">=</span> <span class="va">residuals</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_density</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="residuals-2" class="slide level2"><h2>Residuals</h2>
+<p>We want to see that our residuals are normally distributed and have <strong>constant variance across all levels of the predictors</strong>.</p>
+<p>Can extract residuals from a model with <code>resid(lm_model)</code> or <code>residuals(lm_model)</code>.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Could specify the plots manually per each predictor or…</p>
+</div><div class="column" style="width:50%;">
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-2-1">Plot</a></li>
+<li><a href="#tabset-2-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-2-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_13_files/figure-revealjs/unnamed-chunk-9-1.svg" class="quarto-figure quarto-figure-center" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-2-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_cleaned</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">add_column</span><span class="op">(</span>residuals <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html">residuals</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">bill_length_mm</span>, y <span class="op">=</span> <span class="va">residuals</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section><section id="residuals-3" class="slide level2"><h2>Residuals</h2>
+<p>We want to see that our residuals are normally distributed and have <strong>constant variance across all levels of the predictors</strong>.</p>
+<p>Can extract residuals from a model with <code>resid(lm_model)</code> or <code>residuals(lm_model)</code>.</p>
+<div class="columns">
+<div class="column" style="width:33%;">
+<p>… <code>pivot_longer()</code> the columns with the predictor values (<code>names(coef(lm_model))</code>) so each predictor has a row: then you can just <code>facet_wrap()</code> by the predictor name!</p>
+</div><div class="column" style="width:66%;">
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-3-1">Plot</a></li>
+<li><a href="#tabset-3-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-3-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="lab_13_files/figure-revealjs/unnamed-chunk-11-1.svg" class="quarto-figure quarto-figure-center" width="624"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-3-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins_cleaned</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">add_column</span><span class="op">(</span>residuals <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html">residuals</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu">any_of</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>               names_to <span class="op">=</span> <span class="st">"predictor"</span>, values_to <span class="op">=</span> <span class="st">"x"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">residuals</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="st">"predictor"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
 </section></section><section><section id="multicollinearity" class="title-slide slide level1 center"><h1>Multicollinearity</h1>
 
 </section><section id="multicollinearity-1" class="slide level2"><h2>Multicollinearity</h2>
@@ -400,11 +516,2007 @@ F-statistic: 359.7 on 3 and 338 DF,  p-value: &lt; 2.2e-16</code></pre>
 <img data-src="../media/lab_13/multicollinearity_gossip.png" class="r-stretch"><div class="footer">
 <p>Image made with GPT-6 on 2026-11-12 (may or may not try to make my own to replace).</p>
 </div>
-</section><section id="multicollinearity-bad" class="slide level2"><h2>Multicollinearity Bad</h2>
+</section><section id="multicollinearity-2" class="slide level2"><h2>Multicollinearity</h2>
+<div>
+<iframe class="slide-deck" src="https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/27%20Regression%20Diagnostics/Lecture%2027%20Regression%20Diagnostics.html#/multicolinearity"></iframe>
+</div>
+<div class="footer">
+<p>From Mark’s <a href="https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/27%20Regression%20Diagnostics/Lecture%2027%20Regression%20Diagnostics.html#/multicolinearity">Lecture 27: More Regression and Diagnostics, Slide 14</a> accessed on 2026-11-12</p>
+</div>
+</section><section id="multicollinearity-consequences" class="slide level2"><h2>Multicollinearity Consequences</h2>
+<p>Inflated standard errors on partial regression coefficients</p>
+<div class="panel-tabset">
+<ul id="tabset-4" class="panel-tabset-tabby">
+<li><a data-tabby-default="" href="#tabset-4-1">Tables</a></li>
+<li><a href="#tabset-4-2">Code</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-4-1">
+<div class="cell quarto-layout-panel" data-layout-ncol="4">
+<div class="quarto-layout-row">
+<div class="cell-output cell-output-stdout quarto-layout-cell" style="flex-basis: 25.0%;justify-content: flex-start;">
+<pre><code>[[1]]
+&lt;div id="tybbcfgghp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;
+  &lt;style&gt;#tybbcfgghp table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#tybbcfgghp thead, #tybbcfgghp tbody, #tybbcfgghp tfoot, #tybbcfgghp tr, #tybbcfgghp td, #tybbcfgghp th {
+  border-style: none;
+}
+
+#tybbcfgghp p {
+  margin: 0;
+  padding: 0;
+}
+
+#tybbcfgghp .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#tybbcfgghp .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#tybbcfgghp .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#tybbcfgghp .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#tybbcfgghp .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#tybbcfgghp .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tybbcfgghp .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#tybbcfgghp .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#tybbcfgghp .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#tybbcfgghp .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#tybbcfgghp .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#tybbcfgghp .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#tybbcfgghp .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#tybbcfgghp .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#tybbcfgghp .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#tybbcfgghp .gt_from_md &gt; :first-child {
+  margin-top: 0;
+}
+
+#tybbcfgghp .gt_from_md &gt; :last-child {
+  margin-bottom: 0;
+}
+
+#tybbcfgghp .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#tybbcfgghp .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tybbcfgghp .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#tybbcfgghp .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#tybbcfgghp .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#tybbcfgghp .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tybbcfgghp .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#tybbcfgghp .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#tybbcfgghp .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tybbcfgghp .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tybbcfgghp .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#tybbcfgghp .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tybbcfgghp .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#tybbcfgghp .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tybbcfgghp .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#tybbcfgghp .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tybbcfgghp .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#tybbcfgghp .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tybbcfgghp .gt_left {
+  text-align: left;
+}
+
+#tybbcfgghp .gt_center {
+  text-align: center;
+}
+
+#tybbcfgghp .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#tybbcfgghp .gt_font_normal {
+  font-weight: normal;
+}
+
+#tybbcfgghp .gt_font_bold {
+  font-weight: bold;
+}
+
+#tybbcfgghp .gt_font_italic {
+  font-style: italic;
+}
+
+#tybbcfgghp .gt_super {
+  font-size: 65%;
+}
+
+#tybbcfgghp .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#tybbcfgghp .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#tybbcfgghp .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#tybbcfgghp .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#tybbcfgghp .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#tybbcfgghp .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#tybbcfgghp .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#tybbcfgghp .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#tybbcfgghp div.Reactable &gt; div.rt-table &gt; div.rt-thead &gt; div.rt-tr.rt-tr-group-header &gt; div.rt-th-group:after {
+  height: 0px !important;
+}
+&lt;/style&gt;
+  &lt;table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"&gt;
+  &lt;thead&gt;
+    &lt;tr class="gt_heading"&gt;
+      &lt;td colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style&gt;Predictor correlation: 0&lt;/td&gt;
+    &lt;/tr&gt;
+    
+    &lt;tr class="gt_col_headings"&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="term"&gt;Term&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="estimate"&gt;Estimate&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="std.error"&gt;SE&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="p.value"&gt;p&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody class="gt_table_body"&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;(Intercept)&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;−0.09&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.09&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;0.4&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;x1&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;4.23&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.09&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;&amp;lt;0.001&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;x2&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;1.06&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.10&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;&amp;lt;0.001&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+  
+&lt;/table&gt;
+&lt;/div&gt;
+
+[[2]]
+&lt;div id="ifykiqkqpj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;
+  &lt;style&gt;#ifykiqkqpj table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ifykiqkqpj thead, #ifykiqkqpj tbody, #ifykiqkqpj tfoot, #ifykiqkqpj tr, #ifykiqkqpj td, #ifykiqkqpj th {
+  border-style: none;
+}
+
+#ifykiqkqpj p {
+  margin: 0;
+  padding: 0;
+}
+
+#ifykiqkqpj .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ifykiqkqpj .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ifykiqkqpj .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ifykiqkqpj .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ifykiqkqpj .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ifykiqkqpj .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ifykiqkqpj .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ifykiqkqpj .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ifykiqkqpj .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ifykiqkqpj .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ifykiqkqpj .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ifykiqkqpj .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ifykiqkqpj .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ifykiqkqpj .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ifykiqkqpj .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ifykiqkqpj .gt_from_md &gt; :first-child {
+  margin-top: 0;
+}
+
+#ifykiqkqpj .gt_from_md &gt; :last-child {
+  margin-bottom: 0;
+}
+
+#ifykiqkqpj .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ifykiqkqpj .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ifykiqkqpj .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ifykiqkqpj .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ifykiqkqpj .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ifykiqkqpj .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ifykiqkqpj .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ifykiqkqpj .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ifykiqkqpj .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ifykiqkqpj .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ifykiqkqpj .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ifykiqkqpj .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ifykiqkqpj .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ifykiqkqpj .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ifykiqkqpj .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ifykiqkqpj .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ifykiqkqpj .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ifykiqkqpj .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ifykiqkqpj .gt_left {
+  text-align: left;
+}
+
+#ifykiqkqpj .gt_center {
+  text-align: center;
+}
+
+#ifykiqkqpj .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ifykiqkqpj .gt_font_normal {
+  font-weight: normal;
+}
+
+#ifykiqkqpj .gt_font_bold {
+  font-weight: bold;
+}
+
+#ifykiqkqpj .gt_font_italic {
+  font-style: italic;
+}
+
+#ifykiqkqpj .gt_super {
+  font-size: 65%;
+}
+
+#ifykiqkqpj .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ifykiqkqpj .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ifykiqkqpj .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ifykiqkqpj .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ifykiqkqpj .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ifykiqkqpj .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ifykiqkqpj .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#ifykiqkqpj .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#ifykiqkqpj div.Reactable &gt; div.rt-table &gt; div.rt-thead &gt; div.rt-tr.rt-tr-group-header &gt; div.rt-th-group:after {
+  height: 0px !important;
+}
+&lt;/style&gt;
+  &lt;table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"&gt;
+  &lt;thead&gt;
+    &lt;tr class="gt_heading"&gt;
+      &lt;td colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style&gt;Predictor correlation: 0.33&lt;/td&gt;
+    &lt;/tr&gt;
+    
+    &lt;tr class="gt_col_headings"&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="term"&gt;Term&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="estimate"&gt;Estimate&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="std.error"&gt;SE&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="p.value"&gt;p&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody class="gt_table_body"&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;(Intercept)&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;0.13&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.11&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;0.2&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;x1&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;4.08&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.11&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;&amp;lt;0.001&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;x2&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;1.05&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.10&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;&amp;lt;0.001&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+  
+&lt;/table&gt;
+&lt;/div&gt;
+
+[[3]]
+&lt;div id="vhdimiemcl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;
+  &lt;style&gt;#vhdimiemcl table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#vhdimiemcl thead, #vhdimiemcl tbody, #vhdimiemcl tfoot, #vhdimiemcl tr, #vhdimiemcl td, #vhdimiemcl th {
+  border-style: none;
+}
+
+#vhdimiemcl p {
+  margin: 0;
+  padding: 0;
+}
+
+#vhdimiemcl .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#vhdimiemcl .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#vhdimiemcl .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#vhdimiemcl .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#vhdimiemcl .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#vhdimiemcl .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vhdimiemcl .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#vhdimiemcl .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#vhdimiemcl .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#vhdimiemcl .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#vhdimiemcl .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#vhdimiemcl .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#vhdimiemcl .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#vhdimiemcl .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#vhdimiemcl .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#vhdimiemcl .gt_from_md &gt; :first-child {
+  margin-top: 0;
+}
+
+#vhdimiemcl .gt_from_md &gt; :last-child {
+  margin-bottom: 0;
+}
+
+#vhdimiemcl .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#vhdimiemcl .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vhdimiemcl .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#vhdimiemcl .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#vhdimiemcl .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#vhdimiemcl .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vhdimiemcl .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#vhdimiemcl .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#vhdimiemcl .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vhdimiemcl .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vhdimiemcl .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#vhdimiemcl .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vhdimiemcl .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#vhdimiemcl .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vhdimiemcl .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#vhdimiemcl .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vhdimiemcl .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#vhdimiemcl .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vhdimiemcl .gt_left {
+  text-align: left;
+}
+
+#vhdimiemcl .gt_center {
+  text-align: center;
+}
+
+#vhdimiemcl .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#vhdimiemcl .gt_font_normal {
+  font-weight: normal;
+}
+
+#vhdimiemcl .gt_font_bold {
+  font-weight: bold;
+}
+
+#vhdimiemcl .gt_font_italic {
+  font-style: italic;
+}
+
+#vhdimiemcl .gt_super {
+  font-size: 65%;
+}
+
+#vhdimiemcl .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#vhdimiemcl .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#vhdimiemcl .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#vhdimiemcl .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#vhdimiemcl .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#vhdimiemcl .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#vhdimiemcl .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#vhdimiemcl .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#vhdimiemcl div.Reactable &gt; div.rt-table &gt; div.rt-thead &gt; div.rt-tr.rt-tr-group-header &gt; div.rt-th-group:after {
+  height: 0px !important;
+}
+&lt;/style&gt;
+  &lt;table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"&gt;
+  &lt;thead&gt;
+    &lt;tr class="gt_heading"&gt;
+      &lt;td colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style&gt;Predictor correlation: 0.66&lt;/td&gt;
+    &lt;/tr&gt;
+    
+    &lt;tr class="gt_col_headings"&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="term"&gt;Term&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="estimate"&gt;Estimate&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="std.error"&gt;SE&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="p.value"&gt;p&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody class="gt_table_body"&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;(Intercept)&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;−0.09&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.11&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;0.4&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;x1&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;3.76&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.15&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;&amp;lt;0.001&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;x2&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;1.12&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.14&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;&amp;lt;0.001&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+  
+&lt;/table&gt;
+&lt;/div&gt;
+
+[[4]]
+&lt;div id="lboykiffte" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;
+  &lt;style&gt;#lboykiffte table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#lboykiffte thead, #lboykiffte tbody, #lboykiffte tfoot, #lboykiffte tr, #lboykiffte td, #lboykiffte th {
+  border-style: none;
+}
+
+#lboykiffte p {
+  margin: 0;
+  padding: 0;
+}
+
+#lboykiffte .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#lboykiffte .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#lboykiffte .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#lboykiffte .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#lboykiffte .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lboykiffte .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lboykiffte .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lboykiffte .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#lboykiffte .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#lboykiffte .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#lboykiffte .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#lboykiffte .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#lboykiffte .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#lboykiffte .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#lboykiffte .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#lboykiffte .gt_from_md &gt; :first-child {
+  margin-top: 0;
+}
+
+#lboykiffte .gt_from_md &gt; :last-child {
+  margin-bottom: 0;
+}
+
+#lboykiffte .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#lboykiffte .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lboykiffte .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#lboykiffte .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#lboykiffte .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#lboykiffte .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lboykiffte .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#lboykiffte .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#lboykiffte .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lboykiffte .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lboykiffte .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#lboykiffte .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lboykiffte .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#lboykiffte .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lboykiffte .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lboykiffte .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lboykiffte .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lboykiffte .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lboykiffte .gt_left {
+  text-align: left;
+}
+
+#lboykiffte .gt_center {
+  text-align: center;
+}
+
+#lboykiffte .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#lboykiffte .gt_font_normal {
+  font-weight: normal;
+}
+
+#lboykiffte .gt_font_bold {
+  font-weight: bold;
+}
+
+#lboykiffte .gt_font_italic {
+  font-style: italic;
+}
+
+#lboykiffte .gt_super {
+  font-size: 65%;
+}
+
+#lboykiffte .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#lboykiffte .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#lboykiffte .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#lboykiffte .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#lboykiffte .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#lboykiffte .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#lboykiffte .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#lboykiffte .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#lboykiffte div.Reactable &gt; div.rt-table &gt; div.rt-thead &gt; div.rt-tr.rt-tr-group-header &gt; div.rt-th-group:after {
+  height: 0px !important;
+}
+&lt;/style&gt;
+  &lt;table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"&gt;
+  &lt;thead&gt;
+    &lt;tr class="gt_heading"&gt;
+      &lt;td colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style&gt;Predictor correlation: 0.99&lt;/td&gt;
+    &lt;/tr&gt;
+    
+    &lt;tr class="gt_col_headings"&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="term"&gt;Term&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="estimate"&gt;Estimate&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="std.error"&gt;SE&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="p.value"&gt;p&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody class="gt_table_body"&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;(Intercept)&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;−0.11&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.10&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;0.3&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;x1&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;4.64&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.71&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;&amp;lt;0.001&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="term" class="gt_row gt_left"&gt;x2&lt;/td&gt;
+&lt;td headers="estimate" class="gt_row gt_right"&gt;0.31&lt;/td&gt;
+&lt;td headers="std.error" class="gt_row gt_right"&gt;0.72&lt;/td&gt;
+&lt;td headers="p.value" class="gt_row gt_left"&gt;0.7&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+  
+&lt;/table&gt;
+&lt;/div&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-4-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span><span class="va">sim_dat</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  pred_cor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.33</span>, <span class="fl">0.66</span>, <span class="fl">0.99</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    xs <span class="op">=</span> <span class="fu">map</span><span class="op">(</span></span>
+<span>      <span class="va">pred_cor</span>, </span>
+<span>      \<span class="op">(</span><span class="va">pred_cor</span><span class="op">)</span> <span class="fu">MASS</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/MASS/man/mvrnorm.html">mvrnorm</a></span><span class="op">(</span></span>
+<span>        n <span class="op">=</span> <span class="va">n</span>,</span>
+<span>        mu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>        Sigma <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span></span>
+<span>          <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">pred_cor</span>, </span>
+<span>            <span class="va">pred_cor</span>, <span class="fl">1</span><span class="op">)</span>, </span>
+<span>          nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span>      <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>        <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">set_names</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x1"</span>, <span class="st">"x2"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">mutate</span><span class="op">(</span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="fl">4</span> <span class="op">*</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    res <span class="op">=</span> <span class="fu">map</span><span class="op">(</span></span>
+<span>      <span class="va">xs</span>, \<span class="op">(</span><span class="va">xs</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, data <span class="op">=</span> <span class="va">xs</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span>conf.int <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> </span>
+<span></span>
+<span><span class="va">sim_dat</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">pred_cor</span>, <span class="va">res</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pmap</span><span class="op">(</span></span>
+<span>    \<span class="op">(</span><span class="va">pred_cor</span>, <span class="va">res</span><span class="op">)</span> <span class="va">res</span> <span class="op">|&gt;</span></span>
+<span>         <span class="fu">mutate</span><span class="op">(</span>p.value <span class="op">=</span> <span class="fu">gtsummary</span><span class="fu">::</span><span class="fu"><a href="https://www.danieldsjoberg.com/gtsummary/reference/style_pvalue.html">style_pvalue</a></span><span class="op">(</span><span class="va">p.value</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">statistic</span>, <span class="va">conf.low</span>, <span class="va">conf.high</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">gt</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">fmt_number</span><span class="op">(</span>columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">estimate</span>, <span class="va">std.error</span><span class="op">)</span>, decimals <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">tab_header</span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">"Predictor correlation: {pred_cor}"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">cols_label</span><span class="op">(</span></span>
+<span>          term <span class="op">=</span> <span class="st">"Term"</span>,</span>
+<span>          estimate <span class="op">=</span> <span class="st">"Estimate"</span>,</span>
+<span>          std.error <span class="op">=</span> <span class="st">"SE"</span>,</span>
+<span>          p.value <span class="op">=</span> <span class="st">"p"</span></span>
+<span>        <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu">tab_style</span><span class="op">(</span></span>
+<span>          style <span class="op">=</span> <span class="fu">cell_text</span><span class="op">(</span>weight <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>,</span>
+<span>          locations <span class="op">=</span> <span class="fu">cells_column_labels</span><span class="op">(</span><span class="op">)</span></span>
+<span>        <span class="op">)</span></span>
+<span>    <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
 <p>Sim demoing misinterpretations, variance inflation bc multicollinearity</p>
 </section><section id="superficial-check" class="slide level2"><h2>Superficial Check</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">penguins</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">bill_length_mm</span>, <span class="va">bill_depth_mm</span>, <span class="va">flipper_length_mm</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span>use <span class="op">=</span> <span class="st">"pairwise.complete.obs"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -416,6 +2528,51 @@ flipper_length_mm      0.6561813    -0.5838512         1.0000000</code></pre>
 </div>
 </section><section id="why-superficial" class="slide level2"><h2>Why Superficial?</h2>
 <p>Sim showing that variables can have small bivariate cors but in total explain a lot of the variance in y</p>
+<p>Suppose you have this dataset:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+     x1    x2    x3    x4    x5    x6     y
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1   4.4   9.2   0.5   4.2   5.8  32.2  32.5
+2   5.2   8.9   0.5   4.8   6.4  33.7  34.1
+3   4.2   9    -1.3   2.1   6.2  28.4  28.5
+4   6.6   8.8  -3.9   2.4   5.9  28.1  26.5
+5   5.3   9.5   2.1   1.9   6.7  33.4  32.6
+6   4.2   9.5  -0.6   6.4   5.5  32.7  31.1</code></pre>
+</div>
+</div>
+<p>And you fit this model:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span> <span class="op">+</span> <span class="va">x4</span> <span class="op">+</span> <span class="va">x5</span> <span class="op">+</span> <span class="va">x6</span>, data <span class="op">=</span> <span class="va">d</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section><section id="why-superficial-1" class="slide level2"><h2>Why Superficial?</h2>
+<p>If we just look at the bivariate correlations, we get this correlation matrix:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">d</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">y</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      x1    x2    x3    x4    x5   x6
+x1  1.00  0.00  0.00  0.00 -0.01 0.30
+x2  0.00  1.00  0.00 -0.01 -0.01 0.29
+x3  0.00  0.00  1.00 -0.02  0.00 0.60
+x4  0.00 -0.01 -0.02  1.00  0.01 0.59
+x5 -0.01 -0.01  0.00  0.01  1.00 0.31
+x6  0.30  0.29  0.60  0.59  0.31 1.00</code></pre>
+</div>
+</div>
+<p>Not too bad, right?</p>
+<p>Well, multicollinearity isn’t just about the bivariate relationships of predictors, it’s about the total amount of variance other predictors can explain in a predictor.</p>
+<p>What if we estimate a model of other predictors predicting <code>x6</code>?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">x6</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span> <span class="op">+</span> <span class="va">x4</span> <span class="op">+</span> <span class="va">x5</span>, data <span class="op">=</span> <span class="va">d</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.995932</code></pre>
+</div>
+</div>
+<p>…that’s a lot of explained variance.</p>
 </section><section id="squared-multiple-correlations" class="slide level2"><h2>Squared Multiple Correlations</h2>
 <p>For each predictor, we need to examine the <em>total amount of variance</em> that the remaining predictors can explain of it.</p>
 <p><span class="math display">\[\text{body mass} = \beta_0 + \beta_1\text{bill length} + \beta_2\text{bill depth} + \beta_3\text{flipper length} + \epsilon\]</span></p>
@@ -444,17 +2601,17 @@ flipper_length_mm      0.6561813    -0.5838512         1.0000000</code></pre>
 </div>
 </section><section id="squared-multiple-correlations-2" class="slide level2"><h2>Squared Multiple Correlations</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">multicoll_m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">bill_length_mm</span> <span class="op">~</span> <span class="va">bill_depth_mm</span> <span class="op">+</span> <span class="va">flipper_length_mm</span>, data <span class="op">=</span> <span class="va">penguins</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">multicoll_m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">bill_length_mm</span> <span class="op">~</span> <span class="va">bill_depth_mm</span> <span class="op">+</span> <span class="va">flipper_length_mm</span>, data <span class="op">=</span> <span class="va">penguins</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">multicoll_m1</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.4638329</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">multicoll_m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">bill_depth_mm</span> <span class="op">~</span> <span class="va">bill_length_mm</span> <span class="op">+</span> <span class="va">flipper_length_mm</span>, data <span class="op">=</span> <span class="va">penguins</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">multicoll_m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">bill_depth_mm</span> <span class="op">~</span> <span class="va">bill_length_mm</span> <span class="op">+</span> <span class="va">flipper_length_mm</span>, data <span class="op">=</span> <span class="va">penguins</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">multicoll_m2</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.3793799</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">multicoll_m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">bill_depth_mm</span> <span class="op">+</span> <span class="va">bill_length_mm</span>, data <span class="op">=</span> <span class="va">penguins</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">multicoll_m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">flipper_length_mm</span> <span class="op">~</span> <span class="va">bill_depth_mm</span> <span class="op">+</span> <span class="va">bill_length_mm</span>, data <span class="op">=</span> <span class="va">penguins</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">multicoll_m3</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.6259358</code></pre>
@@ -462,56 +2619,82 @@ flipper_length_mm      0.6561813    -0.5838512         1.0000000</code></pre>
 </div>
 </section><section id="variance-inflation-factor" class="slide level2"><h2>Variance Inflation Factor</h2>
 <p>The presence of multicollinearity among predictors in the model increases the variance of the model estimates. We can examine this effect with Variance Inflation Factors (<span class="math inline">\(VIF\)</span>s).</p>
-<p><span class="math display">\[VIF_p = \frac{1}{1 - SMC_p}\]</span></p>
+<p><span class="math display">\[\mathrm{VIF_p} = \frac{1}{1 - \mathrm{SMC_p}}\]</span></p>
+<p>where <span class="math inline">\(p\)</span> is a given model predictor.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Our penguin model:</p>
+</div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">car</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/car/man/vif.html">vif</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">car</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/car/man/vif.html">vif</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   bill_length_mm     bill_depth_mm flipper_length_mm 
          1.865090          1.611292          2.673338 </code></pre>
 </div>
 </div>
-<p>VIF suggested cutoffs</p>
+</div></div>
+<p>Variance Inflation Factors indicate the factor by which the standard error has increased because of multicollinearity for that predictor.</p>
 </section><section id="tolerance" class="slide level2"><h2>Tolerance</h2>
 <p>An alternative way of looking at this is with <em>tolerance</em>, which is just the inverse of <span class="math inline">\(VIF\)</span>.</p>
-<p><span class="math display">\[tolerance = \frac{1}{VIF}\]</span></p>
+<p><span class="math display">\[\mathrm{tolerance_p} = \frac{1}{\mathrm{VIF_p}}\]</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Our penguin model:</p>
+</div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl">1</span> <span class="op">/</span> <span class="fu">car</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/car/man/vif.html">vif</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl">1</span> <span class="op">/</span> <span class="fu">car</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/car/man/vif.html">vif</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   bill_length_mm     bill_depth_mm flipper_length_mm 
         0.5361671         0.6206201         0.3740642 </code></pre>
 </div>
 </div>
-</section><section id="all-at-once" class="slide level2"><h2>All At Once</h2>
+</div></div>
+<p>Tolerance indicates the proportion of variance in a given predictor that is independent of other predictors.</p>
+</section><section id="why-superficial-2" class="slide level2"><h2>Why Superficial?</h2>
+<p>Let’s check back in with our other dataset:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">olsrr</span><span class="fu">::</span><span class="fu"><a href="https://olsrr.rsquaredacademy.com/reference/ols_coll_diag.html">ols_coll_diag</a></span><span class="op">(</span><span class="va">m3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">d</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">y</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Tolerance and Variance Inflation Factor
----------------------------------------
-          Variables Tolerance      VIF
-1    bill_length_mm 0.5361671 1.865090
-2     bill_depth_mm 0.6206201 1.611292
-3 flipper_length_mm 0.3740642 2.673338
-
-
-Eigenvalue and Condition Index
-------------------------------
-    Eigenvalue Condition Index    intercept bill_length_mm bill_depth_mm
-1 3.9740092816         1.00000 9.073338e-05   0.0005108682  0.0005063802
-2 0.0197406728        14.18840 6.615112e-04   0.1216676763  0.2432806652
-3 0.0054556972        26.98916 5.751741e-02   0.6447644340  0.1461153623
-4 0.0007943484        70.73086 9.417303e-01   0.2330570215  0.6100975923
-  flipper_length_mm
-1      0.0001146937
-2      0.0094403326
-3      0.0834853268
-4      0.9069596469</code></pre>
+<pre><code>      x1    x2    x3    x4    x5   x6
+x1  1.00  0.00  0.00  0.00 -0.01 0.30
+x2  0.00  1.00  0.00 -0.01 -0.01 0.29
+x3  0.00  0.00  1.00 -0.02  0.00 0.60
+x4  0.00 -0.01 -0.02  1.00  0.01 0.59
+x5 -0.01 -0.01  0.00  0.01  1.00 0.31
+x6  0.30  0.29  0.60  0.59  0.31 1.00</code></pre>
 </div>
 </div>
-</section><section id="variance-inflation-factor-1" class="slide level2"><h2>Variance Inflation Factor</h2>
+<div class="columns fragment">
+<div class="column" style="width:50%;">
+<h3 id="vif">VIF</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">car</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/car/man/vif.html">vif</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       x1        x2        x3        x4        x5        x6 
+ 23.78496  22.87241  92.02910  90.52985  24.16011 245.82219 </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<h3 id="tolerance-1">Tolerance</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl">1</span> <span class="op">/</span> <span class="fu">car</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/car/man/vif.html">vif</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         x1          x2          x3          x4          x5          x6 
+0.042043370 0.043720795 0.010866129 0.011046080 0.041390540 0.004067981 </code></pre>
+</div>
+</div>
+</div></div>
 </section></section><section><section id="outliers" class="title-slide slide level1 center"><h1>Outliers</h1>
 
 </section><section id="outlier-detection" class="slide level2"><h2>Outlier Detection</h2>
 </section><section id="outlier-vs-leverage" class="slide level2"><h2>Outlier vs Leverage</h2>
+</section></section><section><section id="confounders" class="title-slide slide level1 center"><h1>Confounders</h1>
+
+</section><section id="section" class="slide level2"><h2></h2>
+</section><section id="lab-13-activity" class="slide level2"><h2>Lab 13 Activity</h2>
 
 
 </section></section>
