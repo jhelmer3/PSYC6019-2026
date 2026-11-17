@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
+
+  <meta name="author" content="Mark Himmelstein">
+  <title>PSYC 6019 – Lecture 16: One Way ANOVA</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-15d324c2aafc27a03d2c3a1c4b493f27.css">
+  <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script>
+  window.MathJax = {
+    tex: {
+      packages: {'[+]': ['cancel']}
+    },
+    loader: {
+      load: ['[tex]/cancel']
+    }
+  };
+  </script>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Lecture 16: One Way ANOVA</h1>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Mark Himmelstein
+</div>
+</div>
+</div>
+
+</section>
+<section id="jargon-refresher" class="slide level2">
+<h2>Jargon Refresher</h2>
+<p><strong>Linear Model:</strong></p>
+<p><span class="math display">\[{\color{blue}y_i} = \beta_0 + \sum_{p=1}^P \beta_p {\color{red}x_{ip}} + \epsilon_i\]</span></p>
+<div class="columns v-center-container">
+<div class="column" style="width:50%;">
+<p><span style="color: blue;"><strong>Left side variable terms</strong></span></p>
+<ul>
+<li><span class="math inline">\(y\)</span></li>
+<li>Dependent variable (DV)</li>
+<li>Outcome variable</li>
+<li>Response variable</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><span style="color: red;"><strong>Right side variable terms</strong></span></p>
+<ul>
+<li><span class="math inline">\(x\)</span></li>
+<li>Independent variable(s) (IVs)</li>
+<li>Predictor variable(s)</li>
+</ul>
+</div></div>
+</section>
+<section id="tests-we-will-cover" class="slide level2 scrollable">
+<h2>Tests We Will Cover</h2>
+<div style="font-size: 0.8em;">
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">IV(s)</th>
+<th style="text-align: left;">DV</th>
+<th style="text-align: left;">IV Status</th>
+<th style="text-align: left;">Model Structure</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">One categorical</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;"><span class="math inline">\(\chi^2\)</span> Goodness of Fit</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">One Categorical</td>
+<td style="text-align: left;">One categorical</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;"><span class="math inline">\(\chi^2\)</span> Test of Independence</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">One Sample <span class="math inline">\(t\)</span>-Test</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">One Binary</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Dependent Groups</td>
+<td style="text-align: left;">Paired Sample <span class="math inline">\(t\)</span>-Test</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">One Binary</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Independent Groups</td>
+<td style="text-align: left;">Independent Sample <span class="math inline">\(t\)</span>-Test</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">One Categorical</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Independent Groups</td>
+<td style="text-align: left;">One-Way ANOVA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">More than One Categorical</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Independent Groups</td>
+<td style="text-align: left;">Factorial ANOVA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">One Categorical</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Dependent Groups</td>
+<td style="text-align: left;">One-Way Repeated Measures ANOVA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">More than One Categorical</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Dependent Groups</td>
+<td style="text-align: left;">Factorial Repeated Measures ANOVA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">More than One Categorical</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">Mixed Groups</td>
+<td style="text-align: left;">Mixed ANOVA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">One Continuous</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">Correlation or Simple Regression</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>More than One Continuous</strong></td>
+<td style="text-align: left;"><strong>One Continuous</strong></td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;"><strong>Multiple Regression</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="more-than-two-variables" class="slide level2">
+<h2>More than two variables</h2>
+<p>Many research studies aim to establish a relationship between <strong>multiple</strong> continuous variables.</p>
+<p>Often, there is one criterion (response) variable, and several predictor variables.</p>
+<p>One common conceptual example is that we may want to understand the effect of a particular predictor of interest, but also “control” or “account” for the effects of third variables</p>
+<p>We can do this using <strong>multiple linear regression</strong></p>
+<p>BUT…</p>
+<ul>
+<li><p>What does it mean to “take into account” a third variable?</p></li>
+<li><p>How does this affect our interpretations?</p></li>
+<li><p>What are the limitations of this approach?</p></li>
+</ul>
+</section>
+<section id="multiple-regression" class="slide level2">
+<h2>Multiple Regression</h2>
+<div style="font-size: 0.85em;">
+<p><strong>Multiple linear regression</strong> is a popular method that allows us to estimate the relationship between a <strong>single</strong> response variable and <strong>multiple</strong> predictors</p>
+<p>Multiple linear regression equations:</p>
+<p><span class="math display">\[\hat{y} = \beta_0 + \beta_1x_1 +\cdots + \beta_px_p \ \ \text{(population prediction)}\\
+  y  = b_0 + \beta_1x_1 + \cdots + \beta_px_p + \epsilon \ \ \text{(population points)}\\
+  \hat{y} = b_0 + b_1x_1 + \cdots + b_px_p \ \  \text{(sample prediction)} \\
+  y  = b_0 + b_1x_1 + \cdots + b_px_p + e \ \  \text{(sample points)}\]</span></p>
+<div class="columns">
+<div class="column">
+<ul>
+<li><p><span class="math inline">\(p\)</span> is the number of <strong>predictors</strong> (continuous IVs)</p></li>
+<li><p><span class="math inline">\(x_1, \ldots, x_p\)</span> are predictor variables</p></li>
+<li><p><span class="math inline">\(\beta_0, \ldots, \beta_p\)</span> are population regression coefficients</p></li>
+</ul>
+</div><div class="column">
+<ul>
+<li><p><span class="math inline">\(y\)</span>: observed criterion value (continuous)</p></li>
+<li><p><span class="math inline">\(\hat{y}\)</span>: predicted criterion value</p></li>
+<li><p><span class="math inline">\(\epsilon = y - \hat{y}\)</span>: model residuals</p></li>
+<li><p><span class="math inline">\(b_0, \ldots b_p\)</span> are estimated regression coefficients</p></li>
+</ul>
+</div></div>
+</div>
+</section>
+<section id="example" class="slide level2">
+<h2>Example</h2>
+<p>Psychiatric patients hospitalized for depression were measured on the following variables:</p>
+<ul>
+<li><p><strong>simplicity (s)</strong>: higher scores = higher need to see the world in black-and-white</p></li>
+<li><p><strong>fatalism (f)</strong>: higher scores = greater belief that events are inevitable and we are powerless to change the future</p></li>
+<li><p><strong>depression (d)</strong>: Beck’s self-report scale, higher scores = greater depression</p></li>
+</ul>
+<p>All variables scaled to have mean 1 and standard deviation .5</p>
+<p>Do <strong>simplicity</strong> and <strong>fatalism</strong> scores predict depression? What do you think?</p>
+</section>
+<section id="using-what-we-know" class="slide level2">
+<h2>Using What We Know</h2>
+<p>We learned that the normal equations in single variable regression were</p>
+<p><span class="math display">\[\hat{b}_1 = \frac{s_{xy}}{s^2_{x}}\]</span></p>
+<p><span class="math display">\[\hat{b}_0 = \bar{y} - \hat{b}_1 \bar{x}\]</span></p>
+<p>In these data</p>
+<div class="columns">
+<div class="column">
+<ul>
+<li><p><span class="math inline">\(s_{s, d} = 0.161\)</span></p></li>
+<li><p><span class="math inline">\(s_{f, d} = 0.164\)</span></p></li>
+<li><p><span class="math inline">\(s^2_s = 0.250\)</span></p></li>
+</ul>
+</div><div class="column">
+<ul>
+<li><p><span class="math inline">\(s^2_f = 0.250\)</span></p></li>
+<li><p><span class="math inline">\(\bar{d} = \bar{s} = \bar{f} = 1.00\)</span></p></li>
+</ul>
+</div></div>
+</section>
+<section id="plugging-in" class="slide level2">
+<h2>Plugging In</h2>
+<div style="font-size: 0.825em;">
+<p>So we could try something like</p>
+<div class="columns">
+<div class="column">
+<p><span class="math display">\[\hat{b}_1 = \frac{s_{s, d}}{s^2_{d}} = \frac{0.161}{0.250}= 0.644\]</span></p>
+</div><div class="column">
+<p><span class="math display">\[\hat{b}_2 = \frac{s_{f, d}}{s^2_{d}} = \frac{0.164}{0.250}= 0.656\]</span></p>
+</div></div>
+<p><span class="math display">\[\hat{b}_0 = \bar{y} - \hat{b}_1 \bar{s} - \hat{b}_2 \bar{f} = 1 - (0.644)(1) - (0.656)(1) = -0.3\]</span></p>
+<p>Giving us</p>
+<p><span class="math display">\[d = -0.3 + 0.644s + 0.656f + e\]</span></p>
+<p>Why might we <strong>NOT</strong> like this approach?</p>
+<ul>
+<li><p><span class="answer fragment" data-unless-meta="params.v0">What piece of information do we know from these data that we are not making use of here?</span></p></li>
+<li><p><span class="answer fragment" data-unless-meta="params.v0">Do you think there is no correlation between <strong>simplicity</strong> and <strong>fatalism</strong>?</span></p></li>
+</ul>
+</div>
+</section>
+<section id="more-than-two-variables-1" class="slide level2">
+<h2>More than two variables</h2>
+<p>Whenever we deal with more than two variables, we need to consider <strong>all</strong> possible inter-relationships.</p>
+<p>We can look at the <strong>bivariate</strong> associations between all variables by looking at the covariance or correlation <strong>matrix</strong>. We can also visualize <strong>bivariate</strong> relationships with a pairs plot, aka a <strong>scatterplot matrix</strong></p>
+<ul>
+<li><strong>bivariate</strong> - as pertaining to a given pair of variables (ignoring the others)</li>
+<li><strong>matrix</strong> - an array of rows and columns (sort of a fancy word for a table, but with some special implications)</li>
+</ul>
+</section>
+<section id="scatterplot-matrix" class="slide level2">
+<h2>Scatterplot Matrix</h2>
+
+<img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="correlation-matrix" class="slide level2">
+<h2>Correlation Matrix</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-label="1"></a><span class="fu">round</span>(<span class="fu">cor</span>(dat), <span class="dv">3</span>) <span class="co"># rounding to 3 digits</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-label="1"></a>           <span class="ex">simplicity</span> fatalism depression</span>
+<span id="cb2-2"><a aria-label="2"></a><span class="ex">simplicity</span>      1.000    0.631      0.643</span>
+<span id="cb2-3"><a aria-label="3"></a><span class="ex">fatalism</span>        0.631    1.000      0.657</span>
+<span id="cb2-4"><a aria-label="4"></a><span class="ex">depression</span>      0.643    0.657      1.000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>What do you notice?</p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0">There are strong relationships between both predictors and the response, <span class="math inline">\(r_{s,d} = .643\)</span> and <span class="math inline">\(r_{f, d} =  .667\)</span></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">However, there is <strong>also</strong> a strong correlation between both predictors, <span class="math inline">\(r_{s, f} = 0.631\)</span></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">The strong relationship between <span class="math inline">\(s\)</span> and <span class="math inline">\(f\)</span> means some of what we see in <span class="math inline">\(r_{s,d}\)</span> might also be shared by what we’re seeing in <span class="math inline">\(r_{f, d}\)</span>, and vice versa.</span></li>
+</ul>
+</section>
+<section id="multiple-correlations" class="slide level2">
+<h2>Multiple Correlations</h2>
+
+<img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="correlations-in-regression" class="slide level2">
+<h2>Correlations in Regression</h2>
+<p>Summary of the Venn diagram:</p>
+<ul>
+<li>Each predictor may add some unique ability to predict the outcome</li>
+<li>Predictors often share some ability to predict the outcome</li>
+</ul>
+<p>Implications:</p>
+<ul>
+<li><p><span class="math inline">\(R\)</span>-square (<span class="math inline">\(R^2\)</span>) is the proportion of variance of the outcome accounted for by the predictors</p></li>
+<li><p>In the Venn diagram, <span class="math inline">\(R^2\)</span> is the proportion of the <span class="math inline">\(y\)</span> circle that overlaps with any other circle</p></li>
+<li><p>In multiple regression, <span class="math inline">\(R^2\)</span> usually doesn’t equal the sum of the proportion of variance accounted for by each predictor, because they also overlap with each other</p></li>
+</ul>
+</section>
+<section id="r2" class="slide level2">
+<h2><span class="math inline">\(R^2\)</span></h2>
+<ul>
+<li>In the Venn diagram, <span class="math inline">\(R^2\)</span> is the proportion of the <span class="math inline">\(y\)</span> circle that overlaps with any other circle</li>
+</ul>
+
+<img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="bivariate-pearson-correlation" class="slide level2">
+<h2>Bivariate Pearson Correlation</h2>
+<p>The ordinary Pearson correlation, <span class="math inline">\(r_{y, x_1}\)</span>, ignores the existence of <span class="math inline">\(x_2\)</span>:</p>
+<div class="columns">
+<div class="column">
+<p><span class="math inline">\(r_{y, x_1} = \frac{s_{y, x_1}}{\sqrt{s_{y}^2} \sqrt{s_{x_1}^2}}\)</span></p>
+</div><div class="column">
+<ul>
+<li><span class="math inline">\(s_{y, x_1}\)</span>: sample covariance of <span class="math inline">\(y\)</span> and <span class="math inline">\(x_1\)</span></li>
+<li><span class="math inline">\(s_{y}^2\)</span>: sample variance of <span class="math inline">\(y\)</span></li>
+<li><span class="math inline">\(s_{x_1}^2\)</span>: sample variance of <span class="math inline">\(x_1\)</span></li>
+</ul>
+</div></div>
+</section>
+<section id="bivariate-visual" class="slide level2">
+<h2>Bivariate Visual</h2>
+
+<img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="partial-correlation" class="slide level2">
+<h2>Partial Correlation</h2>
+<p>The <strong>partial correlation</strong> gives the extent to which the part of <span class="math inline">\(x_1\)</span> that is independent of <span class="math inline">\(x_2\)</span> correlates with the part of <span class="math inline">\(y\)</span> that is independent of <span class="math inline">\(x_2\)</span>:</p>
+<p>Squared partial correlation:</p>
+<ul>
+<li>extent to which <span class="math inline">\(x_1\)</span> predicts the proportion of variance in <span class="math inline">\(y\)</span> that is not predicted by <span class="math inline">\(x_2\)</span></li>
+</ul>
+</section>
+<section id="partial-correlation-1" class="slide level2">
+<h2>Partial Correlation</h2>
+<div style="font-size: 0.825em;">
+<p>“Partialing out”: another way to say “controlling for” or “adjusting for”</p>
+<p>For the partial correlation of <span class="math inline">\(y\)</span> with <span class="math inline">\(x_1\)</span>, controlling for <span class="math inline">\(x_2\)</span>, fit two models:</p>
+<p><span class="math display">\[\text{Model 1: }  y = b_0 + b_1x_2 \\
+  \text{Model 2: }  x_1 = b_0 + b_1x_2\]</span></p>
+<p>Partial correlation:</p>
+<p><span class="math display">\[r_{y, x_1 . x_2} = \text{cor}(\hat{e}_{y \cdot x_2}, \hat{e}_{x_1 \cdot x_2}) = \text{cor}(\overbrace{y - \hat{y}}^{\text{Model 1 residuals}}, \overbrace{x_1 - \hat{x}_1}^{\text{Model 2 residuals}})\]</span></p>
+<ul>
+<li>Equals the correlation between two sets of residuals:
+<ul>
+<li><strong>Residuals of Model 1</strong>: the portion of <span class="math inline">\(y\)</span> independent of <span class="math inline">\(x_2\)</span></li>
+<li><strong>Residuals of Model 2</strong>: the portion of <span class="math inline">\(x_1\)</span> independent of <span class="math inline">\(x_2\)</span></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="partial-correlation-2" class="slide level2">
+<h2>Partial Correlation</h2>
+<p>Other formulations of the partial correlation:</p>
+<p><span class="math display">\[r_{y, x_1 . x_2} = \frac{r_{y, x_1} - r_{y, x_2}r_{x_1, x_2}}{\sqrt{1 - r^2_{y, x_2}}\sqrt{1 - r^2_{x_1, x_ 2}}}\]</span></p>
+<p><span class="math display">\[r^2_{y, x_1 . x_2} = \frac{(R^2 \text{ of } y \text{ predicted by both } x_1 \text{ and } x_2) - (R^2 \text{ of } y \text{ predicted by } x_2)}{1 - R^2 \text{ of } y \text{ predicted by } x_2}\]</span></p>
+</section>
+<section id="partial-visual" class="slide level2">
+<h2>Partial Visual</h2>
+
+<img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="partial-correlations-in-r" class="slide level2">
+<h2>Partial Correlations in R</h2>
+<div style="font-size: 0.825em;">
+<p>the <code>ppcor</code> package can give us a <strong>partial correlation matrix</strong></p>
+<p>Partial correlations of simplicity, fatalism, and depression</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-label="1"></a><span class="fu">library</span>(ppcor)</span>
+<span id="cb3-2"><a aria-label="2"></a><span class="fu">round</span>(<span class="fu">pcor</span>(dat)<span class="sc">$</span>estimate, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-label="1"></a>           <span class="ex">simplicity</span> fatalism depression</span>
+<span id="cb4-2"><a aria-label="2"></a><span class="ex">simplicity</span>      1.000    0.361      0.391</span>
+<span id="cb4-3"><a aria-label="3"></a><span class="ex">fatalism</span>        0.361    1.000      0.423</span>
+<span id="cb4-4"><a aria-label="4"></a><span class="ex">depression</span>      0.391    0.423      1.000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p><strong>Interpretation:</strong> relationship between simplicity controlling for fatalism and depression controlling for fatalism is <span class="math inline">\(r_{d, s . f} = 0.391\)</span></p>
+<p>For the partial correlation, fatalism is <strong>partialed out</strong> of <strong>both</strong> simplicity <strong>and</strong> depression.</p>
+<p>Squared partial correlation:</p>
+<ul>
+<li>Extent to which <span class="math inline">\(x_1\)</span> predicts the proportion of variance in <span class="math inline">\(y\)</span> that is not predicted by <span class="math inline">\(x_2\)</span></li>
+<li>Proportion of the residual variation of <span class="math inline">\(y\)</span> not accounted for by <span class="math inline">\(x_2\)</span>, but accounted for by <span class="math inline">\(x_1\)</span></li>
+</ul>
+</div>
+</section>
+<section id="semi-partial-correlation" class="slide level2">
+<h2>Semi-Partial Correlation</h2>
+<div style="font-size: 0.825em;">
+<p>The <strong>semi-partial correlation</strong> gives the extent to which the part of <span class="math inline">\(x_1\)</span> that is independent of <span class="math inline">\(x_2\)</span> correlates with <span class="math inline">\(y\)</span>:</p>
+<p>Squared semi-partial correlation:</p>
+<ul>
+<li>proportion of variance in <span class="math inline">\(y\)</span> that is uniquely predicted by <span class="math inline">\(x_1\)</span>, beyond <span class="math inline">\(x_2\)</span></li>
+</ul>
+<p>For the semi-partial correlation of <span class="math inline">\(y\)</span> with <span class="math inline">\(x_1\)</span>, controlling for <span class="math inline">\(x_2\)</span>, fit two models:</p>
+<p><span class="math display">\[\text{Model 1: } y = b_0 + b_1x_1 + b_2x_2 \\
+  \text{Model 2: } y = b_0 + b_1x_2\]</span></p>
+<p>The semi-partial correlation is the root difference in <span class="math inline">\(R^2\)</span> from the two models</p>
+<ul>
+<li>Sometimes also called the “part correlation” (annoying, I know)</li>
+</ul>
+</div>
+</section>
+<section id="formulations" class="slide level2">
+<h2>Formulations</h2>
+<p>Semi-partial correlation:</p>
+<p><span class="math display">\[r_{y(x_1. x_2)} = \pm\sqrt{R^2_{\text{Model 1}} - R^2_{\text{Model 2}}}\]</span></p>
+<p>Other formulation for the semi-partial correlation:</p>
+<p><span class="math display">\[r_{y(x_1. x_2)} = \frac{r_{y, x_1} - r_{y, x_2}r_{x_1, x_2}}{\sqrt{1 - r^2_{x_1, x_2}}}\]</span></p>
+<ul>
+<li>This equation gives the correct sign of the semi-partial correlation</li>
+</ul>
+</section>
+<section id="semi-partial-correlations-in-r" class="slide level2">
+<h2>Semi-Partial Correlations in R</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-label="1"></a><span class="fu">round</span>(<span class="fu">spcor</span>(dat)<span class="sc">$</span>estimate, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-label="1"></a>           <span class="ex">simplicity</span> fatalism depression</span>
+<span id="cb6-2"><a aria-label="2"></a><span class="ex">simplicity</span>      1.000    0.277      0.303</span>
+<span id="cb6-3"><a aria-label="3"></a><span class="ex">fatalism</span>        0.272    1.000      0.328</span>
+<span id="cb6-4"><a aria-label="4"></a><span class="ex">depression</span>      0.294    0.324      1.000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p><strong>Notice:</strong> this correlation matrix is <strong>not</strong> symmetrical. The <strong>row</strong> variable can be thought of as a the predictor (<span class="math inline">\(x\)</span>) and <strong>column</strong> variable as the response/criterion (<span class="math inline">\(y\)</span>)</p>
+<p><strong>Interpretation:</strong> relationship between simplicity controlling for fatalism and depression is <span class="math inline">\(r_{d, (s . f)} = 0.303\)</span></p>
+<p>For the semi-partial correlation, fatalism is <strong>partialed out</strong> of <strong>only</strong> simplicity <strong>but not</strong> depression.</p>
+</section>
+<section id="semi-visual" class="slide level2">
+<h2>Semi Visual</h2>
+
+<img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="the-three-types-of-correlations" class="slide level2">
+<h2>The Three Types of Correlations</h2>
+<ul>
+<li><p><strong>Bivariate Pearson correlation</strong> (<span class="math inline">\(r_{y, x_1}\)</span>) measures the proportion of total variance in <span class="math inline">\(y\)</span> that is accounted for by <span class="math inline">\(x_1\)</span>, ignoring <span class="math inline">\(x_2\)</span></p></li>
+<li><p><strong>Partial correlation</strong> (<span class="math inline">\(r_{y, x_1.x_2}\)</span>) measures the proportion of residual variance in <span class="math inline">\(y\)</span> (after accounting for <span class="math inline">\(x_2\)</span>) that is accounted for by <span class="math inline">\(x_1\)</span></p></li>
+<li><p><strong>Semi-partial correlation</strong> (<span class="math inline">\(r_{y(x_1.x_2)}\)</span>) measures the proportion of total variance in <span class="math inline">\(y\)</span> that is accounted for by <span class="math inline">\(x_1\)</span> but not by <span class="math inline">\(x_2\)</span></p></li>
+</ul>
+</section>
+<section id="moving-to-regression-land" class="slide level2">
+<h2>Moving to Regression Land</h2>
+<p>Last week we learned how the Bivariate Pearson correlation could be considered a building block for single-variable regression.</p>
+<p>Which of these do you think we’ll use as the building block of <strong>multiple</strong> regression?</p>
+<ul>
+<li><span class="answer fragment" data-unless-meta="params.v0"><strong>Semi-partial correlation</strong></span></li>
+<li><span class="answer fragment" data-unless-meta="params.v0">This is the relationship we are interested in multiple regression: understanding how variability in different <strong>predictors</strong> accounts for the total variability in a <strong>response</strong> variable, while accounting for the <strong>shared variability</strong> between the predictors</span></li>
+</ul>
+<p>So how do we formulate it as a regression equation?</p>
+</section>
+<section id="example-1" class="slide level2">
+<h2>Example</h2>
+<div style="font-size: 0.8em;">
+<p>Fitted model:</p>
+<p><span class="math display">\[\widehat{\text{depression}} = .20 + .38\times \text{simplicity} + .42\times \text{fatalism}\]</span></p>
+<p>How do we interepret the different values in this equation?</p>
+<ul>
+<li><p><span class="answer fragment" data-unless-meta="params.v0">.20 is the predicted level of depression when simplicity = 0 and fatalism = 0</span></p></li>
+<li><p><span class="answer fragment" data-unless-meta="params.v0">.38 is the predicted increase in mean depression for a one-unit (2 <span class="math inline">\(SD\)</span>) increase in simplicity, holding fatalism constant</span></p></li>
+<li><p><span class="answer fragment" data-unless-meta="params.v0">.42 is the predicted increase in mean depression for a one-unit (2 <span class="math inline">\(SD\)</span>) increase in fatalism, holding simplicity constant</span></p></li>
+</ul>
+<p>We might refer to <span class="math inline">\(\widehat{\text{depression}}\)</span> as the <strong>linear predictor</strong>, which is a composite of the information given by all of the predictors together, in which case we want to minimize <span class="math inline">\(\sum e^2\)</span> in</p>
+<p><span class="math display">\[depression = \widehat{\text{depression}} + e\]</span></p>
+</div>
+</section>
+<section id="the-regression-plane" class="slide level2">
+<h2>The Regression Plane</h2>
+</section>
+<section id="the-regression-plane-1" class="slide level2">
+<h2>The Regression Plane</h2>
+
+<img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="the-regression-plane-2" class="slide level2">
+<h2>The Regression Plane</h2>
+
+<img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="interpreting-regression-coefficients" class="slide level2">
+<h2>Interpreting Regression Coefficients</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div style="color: #4DAF4A;">
+<p><span class="math display">\[\hat{b}_2 = .42 =\]</span></p>
+<p>predicted increase in depression for a one-unit increase in fatalism, holding simplicity constant</p>
+</div>
+</div><div class="column" style="width:50%;">
+<div style="color: #FF7F00;">
+<p><span class="math display">\[\hat{b}_1 = .38 =\]</span></p>
+<p>predicted increase in depression for a one-unit increase in simplicity, holding fatalism constant</p>
+</div>
+</div></div>
+<div class="fragment">
+<ul>
+<li>In reality, simplicity and fatalism are positively correlated, so it may be unrealistic to increase one variable and not the other</li>
+<li>In this example, a one-unit increase in simplicity is associated with an increase in fatalism, so this picture may be more realistic</li>
+</ul>
+</div>
+</section>
+<section id="the-regression-plane-3" class="slide level2">
+<h2>The Regression Plane</h2>
+
+<img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="power-and-reponsibility" class="slide level2">
+<h2>Power and Reponsibility</h2>
+<div class="columns">
+<div class="column">
+<p>Multiple regression allows for correlated predictors</p>
+<ul>
+<li>Advantage: highly flexible model, applies to many contexts</li>
+<li>Disadvantages: easy to misinterpret, does not allow for causal inference about individual predictors (or causal inference at all)</li>
+</ul>
+</div><div class="column">
+<p><img data-src="../../Figs/responsibility.jpg" style="width:67.0%"></p>
+</div></div>
+</section>
+<section id="fitting-the-model" class="slide level2">
+<h2>Fitting the Model</h2>
+<p>By <strong>fitting the regression model</strong>, we obtain estimates of <span class="math inline">\(b_0, b_1, \ldots, b_p\)</span></p>
+<p>As with simple linear regression, we usually use the method of <strong>ordinary least squares (OLS)</strong></p>
+<p>Recall: for simple linear regression, we find <span class="math inline">\(b_0\)</span> and <span class="math inline">\(b_1\)</span> that minimize:</p>
+<p><span class="math display">\[sum_{i = 1}^N[y_i - \hat{y}_i]^2 \\
+=  \sum_{i = 1}^N[y_i - (b_0 + b_1x_i)]^2\]</span></p>
+<p>For multiple linear regression, we find <span class="math inline">\(b_0, b_1, \ldots, b_p\)</span> that minimize: <span class="math display">\[\sum_{i = 1}^N(y_i - \hat{y})^2 = \sum_{i = 1}^Ne^2\]</span></p>
+<p>Where</p>
+<p><span class="math display">\[\hat{y} = (b_0 + b_1x_{1i} + b_2x_{2i} + \cdots + b_px_{pi})\]</span></p>
+</section>
+<section id="two-predictors" class="slide level2">
+<h2>Two Predictors</h2>
+<p>For the (relatively) simple two-predictor case,</p>
+<p><span class="math display">\[\hat{b}_1 = \frac{s_{y, x_1} s^2_{x_2} - s_{x_1, x_2}s_{y, x_2}}{s_{x_1}^2s_{x_2}^2 - s^2_{x_1, x_2}}\]</span></p>
+<p><span class="math display">\[\hat{b}_2 = \frac{s_{y, x_2} s^2_{x_1} - s_{x_1, x_2}s_{y, x_1}}{s_{x_1}^2s_{x_2}^2 - s^2_{x_1, x_2}}\]</span></p>
+<p><span class="math display">\[\hat{b}_0 = \bar{y} - \hat{b}_1\bar{x}_1 - \hat{b}_2\bar{x}_2\]</span></p>
+</section>
+<section id="properties-and-extensions" class="slide level2">
+<h2>Properties and Extensions</h2>
+<p>Notice: estimated regression coefficients are functions of the variances and covariances among the variables, <strong>including the covariances between predictors</strong></p>
+<p>BUT:</p>
+<ul>
+<li>These equations are not very intuitive</li>
+<li>Equations only get more complicated with more predictors</li>
+</ul>
+<p>A matrix formula makes it easier to illustrate what’s going on</p>
+<ul>
+<li>We need matrix operations (go review if necessary!)</li>
+</ul>
+</section>
+<section id="matrix-equations" class="slide level2">
+<h2>Matrix Equations</h2>
+<div style="font-size: 0.9em;">
+<p><span class="math display">\[\mathbf{y}_{N\times 1} = \begin{bmatrix}y_{1}\\
+y_{2}\\
+\vdots\\
+y_{N}
+\end{bmatrix} \qquad \mathbf{X}_{N\times(p+1)} = \begin{bmatrix}1 &amp; x_{1,1} &amp; \cdots &amp; x_{p,1}\\
+1 &amp; x_{1,2} &amp; \cdots &amp; x_{p,2}\\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots\\
+1 &amp; x_{1,N} &amp; \cdots &amp; x_{p,N}
+\end{bmatrix} \qquad \hat{\mathbf{b}}_{(p+1)\times 1} = \begin{bmatrix}\hat{b}_{0}\\
+\hat{b}_{1}\\
+\vdots\\
+\hat{b}_{p}
+\end{bmatrix}\]</span></p>
+<ul>
+<li><p>First column of <span class="math inline">\(\mathbf{X}\)</span> is 1’s and corresponds to the intercept</p></li>
+<li><p>One column per predictor</p></li>
+</ul>
+<p>Equation for multiple regression coefficients:</p>
+<p><span class="math display">\[\hat{\mathbf{b}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}\]</span></p>
+</div>
+</section>
+<section id="equations-cont" class="slide level2">
+<h2>Equations Con’t</h2>
+<p>Matrix algebra in the context of regression:</p>
+<ul>
+<li><p><span class="math inline">\(\mathbf{y}\)</span> is a vector of response variable scores</p></li>
+<li><p><span class="math inline">\(\mathbf{X}\)</span> is an <span class="math inline">\(N\times (p+1)\)</span> matrix of predictors</p>
+<ul>
+<li><span class="math inline">\(p+1\)</span> to account for the intercept</li>
+</ul></li>
+</ul>
+</section>
+<section id="equations-example" class="slide level2">
+<h2>Equations Example</h2>
+<p>Simple example:</p>
+<p><span class="math display">\[\mathbf{y} = \begin{bmatrix}1\\
+2\\
+3\\
+4
+\end{bmatrix} \qquad \mathbf{X} = \begin{bmatrix}1 &amp; 4 &amp; 3\\
+1 &amp; 2 &amp; 1\\
+1 &amp; 3 &amp; 2\\
+1 &amp; 1 &amp; 4
+\end{bmatrix}\]</span></p>
+<ul>
+<li>Column 1 of <span class="math inline">\(\mathbf{X}\)</span>: Intercept “predictor” (all 1s)</li>
+<li>Column 2 of <span class="math inline">\(\mathbf{X}\)</span>: <span class="math inline">\(x_1\)</span></li>
+<li>Column 3 of <span class="math inline">\(\mathbf{X}\)</span>: <span class="math inline">\(x_2\)</span></li>
+</ul>
+</section>
+<section id="example-cont" class="slide level2">
+<h2>Example Con’t</h2>
+<div style="font-size: 0.7em;">
+<p><span class="math display">\[\mathbf{X}^{T}\mathbf{X} = \begin{bmatrix}1 &amp; 1 &amp; 1 &amp; 1\\
+4 &amp; 2 &amp; 3 &amp; 1\\
+3 &amp; 1 &amp; 2 &amp; 4
+\end{bmatrix}\begin{bmatrix}1 &amp; 4 &amp; 3\\
+1 &amp; 2 &amp; 1\\
+1 &amp; 3 &amp; 2\\
+1 &amp; 1 &amp; 4
+\end{bmatrix} = \begin{bmatrix}4 &amp; 10 &amp; 10\\
+10 &amp; 30 &amp; 24\\
+10 &amp; 24 &amp; 30
+\end{bmatrix}\]</span></p>
+<p><span class="math display">\[(\mathbf{X}^{T}\mathbf{X})^{-1} = \begin{bmatrix}3.3750 &amp; -0.6250 &amp; -0.6250\\
+-0.6250 &amp; 0.2083 &amp; 0.0417\\
+-0.6250 &amp; 0.0417 &amp; 0.2083
+\end{bmatrix}\]</span></p>
+<p><span class="math display">\[\mathbf{X}^{T}\mathbf{y} = \begin{bmatrix}1 &amp; 1 &amp; 1 &amp; 1\\
+4 &amp; 2 &amp; 3 &amp; 1\\
+3 &amp; 1 &amp; 2 &amp; 4
+\end{bmatrix}\begin{bmatrix}1\\
+2\\
+3\\
+4
+\end{bmatrix} = \begin{bmatrix}10\\
+21\\
+27
+\end{bmatrix}\]</span></p>
+<p><span class="math display">\[(\mathbf{X}^{T}\mathbf{X})^{-1}\mathbf{X}^{T}\mathbf{y} = \begin{bmatrix}3.3750 &amp; -0.6250 &amp; -0.6250\\
+-0.6250 &amp; 0.2083 &amp; 0.0417\\
+-0.6250 &amp; 0.0417 &amp; 0.2083
+\end{bmatrix}\begin{bmatrix}10\\
+21\\
+27
+\end{bmatrix} = \begin{bmatrix}3.75\\
+-0.75\\
+0.25
+\end{bmatrix} = \begin{bmatrix}\hat{b}_0\\
+\hat{b}_1\\
+\hat{b}_2
+\end{bmatrix}\]</span></p>
+</div>
+</section>
+<section id="insights-from-the-matrix-equations" class="slide level2">
+<h2>Insights from the Matrix Equations</h2>
+<ol type="1">
+<li><p>The interactions among all predictors affects every estimated regression coefficient</p></li>
+<li><p>This equation can break down!</p>
+<ul>
+<li>If <span class="math inline">\((\mathbf{X}^T\mathbf{X})\)</span> cannot be inverted, we say it is <strong>singular</strong></li>
+<li>Will be singular if one (linear combination of) predictor(s) is exactly the same as another (linear combination of) predictor(s)</li>
+<li>Regression coefficients cannot be uniquely estimated if they are redundant in this way</li>
+</ul></li>
+</ol>
+</section>
+<section id="singularity" class="slide level2">
+<h2>Singularity</h2>
+
+<img data-src="../../Figs/blackhole.jpg" class="quarto-figure quarto-figure-center r-stretch" style="width:60.0%"></section>
+<section id="deriving-the-equations" class="slide level2">
+<h2>Deriving the Equations</h2>
+<div style="font-size: 0.95em;">
+<p>The matrix equations give us the ordinary least squares (OLS) result</p>
+<p>This means that <span class="math inline">\(\hat{\mathbf{b}}\)</span> minimizes the sum of squared residuals:</p>
+<p><span class="math display">\[\sum_i e_i^2 = \sum_i (y_i - \hat{y}_i)^2 = (\mathbf{y} - \hat{\mathbf{y}})^T(\mathbf{y} - \hat{\mathbf{y}})\]</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Solved using calculus:</strong></p>
+<ul>
+<li><p>Find the first derivative of <span class="math inline">\((\mathbf{y} - \hat{\mathbf{y}})^T(\mathbf{y} - \hat{\mathbf{y}})\)</span> with respect to <span class="math inline">\(\mathbf{b}\)</span></p></li>
+<li><p>Set equal to 0</p></li>
+<li><p>Solve for <span class="math inline">\(\mathbf{b}\)</span></p></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" style="width:100.0%;height:2in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>The 1st derivative gives the slope of the tangent line and equals zero at the function minimum.</em></p>
+</div></div>
+</div>
+</section>
+<section id="derivation-examples" class="slide level2">
+<h2>Derivation Examples</h2>
+<div style="font-size: 0.7em;">
+<p>I’ll derive these equations for three cases:</p>
+<div class="columns">
+<div class="column" style="width:30%;">
+<p><strong>Single variable</strong></p>
+<p><span class="math display">\[\hat{\mathbf{y}} = b\mathbf{x}\]</span></p>
+</div><div class="column" style="width:31%;">
+<p><strong>Multiple variables</strong></p>
+<p><span class="math display">\[\hat{\mathbf{y}} = \mathbf{X}\mathbf{b}\]</span></p>
+</div><div class="column" style="width:33%;">
+<p><strong>Standardized variables</strong></p>
+<p><span class="math display">\[\hat{\mathbf{z}}_{\mathbf{y}} = \mathbf{Z}_{\mathbf{x}}\mathbf{b}^\star\]</span></p>
+</div></div>
+<p>Want to minimize:</p>
+<div class="columns">
+<div class="column" style="width:33%;">
+<p><span class="math display">\[\begin{aligned}
+(\mathbf{y} - \hat{\mathbf{y}})^T &amp;(\mathbf{y} - \hat{\mathbf{y}}) \\
+(\mathbf{y} - b\mathbf{x})^T &amp;(\mathbf{y} - b\mathbf{x}) \\
+\mathbf{y}^T\mathbf{y} - 2b\mathbf{x}^T &amp;\mathbf{y} + b^2\mathbf{x}^T\mathbf{x}
+\end{aligned}\]</span></p>
+</div><div class="column" style="width:33%;">
+<p><span class="math display">\[\begin{aligned}
+(\mathbf{y} - \hat{\mathbf{y}})^T &amp; (\mathbf{y} - \hat{\mathbf{y}}) \\
+(\mathbf{y} - \mathbf{X}\mathbf{b})^T &amp; (\mathbf{y} - \mathbf{X}\mathbf{b}) \\
+\mathbf{y}^{T}\mathbf{y} - 2\mathbf{b}^{T}\mathbf{X}^{T} &amp;\mathbf{y} + \mathbf{b}^{T}\mathbf{X}^{T}\mathbf{X}\mathbf{b}
+\end{aligned}\]</span></p>
+</div><div class="column" style="width:33%;">
+<p><span class="math display">\[\begin{aligned}
+(\mathbf{z}_{\mathbf{y}} - \hat{\mathbf{z}}_{\mathbf{y}})^T &amp; (\mathbf{z}_{\mathbf{y}} - \hat{\mathbf{z}}_{\mathbf{y}}) \\
+(\mathbf{z}_{\mathbf{y}} - \mathbf{Z}_{\mathbf{x}}\mathbf{b}^\star)^T &amp; (\mathbf{z}_{\mathbf{y}} - \mathbf{Z}_{\mathbf{x}}\mathbf{b}^\star) \\
+\mathbf{z}_{\mathbf{y}}^T\mathbf{z}_{\mathbf{y}} - 2(N-1) &amp;\mathbf{b}^{\star T}\mathbf{r}_{\mathbf{xy}} + \\
+(N-1) &amp;\mathbf{b}^{\star T}\mathbf{R}_{\mathbf{xx}}\mathbf{b}^\star
+\end{aligned}\]</span></p>
+</div></div>
+<ul>
+<li><p><span class="math inline">\(\mathbf{R}_{\mathbf{xx}} = \frac{1}{N-1}\mathbf{Z}_{\mathbf{x}}^T\mathbf{Z}_{\mathbf{x}}\)</span> is a <span class="math inline">\(p\times p\)</span> matrix of correlations among predictors</p></li>
+<li><p><span class="math inline">\(\mathbf{r}_{\mathbf{xy}} = \frac{1}{N-1}\mathbf{Z}_{\mathbf{x}}^T\mathbf{z}_{\mathbf{y}}\)</span> is a vector of correlations among predictors and the criterion</p></li>
+</ul>
+</div>
+</section>
+<section id="derivations-cont" class="slide level2">
+<h2>Derivations Con’t</h2>
+<div style="font-size: 0.6em;">
+<p>From the previous slide, we want to minimize:</p>
+<div class="columns">
+<div class="column" style="width:27%;">
+<p><strong>For a single variable:</strong></p>
+<p><span class="math display">\[\mathbf{y}^T\mathbf{y} - 2b\mathbf{x}^T\mathbf{y} + b^2\mathbf{x}^T\mathbf{x}\]</span></p>
+</div><div class="column" style="width:27%;">
+<p><strong>For multiple variables:</strong></p>
+<p><span class="math display">\[\mathbf{y}^{T}\mathbf{y} - 2\mathbf{b}^{T}\mathbf{X}^{T}\mathbf{y} + \mathbf{b}^{T}\mathbf{X}^{T}\mathbf{X}\mathbf{b}\]</span></p>
+</div><div class="column" style="width:39%;">
+<p><strong>For standardized variables:</strong></p>
+<p><span class="math display">\[\begin{aligned}
+&amp;\mathbf{z}_{\mathbf{y}}^T\mathbf{z}_{\mathbf{y}} - 2(N-1)\mathbf{b}^{\star T}\mathbf{r}_{\mathbf{xy}} + \\
+&amp;(N-1)\mathbf{b}^{\star T}\mathbf{R}_{\mathbf{xx}}\mathbf{b}^\star
+\end{aligned}\]</span></p>
+</div></div>
+<p>Take the first derivative with respect to <span class="math inline">\(b\)</span> or <span class="math inline">\(\mathbf{b}\)</span> and set equal to 0:</p>
+<div class="columns">
+<div class="column" style="width:27%;">
+<p><span class="math display">\[\begin{aligned}
+-2\mathbf{x}^T\mathbf{y} + 2b\mathbf{x}^T\mathbf{x} &amp;= 0 \\
+2b\mathbf{x}^T\mathbf{x} &amp;= 2\mathbf{x}^T\mathbf{y} \\
+b \sum x^2 &amp;= \sum xy \\
+\hat{b} &amp;= \frac{\sum xy}{\sum x^2}
+\end{aligned}\]</span></p>
+</div><div class="column" style="width:27%;">
+<p><span class="math display">\[\begin{aligned}
+-2\mathbf{X}^{T}\mathbf{y} + 2\mathbf{X}^{T}\mathbf{X}\mathbf{b} &amp;= 0 \\
+2\mathbf{X}^{T}\mathbf{X}\mathbf{b} &amp;= 2\mathbf{X}^{T}\mathbf{y} \\
+(\mathbf{X}^{T}\mathbf{X})^{-1}(\mathbf{X}^{T}\mathbf{X})\mathbf{b} &amp;= (\mathbf{X}^{T}\mathbf{X})^{-1}\mathbf{X}^{T}\mathbf{y} \\
+\hat{\mathbf{b}} &amp;= (\mathbf{X}^{T}\mathbf{X})^{-1}\mathbf{X}^{T}\mathbf{y}
+\end{aligned}\]</span></p>
+</div><div class="column" style="width:39%;">
+<p><span class="math display">\[\begin{aligned}
+-2(N-1)\mathbf{r}_{\mathbf{xy}} + 2(N-1)\mathbf{R}_{\mathbf{xx}}\mathbf{b}^\star &amp;= 0 \\
+2(N-1)\mathbf{R}_{\mathbf{xx}}\mathbf{b}^\star &amp;= 2(N-1)\mathbf{r}_{\mathbf{xy}} \\
+\mathbf{R}_{\mathbf{xx}}^{-1}\mathbf{R}_{\mathbf{xx}}\mathbf{b}^\star &amp;= \mathbf{R}_{\mathbf{xx}}^{-1}\mathbf{r}_{\mathbf{xy}} \\
+\hat{\mathbf{b}}^\star &amp;= \mathbf{R}_{\mathbf{xx}}^{-1}\mathbf{r}_{\mathbf{xy}}
+\end{aligned}\]</span></p>
+</div></div>
+</div>
+</section>
+<section id="standardized-coefficients" class="slide level2">
+<h2>Standardized Coefficients</h2>
+<div style="font-size: 0.7em;">
+<p>From the previous slide, we see that if variables are standardized</p>
+<p><span class="math display">\[\hat{\mathbf{b}}^\star = \mathbf{R}_{\mathbf{xx}}^{-1}\mathbf{r}_{\mathbf{xy}}\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\hat{\mathbf{b}}^\star\)</span> is a function entirely of the correlations among predictors (<span class="math inline">\(\mathbf{R}_{\mathbf{xx}}\)</span>) and the correlations of the predictors with the criterion <span class="math inline">\(\mathbf{r}_{\mathbf{xy}}\)</span></p></li>
+<li><p>After we invert <span class="math inline">\(\mathbf{R}_{\mathbf{xx}}\)</span>, every element of the resulting matrix <span class="math inline">\(\mathbf{R}_{\mathbf{xx}}^{-1}\)</span> is a function of all predictor intercorrelations</p></li>
+</ul>
+<p>Standardized regression coefficients are denoted <span class="math inline">\(\hat{b}^\star_1, \ldots, \hat{b}^\star_p\)</span></p>
+<ul>
+<li><p><span class="math inline">\(\hat{b}^\star_1\)</span> is the predicted change in <span class="math inline">\(z_y\)</span> (in standard deviation units) associated with increasing <span class="math inline">\(z_1\)</span> by one standard deviation, holding all other predictors constant</p></li>
+<li><p>The standardized model does not require an intercept parameter (<span class="math inline">\(\hat{b}_0^\star = 0\)</span>)</p></li>
+</ul>
+<p>For any predictor <span class="math inline">\(i\)</span>,</p>
+<p><span class="math display">\[\hat{b}_i = \hat{b}^\star_i \frac{s_y}{s_{x_i}}\]</span></p>
+</div>
+</section>
+<section id="regression-in-r" class="slide level2">
+<h2>Regression in <code>R</code></h2>
+<div style="font-size: 0.9em;">
+<p>Another example: predicting average SAT scores from educational expenditures</p>
+<ul>
+<li><p>50 observations (one for each U.S. state)</p></li>
+<li><p>Data from the 1994-1995 school year</p></li>
+</ul>
+<p>First, we can fit the simple linear regression model reflecting the primary relationship of interest (<code>coef</code> returns the estimated coefficients)</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-label="1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(SAT <span class="sc">~</span> Expend, dat)</span>
+<span id="cb7-2"><a aria-label="2"></a><span class="fu">coef</span>(lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-label="1"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>      <span class="ex">Expend</span> </span>
+<span id="cb8-2"><a aria-label="2"></a> <span class="ex">1089.29372</span>   <span class="at">-20.89217</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p><span class="math display">\[\widehat{\text{SAT}} = 1089.29 - 20.89\times \text{Expend}\]</span></p>
+<p>Does this makes sense? Increased spending associated with a <em>decrease</em> in average SAT scores?</p>
+</div>
+</section>
+<section id="what-happened" class="slide level2">
+<h2>What Happened?</h2>
+<p>This unexpected result occurs because a third variable—the proportion of students who take the SAT—mitigates the relationship between average SAT scores and educational expenditures</p>
+<ul>
+<li><p>States with higher expenditures have higher rates of SAT test-taking</p></li>
+<li><p>Average SAT scores are higher in states with <em>low</em> rates of SAT test-taking</p></li>
+<li><p>I used log(PctSAT) is to improve linearity</p></li>
+</ul>
+<p>Correlations among variables:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-label="1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">logPctSAT =</span> <span class="fu">log</span>(PctSAT)) </span>
+<span id="cb9-2"><a aria-label="2"></a><span class="fu">cor</span>(dat[<span class="fu">c</span>(<span class="st">"SAT"</span>, <span class="st">"Expend"</span>,<span class="st">"logPctSAT"</span>)])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-label="1"></a>                 <span class="ex">SAT</span>     Expend  logPctSAT</span>
+<span id="cb10-2"><a aria-label="2"></a><span class="ex">SAT</span>        1.0000000 <span class="at">-0.3805370</span> <span class="at">-0.9262563</span></span>
+<span id="cb10-3"><a aria-label="3"></a><span class="ex">Expend</span>    <span class="at">-0.3805370</span>  1.0000000  0.5608493</span>
+<span id="cb10-4"><a aria-label="4"></a><span class="ex">logPctSAT</span> <span class="at">-0.9262563</span>  0.5608493  1.0000000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="scatterplot-matrix-1" class="slide level2">
+<h2>Scatterplot Matrix</h2>
+
+<img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="distorters" class="slide level2">
+<h2>Distorters</h2>
+<p>Adding <code>logPctSAT</code> as a predictor, we find:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-label="1"></a>lm2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(SAT <span class="sc">~</span> Expend <span class="sc">+</span> logPctSAT, dat)</span>
+<span id="cb11-2"><a aria-label="2"></a><span class="fu">coef</span>(lm2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a aria-label="1"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>      <span class="ex">Expend</span>   logPctSAT </span>
+<span id="cb12-2"><a aria-label="2"></a> <span class="ex">1147.11259</span>    11.12963   <span class="at">-78.20499</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>Resulting in:</p>
+<p><span class="math display">\[\widehat{\text{SAT}} = 1147.113 + 11.130 \times \text{Expend} - 78.205 \times \text{logPctSAT}\]</span></p>
+<p>Controlling for <code>logPctSAT</code>, the coefficient for Expend is <strong>positive</strong></p>
+<ul>
+<li><code>logPctSAT</code> is a <strong>distorter</strong> variable</li>
+</ul>
+</section>
+<section id="standardized-regression-coefficients" class="slide level2">
+<h2>Standardized Regression Coefficients</h2>
+<p>The <code>scale()</code> function in R standardizes variables:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-label="1"></a>lm_std <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">scale</span>(SAT) <span class="sc">~</span> <span class="fu">scale</span>(Expend) <span class="sc">+</span> </span>
+<span id="cb13-2"><a aria-label="2"></a>                           <span class="fu">scale</span>(logPctSAT), <span class="at">data =</span> dat)</span>
+<span id="cb13-3"><a aria-label="3"></a></span>
+<span id="cb13-4"><a aria-label="4"></a><span class="fu">round</span>(<span class="fu">coef</span>(lm_std), <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a aria-label="1"></a>     <span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>    <span class="ex">scale</span><span class="er">(</span><span class="ex">Expend</span><span class="kw">)</span> <span class="ex">scale</span><span class="er">(</span><span class="ex">logPctSAT</span><span class="kw">)</span> </span>
+<span id="cb14-2"><a aria-label="2"></a>          <span class="ex">0.0000</span>           0.2027          <span class="at">-1.0400</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<ul>
+<li><p>Intercept must equal zero</p></li>
+<li><p>For a one standard deviation increase in Expend, we expect average SAT scores to increase by .2027 standard deviations, holding <code>logPctSAT</code> constant</p></li>
+<li><p>For a one standard deviation increase in <code>logPctSAT</code>, we expect average SAT scores to decrease by 1.04 standard deviations, holding Expend constant</p></li>
+</ul>
+</section>
+<section id="sat-plane" class="slide level2">
+<h2>SAT Plane</h2>
+
+<img data-src="Lecture-26-Multiple-Regression_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="types-of-third-variables" class="slide level2">
+<h2>Types of Third Variables</h2>
+<p>Types of relationships a third variable (<span class="math inline">\(z\)</span>) can have with a DV (<span class="math inline">\(y\)</span>) and IV (<span class="math inline">\(x\)</span>):</p>
+<ul>
+<li><p>Confounder</p>
+<ul>
+<li><p><span class="math inline">\(z\)</span> is related to both <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></p></li>
+<li><p>The relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> changes when accounting for <span class="math inline">\(z\)</span></p></li>
+</ul></li>
+<li><p>Distorter</p>
+<ul>
+<li><p><span class="math inline">\(z\)</span> changes the sign of the relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></p></li>
+<li><p><span class="math inline">\(z\)</span> changes a zero relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> to a nonzero relationship</p></li>
+<li><p>Can be specific type of confounder (as in our example)</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="more-third-variables" class="slide level2">
+<h2>More Third Variables</h2>
+<ul>
+<li><p>Suppressor</p>
+<ul>
+<li>Like a confounder, but <span class="math inline">\(z\)</span> is unrelated to <span class="math inline">\(y\)</span></li>
+</ul></li>
+<li><p>Mediator</p>
+<ul>
+<li><p><span class="math inline">\(x\)</span> causes <span class="math inline">\(y\)</span></p></li>
+<li><p><span class="math inline">\(z\)</span> is intermediate in the causal process</p></li>
+</ul></li>
+<li><p>Moderator</p>
+<ul>
+<li>The relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> changes across levels of <span class="math inline">\(z\)</span></li>
+</ul></li>
+</ul>
+<p>We’ll discuss mediation and moderation more later in the semester</p>
+</section>
+<section id="r-squared" class="slide level2">
+<h2>R-Squared</h2>
+<div style="font-size: 0.85em;">
+<p>In simple linear regression, <span class="math inline">\(R^2 = r_{xy}^2 = \text{cor}(x, y)^2 = \text{cor}(y, \hat{y})^2\)</span></p>
+<p>In multiple linear regression, <span class="math inline">\(R^2 = \text{cor}(y, \hat{y})^2\)</span></p>
+<p><span class="math inline">\(R^2\)</span> indicates the proportion of variance in <span class="math inline">\(\hat{y}\)</span> accounted for by the model</p>
+<ul>
+<li>i.e., accounted for by the linear combination of predictors</li>
+</ul>
+<p>Information including <span class="math inline">\(R^2\)</span> is printed at the bottom of the <code>summary</code> output</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a aria-label="1"></a><span class="fu">summary</span>(lm2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a aria-label="1"></a> <span class="ex">Call:</span> lm<span class="er">(</span><span class="ex">formula</span> = SAT ~ Expend + logPctSAT, data = dat<span class="kw">)</span>  </span>
+<span id="cb16-2"><a aria-label="2"></a><span class="ex">Residuals:</span>     Min      1Q  Median      3Q     Max  </span>
+<span id="cb16-3"><a aria-label="3"></a><span class="ex">-61.510</span> <span class="at">-13.586</span>  <span class="at">-2.587</span>  16.562  54.932   Coefficients: </span>
+<span id="cb16-4"><a aria-label="4"></a>            <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span>     </span>
+<span id="cb16-5"><a aria-label="5"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span> <span class="ex">1147.113</span>     16.700   68.69  <span class="op">&lt;</span> 2e-16 <span class="pp">***</span> </span>
+<span id="cb16-6"><a aria-label="6"></a><span class="ex">Expend</span>        11.130      3.264    3.41  0.00134 <span class="pp">**</span>  </span>
+<span id="cb16-7"><a aria-label="7"></a><span class="ex">logPctSAT</span>    <span class="at">-78.205</span>      4.471  <span class="at">-17.49</span>  <span class="op">&lt;</span> 2e-16 <span class="pp">***</span> <span class="at">---</span> </span>
+<span id="cb16-8"><a aria-label="8"></a><span class="ex">Signif.</span> codes:   </span>
+<span id="cb16-9"><a aria-label="9"></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1  </span>
+<span id="cb16-10"><a aria-label="10"></a><span class="ex">Residual</span> standard error: 25.78 on 47 degrees of freedom </span>
+<span id="cb16-11"><a aria-label="11"></a><span class="ex">Multiple</span> R-squared:  0.8861,    Adjusted R-squared:  0.8813  </span>
+<span id="cb16-12"><a aria-label="12"></a><span class="ex">F-statistic:</span> 182.9 on 2 and 47 DF,  p-value: <span class="op">&lt;</span> 2.2e-16 </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>This means that 89% of the variance in average SAT scores is associated with these two variables!</p>
+</div>
+</section>
+<section id="adjusted-r-squared" class="slide level2">
+<h2>Adjusted R-Squared</h2>
+<div style="font-size: 0.85em;">
+<p>Adding more predictors <strong>necessarily</strong> increases <span class="math inline">\(R^2\)</span></p>
+<ul>
+<li><p>The obtained <span class="math inline">\(R^2\)</span> is an overestimate of the population <span class="math inline">\(R^2\)</span></p></li>
+<li><p>Capitalizes on unreliable/nonreplicable patterns in the data</p></li>
+</ul>
+<p><span class="math display">\[\text{Adjusted } R^2 = \left(R^2 - \frac{p}{N-1}\right)\left(\frac{N-1}{N-p-1}\right)\]</span></p>
+<ul>
+<li><p><span class="math inline">\(p\)</span>: number of predictors</p></li>
+<li><p><span class="math inline">\(N\)</span>: sample size</p></li>
+<li><p>Adjusted <span class="math inline">\(R^2\)</span> is not completely unbiased (Darlington, 1990, p.&nbsp;122), but it is less biased than <span class="math inline">\(R^2\)</span> and is commonly used</p></li>
+<li><p>Adjusted <span class="math inline">\(R^2\)</span> does not necessarily increase with more predictors</p></li>
+<li><p><span class="math inline">\(R^2 \geq 0\)</span>, but adjusted <span class="math inline">\(R^2\)</span> can be slightly negative</p></li>
+</ul>
+</div>
+</section>
+<section id="omnibus-test-r-squared" class="slide level2">
+<h2>Omnibus Test: R-Squared</h2>
+<div style="font-size: 0.85em;">
+<p>We may want to know whether <span class="math inline">\(R^2\)</span> is significantly greater than zero</p>
+<p><span class="math display">\[H_0: R^2 = 0 \hspace{2cm} H_1: R^2 &gt; 0\]</span></p>
+<p><span class="math display">\[F(p, N - p - 1)  = \frac{MS_{\text{regression}}}{MS_{\text{residual}}} = \frac{SS_{\text{regression}} / p}{SS_{\text{residual}} / (N - p - 1)}\\
+   = \frac{(N - p - 1) R^2}{p(1 - R^2)}\]</span></p>
+<p><span class="math display">\[SS_{\text{regression}}  = \sum(\hat{y} - \bar{y})^2 = \text{ variation in } y \text{ accounted by predictors} \\
+  SS_{\text{residual}}  = \sum(y - \hat{y})^2 = \text{ variation of residuals}\]</span></p>
+<ul>
+<li><p><span class="math inline">\(N\)</span>: sample size</p></li>
+<li><p><span class="math inline">\(p\)</span>: number of predictors</p></li>
+</ul>
+<p>Under <span class="math inline">\(H_0\)</span>, the <span class="math inline">\(F\)</span> statistic follows an <span class="math inline">\(F\)</span> distribution with <span class="math inline">\(p\)</span> and <span class="math inline">\(N - p - 1\)</span> degrees of freedom</p>
+</div>
+</section>
+<section id="testing-coefficients" class="slide level2">
+<h2>Testing Coefficients</h2>
+<p>We can also test individual regression coefficients</p>
+<p>For <span class="math inline">\(j = 0, \ldots, p\)</span></p>
+<p><span class="math display">\[H_0: \,b_j = 0 \\
+  H_1: \,b_j \neq 0\]</span></p>
+<p>Even though most software reports the test for all coefficients, the test for the intercept <span class="math inline">\(b_0\)</span> is usually not interesting</p>
+<p>Hypothesis tests of whether each population coefficient might be equal to zero (effectively dropping the term from the model) <strong>if the other predictors are held constant</strong></p>
+</section>
+<section id="testing-cont" class="slide level2">
+<h2>Testing Con’t</h2>
+<div style="font-size: 0.73em;">
+<p>Test whether regression coefficients are different than zero (two predictors):</p>
+<p><span class="math display">\[H_0: b_1 = 0 \hspace{2cm} H_1: b_1 \neq 0\]</span></p>
+<ul>
+<li><span class="math inline">\(b_1\)</span> is the population partial regression coefficient of <span class="math inline">\(x_1\)</span> predicting <span class="math inline">\(y\)</span></li>
+</ul>
+<p>Test statistic:</p>
+<p><span class="math display">\[t(df) = \frac{\hat{b}_1}{s_{\hat{b}_1}} \hspace{2cm} s_{\hat{b}_1} = \frac{s_y}{s_1}\sqrt{\frac{1-R^2}{N-p-1}}\sqrt{\frac{1}{1-r^2_{x_1,x_2}}}\]</span></p>
+<div class="columns">
+<div class="column">
+<ul>
+<li><p><span class="math inline">\(df\)</span>: degrees of freedom <span class="math inline">\(= N - p - 1\)</span></p></li>
+<li><p><span class="math inline">\(s_y\)</span>: sample standard deviation of <span class="math inline">\(y\)</span></p></li>
+<li><p><span class="math inline">\(s_{x_1}\)</span>: sample standard deviation of <span class="math inline">\(x_1\)</span></p></li>
+<li><p><span class="math inline">\(R^2\)</span>: (unadjusted) coefficient of determination for regression model</p></li>
+</ul>
+</div><div class="column">
+<ul>
+<li><p><span class="math inline">\(r_{x_1,x_2}\)</span>: sample correlation between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span></p></li>
+<li><p><span class="math inline">\(N\)</span>: sample size</p></li>
+<li><p><span class="math inline">\(p\)</span>: number of predictors</p></li>
+</ul>
+</div></div>
+<p>For more than two predictors, standard error calculations are more complicated</p>
+</div>
+</section>
+<section id="confidence-intervals" class="slide level2">
+<h2>Confidence Intervals</h2>
+<p>Confidence interval limits for <span class="math inline">\(b_1\)</span>:</p>
+<p><span class="math display">\[\hat{b}_1 \pm t(df)_{\alpha/2}s_{\hat{b}_1}\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-label="1"></a><span class="fu">summary</span>(lm2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a aria-label="1"></a></span>
+<span id="cb18-2"><a aria-label="2"></a><span class="ex">Call:</span></span>
+<span id="cb18-3"><a aria-label="3"></a><span class="ex">lm</span><span class="er">(</span><span class="ex">formula</span> = SAT ~ Expend + logPctSAT, data = dat<span class="kw">)</span></span>
+<span id="cb18-4"><a aria-label="4"></a></span>
+<span id="cb18-5"><a aria-label="5"></a><span class="ex">Residuals:</span></span>
+<span id="cb18-6"><a aria-label="6"></a>    <span class="ex">Min</span>      1Q  Median      3Q     Max </span>
+<span id="cb18-7"><a aria-label="7"></a><span class="ex">-61.510</span> <span class="at">-13.586</span>  <span class="at">-2.587</span>  16.562  54.932 </span>
+<span id="cb18-8"><a aria-label="8"></a></span>
+<span id="cb18-9"><a aria-label="9"></a><span class="ex">Coefficients:</span></span>
+<span id="cb18-10"><a aria-label="10"></a>            <span class="ex">Estimate</span> Std. Error t value Pr<span class="er">(</span><span class="op">&gt;|</span>t<span class="kw">|)</span>    </span>
+<span id="cb18-11"><a aria-label="11"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span> <span class="ex">1147.113</span>     16.700   68.69  <span class="op">&lt;</span> 2e-16 <span class="pp">***</span></span>
+<span id="cb18-12"><a aria-label="12"></a><span class="ex">Expend</span>        11.130      3.264    3.41  0.00134 <span class="pp">**</span> </span>
+<span id="cb18-13"><a aria-label="13"></a><span class="ex">logPctSAT</span>    <span class="at">-78.205</span>      4.471  <span class="at">-17.49</span>  <span class="op">&lt;</span> 2e-16 <span class="pp">***</span></span>
+<span id="cb18-14"><a aria-label="14"></a><span class="ex">---</span></span>
+<span id="cb18-15"><a aria-label="15"></a><span class="ex">Signif.</span> codes:  </span>
+<span id="cb18-16"><a aria-label="16"></a><span class="ex">0</span> <span class="st">'***'</span> 0.001 <span class="st">'**'</span> 0.01 <span class="st">'*'</span> 0.05 <span class="st">'.'</span> 0.1 <span class="st">' '</span> 1</span>
+<span id="cb18-17"><a aria-label="17"></a></span>
+<span id="cb18-18"><a aria-label="18"></a><span class="ex">Residual</span> standard error: 25.78 on 47 degrees of freedom</span>
+<span id="cb18-19"><a aria-label="19"></a><span class="ex">Multiple</span> R-squared:  0.8861,    Adjusted R-squared:  0.8813 </span>
+<span id="cb18-20"><a aria-label="20"></a><span class="ex">F-statistic:</span> 182.9 on 2 and 47 DF,  p-value: <span class="op">&lt;</span> 2.2e-16</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-label="1"></a><span class="fu">qt</span>(.<span class="dv">05</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">df =</span> <span class="dv">47</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-label="1"></a><span class="ex">[1]</span> 2.011741</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>CI for Expend: <span class="math inline">\(11.130 \pm 2.012 \times 3.264 = [4.56, 17.70]\)</span></p>
+</section>
+<section id="confidence-intervals-in-r" class="slide level2">
+<h2>Confidence Intervals in <code>R</code></h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-label="1"></a><span class="fu">confint</span>(lm2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a aria-label="1"></a>                  <span class="ex">2.5</span> %     97.5 %</span>
+<span id="cb22-2"><a aria-label="2"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span> <span class="ex">1113.515605</span> 1180.70957</span>
+<span id="cb22-3"><a aria-label="3"></a><span class="ex">Expend</span>         4.562923   17.69634</span>
+<span id="cb22-4"><a aria-label="4"></a><span class="ex">logPctSAT</span>    <span class="at">-87.199604</span>  <span class="at">-69.21037</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="hypothesis-testing-regression-coefficients" class="slide level2">
+<h2>Hypothesis Testing: Regression Coefficients</h2>
+<p>These hypothesis tests are interpreted by treating other variables as constant</p>
+<p>If variables are correlated, these can be easily misinterpreted</p>
+<p>For the quadratic model,</p>
+<p><span class="math display">\[\hat{y} = b_0 + b_1x_1 + b_2x_1^2\]</span></p>
+<p>we cannot interpret significance test for <span class="math inline">\(b_2\)</span> because we cannot increase <span class="math inline">\(x_1^2\)</span> by one unit without also changing <span class="math inline">\(x_1\)</span></p>
+</section>
+<section id="simulation-example" class="slide level2">
+<h2>Simulation Example</h2>
+<p>Suppose <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, and <span class="math inline">\(x_3\)</span> all correlate .3 with each other (in the population), <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> correlate .3 with <span class="math inline">\(y\)</span>, and </p>
+<p>How often will the <span class="math inline">\(\hat{b}_3\)</span> coefficient be significantly different than 0?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a aria-label="1"></a>Rxx <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">c</span>(<span class="dv">1</span>, .<span class="dv">3</span>, .<span class="dv">3</span>, <span class="dv">0</span>), <span class="fu">c</span>(.<span class="dv">3</span>, <span class="dv">1</span>, .<span class="dv">3</span>, .<span class="dv">3</span>),</span>
+<span id="cb23-2"><a aria-label="2"></a>             <span class="fu">c</span>(.<span class="dv">3</span>, .<span class="dv">3</span>, <span class="dv">1</span>, .<span class="dv">3</span>), <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">3</span>, .<span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb23-3"><a aria-label="3"></a>R <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb23-4"><a aria-label="4"></a>reject <span class="ot">&lt;-</span> <span class="fu">logical</span>(R)</span>
+<span id="cb23-5"><a aria-label="5"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>R){</span>
+<span id="cb23-6"><a aria-label="6"></a>  X <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mu =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="at">Sigma =</span> Rxx)</span>
+<span id="cb23-7"><a aria-label="7"></a>  reject[i] <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>(X[, <span class="dv">1</span>] <span class="sc">~</span> X[, <span class="dv">2</span>] <span class="sc">+</span> X[, <span class="dv">3</span>] <span class="sc">+</span> </span>
+<span id="cb23-8"><a aria-label="8"></a>                          X[, <span class="dv">4</span>]))<span class="sc">$</span>coefficients[<span class="dv">4</span>, <span class="dv">4</span>] <span class="sc">&lt;</span> .<span class="dv">05</span></span>
+<span id="cb23-9"><a aria-label="9"></a>}</span>
+<span id="cb23-10"><a aria-label="10"></a><span class="fu">mean</span>(reject)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a aria-label="1"></a><span class="ex">[1]</span> 0.192</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>19% is way more than my <span class="math inline">\(\alpha = .05\)</span> for a true null! Is the null <span class="math inline">\(\beta_3 = 0\)</span> true?</p>
+</section>
+<section id="what-happened-1" class="slide level2">
+<h2>What happened?</h2>
+<ul>
+<li><p><span class="answer fragment" data-unless-meta="params.v0">A correlation <span class="math inline">\(\rho_{xy}\)</span> can be 0 in the population while a regression coefficient <span class="math inline">\(\beta_{x}\)</span> might not be!</span></p></li>
+<li><p><span class="answer fragment" data-unless-meta="params.v0">If the predictor <span class="math inline">\(x\)</span> is correlated with <strong>other</strong> predictors in the model, that correlation gets “partialed out”</span></p></li>
+<li><p><span class="answer fragment" data-unless-meta="params.v0">What’s left in <span class="math inline">\(x_3\)</span> after taking what’s shared with <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> out might <strong>not</strong> be independent of <span class="math inline">\(y\)</span>!</span></p></li>
+</ul>
+</section>
+<section id="simulation-example-1" class="slide level2">
+<h2>Simulation Example</h2>
+<p>In the example on the previous slide,</p>
+<p><span class="math display">\[\rho_{xx}=\begin{bmatrix}1 &amp; .3 &amp; .3\\
+  .3 &amp; 1 &amp; .3\\
+  .3 &amp; .3 &amp; 1
+  \end{bmatrix}\,\,\,\,\rho_{xy}=\begin{bmatrix}.3\\
+  .3\\
+  0
+  \end{bmatrix}\]</span></p>
+<p>Reason that we often reject the null hypothesis for <span class="math inline">\(\hat{b}_3\)</span>? Population <span class="math inline">\(b_3 \neq 0\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-label="1"></a><span class="fu">solve</span>(Rxx[<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>]) <span class="sc">%*%</span> Rxx[<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">1</span>] <span class="co"># Population Coefficients!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a aria-label="1"></a>           <span class="ex">[,1]</span></span>
+<span id="cb26-2"><a aria-label="2"></a><span class="ex">[1,]</span>  0.2678571</span>
+<span id="cb26-3"><a aria-label="3"></a><span class="ex">[2,]</span>  0.2678571</span>
+<span id="cb26-4"><a aria-label="4"></a><span class="ex">[3,]</span> <span class="at">-0.1607143</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>Even though <span class="math inline">\(\rho_{x_1, y} = 0\)</span>, because <span class="math inline">\(\rho_{x_1, x_3} \neq 0\)</span>, <span class="math inline">\(\rho_{x_2, x_3} \neq 0\)</span>, <span class="math inline">\(\rho_{x_2, y} \neq 0\)</span>, and <span class="math inline">\(\rho_{x_3, y} \neq 0\)</span>, once we account for <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_2\)</span>, then we see that <span class="math inline">\(x_1\)</span> and <span class="math inline">\(y\)</span> are <strong>not</strong> (linearly) independent.</p>
+</section>
+<section id="warning" class="slide level2">
+<h2>WARNING</h2>
+
+<img data-src="../../Figs/warning.png" class="r-stretch"></section>
+<section id="two-scenarios" class="slide level2">
+<h2>Two Scenarios</h2>
+<ul>
+<li>When looking at the relationship between ice cream sales and murder rate, should you also factor in temperature outside?</li>
+</ul>
+
+<img data-src="../../Figs/ice cream.png" class="r-stretch"></section>
+<section id="two-scenarios-1" class="slide level2">
+<h2>Two Scenarios</h2>
+<ul>
+<li>When looking at the relationship between player height and points per game (PPG) in the NBA, should you control for the player’s draft position?</li>
+</ul>
+
+<img data-src="../../Figs/bol bogues.jpg" class="r-stretch"></section>
+<section id="two-scenarios-2" class="slide level2">
+<h2>Two Scenarios</h2>
+<ul>
+<li><p>When looking at the relationship between ice cream sales and murder rate, should you also factor in temperature outside?</p>
+<ul>
+<li>YES! The is a classic confounder example. Without including outside temperature, you may find a positive relationship between ice cream sales and murder rate, but that could be because outside temperature causes both variables</li>
+</ul></li>
+<li><p>When looking at the relationship between player height and points per game (PPG) in the NBA, should you control for the player’s draft position?</p>
+<ul>
+<li>PROBABLY NOT! Player height may be a major determining factor draft position to begin with, meaning the unshared relationship between height and PPG may look totally wrong if you control for draft position.</li>
+</ul></li>
+</ul>
+</section>
+<section id="model-selection" class="slide level2">
+<h2>Model Selection</h2>
+<p>Model building using regression is an art:</p>
+<ul>
+<li><p>We should include (“control for”) theoretically relevant predictors</p></li>
+<li><p>We should make sure we’re including confounds, not not suppressors</p></li>
+<li><p>But we should also strive for the simplest model possible</p></li>
+<li><p>Don’t want to include redundant (or nearly redundant) predictors</p></li>
+</ul>
+<p><strong>BOTTOM LINE</strong>: We need to think carefully about which variables to include</p>
+</section>
+<section id="bayes-overview" class="slide level2">
+<h2>Bayes Overview</h2>
+<p>Nothing really new in Bayes world here. We use <code>rstanarm</code> to fit our regression, and interpret the posterior credible intervals and Bayesian <span class="math inline">\(R^2\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a aria-label="1"></a>stan_lm1 <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(SAT <span class="sc">~</span> Expend <span class="sc">+</span> logPctSAT, dat, </span>
+<span id="cb27-2"><a aria-label="2"></a>                     <span class="at">family =</span> <span class="st">"gaussian"</span>, </span>
+<span id="cb27-3"><a aria-label="3"></a>                     <span class="at">seed =</span> <span class="dv">12340</span>)</span>
+<span id="cb27-4"><a aria-label="4"></a></span>
+<span id="cb27-5"><a aria-label="5"></a><span class="fu">summary</span>(stan_lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="summary-output" class="slide level2">
+<h2>Summary Output</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a aria-label="1"></a></span>
+<span id="cb28-2"><a aria-label="2"></a><span class="ex">Model</span> Info:</span>
+<span id="cb28-3"><a aria-label="3"></a> <span class="ex">function:</span>     stan_glm</span>
+<span id="cb28-4"><a aria-label="4"></a> <span class="ex">family:</span>       gaussian <span class="pp">[</span><span class="ss">identity</span><span class="pp">]</span></span>
+<span id="cb28-5"><a aria-label="5"></a> <span class="ex">formula:</span>      SAT ~ Expend + logPctSAT</span>
+<span id="cb28-6"><a aria-label="6"></a> <span class="ex">algorithm:</span>    sampling</span>
+<span id="cb28-7"><a aria-label="7"></a> <span class="ex">sample:</span>       4000 <span class="er">(</span><span class="ex">posterior</span> sample size<span class="kw">)</span></span>
+<span id="cb28-8"><a aria-label="8"></a> <span class="ex">priors:</span>       see help<span class="er">(</span><span class="st">'prior_summary'</span><span class="kw">)</span></span>
+<span id="cb28-9"><a aria-label="9"></a> <span class="ex">observations:</span> 50</span>
+<span id="cb28-10"><a aria-label="10"></a> <span class="ex">predictors:</span>   3</span>
+<span id="cb28-11"><a aria-label="11"></a></span>
+<span id="cb28-12"><a aria-label="12"></a><span class="ex">Estimates:</span></span>
+<span id="cb28-13"><a aria-label="13"></a>              <span class="ex">mean</span>   sd     10%    50%    90% </span>
+<span id="cb28-14"><a aria-label="14"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span> <span class="ex">1146.7</span>   17.3 1125.2 1146.6 1168.7</span>
+<span id="cb28-15"><a aria-label="15"></a><span class="ex">Expend</span>        11.2    3.3    7.1   11.2   15.3</span>
+<span id="cb28-16"><a aria-label="16"></a><span class="ex">logPctSAT</span>    <span class="at">-78.2</span>    4.5  <span class="at">-83.7</span>  <span class="at">-78.2</span>  <span class="at">-72.4</span></span>
+<span id="cb28-17"><a aria-label="17"></a><span class="ex">sigma</span>         26.4    2.7   23.1   26.1   30.0</span>
+<span id="cb28-18"><a aria-label="18"></a></span>
+<span id="cb28-19"><a aria-label="19"></a><span class="ex">Fit</span> Diagnostics:</span>
+<span id="cb28-20"><a aria-label="20"></a>           <span class="ex">mean</span>   sd    10%   50%   90%</span>
+<span id="cb28-21"><a aria-label="21"></a><span class="ex">mean_PPD</span> 965.9    5.3 959.2 965.9 972.7</span>
+<span id="cb28-22"><a aria-label="22"></a></span>
+<span id="cb28-23"><a aria-label="23"></a><span class="ex">The</span> mean_ppd is the sample average posterior predictive distribution of the outcome variable <span class="er">(</span><span class="cf">for</span> details <span class="ex">see</span> help<span class="er">(</span><span class="st">'summary.stanreg'</span><span class="kw">))</span><span class="bu">.</span></span>
+<span id="cb28-24"><a aria-label="24"></a></span>
+<span id="cb28-25"><a aria-label="25"></a><span class="ex">MCMC</span> diagnostics</span>
+<span id="cb28-26"><a aria-label="26"></a>              <span class="ex">mcse</span> Rhat n_eff</span>
+<span id="cb28-27"><a aria-label="27"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span>   <span class="ex">0.2</span>  1.0  5235 </span>
+<span id="cb28-28"><a aria-label="28"></a><span class="ex">Expend</span>        0.1  1.0  3392 </span>
+<span id="cb28-29"><a aria-label="29"></a><span class="ex">logPctSAT</span>     0.1  1.0  3329 </span>
+<span id="cb28-30"><a aria-label="30"></a><span class="ex">sigma</span>         0.0  1.0  3215 </span>
+<span id="cb28-31"><a aria-label="31"></a><span class="ex">mean_PPD</span>      0.1  1.0  3771 </span>
+<span id="cb28-32"><a aria-label="32"></a><span class="ex">log-posterior</span> 0.0  1.0  1306 </span>
+<span id="cb28-33"><a aria-label="33"></a></span>
+<span id="cb28-34"><a aria-label="34"></a><span class="ex">For</span> each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains <span class="er">(</span><span class="ex">at</span> convergence Rhat=1<span class="kw">)</span><span class="bu">.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="hdis" class="slide level2">
+<h2>HDIs</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a aria-label="1"></a><span class="fu">library</span>(bayestestR)</span>
+<span id="cb29-2"><a aria-label="2"></a><span class="fu">hdi</span>(stan_lm1, <span class="at">component =</span> <span class="st">"all"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a aria-label="1"></a><span class="ex">Highest</span> Density Interval</span>
+<span id="cb30-2"><a aria-label="2"></a></span>
+<span id="cb30-3"><a aria-label="3"></a><span class="ex">Parameter</span>   <span class="kw">|</span>            <span class="ex">95%</span> HDI</span>
+<span id="cb30-4"><a aria-label="4"></a><span class="ex">--------------------------------</span></span>
+<span id="cb30-5"><a aria-label="5"></a><span class="kw">(</span><span class="ex">Intercept</span><span class="kw">)</span> <span class="kw">|</span> <span class="ex">[1113.49,</span> 1180.90]</span>
+<span id="cb30-6"><a aria-label="6"></a><span class="ex">Expend</span>      <span class="kw">|</span> <span class="bu">[</span>   4.79,   18.07]</span>
+<span id="cb30-7"><a aria-label="7"></a>logPctSAT   <span class="er">|</span> <span class="er">[</span> <span class="ex">-87.35,</span>  <span class="at">-69.57]</span></span>
+<span id="cb30-8"><a aria-label="8"></a></span>
+<span id="cb30-9"><a aria-label="9"></a><span class="co"># Fixed effects (sigma)</span></span>
+<span id="cb30-10"><a aria-label="10"></a></span>
+<span id="cb30-11"><a aria-label="11"></a><span class="ex">Parameter</span> <span class="kw">|</span>            <span class="ex">95%</span> HDI</span>
+<span id="cb30-12"><a aria-label="12"></a><span class="ex">------------------------------</span></span>
+<span id="cb30-13"><a aria-label="13"></a><span class="ex">sigma</span>     <span class="kw">|</span> <span class="bu">[</span>  21.42,   31.95]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="bayesian-r2" class="slide level2">
+<h2>Bayesian <span class="math inline">\(R^2\)</span></h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a aria-label="1"></a><span class="fu">library</span>(performance)</span>
+<span id="cb31-2"><a aria-label="2"></a><span class="fu">r2_bayes</span>(stan_lm1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode numberSource sh number-lines code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a aria-label="1"></a><span class="co"># Bayesian R2 with Compatibility Interval</span></span>
+<span id="cb32-2"><a aria-label="2"></a></span>
+<span id="cb32-3"><a aria-label="3"></a>  <span class="ex">Conditional</span> R2: 0.879 <span class="er">(</span><span class="ex">95%</span> CI [0.822, 0.920]<span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="apa-writeups" class="slide level2">
+<h2>APA Writeups</h2>
+<div style="font-size: 0.9em;">
+<p><strong>Frequentist</strong></p>
+<p>We estimated a multiple linear regression of the log of percentage of students taking the SAT and statewide expenditure on SAT scores. The model had <span class="math inline">\(R^2 = .89, \ F(2, 47) = 182.09, \ p &lt; .001, \ \text{adjusted} R^2 = .88\)</span>. Controlling for log of percentage of students taking the SAT, the effect of expenditure was <span class="math inline">\(b = 11.13, t(47) = 3.41, p = .001, 95\% CI = 4.56, 17.70]\)</span></p>
+<p><strong>Bayesian</strong></p>
+<p>We estimated a Bayesian multiple linear regression of the log of percentage of students taking the SAT and statewide expenditure on SAT scores. The model had Bayesian <span class="math inline">\(R^2 = .88, 95\% CI = [.82, .92]\)</span>. Controlling for log of percentage of students taking the SAT, the posterior mean for the effect of expenditure was <span class="math inline">\(b = 11.2, 95\% CI = [4.79, 18.07]\)</span></p>
+</div>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jhelmer3\.github\.io\/PSYC6019-2026\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
