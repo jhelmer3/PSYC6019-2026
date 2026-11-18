@@ -196,7 +196,7 @@ arrow_svg <- function(x0, y0, x1, y1, color, len = 18, half_w = 8) {
 
 ## Categorical Predictors
 
-::: {style="font-size: 0.85em;"}
+::: {style="font-size: 0.825em;"}
 
 So far, we have discussed regression with continuous predictors
 
@@ -337,19 +337,19 @@ Example:
 
 Regression model:
 
-$$\hat{y} = \hat{b}_0 + \hat{b}_1x_1 + \hat{b}_2x_2 + \hat{b}_3x_3$$
+$$\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3x_3$$
 
 ::::: columns
 
 :::: column
 
-* Control: $\hat{y} = \hat{b}_0$
+* Control: $\hat{y} = b_0$
 
-* Drug: $\hat{y} = \hat{b}_0 + \hat{b}_1x_1$
+* Drug: $\hat{y} = b_0 + b_1x_1$
 
-* Therapy: $\hat{y} = \hat{b}_0 + \hat{b}_2x_2$
+* Therapy: $\hat{y} = b_0 + b_2x_2$
 
-* D + T: $\hat{y} = \hat{b}_0 + \hat{b}_3x_3$
+* D + T: $\hat{y} = b_0 + b_3x_3$
 
 ::::
 
@@ -368,10 +368,10 @@ $$\hat{y} = \hat{b}_0 + \hat{b}_1x_1 + \hat{b}_2x_2 + \hat{b}_3x_3$$
 
 Interpretation:
 
-* $\hat{b}_0$: predicted $\hat{y}$ for control group
-* $\hat{b}_1$: difference in $\hat{y}$ between (drug) and (control)
-* $\hat{b}_2$: difference in $\hat{y}$ between (therapy) and (control)
-* $\hat{b}_3$: difference in $\hat{y}$ between (drug + therapy) and (control)
+* $b_0$: predicted $\hat{y}$ for control group
+* $b_1$: difference in $\hat{y}$ between (drug) and (control)
+* $b_2$: difference in $\hat{y}$ between (therapy) and (control)
+* $b_3$: difference in $\hat{y}$ between (drug + therapy) and (control)
 
 <!-- Cool side effect: $x_1$, $x_2$, and $x_3$ are uncorrelated! -->
 
@@ -383,7 +383,7 @@ Interpretation:
 
 Test of individual predictors:
 
-* If $\hat{b}_1$ is significant, then the $x_1$ group (drug group) differs significantly from the control group (contrast coding, excluding other groups)
+* If $b_1$ is significant, then the $x_1$ group (drug group) differs significantly from the control group (contrast coding, excluding other groups)
 
 * Degrees of freedom for the one-way ANOVA ( = #groups - 1) are divided into (#groups - 1) contrasts comparing each group to the reference group
 
@@ -416,17 +416,17 @@ For example:
 
 Regression model:
 
-$$\hat{y} = \hat{b}_0 + \hat{b}_1x_1 + \hat{b}_2x_2 + \hat{b}_3x_3$$
+$$\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3x_3$$
 
 Interpretation:
 
-* $\hat{b}_0$: grand mean of $y$
+* $b_0$: grand mean of $y$
 
-* $\hat{b}_1$: difference in $\hat{y}$ between drug and grand mean
+* $b_1$: difference in $\hat{y}$ between drug and grand mean
 
-* $\hat{b}_2$: difference in $\hat{y}$ between therapy and grand mean
+* $b_2$: difference in $\hat{y}$ between therapy and grand mean
 
-* $\hat{b}_3$: difference in $\hat{y}$ between (drug + therapy) and grand mean
+* $b_3$: difference in $\hat{y}$ between (drug + therapy) and grand mean
 
 Omnibus test of $R^2$ is equivalent to simultaneously testing main effects in ANOVA
 
@@ -581,7 +581,7 @@ Consequences of severe (high) multicollinearity:
   
     + Consider:
 
-    $$s_{\hat{b}_1} = \frac{s_y}{s_{x_1}}\sqrt{\frac{1-R^2}{(N-p-1){\color{#377EB8}\boxed{(1-r_{x_1,x_2}^2)}}}} \qquad {\color{#377EB8}\begin{array}{l}\text{When } r_{x_1,x_2} \text{ is large,} \\ s_{\hat{b}_1} \text{ is large}\end{array}}$$
+    $$s_{b_1} = \frac{s_y}{s_{x_1}}\sqrt{\frac{1-R^2}{(N-p-1){\color{#377EB8}\boxed{(1-r_{x_1,x_2}^2)}}}} \qquad {\color{#377EB8}\begin{array}{l}\text{When } r_{x_1,x_2} \text{ is large,} \\ s_{b_1} \text{ is large}\end{array}}$$
 
     + Low statistical power of partial regression coefficients
     
@@ -621,7 +621,7 @@ $$x_1 = \beta_{(1),0} +  \beta_{(1),1} x_2 + \beta_{(1),2}x_3 + \epsilon_{(1)}$$
 
 * VIF is how much the standard error increases due to multicolinearity for that predictor
 
-    - Example: VIF = 1.057 means that our estimate for $s_{\hat{b}_1}$ is 1.057 times as large as it would be if $x_1$ were uncorrelated with the other predictors ($R^2_1 = 0$)
+    - Example: VIF = 1.057 means that our estimate for $s_{b_1}$ is 1.057 times as large as it would be if $x_1$ were uncorrelated with the other predictors ($R^2_1 = 0$)
 
 * Tolerance is the inverse of VIF: proportion of variance of $x_j$ that is independent of other predictors
 
@@ -1038,7 +1038,7 @@ Wrong form of relationships fitted:
   
 * Example of non-additivity: moderation (interaction, coming soon!):
   
-$$\hat{y} = \hat{b}_0 + \hat{b}_1x_1 + \hat{b}_2x_2 + \hat{b}_3 (x_1 \times x_2)$$
+$$\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3 (x_1 \times x_2)$$
 
 * Regression slope of $y$ on $x_1$ depends on the value of $x_2$
 
@@ -1437,13 +1437,13 @@ Influence measures (for each observation):
   
 DFBETAS: measures the standardized change in regression coefficients
 
-$$\text{DFBETAS} = \frac{\hat{b} - \hat{b}_{(i)}}{s_{\hat{b}_{(i)}}}$$
+$$\text{DFBETAS} = \frac{b - b_{(i)}}{s_{b_{(i)}}}$$
 
-* $\hat{b}$: regression coefficient when observation $i$ is included in the regression
+* $b$: regression coefficient when observation $i$ is included in the regression
 
-* $\hat{b}_{(i)}$: regression coefficient when observation $i$ is excluded from the regression
+* $b_{(i)}$: regression coefficient when observation $i$ is excluded from the regression
 
-* $s_{\hat{b}_{(i)}}$ standard error of $\hat{b}_{(i)}$
+* $s_{b_{(i)}}$ standard error of $b_{(i)}$
 
 Suggested cutoffs:
   
