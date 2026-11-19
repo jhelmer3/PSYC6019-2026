@@ -34,8 +34,74 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-<link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-15d324c2aafc27a03d2c3a1c4b493f27.css">
+<link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-cb2328c9f5f78bc8d6e3928db924d943.css">
 <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
 <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
 <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -160,6 +226,14 @@ Jess Helmer
 <h3 id="quarto-publishing">Quarto Publishing</h3>
 </div></div>
 <p>I will be heavily pulling from these resources in these slides. Relevant references will be in the footer of the slide.</p>
+</section><section id="goals-for-today" class="slide level2"><h2>Goals for Today</h2>
+<p>We are going to be covering a lot today!</p>
+<p>My main goal is to get everyone using the basic functionalities that allow you to host Quarto on GitHub.</p>
+<p>There may be details or terminology that feel confusing—that is OK. There is lots of background information and context that we won’t cover today.</p>
+<p>The resources provided have much more detail. I encourage you to read through them at your own pace to fill in the gaps of what we will skip today.</p>
+<div class="subsubpoint">
+<p>○ Probably especially <a href="https://happygitwithr.com/">Happy Git with R</a></p>
+</div>
 </section><section><section id="git-and-github-basics" class="title-slide slide level1 center"><h1>Git and GitHub Basics</h1>
 
 </section><section id="about-git" class="slide level2"><h2>About Git</h2>
@@ -175,14 +249,278 @@ Jess Helmer
 <div class="subsubpoint">
 <p>○ We often have a collection of code files, figures, data, etc that can run rampant if untamed…</p>
 </div>
-<div class="footer">
+</section><section id="about-git-1" class="slide level2"><h2>About Git</h2>
+<p>Without vs.&nbsp;with Git changes</p>
+
+<img data-src="../media/lab_14/diy_vs_git.png" class="r-stretch"><div class="footer">
 <p><a href="https://happygitwithr.com/big-picture#why-git">Happy Git with R: Why Git</a> and <a href="https://peerj.com/preprints/3159v2/">Excuse me, do you have a moment to talk about version control?</a></p>
 </div>
 </section><section id="about-github" class="slide level2"><h2>About GitHub</h2>
-<p>What is GitHub?</p>
-<p>Why GitHub</p>
+<p>GitHub is a helpful <strong>user interface</strong> to Git (similar to how RStudio is a user interface to R) and provides a <strong>hosting service</strong> for our projects.</p>
+<div class="subpoint">
+<p>○ Allows other people to easily look at the files, suggest changes, sync up themselves.</p>
+</div>
+<div class="subpoint">
+<p>○ Offers controls of who can see and edit the project</p>
+</div>
+<p>If you do something silly to your files locally, you can always reset if you have been pushing to GitHub!</p>
+<div class="footer">
+<p><a href="https://happygitwithr.com/big-picture#why-github">Happy Git with R: Why GitHub</a> and <a href="https://peerj.com/preprints/3159v2/">Excuse me, do you have a moment to talk about version control?</a></p>
+</div>
+</section><section id="benefits-of-git-github" class="slide level2"><h2>Benefits of Git / GitHub</h2>
+<div class="footer">
+<p><a href="https://happygitwithr.com/big-picture#what-is-the-payoff">Happy Git with R: What is the payoff?</a> and <a href="https://peerj.com/preprints/3159v2/">Excuse me, do you have a moment to talk about version control?</a></p>
+</div>
 </section><section id="getting-started" class="slide level2"><h2>Getting Started</h2>
-<p>GitHub account</p>
+<p>In order to get all this working, we have a couple steps ahead of us:</p>
+<div class="subpoint">
+<p>○ Register for a GitHub account (free)</p>
+</div>
+<div class="subpoint">
+<p>○ Install Git</p>
+</div>
+<div class="subpoint">
+<p>○ Install a local Git client</p>
+</div>
+<div class="subsubpoint">
+<p>○ Will be a friendly interface to working with Git on our end</p>
+</div>
+<div class="subsubpoint">
+<p>○ An alternative is working on the command line</p>
+</div>
+<div class="subpoint">
+<p>○ Connect Git and RStudio</p>
+</div>
+<div class="subpoint">
+<p>○ Confirm we can interact with Git!</p>
+</div>
+<div class="subsubpoint">
+<p>○ We can create a practice repository to do this</p>
+</div>
+<div class="footer">
+<p><a href="https://happygitwithr.com/big-picture#is-it-going-to-hurt">Happy Git with R: Is it going to hurt?</a> and <a href="https://peerj.com/preprints/3159v2/">Excuse me, do you have a moment to talk about version control?</a></p>
+</div>
+</section><section id="i.-github-account" class="slide level2"><h2>I. GitHub Account</h2>
+<p>Create an account on <a href="https://github.com/" target="_blank">github.com</a></p>
+<p>Jenny Bryan’s advice on usernames (paraphrased):</p>
+<div class="blockquote">
+<ul>
+<li><p>Incorporate your actual name! People like to know who they’re dealing with. Also makes your username easier for people to guess or remember.</p></li>
+<li><p>Reuse your username from other contexts, e.g., Twitter or Slack.</p></li>
+<li><p>Pick a username you will be comfortable revealing to your future boss.</p></li>
+<li><p>Shorter is better than longer.</p></li>
+<li><p>Make it timeless. Don’t highlight your current university, employer, or place of residence, e.g.&nbsp;JennyFromTheBlock.</p></li>
+<li><p>Avoid the use of upper vs.&nbsp;lower case to separate words. We highly recommend all lowercase. A better strategy for word separation is to use a hyphen -.</p></li>
+</ul>
+</div>
+<p>You can always change your username later.</p>
+<div class="footer">
+<p><a href="https://happygitwithr.com/github-acct#github-acct">Happy Git with R: Register a GitHub Account</a></p>
+</div>
+</section><section id="ii.-install-git" class="slide level2"><h2>II. Install Git</h2>
+<p>Do you have Git already? Check in the RStudio Terminal.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<pre><code>which git
+## /usr/bin/git</code></pre>
+</div><div class="column" style="width:50%;">
+<pre><code>git --version
+## git version 2.50.1</code></pre>
+</div></div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="windows">Windows</h3>
+<p>Install <a href="https://git-for-windows.github.io/">Git for Windows</a></p>
+<div class="blockquote">
+<p><strong>NOTE</strong>: When asked about “Adjusting your PATH environment”, make sure to select “Git from the command line and also from 3rd-party software”. Otherwise, we believe it is good to accept the defaults.</p>
+<p>Note that RStudio for Windows prefers for Git to be installed below C:/Program Files and this appears to be the default. This implies, for example, that the Git executable on my Windows system is found at C:/Program Files/Git/bin/git.exe. Unless you have specific reasons to otherwise, follow this convention.</p>
+</div>
+</div><div class="column" style="width:50%;">
+<h3 id="macos">macOS</h3>
+<p>Go to the shell (Terminal) and enter these commands:</p>
+<pre><code>git --version
+git config</code></pre>
+<p>Click “Install”</p>
+</div></div>
+<div class="footer">
+<p><a href="https://happygitwithr.com/install-git#install-git">Happy Git with R: Install Git</a></p>
+</div>
+</section><section id="iii.-introduce-yourself-to-git" class="slide level2"><h2>III. Introduce Yourself to Git</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="in-the-shell">In the Shell</h3>
+<pre><code>git config --global user.name "Jane Doe"
+git config --global user.email "jane@example.com"
+git config --global --list</code></pre>
+</div><div class="column" style="width:50%;">
+<h3 id="in-r">In R</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">## install.packages("usethis")</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://usethis.r-lib.org">usethis</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://usethis.r-lib.org/reference/use_git_config.html">use_git_config</a></span><span class="op">(</span>user.name <span class="op">=</span> <span class="st">"Jane Doe"</span>, user.email <span class="op">=</span> <span class="st">"jane@example.org"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div></div>
+<p><strong>Username</strong>: Can be your GitHub username, can also be your name</p>
+<p><strong>Email</strong>: <strong>Needs to be</strong> the same email you used for your GitHub account</p>
+<div class="footer">
+<p><a href="https://happygitwithr.com/hello-git#hello-git">Happy Git with R: Introduce yourself to Git</a></p>
+</div>
+<h3 id="iv.-install-a-git-client">IV. Install a Git Client</h3>
+<p>Having a user interface can be a smoother way of interacting with Git, especially when starting out.</p>
+<p>There are options, but I recommend (and use) <a href="https://www.gitkraken.com/">GitKraken</a>.</p>
+<div class="footer">
+<p><a href="https://happygitwithr.com/git-client">Happy Git with R: Install a Git client</a></p>
+</div>
+<h3 id="v.-get-everything-connected">V. Get Everything Connected</h3>
+<p>When we need to talk to a remote (e.g., on the Internet, including our own) GitHub repository, we need to include credentials that prove we are a specific GitHub user, allowed to do what we’re trying to do.</p>
+<div class="subpoint">
+<p>○ In the olden days, we could do this by entering our passwords. GitHub no longer considers password secure enough—so we just need to do a little fiddling to set these credentials up.</p>
+</div>
+<p>How do we do this? Two options:</p>
+<div class="subpoint">
+<p>○ <strong>HTTPS</strong>: recommended by <em>Happy Git with R</em>, what we are going to do</p>
+</div>
+<div class="subpoint">
+<p>○ <strong>SSH</strong>: an alternative method. Feel free to read more <a href="https://happygitwithr.com/ssh-keys">here</a></p>
+</div>
+<p>Instead of a password, we will use a <strong>Personal Access Token (PAT)</strong>. We will go to GitHub, ask it to generate a <strong>PAT</strong>, and then tell RStudio the <strong>PAT</strong> to connect RStudio with GitHub.</p>
+<div class="footer">
+<p><a href="https://happygitwithr.com/https-pat">Happy Git with R: Personal access token for HTTPS</a></p>
+</div>
+<h3 id="v.-get-everything-connected-1">V. Get Everything Connected</h3>
+<ol type="1">
+<li>Go to <a href="https://github.com/settings/tokens">https://github.com/settings/tokens</a> and click “Generate Token”</li>
+</ol>
+<p>From R, you could also do:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/github-token.html">create_github_token</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>In the settings, Jenny recommends selecting “repo,” “user,” and “workflow.”</p>
+<ol start="2" type="1">
+<li><p>Copy the generated PAT</p></li>
+<li><p>Set your Git credentials in R with the following code and pasting your PAT.</p></li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">gitcreds</span><span class="fu">::</span><span class="fu"><a href="https://gitcreds.r-lib.org/reference/gitcreds_get.html">gitcreds_set</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<pre><code>? Enter password or token: ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+-&gt; Adding new credentials...
+-&gt; Removing credentials from cache...
+-&gt; Done.</code></pre>
+<div class="footer">
+<p><a href="https://happygitwithr.com/https-pat">Happy Git with R: Personal access token for HTTPS</a></p>
+</div>
+<h3 id="vi.-connect-to-github">VI. Connect to GitHub</h3>
+<p>Let’s make sure we can <strong>push</strong> and <strong>pull</strong> from GitHub to our computer!</p>
+<ol type="1">
+<li>Let’s make a repo on GitHub</li>
+</ol>
+<div class="subpoint">
+<p>○ Repositories &gt; New</p>
+</div>
+<div class="blockquote">
+<p>How to fill this in:</p>
+<ul>
+<li><p>Repository template: No template.</p></li>
+<li><p>Repository name: myrepo or whatever you wish (we’ll delete this soon).</p></li>
+<li><p>Description: “Repository for testing my Git/GitHub setup” or similar. It’s nice to have something here, so you’ll see it appear in the README.</p></li>
+<li><p>Public.</p></li>
+<li><p>Initialize this repository with: Add a README file.</p></li>
+</ul>
+<p>Click the big green button that says “Create repository”.</p>
+<p>Now click the big green button that says “&lt;&gt; Code”.</p>
+<p>Copy a clone URL to your clipboard. If you’re taking our default advice, copy the HTTPS URL. But if you’re opting for SSH, then make sure to copy the SSH URL.</p>
+</div>
+<p>I recommend trying a public repo, but private is an option too.</p>
+<div class="footer">
+<p><a href="https://happygitwithr.com/push-pull-github">Happy Git with R: Connect to GitHub</a></p>
+</div>
+<h3 id="vi.-connect-to-github-1">VI. Connect to GitHub</h3>
+<ol start="2" type="1">
+<li>Clone the repo onto your computer</li>
+</ol>
+<p>This is like making our own, local version of this repository, which is currently empty with just a <code>README</code> file.</p>
+<div class="subpoint">
+<p>○ Copy the URL of the repository (e.g., <code>https://github.com/username/my-repo</code>)</p>
+</div>
+<div class="subpoint">
+<p>○ Open GitKraken, File &gt; Clone repo…</p>
+</div>
+<div class="subpoint">
+<p>○ Clone with URL</p>
+</div>
+<div class="subsubpoint">
+<p>○ Where to clone to: pick a location for a new folder on your computer. I’m going to do mine next to my <code>live-coding</code> folder for this class.</p>
+</div>
+<div class="subsubpoint">
+<p>○ URL: paste in the repository URL</p>
+</div>
+<div class="subpoint">
+<p>○ Clone the repo!</p>
+</div>
+<h3 id="vi.-connect-to-github-2">VI. Connect to GitHub</h3>
+<p>Let’s turn this newly-created folder into an R Project, like we made for this class.</p>
+<div class="subpoint">
+<p>○ Open RStudio, File &gt; New Project &gt; Existing Directory</p>
+</div>
+<div class="subpoint">
+<p>○ Navigate to the new repo folder</p>
+</div>
+<p>We now have <em>new files</em> in our <em>local</em> version of this repository: an .Rproj file, and a .gitignore file.</p>
+<p>Let’s get these onto the <strong>remote</strong> (GitHub’s version) of the repo.</p>
+<p>In RStudio, we can use the Git pane.</p>
+<div class="subpoint">
+<p>○ Check the “Staged” box next to each file</p>
+</div>
+<div class="subsubpoint">
+<p>○ This is telling RStudio which files we want to add to the remote</p>
+</div>
+<div class="subpoint">
+<p>○ Click the “Commit” button</p>
+</div>
+<div class="subsubpoint">
+<p>○ This is like putting all the added files into an envelope to send to Git</p>
+</div>
+<div class="subsubpoint">
+<p>○ Add a commit message: a short description of what is changing with this commit</p>
+</div>
+<div class="subsubpoint">
+<p>○ Click the “Commit” button</p>
+</div>
+<div class="subpoint">
+<p>○ Click the “Pull” button</p>
+</div>
+<div class="subsubpoint">
+<p>○ This is bringing down any new changes on the remote’s version. This is unnecessary in our example, because there’s no one else interacting with the remote. But, it’s a good habit to build for collaboration with Git.</p>
+</div>
+<div class="subsubpoint">
+<p>○ <code>Already up to date</code></p>
+</div>
+<div class="subpoint">
+<p>○ Click the “Push” button</p>
+</div>
+<div class="subsubpoint">
+<p>○ This is sending off our commit to the remote!</p>
+</div>
+<h3 id="vi.-connect-to-github-3">VI. Connect to GitHub</h3>
+<p>Let’s check the remote. Can we see the new files?</p>
+<p>We have successfully <strong>pushed</strong> our changes in the directory to the <strong>remote</strong>.</p>
+<p>Now we can practice <strong>pulling</strong> changes.</p>
+<p>Modify the <code>README.md</code> file by clicking the edit button (little pencil) on the website.</p>
+<p>Go back to RStudio, and click “Pull” to bring the changed <code>README.md</code> to your local version.</p>
+<p>We have now finished setup :)</p>
+</section><section id="whats-next" class="slide level2"><h2>What’s Next?</h2>
+<p>We have successfully been able to edit files and <strong>push</strong> / <strong>pull</strong> them to / from GitHub.</p>
+<p>We will now do this with Quarto files, so we can have a live-hosted Quarto website on our GitHub page!</p>
+<p>We will practice pushing and pulling (mostly pushing) to / from Git throughout our process of creating the website.</p>
+</section><section id="appendix-from-local-to-git" class="slide level2"><h2>Appendix: From Local to Git</h2>
+<p>Generally, starting a project by creating a repo on Git and then adding files is a smooth way to work.</p>
+<p>But, you may have an existing project on your computer and want to now host it on GitHub.</p>
+<p>This matches the <a href="https://happygitwithr.com/existing-github-last">“Existing project, GitHub last”</a> page in the <a href="https://happygitwithr.com/">Happy Git with R</a> book. Refer to it for how to implement this!</p>
+<div class="footer">
+<p><a href="https://happygitwithr.com/existing-github-last">Happy Git with R: “Existing project, GitHub last</a></p>
+</div>
 </section></section><section><section id="quarto-websites-1" class="title-slide slide level1 center"><h1>Quarto Websites</h1>
 
 </section><section id="quarto-websites-2" class="slide level2"><h2>Quarto Websites</h2>
@@ -192,10 +530,139 @@ Jess Helmer
 <p>By default, will have navigation features set up to help move throughout your website.</p>
 <p>Why website instead of a document?</p>
 <p>Websites allow you to have more than one page. You can have a website with just one page if you want, and then you will always have the flexibility of adding more (e.g., a new analysis, a Quarto slide deck for a presentation)</p>
-</section></section><section id="quarto-on-github" class="title-slide slide level1 center"><h1>Quarto on GitHub</h1>
+<div class="footer">
+<p><a href="https://quarto.org/docs/websites/">Quarto Websites</a></p>
+</div>
+</section><section id="quarto-website-examples" class="slide level2"><h2>Quarto Website Examples</h2>
+<p>Small gallery of 2–3 Quarto websites. One being the class site.</p>
+</section><section id="creating-a-website" class="slide level2"><h2>Creating a Website</h2>
+<p>Let’s turn our newly created Git repository into a Quarto website.</p>
+<p>One way to create a Quarto website is in RStudio, File &gt; New Project &gt; New Directory &gt; Quarto Website</p>
+<p>But we already have a directory—our local version of the Git repo!</p>
+<p>Luckily, all we need is two things: a Quarto file named <code>index.qmd</code> (to be our “homepage”), and a config file named <code>_quarto.yml</code> (this just tells Quarto to render as a website! And, we can specify settings for the whole site).</p>
+<div class="footer">
+<p><a href="https://quarto.org/docs/websites/">Quarto Websites: Creating a Website</a></p>
+</div>
+</section><section id="creating-a-website-1" class="slide level2"><h2>Creating a Website</h2>
+<p>Let’s add a Quarto document <code>index.qmd</code>, like we’ve made Quarto documents before.</p>
+<p>Next, let’s create the <code>_quarto.yml</code> file. To do this, I usually click File &gt; New File &gt; Text File, and then save it and type in the name with the file extension specified.</p>
+<div class="subpoint">
+<p>○ Check the Files pane to make sure it did not add <code>.txt</code></p>
+</div>
+<p>Now, our config file needs some stuff. I usually go to the <a href="https://quarto.org/docs/websites/">Quarto Websites</a> page and copy the default config file, provided under <a href="https://quarto.org/docs/websites/#config-file">Config File</a>.</p>
+</section><section id="default-config-file" class="slide level2"><h2>Default Config File</h2>
+<p>I’ve also included the default config file here.</p>
+<div>
+<iframe src="https://quarto.org/docs/websites/#config-file"></iframe>
+</div>
+<div class="footer">
+<p><a href="https://quarto.org/docs/websites/#config-file">Quarto Websites: Config File</a>0Regression%20Diagnostics/Lecture%2027%20Regression%20Diagnostics.html#/multicolinearity) accessed on 2026-11-19.</p>
+</div>
+</section><section id="creating-a-website-2" class="slide level2"><h2>Creating a Website</h2>
+<p>Now let’s render our site. The top right says “today”, and the “about.qmd” link does nothing. These are things we can adjust in our <code>_quarto.yml</code> or fix by adding a new page!</p>
+<p>Changing title to “My Website”</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>_quarto.yml</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" data-filename="_quarto.yml"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span></span>
+<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> website</span></span>
+<span id="cb9-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">website</span><span class="kw">:</span></span>
+<span id="cb9-5"><a aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">"My Website"</span></span>
+<span id="cb9-6"><a aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">navbar</span><span class="kw">:</span></span>
+<span id="cb9-7"><a aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">left</span><span class="kw">:</span></span>
+<span id="cb9-8"><a aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">href</span><span class="kw">:</span><span class="at"> index.qmd</span></span>
+<span id="cb9-9"><a aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">text</span><span class="kw">:</span><span class="at"> Home</span></span>
+<span id="cb9-10"><a aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> about.qmd</span></span>
+<span id="cb9-11"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a aria-hidden="true" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb9-13"><a aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
+<span id="cb9-14"><a aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cosmo</span></span>
+<span id="cb9-15"><a aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> styles.css</span></span>
+<span id="cb9-16"><a aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><code>navbar</code> is specifying Navigation Bar settings, and <code>left</code> means it is located on the top-left of the page.</p>
+<p><code>- href</code> is specifying a link to a page with the <strong>path</strong> to that file from the project root. By default, it uses the <code>title</code> specified in the Quarto document’s YAML.</p>
+<p>You can manually specify a title putting <code>text: New Title</code> below the link (<code>href</code>).</p>
+<p>See more about navigation at <a href="https://quarto.org/docs/websites/website-navigation.html">Quarto Websites: Website Navigation</a></p>
+<p>We don’t have an <code>about.qmd</code> right now, but we can create one!</p>
+</div></div>
+</section><section id="next-steps" class="slide level2"><h2>Next Steps</h2>
+<p>We have successfully created a Quarto website that has a couple pages.</p>
+<p>You don’t need to wait until your website is fully set-up to start pushing things to Git.</p>
+<p>It’s good practice to “commit early and often.”</p>
+<p>Now, let’s get our website onto GitHub!!!</p>
+</section></section><section><section id="quarto-on-github" class="title-slide slide level1 center"><h1>Quarto on GitHub</h1>
+
+</section><section id="quarto-on-github-1" class="slide level2"><h2>Quarto on GitHub</h2>
+<p>The Quarto docs provide excellent documentation on hosting your website on GitHub at <a href="https://quarto.org/docs/publishing/github-pages.html" target="_blank">Publishing: GitHub Pages</a>.</p>
+<p>GitHub Pages is GitHub’s website hosting service. It is free, and compatible with hosting HTML pages made from Quarto!</p>
+<p>We will follow its instructions (publishing way 1) together.</p>
+<div class="subpoint">
+<p>○ I refer back to these instructions just about every time I’m putting a Quarto website online. There’s no need to memorize any of this.</p>
+</div>
+</section><section id="render-to-docs" class="slide level2"><h2>Render to <code>docs</code>
+</h2>
+<p>So far, when we render our Quarto documents, the outputted HTML any any files (those little <code>page_files</code> folders) go into the <em>same directory</em> as the Quarto document.</p>
+<p>For websites, it can be helpful to keep the <strong>source</strong> and the <strong>output</strong> separate: so GitHub Pages knows what to use as the actual website content (the rendered HTML, not the Quarto source code).</p>
+<p>We will modify our <code>_quarto.yml</code> to use <code>docs</code> as the <code>output-dir</code>.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>_quarto.yml</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" data-filename="_quarto.yml"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span></span>
+<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> website</span></span>
+<span id="cb10-3"><a aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">output-dir</span><span class="kw">:</span><span class="at"> docs</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:50%;">
+<p>And now we can rerender our site. The HTML files will all go into a <code>docs</code> folder, and we can delete the old <code>page_files</code> folders in the main directory.</p>
+</div></div>
+</section><section id="last-details" class="slide level2"><h2>Last Details</h2>
+<p>GitHub Pages (by default) will do additional processing of the HTML we ask it to host via Jekyll (GitHub Pages’ default website-creation tool).</p>
+<p>We can ask it not do this by adding a file <code>.nojekyll</code>.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="windows-1">Windows</h3>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>Terminal</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" data-filename="Terminal"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> .nojekyll</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:50%;">
+<h3 id="macos-1">macOS</h3>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>Terminal</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" data-filename="Terminal"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">copy</span> NUL .nojekyll</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div></div>
+<p>Now, let’s get all these changes onto the remote repository!</p>
+</section><section id="using-gitkraken" class="slide level2"><h2>Using GitKraken</h2>
+<p>So far, we’ve used RStudio’s Git pane, but GitKraken is a nicer way of interacting with Git.</p>
+<p>When you open the folder in GitKraken (may already be open from cloning), you can see all the commits made so far.</p>
+<p>You can stage changes one-by-one (like clicking the checkbox in RStudio), or Stage All Changes.</p>
+<p>Add a commit message, and commit.</p>
+<p>Pull, push.</p>
+</section><section id="hosting-the-website" class="slide level2"><h2>Hosting the Website</h2>
+<p>We now should be able to see all the changes (<code>.qmd</code> files, <code>docs</code> folder, etc.) on the online version of the repository. Let’s now get the website content rendering as webpages!</p>
+<p>In the repository, go to Settings &gt; Pages. Under Branch, switch <code>None</code> to <code>main</code>. Then, switch <code>/ (root)</code> to <code>/docs</code> and click Save. This tells GitHub Pages host use the HTML in the <code>docs</code> folder.</p>
+<p>You should see “Your GitHub Pages site is currently being built from the /docs folder in the main branch.”</p>
+<p>After a minute or two, refresh the page. You should see Your site is live at URL.</p>
+<p>Go to that URL! Your site is now live on the internet. Anyone with that link will be able to view the content.</p>
+</section><section id="adding-to-our-website" class="slide level2"><h2>Adding to Our Website</h2>
+<p>Let’s also add an <code>analysis.qmd</code> document that has some brief analyses of the <code>palmerpenguins</code> data and render.</p>
+<p>Then, let’s commit and push those changes to get our analysis live on GitHub!</p>
 
 
-</section>
+</section></section>
 </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
