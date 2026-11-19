@@ -182,131 +182,131 @@ predict(m1) |>
 ::::
 
 
-## Model Predictions
+<!-- ## Model Predictions -->
 
-What are the predicted outcome values for each datapoint in our dataset?
+<!-- What are the predicted outcome values for each datapoint in our dataset? -->
 
-Comparing the density distribution of predicted values to observed values.
+<!-- Comparing the density distribution of predicted values to observed values. -->
 
-:::: {.columns}
-::: {.column width="50%"}
-### Legend-Based
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- ### Legend-Based -->
 
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-penguins_cleaned |>
-  mutate(predicted_y = predict(m1)) |>
-  pivot_longer(c(predicted_y, body_mass_g),
-               names_to = "type", values_to = "body_mass_g") |>
-  mutate(type = replace_values(
-    type,
-    "predicted_y" ~ "predicted",
-    "body_mass_g" ~ "observed"
-  )) |>
-  ggplot(aes(x = body_mass_g, fill = type, color = type)) +
-  geom_density(alpha = 0.4) +
-  guides(x = guide_axis("Body Mass (g)", cap = T),
-         y = guide_none("Density")) +
-  scale_color_discrete("Type", 
-                       palette = "Set2", 
-                       aesthetics = c("color", "fill")) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-```
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 5 -->
+<!-- #| fig-height: 4 -->
+<!-- #| fig-align: center -->
+<!-- penguins_cleaned |> -->
+<!--   mutate(predicted_y = predict(m1)) |> -->
+<!--   pivot_longer(c(predicted_y, body_mass_g), -->
+<!--                names_to = "type", values_to = "body_mass_g") |> -->
+<!--   mutate(type = replace_values( -->
+<!--     type, -->
+<!--     "predicted_y" ~ "predicted", -->
+<!--     "body_mass_g" ~ "observed" -->
+<!--   )) |> -->
+<!--   ggplot(aes(x = body_mass_g, fill = type, color = type)) + -->
+<!--   geom_density(alpha = 0.4) + -->
+<!--   guides(x = guide_axis("Body Mass (g)", cap = T), -->
+<!--          y = guide_none("Density")) + -->
+<!--   scale_color_discrete("Type",  -->
+<!--                        palette = "Set2",  -->
+<!--                        aesthetics = c("color", "fill")) + -->
+<!--   theme_classic() + -->
+<!--   theme(legend.position = "bottom") -->
+<!-- ``` -->
 
-### Code
-```{r}
-#| eval: false
-penguins_cleaned |>
-  mutate(predicted_y = predict(m1)) |>
-  pivot_longer(c(predicted_y, body_mass_g),
-               names_to = "type", values_to = "body_mass_g") |>
-  mutate(type = replace_values(
-    type,
-    "predicted_y" ~ "predicted",
-    "body_mass_g" ~ "observed"
-  )) |>
-  ggplot(aes(x = body_mass_g, fill = type, color = type)) +
-  geom_density(alpha = 0.4) +
-  guides(x = guide_axis("Body Mass (g)", cap = T),
-         y = guide_none("Density")) +
-  scale_color_discrete("Type", 
-                       palette = "Set2", 
-                       aesthetics = c("color", "fill")) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-```
-:::
-:::
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- penguins_cleaned |> -->
+<!--   mutate(predicted_y = predict(m1)) |> -->
+<!--   pivot_longer(c(predicted_y, body_mass_g), -->
+<!--                names_to = "type", values_to = "body_mass_g") |> -->
+<!--   mutate(type = replace_values( -->
+<!--     type, -->
+<!--     "predicted_y" ~ "predicted", -->
+<!--     "body_mass_g" ~ "observed" -->
+<!--   )) |> -->
+<!--   ggplot(aes(x = body_mass_g, fill = type, color = type)) + -->
+<!--   geom_density(alpha = 0.4) + -->
+<!--   guides(x = guide_axis("Body Mass (g)", cap = T), -->
+<!--          y = guide_none("Density")) + -->
+<!--   scale_color_discrete("Type",  -->
+<!--                        palette = "Set2",  -->
+<!--                        aesthetics = c("color", "fill")) + -->
+<!--   theme_classic() + -->
+<!--   theme(legend.position = "bottom") -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
 
-::: {.column width="50%"}
-### Direct Labels
+<!-- ::: {.column width="50%"} -->
+<!-- ### Direct Labels -->
 
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-penguins_cleaned |>
-  mutate(predicted_y = predict(m1)) |>
-  pivot_longer(c(predicted_y, body_mass_g),
-               names_to = "type", values_to = "body_mass_g") |>
-  mutate(type = replace_values(
-    type,
-    "predicted_y" ~ "predicted",
-    "body_mass_g" ~ "observed"
-  )) |>
-  ggplot(aes(x = body_mass_g, fill = type, color = type)) +
-  geom_density(alpha = 0.4, color = NA, show.legend = FALSE) +
-  geomtextpath::geom_textdensity(
-    aes(label = type),
-    hjust = 0.35,
-    fontface = "bold",
-    show.legend = FALSE
-  ) +
-  guides(x = guide_axis("Body Mass (g)", cap = TRUE),
-         y = guide_none("Density")) +
-  scale_color_discrete(palette = "Set2",
-                       aesthetics = c("color", "fill")) +
-  theme_classic()
-```
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 5 -->
+<!-- #| fig-height: 4 -->
+<!-- #| fig-align: center -->
+<!-- penguins_cleaned |> -->
+<!--   mutate(predicted_y = predict(m1)) |> -->
+<!--   pivot_longer(c(predicted_y, body_mass_g), -->
+<!--                names_to = "type", values_to = "body_mass_g") |> -->
+<!--   mutate(type = replace_values( -->
+<!--     type, -->
+<!--     "predicted_y" ~ "predicted", -->
+<!--     "body_mass_g" ~ "observed" -->
+<!--   )) |> -->
+<!--   ggplot(aes(x = body_mass_g, fill = type, color = type)) + -->
+<!--   geom_density(alpha = 0.4, color = NA, show.legend = FALSE) + -->
+<!--   geomtextpath::geom_textdensity( -->
+<!--     aes(label = type), -->
+<!--     hjust = 0.35, -->
+<!--     fontface = "bold", -->
+<!--     show.legend = FALSE -->
+<!--   ) + -->
+<!--   guides(x = guide_axis("Body Mass (g)", cap = TRUE), -->
+<!--          y = guide_none("Density")) + -->
+<!--   scale_color_discrete(palette = "Set2", -->
+<!--                        aesthetics = c("color", "fill")) + -->
+<!--   theme_classic() -->
+<!-- ``` -->
 
-### Code
-```{r}
-#| eval: false
-penguins_cleaned |>
-  mutate(predicted_y = predict(m1)) |>
-  pivot_longer(c(predicted_y, body_mass_g),
-               names_to = "type", values_to = "body_mass_g") |>
-  mutate(type = replace_values(
-    type,
-    "predicted_y" ~ "predicted",
-    "body_mass_g" ~ "observed"
-  )) |>
-  ggplot(aes(x = body_mass_g, fill = type, color = type)) +
-  geom_density(alpha = 0.4, color = NA, show.legend = FALSE) +
-  geomtextpath::geom_textdensity(
-    aes(label = type),
-    hjust = 0.35,
-    fontface = "bold",
-    show.legend = FALSE
-  ) +
-  guides(x = guide_axis("Body Mass (g)", cap = TRUE),
-         y = guide_none("Density")) +
-  scale_color_discrete(palette = "Set2",
-                       aesthetics = c("color", "fill")) +
-  theme_classic()
-```
-:::
-:::
-::::
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- penguins_cleaned |> -->
+<!--   mutate(predicted_y = predict(m1)) |> -->
+<!--   pivot_longer(c(predicted_y, body_mass_g), -->
+<!--                names_to = "type", values_to = "body_mass_g") |> -->
+<!--   mutate(type = replace_values( -->
+<!--     type, -->
+<!--     "predicted_y" ~ "predicted", -->
+<!--     "body_mass_g" ~ "observed" -->
+<!--   )) |> -->
+<!--   ggplot(aes(x = body_mass_g, fill = type, color = type)) + -->
+<!--   geom_density(alpha = 0.4, color = NA, show.legend = FALSE) + -->
+<!--   geomtextpath::geom_textdensity( -->
+<!--     aes(label = type), -->
+<!--     hjust = 0.35, -->
+<!--     fontface = "bold", -->
+<!--     show.legend = FALSE -->
+<!--   ) + -->
+<!--   guides(x = guide_axis("Body Mass (g)", cap = TRUE), -->
+<!--          y = guide_none("Density")) + -->
+<!--   scale_color_discrete(palette = "Set2", -->
+<!--                        aesthetics = c("color", "fill")) + -->
+<!--   theme_classic() -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- :::: -->
 
 
 ## Model Predictions
