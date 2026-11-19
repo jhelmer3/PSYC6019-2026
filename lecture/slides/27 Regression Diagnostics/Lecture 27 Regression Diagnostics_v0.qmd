@@ -196,7 +196,7 @@ arrow_svg <- function(x0, y0, x1, y1, color, len = 18, half_w = 8) {
 
 ## Categorical Predictors
 
-::: {style="font-size: 0.825em;"}
+::: {style="font-size: 0.775em;"}
 
 So far, we have discussed regression with continuous predictors
 
@@ -337,19 +337,19 @@ Example:
 
 Regression model:
 
-$$\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3x_3$$
+$$\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3x_3 + b_4\text{age}$$
 
 ::::: columns
 
 :::: column
 
-* Control: $\hat{y} = b_0$
+* Control: $\hat{y} = b_0+ b_4\text{age}$ 
 
-* Drug: $\hat{y} = b_0 + b_1x_1$
+* Drug: $\hat{y} = b_0 + b_1x_1+ b_4\text{age}$
 
-* Therapy: $\hat{y} = b_0 + b_2x_2$
+* Therapy: $\hat{y} = b_0 + b_2x_2+ b_4\text{age}$
 
-* D + T: $\hat{y} = b_0 + b_3x_3$
+* D + T: $\hat{y} = b_0 + b_3x_3+ b_4\text{age}$
 
 ::::
 
@@ -368,10 +368,10 @@ $$\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3x_3$$
 
 Interpretation:
 
-* $b_0$: predicted $\hat{y}$ for control group
-* $b_1$: difference in $\hat{y}$ between (drug) and (control)
-* $b_2$: difference in $\hat{y}$ between (therapy) and (control)
-* $b_3$: difference in $\hat{y}$ between (drug + therapy) and (control)
+* $b_0 + b_4\text{age}$: predicted $\hat{y}$ for control group
+* $b_1 + b_4\text{age}$: difference in $\hat{y}$ between (drug) and (control) holding age constant
+* $b_2 + b_4\text{age}$: difference in $\hat{y}$ between (therapy) and (control) holding age constant
+* $b_3 + b_4\text{age}$: difference in $\hat{y}$ between (drug + therapy) and (control) holding age constant
 
 <!-- Cool side effect: $x_1$, $x_2$, and $x_3$ are uncorrelated! -->
 
@@ -416,17 +416,17 @@ For example:
 
 Regression model:
 
-$$\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3x_3$$
+$$\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3x_3 + b_4\text{age}$$
 
 Interpretation:
 
-* $b_0$: grand mean of $y$
+* $b_0 + b_4\text{age}$: predicted mean of $y$ at for a given age
 
-* $b_1$: difference in $\hat{y}$ between drug and grand mean
+* $b_1$: difference in $\hat{y}$ between drug and mean $y$ holding age constant
 
-* $b_2$: difference in $\hat{y}$ between therapy and grand mean
+* $b_2$: difference in $\hat{y}$ between therapy and mean $y$ holding age constant
 
-* $b_3$: difference in $\hat{y}$ between (drug + therapy) and grand mean
+* $b_3$: difference in $\hat{y}$ between (drug + therapy) and mean $y$ holding age constant
 
 Omnibus test of $R^2$ is equivalent to simultaneously testing main effects in ANOVA
 
