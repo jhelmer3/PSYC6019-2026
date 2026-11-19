@@ -64,28 +64,34 @@ $$y_i = \beta_0 \, + \, \beta_1 x_{1i} \, + \, \beta_2 x_{2i} \, + \, ... \, + \
 ```{r}
 library(palmerpenguins)
 
-m1 <- lm(body_mass_g ~ bill_length_mm, data = penguins) 
+m1 <- lm(body_mass_g ~ bill_depth_mm, data = penguins) 
 summary(m1)
 ```
 :::
 
 ::: {.column width="50%"}
-The estimated penguin body mass when bill length is zero is `r coef(m1)["(Intercept)"] |> round(2)`.
+The estimated penguin body mass when bill depth is zero is `r coef(m1)["(Intercept)"] |> round(2)`.
 
-An increase in 1 mm in bill length is associated with an `r coef(m1)["bill_length_mm"] |> round(2)` g increase in body mass.
+An increase in 1 mm in bill depth is associated with an `r coef(m1)["bill_depth_mm"] |> round(2)` g increase in body mass.
 :::
 ::::
 
 
 ## Standardizing
 
+::: {style="font-size:80%"}
 ```{r}
 penguins_cleaned <- penguins |>
-  filter_out(when_any(is.na(bill_length_mm), is.na(bill_depth_mm), 
-                      is.na(flipper_length_mm), is.na(body_mass_g))) |>
-    mutate(across(ends_with("_mm"), function(col) (col - mean(col)) / sd(col)))
+  drop_na(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g) |>
+  mutate(
+    across(
+      ends_with("_mm"), 
+      function(col) (col - mean(col)) / sd(col), 
+      .names = "{.col}_z")
+    )
 penguins_cleaned
 ```
+:::
 
 
 ## Simple Regression
@@ -93,15 +99,385 @@ penguins_cleaned
 :::: {.columns}
 ::: {.column width="50%"}
 ```{r}
-m1 <- lm(body_mass_g ~ bill_length_mm, data = penguins_cleaned) 
+m1 <- lm(body_mass_g ~ bill_depth_mm_z, 
+         data = penguins_cleaned) 
 summary(m1)
 ```
 :::
 
 ::: {.column width="50%"}
-The estimated penguin body mass for penguins with average bill length is `r coef(m1)["(Intercept)"] |> round(2)`.
+The estimated penguin body mass for penguins with average bill depth is `r coef(m1)["(Intercept)"] |> round(2)`.
 
-An increase in 1 SD in bill length is associated with an `r coef(m1)["bill_length_mm"] |> round(2)` g increase in body mass.
+An increase in 1 SD in bill depth is associated with an `r coef(m1)["bill_depth_mm_z"] |> round(2)` g increase in body mass.
+:::
+::::
+
+
+## Model Predictions
+
+Once we've fitted the model, we can examine the model **predictions**.
+
+::: subpoint
+○ What are the predicted outcome values for each datapoint in our dataset?
+:::
+
+::: subsubpoint
+○ Plugging in each observations' predictor values into the fitted regression equation.
+:::
+
+::: subpoint
+○ What are the predicted outcome values new possible datapoints?
+:::
+
+::: subsubpoint
+○ Plugging in some possible predictor values for theoretical new datapoints.
+:::
+
+::: subsubpoint
+○ Can be a helpful way of examining the model implications.
+:::
+
+
+## Model Predictions
+
+What are the predicted outcome values for each datapoint in our dataset?
+
+:::: {.columns style="font-size:85%"}
+::: {.column width="50%"}
+```{r}
+gtsummary::tbl_regression(m1, intercept = T)
+```
+
+$\hat{\text{body mass}_i} = -378 (\text{bill depth}_i)$
+:::
+
+::: {.column width="50%"}
+Now that we have estimated these regression coefficients, what if we plug back in each datapoints' predictor values to get predicted outcome values?
+
+```{r}
+penguins_cleaned |>
+  select(bill_depth_mm) |>
+  head(2)
+```
+
+:::
+::::
+
+`fitted.values()` and `predict()` will each extract these predicted values for you into a vector with a predicted value for each row in the dataset.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+fitted.values(m1) |>
+  head()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+predict(m1) |>
+  head()
+```
+:::
+::::
+
+
+<!-- ## Model Predictions -->
+
+<!-- What are the predicted outcome values for each datapoint in our dataset? -->
+
+<!-- Comparing the density distribution of predicted values to observed values. -->
+
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- ### Legend-Based -->
+
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 5 -->
+<!-- #| fig-height: 4 -->
+<!-- #| fig-align: center -->
+<!-- penguins_cleaned |> -->
+<!--   mutate(predicted_y = predict(m1)) |> -->
+<!--   pivot_longer(c(predicted_y, body_mass_g), -->
+<!--                names_to = "type", values_to = "body_mass_g") |> -->
+<!--   mutate(type = replace_values( -->
+<!--     type, -->
+<!--     "predicted_y" ~ "predicted", -->
+<!--     "body_mass_g" ~ "observed" -->
+<!--   )) |> -->
+<!--   ggplot(aes(x = body_mass_g, fill = type, color = type)) + -->
+<!--   geom_density(alpha = 0.4) + -->
+<!--   guides(x = guide_axis("Body Mass (g)", cap = T), -->
+<!--          y = guide_none("Density")) + -->
+<!--   scale_color_discrete("Type",  -->
+<!--                        palette = "Set2",  -->
+<!--                        aesthetics = c("color", "fill")) + -->
+<!--   theme_classic() + -->
+<!--   theme(legend.position = "bottom") -->
+<!-- ``` -->
+
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- penguins_cleaned |> -->
+<!--   mutate(predicted_y = predict(m1)) |> -->
+<!--   pivot_longer(c(predicted_y, body_mass_g), -->
+<!--                names_to = "type", values_to = "body_mass_g") |> -->
+<!--   mutate(type = replace_values( -->
+<!--     type, -->
+<!--     "predicted_y" ~ "predicted", -->
+<!--     "body_mass_g" ~ "observed" -->
+<!--   )) |> -->
+<!--   ggplot(aes(x = body_mass_g, fill = type, color = type)) + -->
+<!--   geom_density(alpha = 0.4) + -->
+<!--   guides(x = guide_axis("Body Mass (g)", cap = T), -->
+<!--          y = guide_none("Density")) + -->
+<!--   scale_color_discrete("Type",  -->
+<!--                        palette = "Set2",  -->
+<!--                        aesthetics = c("color", "fill")) + -->
+<!--   theme_classic() + -->
+<!--   theme(legend.position = "bottom") -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+<!-- ### Direct Labels -->
+
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 5 -->
+<!-- #| fig-height: 4 -->
+<!-- #| fig-align: center -->
+<!-- penguins_cleaned |> -->
+<!--   mutate(predicted_y = predict(m1)) |> -->
+<!--   pivot_longer(c(predicted_y, body_mass_g), -->
+<!--                names_to = "type", values_to = "body_mass_g") |> -->
+<!--   mutate(type = replace_values( -->
+<!--     type, -->
+<!--     "predicted_y" ~ "predicted", -->
+<!--     "body_mass_g" ~ "observed" -->
+<!--   )) |> -->
+<!--   ggplot(aes(x = body_mass_g, fill = type, color = type)) + -->
+<!--   geom_density(alpha = 0.4, color = NA, show.legend = FALSE) + -->
+<!--   geomtextpath::geom_textdensity( -->
+<!--     aes(label = type), -->
+<!--     hjust = 0.35, -->
+<!--     fontface = "bold", -->
+<!--     show.legend = FALSE -->
+<!--   ) + -->
+<!--   guides(x = guide_axis("Body Mass (g)", cap = TRUE), -->
+<!--          y = guide_none("Density")) + -->
+<!--   scale_color_discrete(palette = "Set2", -->
+<!--                        aesthetics = c("color", "fill")) + -->
+<!--   theme_classic() -->
+<!-- ``` -->
+
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- penguins_cleaned |> -->
+<!--   mutate(predicted_y = predict(m1)) |> -->
+<!--   pivot_longer(c(predicted_y, body_mass_g), -->
+<!--                names_to = "type", values_to = "body_mass_g") |> -->
+<!--   mutate(type = replace_values( -->
+<!--     type, -->
+<!--     "predicted_y" ~ "predicted", -->
+<!--     "body_mass_g" ~ "observed" -->
+<!--   )) |> -->
+<!--   ggplot(aes(x = body_mass_g, fill = type, color = type)) + -->
+<!--   geom_density(alpha = 0.4, color = NA, show.legend = FALSE) + -->
+<!--   geomtextpath::geom_textdensity( -->
+<!--     aes(label = type), -->
+<!--     hjust = 0.35, -->
+<!--     fontface = "bold", -->
+<!--     show.legend = FALSE -->
+<!--   ) + -->
+<!--   guides(x = guide_axis("Body Mass (g)", cap = TRUE), -->
+<!--          y = guide_none("Density")) + -->
+<!--   scale_color_discrete(palette = "Set2", -->
+<!--                        aesthetics = c("color", "fill")) + -->
+<!--   theme_classic() -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- :::: -->
+
+
+## Model Predictions
+
+What are the predicted outcome values new possible datapoints?
+
+:::: {.columns style="font-size:85%"}
+::: {.column width="50%"}
+```{r}
+gtsummary::tbl_regression(m1, intercept = T)
+```
+
+$\hat{\text{body mass}_i} = -378 (\text{bill depth}_i)$
+
+:::
+
+::: {.column width="50%"}
+Examining model predictions for theoretical new datapoints can be a way of exploring model implications.
+
+With other predictors at their average ($x = 0$ because standardized), how does the predicted outcome change with increases in bill length?
+
+```{r}
+new_data <- tibble(
+  bill_depth_mm_z = seq(-3, 3, by = 1)
+)
+new_data
+```
+
+:::
+::::
+
+
+## Model Predictions
+
+What are the predicted outcome values new possible datapoints?
+
+`predict()` will calculate predicted values on new possible datapoints for you into a vector with a predicted value for each row in the new dataset. Needs the `newdata` argument to be a `data.frame` or `tibble` with column names matching the predictor values.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+predictions <- predict(m1, newdata = new_data)
+predictions
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+predicted_data <- tibble(
+  bill_depth_mm_z = seq(-3, 3, by = 1)
+) |>
+  mutate(
+    predicted_y = predict(
+      m1, 
+      newdata = tibble(bill_depth_mm_z))
+  )
+predicted_data
+```
+:::
+::::
+
+
+## Model Predictions
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+predicted_data |>
+  ggplot(aes(x = bill_depth_mm_z, y = predicted_y)) +
+  geom_point(
+    data = penguins_cleaned,
+    aes(y = body_mass_g)
+  ) +
+  geom_line()
+```
+
+### Code
+```{r}
+#| eval: false
+predicted_data |>
+  ggplot(aes(x = bill_depth_mm_z, y = predicted_y)) +
+  geom_point(
+    data = penguins_cleaned,
+    aes(y = body_mass_g)
+  ) +
+  geom_line()
+```
+:::
+
+
+
+## Predictions with `ggpredict()`
+
+The `ggpredict()` function from the `ggeffects` package can do this for us!
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+ggeffects::ggpredict(m1, terms = c("bill_depth_mm_z")) |>
+  plot() +
+  geom_point(
+    data = penguins_cleaned,
+    aes(x = bill_depth_mm_z, y = body_mass_g)
+  )
+```
+
+### Code
+```{r}
+#| eval: false
+ggeffects::ggpredict(m1, terms = c("bill_depth_mm_z")) |>
+  plot() +
+  geom_point(
+    data = penguins_cleaned,
+    aes(x = bill_depth_mm_z, y = body_mass_g)
+  )
+```
+:::
+
+
+
+## Confounders
+
+One assumption of linear regression is that our model is correctly specifed.
+
+:::: {.columns}
+::: {.column width="66%"}
+The previous scatterplot is an example of **omitted variable bias**. The relationship between bill depth and body mass *looks* negative, but we see clusters of *positive*-looking relationships.
+
+Since we have worked with this data so much, we know what the omitted variable likely influencing this clustering is: [species!]{.fragment}
+
+[Species as an omitted variable is currently **confounding** the relationship between bill depth and body mass.]{.fragment}
+
+[We can account for species by including it as a predictor in our model, going from single to **multiple** regression!]{.fragment}
+:::
+
+::: {.column width="33%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+ggeffects::ggpredict(m1, terms = c("bill_depth_mm_z")) |>
+  plot() +
+  geom_point(
+    data = penguins_cleaned,
+    aes(x = bill_depth_mm_z, y = body_mass_g)
+  )
+```
+
+### Code
+```{r}
+#| eval: false
+ggeffects::ggpredict(m1, terms = c("bill_depth_mm_z")) |>
+  plot() +
+  geom_point(
+    data = penguins_cleaned,
+    aes(x = bill_depth_mm_z, y = body_mass_g)
+  )
+```
+:::
 :::
 ::::
 
@@ -111,15 +487,102 @@ An increase in 1 SD in bill length is associated with an `r coef(m1)["bill_lengt
 :::: {.columns}
 ::: {.column width="50%"}
 ```{r}
-m2 <- lm(body_mass_g ~ bill_length_mm + bill_depth_mm, data = penguins_cleaned) 
+m2 <- lm(body_mass_g ~ bill_depth_mm_z + species, 
+         data = penguins_cleaned) 
 summary(m2)
 ```
 :::
 
 ::: {.column width="50%"}
-After adjusting for bill depth, an increase in 1 SD in bill length is associated with an `r coef(m2)["bill_length_mm"] |> round(2)` g increase in body mass.
+After adjusting for species, an increase in 1 SD in bill depth is associated with an `r coef(m2)["bill_depth_mm_z"] |> round(2)` g increase in body mass.
+
+After adjusting for bill depth, the difference between Adelie and Gentoo penguins is associated with an `r coef(m2)["speciesGentoo"] |> round(2)` g increase in body mass.
 :::
 ::::
+
+
+## Predictions with `ggpredict()`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+ggeffects::ggpredict(m2, terms = c("bill_depth_mm_z", "species")) |>
+  plot() +
+  geom_point(
+    data = penguins_cleaned,
+    aes(x = bill_depth_mm_z, y = body_mass_g),
+    inherit.aes = F
+  )
+```
+
+### Code
+```{r}
+#| eval: false
+ggeffects::ggpredict(m2, terms = c("bill_depth_mm_z", "species")) |>
+  plot() +
+  geom_point(
+    data = penguins_cleaned,
+    aes(x = bill_depth_mm_z, y = body_mass_g),
+    inherit.aes = F
+  )
+```
+:::
+
+
+## Predictions with `ggpredict()`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 5
+#| fig-align: center
+ggeffects::ggpredict(m2, terms = c("bill_depth_mm_z", "species")) |>
+  plot() +
+  geom_point(
+    data = penguins_cleaned,
+    aes(x = bill_depth_mm_z, y = body_mass_g, color = species),
+    inherit.aes = F,
+    shape = 21,
+    alpha = 0.4,
+    stroke = 1
+  ) +
+  scale_color_discrete("Species", palette = "Set2") +
+  guides(x = guide_axis("Bill Depth (z)", cap = T),
+         y = guide_axis("Body Mass (g)", cap = T)) +
+  labs(title = "Body Mass Predicted to Increase with Bill Depth",
+       subtitle = "After adjusting for species") +
+  theme_classic() +
+  theme(legend.position = "bottom")
+```
+
+### Code
+```{r}
+#| eval: false
+ggeffects::ggpredict(m2, terms = c("bill_depth_mm_z", "species")) |>
+  plot() +
+  geom_point(
+    data = penguins_cleaned,
+    aes(x = bill_depth_mm_z, y = body_mass_g, color = species),
+    inherit.aes = F,
+    shape = 21,
+    alpha = 0.4,
+    stroke = 1
+  ) +
+  scale_color_discrete("Species", palette = "Set2") +
+  guides(x = guide_axis("Bill Depth (z)", cap = T),
+         y = guide_axis("Body Mass (g)", cap = T)) +
+  labs(title = "Body Mass Predicted to Increase with Bill Depth",
+       subtitle = "After adjusting for species") +
+  theme_classic() +
+  theme(legend.position = "bottom")
+```
+:::
 
 
 ## Multiple Regression
@@ -127,17 +590,86 @@ After adjusting for bill depth, an increase in 1 SD in bill length is associated
 :::: {.columns}
 ::: {.column width="50%"}
 ```{r}
-m3 <- lm(body_mass_g ~ bill_length_mm + bill_depth_mm + flipper_length_mm, data = penguins_cleaned) 
+m3 <- lm(body_mass_g ~ bill_depth_mm_z + 
+           bill_length_mm_z + 
+           species, 
+         data = penguins_cleaned) 
 summary(m3)
 ```
 :::
 
 ::: {.column width="50%"}
-After adjusting for bill depth and flipper length, an increase in 1 SD in bill length is associated with an `r coef(m3)["bill_length_mm"] |> round(2)` g increase in body mass.
+After adjusting for bill length and species, an increase in 1 SD in bill depth is associated with an `r coef(m3)["bill_depth_mm_z"] |> round(2)` g increase in body mass.
+
+After adjusting for bill length and depth, the difference between Adelie and Gentoo penguins is associated with an `r coef(m3)["speciesGentoo"] |> round(2)` g increase in body mass.
 :::
 ::::
 
 
+## Predictions with `ggpredict()`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+ggeffects::ggpredict(m3, terms = c("bill_depth_mm_z", "bill_length_mm_z", "species")) |>
+  plot() +
+  geom_point(
+    data = penguins_cleaned |> mutate(facet = species), # needs to match ggpredict's name
+    aes(x = bill_depth_mm_z, y = body_mass_g),
+    inherit.aes = FALSE,
+    shape = 21,
+    alpha = 0.4,
+    color = "grey40"
+  ) +
+  scale_color_discrete(
+    "Bill Length", 
+    palette = "Reds", 
+    aesthetics = c("color", "fill"), 
+    labels = c("-1 SD", "0", "+1 SD")
+  ) +
+  theme_classic() +
+  guides(x = guide_axis("Bill Depth (z)", cap = T),
+         y = guide_axis("Body Mass (g)", cap = T)) +
+  labs(title = "Body Mass Predicted to Increase with Bill Depth",
+       subtitle = "After adjusting for species and bill length") +
+  theme(legend.position = "bottom")
+```
+
+### Code
+```{r}
+#| eval: false
+ggeffects::ggpredict(m3, terms = c("bill_depth_mm_z", "bill_length_mm_z", "species")) |>
+  plot() +
+  geom_point(
+    data = penguins_cleaned |> mutate(facet = species), # needs to match ggpredict's name
+    aes(x = bill_depth_mm_z, y = body_mass_g),
+    inherit.aes = FALSE,
+    shape = 21,
+    alpha = 0.4,
+    color = "grey40"
+  ) +
+  scale_color_discrete(
+    "Bill Length", 
+    palette = "Reds", 
+    aesthetics = c("color", "fill"), 
+    labels = c("-1 SD", "0", "+1 SD")
+  ) +
+  theme_classic() +
+  guides(x = guide_axis("Bill Depth (z)", cap = T),
+         y = guide_axis("Body Mass (g)", cap = T)) +
+  labs(title = "Body Mass Predicted to Increase with Bill Depth",
+       subtitle = "After adjusting for species and bill length") +
+  theme(legend.position = "bottom")
+```
+:::
+
+
+
+# Regression Diagnostics
 
 ## Regression Diagnostics
 
@@ -175,8 +707,8 @@ residuals(m3) |>
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
-#| fig-height: 4
+#| fig-width: 3.5
+#| fig-height: 3.5
 #| fig-align: center
 penguins_cleaned |>
   add_column(residuals = residuals(m3)) |>
@@ -199,6 +731,53 @@ penguins_cleaned |>
 
 :::
 ::::
+
+
+## Residuals
+
+::: {style="font-size:85%"}
+We want to see that our residuals are **normally distributed** and have constant variance across all levels of the predictors.
+
+Can extract residuals from a model with `resid(lm_model)` or `residuals(lm_model)`.
+
+:::: {.columns}
+::: {.column width="50%"}
+QQ-plot on residuals with `geom_qq()` and `geom_qq_line()` (remember they need the `aes(sample = )` mapping).
+
+:::
+
+::: {.column width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+penguins_cleaned |>
+  add_column(residuals = residuals(m3)) |>
+  ggplot(aes(sample = residuals)) +
+  geom_qq() +
+  geom_qq_line()
+```
+
+### Code
+```{r}
+#| eval: false
+penguins_cleaned |>
+  add_column(residuals = residuals(m3)) |>
+  ggplot(aes(sample = residuals)) +
+  geom_qq() +
+  geom_qq_line()
+```
+:::
+
+
+:::
+::::
+
+:::
 
 
 ## Residuals
@@ -272,7 +851,8 @@ penguins_cleaned |>
   ggplot(aes(x = x, y = residuals)) +
   geom_point() +
   facet_wrap("predictor") +
-  theme_classic()
+  theme_classic() +
+  theme(aspect.ratio = 1)
 ```
 
 ### Code
@@ -285,7 +865,61 @@ penguins_cleaned |>
   ggplot(aes(x = x, y = residuals)) +
   geom_point() +
   facet_wrap("predictor") +
-  theme_classic()
+  theme_classic() +
+  theme(aspect.ratio = 1)
+```
+:::
+
+
+:::
+::::
+
+
+## Residuals
+
+We want to see that our residuals are normally distributed and have **constant variance across all levels of the predictors**.
+
+Can extract residuals from a model with `resid(lm_model)` or `residuals(lm_model)`.
+
+:::: {.columns}
+::: {.column width="33%"}
+Adding Loess line with standard errors (on by default)
+:::
+
+::: {.column width="66%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 6.5
+#| fig-height: 3
+#| fig-align: center
+penguins_cleaned |>
+  add_column(residuals = residuals(m3)) |>
+  pivot_longer(any_of(names(coef(m3))),
+               names_to = "predictor", values_to = "x") |>
+  ggplot(aes(x = x, y = residuals)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap("predictor") +
+  theme_classic() +
+  theme(aspect.ratio = 1)
+```
+
+### Code
+```{r}
+#| eval: false
+penguins_cleaned |>
+  add_column(residuals = residuals(m3)) |>
+  pivot_longer(any_of(names(coef(m3))),
+               names_to = "predictor", values_to = "x") |>
+  ggplot(aes(x = x, y = residuals)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap("predictor") +
+  theme_classic() +
+  theme(aspect.ratio = 1)
 ```
 :::
 
@@ -377,7 +1011,8 @@ sim_dat |>
           style = cell_text(weight = "bold"),
           locations = cells_column_labels()
         )
-    )
+    ) |>
+  print()
 ```
 
 ### Code
@@ -481,24 +1116,37 @@ m <- lm(y ~ x1 + x2 + x3 + x4 + x5 + x6, data = d)
 
 If we just look at the bivariate correlations, we get this correlation matrix:
 
+:::: {.columns}
+::: {.column width="50%"}
 ```{r}
 d |>
   select(-y) |>
   cor() |> 
   round(2)
 ```
+:::
 
+::: {.column width="50%"}
 Not too bad, right?
+:::
+::::
 
 Well, multicollinearity isn't just about the bivariate relationships of predictors, it's about the total amount of variance other predictors can explain in a predictor.
 
 What if we estimate a model of other predictors predicting `x6`?
 
+:::: {.columns}
+::: {.column width="50%"}
 ```{r}
 summary(lm(x6 ~ x1 + x2 + x3 + x4 + x5, data = d))$r.squared
 ```
 
+:::
+
+::: {.column width="50%"}
 ...that's a lot of explained variance.
+:::
+::::
 
 
 ## Squared Multiple Correlations
@@ -510,15 +1158,15 @@ $$\text{body mass} = \beta_0 + \beta_1\text{bill length} + \beta_2\text{bill dep
 In the models
 
 ::: subpoint
-$\text{bill length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{flipper length} + \epsilon$
+○ $\text{bill length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{flipper length} + \epsilon$
 :::
 
 ::: subpoint
-$\text{bill depth} = \beta_0 + \beta_1\text{bill length} + \beta_2\text{flipper length} + \epsilon$
+○ $\text{bill depth} = \beta_0 + \beta_1\text{bill length} + \beta_2\text{flipper length} + \epsilon$
 :::
 
 ::: subpoint
-$\text{flipper length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{bill length} + \epsilon$
+○ $\text{flipper length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{bill length} + \epsilon$
 :::
 
 what is the amount of variance the predictors (i.e., the *other predictors* in the model of interest)? 
@@ -531,15 +1179,15 @@ We can assess the amount of variance predictors can account for in an outcome wi
 The $R^2$ of these models (again, predictors in the model of interest trying to predict each other) is called *squared multiple correlations*, $SMC$s. 
 
 ::: subpoint
-$\text{bill length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{flipper length} + \epsilon$
+○ $\text{bill length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{flipper length} + \epsilon$
 :::
 
 ::: subpoint
-$\text{bill depth} = \beta_0 + \beta_1\text{bill length} + \beta_2\text{flipper length} + \epsilon$
+○ $\text{bill depth} = \beta_0 + \beta_1\text{bill length} + \beta_2\text{flipper length} + \epsilon$
 :::
 
 ::: subpoint
-$\text{flipper length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{bill length} + \epsilon$
+○ $\text{flipper length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{bill length} + \epsilon$
 :::
 
 
@@ -636,24 +1284,1076 @@ car::vif(m)
 
 
 
-
-
 # Outliers
 
+## Outliers
+
+Outliers are datapoints that fall far away from the rest of the datapoints.
+
+::: subpoint
+○ Might be an unusual predictor value (or unusual combination of predictor values)
+:::
+
+::: subpoint
+○ Might be an unusual outcome value given the predictor values
+:::
+
+We can describe all datapoints based on their **leverage**, **distance**, and **influence**.
+
+::: subpoint
+○ High values on these characteristics may indicate a datapoint is an outlier.
+:::
 
 
 ## Outlier Detection
 
+:::: {.columns style="font-size:85%"}
+::: {.column width="33%"}
+### Leverage
+
+Leverage represents the distance of a set of predictor values to the centroid of the predictor density
+
+::: subpoint
+○ Potential to affect regression results
+:::
+
+$h$, or "hat," values indicate how far a point is from the centroid
+:::
+
+::: {.column width="33%"}
+### Distance
+
+Distance values are unusual outcome values given the observations' predictors
+
+::: subpoint
+○ Based on an observation's *residual*
+:::
+
+Studentized residuals provide a measure of distance
+:::
+
+::: {.column width="33%"}
+### Influence
+
+Influence indicates the amount an observation actually changes the results of a regression.
+
+Function of leverage and distance
+
+Considers the difference in predictions if a datapoint were removed
+:::
+::::
 
 
-## Outlier vs Leverage
+## Leverage
+
+Leverage represents the distance of a set of predictor values to the centroid of the predictor density.
+
+One datapoint with very high X compared to others.
+
+:::: {.columns}
+::: {.column width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+set.seed(1)
+n_people <- 100
+d <- tibble(
+  x = c(rnorm(n_people, 30, 4.5), 60),
+  y = x + rnorm(n_people + 1, 0, 5)
+)
+
+d |>
+  ggplot(aes(x = x)) +
+  geom_histogram(binwidth = 5) +
+  coord_cartesian(xlim = c(10, 70)) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  labs(x = "Density Plot of X")
+```
+
+### Code
+```{r}
+#| eval: false
+set.seed(8)
+n_people <- 500
+d <- tibble(
+  x = c(rnorm(n_people, 30, 4.5), 60),
+  y = x + rnorm(n_people + 1, 0, 5)
+)
+
+d |>
+  ggplot(aes(x = x)) +
+  geom_histogram(binwidth = 5) +
+  coord_cartesian(xlim = c(10, 70)) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  labs(x = "Density Plot of X")
+```
+:::
+
+:::
+
+::: {.column .fragment width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+d |>
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  labs(title = "Scatterplot of X and Y")
+```
+
+### Code
+```{r}
+#| eval: false
+d |>
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  labs(title = "Scatterplot of X and Y")
+```
+:::
+
+:::
+::::
+
+
+## Leverage
+
+Leverage represents the distance of a set of predictor values to the centroid of the predictor density.
+
+One datapoint with very high X compared to others.
+
+:::: {.columns}
+::: {.column width="50%"}
+A datapoint having high leverage is not about its relationship to Y. Here, the outlier falls comfortably in the regression line.
+
+But you can see **why** datapoints with unusual X values have high leverage: moving or changing them slightly could drastically change the estimated "line of best fit".
+
+:::
+
+::: {.column .fragment width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+d |>
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  labs(title = "Scatterplot of X and Y")
+```
+
+### Code
+```{r}
+#| eval: false
+d |>
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  labs(title = "Scatterplot of X and Y")
+```
+:::
+
+:::
+::::
 
 
 
+## Leverage
 
-# Confounders
+Leverage represents the distance of a set of predictor values to the centroid of the predictor density
 
-##
+:::: {.columns}
+::: {.column width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+d |>
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+```
+
+### Code
+```{r}
+#| eval: false
+d |>
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+```
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+delta  <- 15                       # how far to move the outlier's Y up/down
+out_id <- 101           # the high-leverage point
+
+ver <- c("Outlier lower", "As observed", "Outlier higher")
+
+# Three copies of the data, differing only in the outlier's Y
+d_pert <- purrr::map2_dfr(c(-delta, 0, delta), ver, \(shift, v) {
+  d |>
+    mutate(y = if_else(row_number() == out_id, y + shift, y),
+           version = v)
+}) |>
+  mutate(version = factor(version, levels = ver))
+
+# Slope for each version, shown in the legend
+slopes <- d_pert |>
+  group_by(version) |>
+  summarise(b = coef(lm(y ~ x))[2], .groups = "drop") |>
+  mutate(label = sprintf("%s  (slope = %.2f)", version, b))
+
+lab <- setNames(slopes$label, slopes$version)
+d_pert <- d_pert |> mutate(version = factor(version, levels = ver, labels = lab[ver]))
+cols_fill <- setNames(c("#8FB8A8", "#7FA6C9", "#E8A07A"), lab[ver])
+cols_line <- setNames(c("#5E8F7D", "#3F6E94", "#C2623A"), lab[ver])
+
+# Pieces for the plot
+rest    <- d[-out_id, ]
+out_pts <- d_pert |> group_by(version) |> slice(out_id) |> ungroup()
+out_obs <- out_pts |> filter(grepl("As observed", version))
+arrows  <- out_pts |> filter(!grepl("As observed", version))
+
+ggplot(d_pert, aes(x = x, y = y)) +
+  # the 'other' points, identical in every version
+  geom_point(data = rest, aes(x = x, y = y), inherit.aes = FALSE) +
+  # one regression line per version of the outlier
+  geom_smooth(aes(color = version), method = "lm", se = FALSE,
+              linewidth = 1) +
+  # arrows showing the perturbation of the outlier's Y
+  geom_segment(data = arrows,
+               aes(x = out_obs$x, xend = x, y = out_obs$y, yend = y, color = version),
+               inherit.aes = FALSE, linewidth = 0.5, linetype = "dashed",
+               arrow = arrow(length = unit(0.09, "inches"), type = "closed")) +
+  # the three versions of the outlier
+  geom_point(data = out_pts, aes(fill = version, color = version),
+             shape = 21, size = 3.5, stroke = 1) +
+  scale_fill_manual(values = cols_fill) +
+  scale_color_manual(values = cols_line) +
+  coord_cartesian(xlim = c(10, 70), ylim = c(10, 80)) +
+  guides(x = guide_axis(cap = TRUE), y = guide_axis(cap = TRUE),
+         fill = guide_legend(title = NULL), color = guide_legend(title = NULL)) +
+  theme_classic() +
+  theme(legend.position = "none",
+        legend.direction = "vertical",
+        plot.title = element_text(hjust = 0.5, size = 11))
+```
+
+### Code
+```{r}
+#| eval: false
+# Written by Claude Sonnet 5.5 on 2026-11-17
+delta  <- 15                       # how far to move the outlier's Y up/down
+out_id <- 101           # the high-leverage point
+
+ver <- c("Outlier lower", "As observed", "Outlier higher")
+
+# Three copies of the data, differing only in the outlier's Y
+d_pert <- purrr::map2_dfr(c(-delta, 0, delta), ver, \(shift, v) {
+  d |>
+    mutate(y = if_else(row_number() == out_id, y + shift, y),
+           version = v)
+}) |>
+  mutate(version = factor(version, levels = ver))
+
+# Slope for each version, shown in the legend
+slopes <- d_pert |>
+  group_by(version) |>
+  summarise(b = coef(lm(y ~ x))[2], .groups = "drop") |>
+  mutate(label = sprintf("%s  (slope = %.2f)", version, b))
+
+lab <- setNames(slopes$label, slopes$version)
+d_pert <- d_pert |> mutate(version = factor(version, levels = ver, labels = lab[ver]))
+cols_fill <- setNames(c("#8FB8A8", "#7FA6C9", "#E8A07A"), lab[ver])
+cols_line <- setNames(c("#5E8F7D", "#3F6E94", "#C2623A"), lab[ver])
+
+# Pieces for the plot
+rest    <- d[-out_id, ]
+out_pts <- d_pert |> group_by(version) |> slice(out_id) |> ungroup()
+out_obs <- out_pts |> filter(grepl("As observed", version))
+arrows  <- out_pts |> filter(!grepl("As observed", version))
+
+ggplot(d_pert, aes(x = x, y = y)) +
+  # the 'other' points, identical in every version
+  geom_point(data = rest, aes(x = x, y = y), inherit.aes = FALSE) +
+  # one regression line per version of the outlier
+  geom_smooth(aes(color = version), method = "lm", se = FALSE,
+              linewidth = 1) +
+  # arrows showing the perturbation of the outlier's Y
+  geom_segment(data = arrows,
+               aes(x = out_obs$x, xend = x, y = out_obs$y, yend = y, color = version),
+               inherit.aes = FALSE, linewidth = 0.5, linetype = "dashed",
+               arrow = arrow(length = unit(0.09, "inches"), type = "closed")) +
+  # the three versions of the outlier
+  geom_point(data = out_pts, aes(fill = version, color = version),
+             shape = 21, size = 3.5, stroke = 1) +
+  scale_fill_manual(values = cols_fill) +
+  scale_color_manual(values = cols_line) +
+  coord_cartesian(xlim = c(10, 70), ylim = c(10, 80)) +
+  guides(x = guide_axis(cap = TRUE), y = guide_axis(cap = TRUE),
+         fill = guide_legend(title = NULL), color = guide_legend(title = NULL)) +
+  theme_classic() +
+  theme(legend.position = "none",
+        legend.direction = "vertical",
+        plot.title = element_text(hjust = 0.5, size = 11))
+```
+:::
+
+:::
+::::
+
+
+## Leverage
+
+We can examine observations' leverage statistics with their $h$ "hat" values with `hatvalues(lm_model)`.
+
+::: subpoint
+○ Returns one hat value per observation (row), so we can attach the column to our dataframe
+:::
+
+Want to compare to a cutoff of $h > \frac{3(P + 1)}{N}$.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+hatvalues(m3) |>
+  head()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+penguins_cleaned |>
+  mutate(hat = hatvalues(m3)) |>
+  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, hat) |>
+  round(3)
+```
+
+:::
+::::
+
+
+## Leverage
+
+We can examine observations' leverage statistics with their $h$ "hat" values with `hatvalues(lm_model)`.
+
+::: subpoint
+○ Returns one hat value per observation (row), so we can attach the column to our dataframe
+:::
+
+Want to compare to a cutoff of $h > \frac{3(P + 1)}{N}$.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+n_parameters <- length(coef(m3)) - 1
+n_observations = nrow(penguins_cleaned)
+
+cutoff <- 3 * (n_parameters + 1) / n_observations
+n_parameters; n_observations
+cutoff
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+high_hats <- penguins_cleaned |>
+  mutate(hat = hatvalues(m3)) |>
+  filter(hat > cutoff)
+  
+high_hats |>
+  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, hat) |>
+  round(3)
+```
+
+:::
+::::
+
+
+## Leverage
+
+We can examine observations' leverage statistics with their $h$ "hat" values with `hatvalues(lm_model)`.
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+#| layout-ncol: 3
+penguins_cleaned |>
+  ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z)) +
+  geom_point() +
+  geom_point(
+    data = high_hats,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+
+penguins_cleaned |>
+  ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z)) +
+  geom_point() +
+  geom_point(
+    data = high_hats,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+
+penguins_cleaned |>
+  ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z)) +
+  geom_point() +
+  geom_point(
+    data = high_hats,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+```
+
+### Code
+```{r}
+#| eval: false
+penguins_cleaned |>
+  ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z)) +
+  geom_point() +
+  geom_point(
+    data = high_hats,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+
+penguins_cleaned |>
+  ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z)) +
+  geom_point() +
+  geom_point(
+    data = high_hats,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+
+penguins_cleaned |>
+  ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z)) +
+  geom_point() +
+  geom_point(
+    data = high_hats,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+```
+:::
+
+
+
+## Distance
+
+Distance values are unusual outcome values given the observations' predictors
+
+:::: {.columns}
+::: {.column width="50%"}
+### Internally Studentized
+
+$$ \frac{y - \hat{y}}{\sqrt{\mathrm{MS}_\mathrm{residual} \times (1 - h)}} $$
+
+:::
+
+::: {.column width="50%"}
+### Externally Studentized
+
+$$ \frac{y - \hat{y}}{\sqrt{\mathrm{MS}_\mathrm{residual(i)} \times (1 - h)}} $$
+
+**Recommended**
+:::
+::::
+
+
+## Distance
+
+We can examine observations' externally studentized residuals `rstudent(lm_model)`.
+
+::: subpoint
+○ Returns one hat value per observation (row), so we can attach the column to our dataframe
+:::
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+rstudent(m3) |>
+  head()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+penguins_cleaned |>
+  mutate(ext_stud_resids = rstudent(m3)) |>
+  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, ext_stud_resids) |>
+  round(3)
+```
+
+:::
+::::
+
+
+## Distance
+
+We can examine observations' externally studentized residuals `rstudent(lm_model)`.
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-align: center
+#| layout-ncol: 3
+penguins_cleaned |>
+  mutate(ext_stud_resids = rstudent(m3)) |>
+  ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z, color = ext_stud_resids)) +
+  geom_point() +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  scale_color_continuous(palette = "PuOr") +
+  theme(legend.position = "bottom")
+
+penguins_cleaned |>
+  mutate(ext_stud_resids = rstudent(m3)) |>
+  ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z, color = ext_stud_resids)) +
+  geom_point() +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  scale_color_continuous(palette = "PuOr") +
+  theme(legend.position = "bottom")
+
+penguins_cleaned |>
+  mutate(ext_stud_resids = rstudent(m3)) |>
+  ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z, color = ext_stud_resids)) +
+  geom_point() +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  scale_color_continuous(palette = "PuOr") +
+  theme(legend.position = "bottom")
+```
+
+### Code
+```{r}
+#| eval: false
+penguins_cleaned |>
+  mutate(ext_stud_resids = rstudent(m3)) |>
+  ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z, color = ext_stud_resids)) +
+  geom_point() +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  scale_color_continuous(palette = "PuOr") +
+  theme(legend.position = "bottom")
+
+penguins_cleaned |>
+  ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z, color = ext_stud_resids)) +
+  geom_point() +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  scale_color_continuous(palette = "PuOr") +
+  theme(legend.position = "bottom")
+
+penguins_cleaned |>
+  ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z, color = ext_stud_resids)) +
+  geom_point() +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  scale_color_continuous(palette = "PuOr") +
+  theme(legend.position = "bottom")
+```
+:::
+
+
+
+## Influence
+
+Influence indicates the amount an observation actually changes the results of a regression.
+
+
+## DFFITS
+
+$$ \mathrm{DFFITS} =  \frac{\hat{y} - \hat{y}_{(i)}}{s_{\hat{y}_{(i)}}} $$
+
+::: subpoint
+○ $\hat{y}$: predicted value of $y_i$ when $i$ is included in the regression  
+:::
+
+::: subpoint
+○ $\hat{y}_{(i)}$: predicted value of $y_i$ when $i$ is NOT included in the regression  
+:::
+
+::: subpoint
+○ $s_{\hat{y}_{(i)}}$: standard error of $\hat{y}_{(i)}$
+:::
+
+How much would the regression line change if $i$ was not in the dataset?
+
+
+## DFFITS
+
+We can examine observations' DFFITS with `dffits(lm_model)`.
+
+::: subpoint
+○ Returns one DFFITS value per observation (row), so we can attach the column to our dataframe
+:::
+
+Want to compare to a cutoff of $\mathrm{DFFITS} > 1$ or $\mathrm{DFFITS} > 2 \sqrt{\frac{p \, + \, 1}{N}}$.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+dffits(m3) |>
+  head()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+penguins_cleaned |>
+  mutate(dffits = dffits(m3)) |>
+  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, dffits) |>
+  round(3)
+```
+
+:::
+::::
+
+
+## DFFITS
+
+We can examine observations' DFFITS with `dffits(lm_model)`.
+
+::: subpoint
+○ Returns one DFFITS value per observation (row), so we can attach the column to our dataframe
+:::
+
+Want to compare to a cutoff of $\mathrm{DFFITS} > 1$ or $\mathrm{DFFITS} > 2 \sqrt{\frac{p \, + \, 1}{N}}$.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+n_parameters <- length(coef(m3)) - 1
+n_observations = nrow(penguins_cleaned)
+
+cutoff <- 2 * sqrt((n_parameters + 1) / n_observations)
+n_parameters; n_observations
+cutoff
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+high_dffits <- penguins_cleaned |>
+  mutate(dffits = dffits(m3)) |>
+  filter(dffits > cutoff)
+  
+high_dffits |>
+  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, dffits) |>
+  round(3)
+```
+
+:::
+::::
+
+
+## DFFITS
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+#| fig-align: center
+#| layout-ncol: 3
+penguins_cleaned |>
+  ggplot(aes(x = bill_length_mm_z, y = body_mass_g)) +
+  geom_point() +
+  geom_point(
+    data = high_dffits,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+
+penguins_cleaned |>
+  ggplot(aes(x = bill_depth_mm_z, y = body_mass_g)) +
+  geom_point() +
+  geom_point(
+    data = high_dffits,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+
+penguins_cleaned |>
+  ggplot(aes(x = flipper_length_mm_z, y = body_mass_g)) +
+  geom_point() +
+  geom_point(
+    data = high_dffits,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+```
+
+### Code
+```{r}
+#| eval: false
+penguins_cleaned |>
+  ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z)) +
+  geom_point() +
+  geom_point(
+    data = high_hats,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+
+penguins_cleaned |>
+  ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z)) +
+  geom_point() +
+  geom_point(
+    data = high_hats,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+
+penguins_cleaned |>
+  ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z)) +
+  geom_point() +
+  geom_point(
+    data = high_hats,
+    color = "skyblue", fill = "white",
+    shape = 21, size = 2, stroke = 2
+  ) +
+  theme_classic() +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T))
+```
+:::
+
+
+## DFBETAS
+
+Similar to DFFITS, but examines change in estimated regression coefficients.
+
+$$ \mathrm{DFBETAS} =  \frac{\hat{b} - \hat{b}_{(i)}}{s_{\hat{b}_{(i)}}} $$
+
+::: subpoint
+○ $\hat{b}$: predicted value of $b_i$ when $i$ is included in the regression  
+:::
+
+::: subpoint
+○ $\hat{b}_{(i)}$: predicted value of $b_i$ when $i$ is NOT included in the regression  
+:::
+
+::: subpoint
+○ $s_{\hat{b}_{(i)}}$: standard error of $\hat{b}_{(i)}$
+:::
+
+How much would the regression coefficients change if $i$ was not in the dataset?
+
+
+
+## DFBETAS
+
+We can examine observations' DFBETAS with `dfbetas(lm_model)`.
+
+::: subpoint
+○ Returns a **matrix** of DFBETAS values per observation (row), so we can still attach the column**s** to our dataframe with `bind_cols()`
+:::
+
+Want to compare to a cutoff of $\mathrm{DFBETAS} > 1$ or $\mathrm{DFBETAS} > \frac{2}{\sqrt{N}}$.
+
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+dfbetas(m3) |>
+  head()
+
+m3_dfbetas <- m3 |>
+  dfbetas() |>
+  as_tibble() |>
+  rename_with(\(colname) paste0("dfbeta_", colname))
+m3_dfbetas
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+penguins_cleaned |>
+  bind_cols(m3_dfbetas) |>
+  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, starts_with("dfbeta_")) |>
+  round(3)
+```
+
+:::
+::::
+
+
+## DFBETAS
+
+We can examine observations' DFBETAS with `dfbetas(lm_model)`.
+
+::: subpoint
+○ Returns one DFBETAS value per observation (row), so we can attach the column to our dataframe
+:::
+
+Want to compare to a cutoff of $\mathrm{DFBETAS} > 1$ or $\mathrm{DFBETAS} > \frac{2}{\sqrt{N}}$.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+n_observations = nrow(penguins_cleaned)
+
+cutoff <- 2 / sqrt(n_observations)
+cutoff
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+high_dfbetas <- penguins_cleaned |>
+  bind_cols(m3_dfbetas) |>
+  filter(
+    if_any(
+      starts_with("dfbeta_"),
+      \(dfbeta) dfbeta > cutoff
+    )
+  )
+  
+high_dfbetas |>
+  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, starts_with("dfbetas_")) |>
+  round(3)
+```
+:::
+::::
+
+
+# Matrix Math in R
+
+## Matrix Math in R
+
+While most of the time, R functions will do the work of handling matrix math for us, it can be handy to know a few functions and operations to do matrix math yourself in R.
+
+### Creating a Matrix
+
+The `matrix()` function allows us to create matrices. We can also convert from a dataframe with `as.matrix()`.
+
+`matrix(data, nrow = 1, col = 1, byrow = FALSE)
+
+By default, `matrix()` will input values down columns first. Change `byrow = TRUE` to swap to by rows first.
+
+:::: {.columns}
+::: {.column width="33%"}
+```{r}
+c(1, 2, 3, 4) |>
+  matrix()
+```
+
+:::
+
+::: {.column width="33%"}
+```{r}
+c(1, 2, 3, 4) |>
+  matrix(nrow = 2)
+
+c(1, 2, 3, 4) |>
+  matrix(nrow = 2, byrow = TRUE)
+```
+
+:::
+
+::: {.column width="33%"}
+```{r}
+M <- tibble(
+  x1 = c(1, 2, 3),
+  x2 = c(4, 5, 6),
+  x3 = c(7, 8, 9)
+) |>
+  as.matrix()
+M
+```
+:::
+::::
+
+## Transposing a Matrix
+
+Transposition (denoted $\bf{M}^\top$ or $\bf{M}'$, read "M transposed" or "M prime") flips the matrix columns and rows. The `t(matrix)` function will transpose matrices.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+M
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+t(M)
+```
+:::
+::::
+
+
+## Matrix Multiplication
+
+By default, using the `*` operator in R multiplies elements from each cell of a matrix.
+
+```{r}
+M * M
+```
+
+To apply real **matrix multiplication**, use the `%*%` operator.
+
+```{r}
+M %*% M
+```
+
+For vectors (single column matrices), this will compute the **dot product** and result in a scalar (one number).
+
+```{r}
+c(1, 2, 3) %*% c(1, 2, 3)
+```
+
+
+## Inverting a Matrix
+
+A matrix multiplied by its inverse equals the identity matrices. In that way, it is similar to the **reciprocal** value for scalars.
+
+:::: {.columns}
+::: {.column width="50%"}
+### Scalars
+
+$$ x \times \frac{1}{x} = 1 $$
+:::
+
+::: {.column width="50%"}
+### Matrices
+
+$$ \bf{M} \times \bf{M}^{-1} = \bf{I} $$
+:::
+::::
+
+To invert a matrix in R, use the `solve()` function.
+
+:::: {.columns}
+::: {.column width="33%"}
+```{r}
+M <- tibble(
+  x1 = c(1, 0, 3),
+  x2 = c(2, 3, 0),
+  x3 = c(0, 4, 5)
+) |>
+  as.matrix()
+M
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+solve(M)
+```
+:::
+
+::: {.column width="33%"}
+```{r}
+M %*% solve(M) 
+```
+
+:::
+::::
+
+
 
 
 ## Lab 13 Activity
