@@ -19,7 +19,7 @@ list(
   # tar_quarto(extra_credit, "extra-credit.qmd"),
   
   ## lab index page
-  # tar_quarto(lab_index, "lab/lab-index.qmd"),
+  tar_quarto(lab_index, "lab/lab-index.qmd"),
   
   ## lab 14
   tar_target(lab_14_slides_qmd, 
