@@ -60,7 +60,7 @@ $$y_i = \beta_0 \, + \, \beta_1 x_{1i} \, + \, \beta_2 x_{2i} \, + \, ... \, + \
 ## Simple Regression
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
 library(palmerpenguins)
 
@@ -70,9 +70,13 @@ summary(m1)
 :::
 
 ::: {.column width="50%"}
+Today's regression question: what is the effect of penguin bill depth on body mass?
+
+::: fragment
 The estimated penguin body mass when bill depth is zero is `r coef(m1)["(Intercept)"] |> round(2)`.
 
 An increase in 1 mm in bill depth is associated with an `r coef(m1)["bill_depth_mm"] |> round(2)` g increase in body mass.
+:::
 :::
 ::::
 
@@ -82,7 +86,7 @@ An increase in 1 mm in bill depth is associated with an `r coef(m1)["bill_depth_
 ::: {style="font-size:80%"}
 ```{r}
 penguins_cleaned <- penguins |>
-  drop_na(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g) |>
+  drop_na(body_mass_g, bill_depth_mm) |>
   mutate(
     across(
       ends_with("_mm"), 
@@ -117,17 +121,19 @@ An increase in 1 SD in bill depth is associated with an `r coef(m1)["bill_depth_
 
 Once we've fitted the model, we can examine the model **predictions**.
 
-::: subpoint
+:::: subpoint
 ○ What are the predicted outcome values for each datapoint in our dataset?
-:::
 
 ::: subsubpoint
 ○ Plugging in each observations' predictor values into the fitted regression equation.
 :::
 
-::: subpoint
+::::
+
+
+
+:::: subpoint
 ○ What are the predicted outcome values new possible datapoints?
-:::
 
 ::: subsubpoint
 ○ Plugging in some possible predictor values for theoretical new datapoints.
@@ -137,32 +143,54 @@ Once we've fitted the model, we can examine the model **predictions**.
 ○ Can be a helpful way of examining the model implications.
 :::
 
+::::
+
+
 
 ## Model Predictions
 
 What are the predicted outcome values for each datapoint in our dataset?
 
-:::: {.columns style="font-size:85%"}
-::: {.column width="50%"}
+::::::: {style="font-size:85%"}
+
+:::::: {.columns}
+::::: {.column .fragment width="50%"}
 ```{r}
 gtsummary::tbl_regression(m1, intercept = T)
 ```
 
-$\hat{\text{body mass}_i} = -378 (\text{bill depth}_i)$
-:::
+$\widehat{\text{body mass}}_i = 4202 + -378 (\text{bill depth}_i)$
+:::::
 
-::: {.column width="50%"}
+::::: {.column .fragment width="50%"}
 Now that we have estimated these regression coefficients, what if we plug back in each datapoints' predictor values to get predicted outcome values?
 
+:::: {.columns}
+::: {.column width="47.5%"}
 ```{r}
+#| eval: false
 penguins_cleaned |>
-  select(bill_depth_mm) |>
+  select(bill_depth_mm, 
+         bill_depth_mm_z) |>
   head(2)
 ```
+:::
 
+::: {.column width="47.5%"}
+```{r}
+#| echo: false
+penguins_cleaned |>
+  select(bill_depth_mm, bill_depth_mm_z) |>
+  head(2)
+```
 :::
 ::::
 
+
+:::::
+::::::
+
+::: fragment
 `fitted.values()` and `predict()` will each extract these predicted values for you into a vector with a predicted value for each row in the dataset.
 
 :::: {.columns}
@@ -180,6 +208,12 @@ predict(m1) |>
 ```
 :::
 ::::
+
+:::
+
+:::::::
+
+
 
 
 <!-- ## Model Predictions -->
@@ -313,13 +347,15 @@ predict(m1) |>
 
 What are the predicted outcome values new possible datapoints?
 
-:::: {.columns style="font-size:85%"}
+::::: {style="font-size:85%"}
+
+:::: {.columns}
 ::: {.column width="50%"}
 ```{r}
 gtsummary::tbl_regression(m1, intercept = T)
 ```
 
-$\hat{\text{body mass}_i} = -378 (\text{bill depth}_i)$
+$\widehat{\text{body mass}}_i = 4202 + -378 (\text{bill depth}_i)$
 
 :::
 
@@ -328,20 +364,26 @@ Examining model predictions for theoretical new datapoints can be a way of explo
 
 With other predictors at their average ($x = 0$ because standardized), how does the predicted outcome change with increases in bill length?
 
+::: fragment
 ```{r}
 new_data <- tibble(
   bill_depth_mm_z = seq(-3, 3, by = 1)
 )
 new_data
 ```
+:::
 
 :::
 ::::
+
+:::::
 
 
 ## Model Predictions
 
 What are the predicted outcome values new possible datapoints?
+
+::::: {style="font-size:85%"}
 
 `predict()` will calculate predicted values on new possible datapoints for you into a vector with a predicted value for each row in the new dataset. Needs the `newdata` argument to be a `data.frame` or `tibble` with column names matching the predictor values.
 
@@ -368,14 +410,46 @@ predicted_data
 :::
 ::::
 
+:::::
+
 
 ## Model Predictions
+
+::::: {.columns}
+:::: {.column .fragment width="50%"}
+No raw data
 
 ::: {.panel-tabset}
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+predicted_data |>
+  ggplot(aes(x = bill_depth_mm_z, y = predicted_y)) +
+  geom_line()
+```
+
+### Code
+```{r}
+#| eval: false
+predicted_data |>
+  ggplot(aes(x = bill_depth_mm_z, y = predicted_y)) +
+  geom_line()
+```
+:::
+
+::::
+
+:::: {.column .fragment width="50%"}
+Data plotted too
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 4
 #| fig-height: 4
 #| fig-align: center
 predicted_data |>
@@ -400,17 +474,49 @@ predicted_data |>
 ```
 :::
 
+::::
+
+:::::
 
 
 ## Predictions with `ggpredict()`
 
 The `ggpredict()` function from the `ggeffects` package can do this for us!
 
+::::: {.columns}
+:::: {.column .fragment width="50%"}
+No data by default...
+
 ::: {.panel-tabset}
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+# install.packages("ggeffects")
+ggeffects::ggpredict(m1, terms = c("bill_depth_mm_z")) |>
+  plot()
+```
+
+### Code
+```{r}
+#| eval: false
+ggeffects::ggpredict(m1, terms = c("bill_depth_mm_z")) |>
+  plot()
+```
+:::
+
+::::
+
+:::: {.column .fragment width="50%"}
+...but we can add!
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 4
 #| fig-height: 4
 #| fig-align: center
 ggeffects::ggpredict(m1, terms = c("bill_depth_mm_z")) |>
@@ -432,6 +538,10 @@ ggeffects::ggpredict(m1, terms = c("bill_depth_mm_z")) |>
   )
 ```
 :::
+
+::::
+:::::
+
 
 
 
@@ -439,26 +549,23 @@ ggeffects::ggpredict(m1, terms = c("bill_depth_mm_z")) |>
 
 One assumption of linear regression is that our model is correctly specifed.
 
-:::: {.columns}
-::: {.column width="66%"}
-The previous scatterplot is an example of **omitted variable bias**. The relationship between bill depth and body mass *looks* negative, but we see clusters of *positive*-looking relationships.
+::::: {.columns style="font-size:85%"}
+:::: {.column .fragment width="70%"}
+These results are an example of **omitted variable bias**. The relationship between bill depth and body mass *looks* negative, but we see clusters of *positive*-looking relationships.
 
-Since we have worked with this data so much, we know what the omitted variable likely influencing this clustering is: [species!]{.fragment}
+[Since we have worked with this data so much, we know what the omitted variable likely influencing this clustering is:]{.fragment} [species!]{.fragment}
 
 [Species as an omitted variable is currently **confounding** the relationship between bill depth and body mass.]{.fragment}
+::::
 
-[We can account for species by including it as a predictor in our model, going from single to **multiple** regression!]{.fragment}
-:::
-
-::: {.column width="33%"}
-
+:::: {.column width="30%"}
 ::: {.panel-tabset}
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
+#| fig-width: 3.5
+#| fig-height: 3.5
+#| out-width: "80%"
 ggeffects::ggpredict(m1, terms = c("bill_depth_mm_z")) |>
   plot() +
   geom_point(
@@ -478,14 +585,20 @@ ggeffects::ggpredict(m1, terms = c("bill_depth_mm_z")) |>
   )
 ```
 :::
-:::
 ::::
+:::::
+
+::: {style="font-size:85%"}
+[We can account for species by including it as a predictor in our model, going from single to **multiple** regression!]{.fragment}
+
+[Note that we may not have noticed this had we not looked at the predictions against the data.]{.fragment}
+:::
 
 
 ## Multiple Regression
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
 m2 <- lm(body_mass_g ~ bill_depth_mm_z + species, 
          data = penguins_cleaned) 
@@ -493,7 +606,7 @@ summary(m2)
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 After adjusting for species, an increase in 1 SD in bill depth is associated with an `r coef(m2)["bill_depth_mm_z"] |> round(2)` g increase in body mass.
 
 After adjusting for bill depth, the difference between Adelie and Gentoo penguins is associated with an `r coef(m2)["speciesGentoo"] |> round(2)` g increase in body mass.
@@ -503,6 +616,19 @@ After adjusting for bill depth, the difference between Adelie and Gentoo penguin
 
 ## Predictions with `ggpredict()`
 
+:::: {.columns}
+::: {.column .fragment width="50%"}
+```{r}
+gtsummary::tbl_regression(m2, intercept = T) |>
+  gtsummary::as_gt() |>
+  gt::tab_header(
+    title = "Bill Depth and Body Mass",
+    subtitle = "Adjusted for species"
+  ) 
+```
+:::
+
+::: {.column .fragment width="50%"}
 ::: {.panel-tabset}
 ### Plot
 ```{r}
@@ -531,6 +657,9 @@ ggeffects::ggpredict(m2, terms = c("bill_depth_mm_z", "species")) |>
   )
 ```
 :::
+:::
+::::
+
 
 
 ## Predictions with `ggpredict()`
@@ -539,71 +668,173 @@ ggeffects::ggpredict(m2, terms = c("bill_depth_mm_z", "species")) |>
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
+#| fig-width: 8
 #| fig-height: 5
 #| fig-align: center
+penguin_palette <- c(Adelie = "#FF8C00", Chinstrap = "#A034F0", Gentoo = "#159090")
+
 ggeffects::ggpredict(m2, terms = c("bill_depth_mm_z", "species")) |>
   plot() +
   geom_point(
     data = penguins_cleaned,
     aes(x = bill_depth_mm_z, y = body_mass_g, color = species),
-    inherit.aes = F,
+    inherit.aes = FALSE,
     shape = 21,
     alpha = 0.4,
     stroke = 1
   ) +
-  scale_color_discrete("Species", palette = "Set2") +
-  guides(x = guide_axis("Bill Depth (z)", cap = T),
-         y = guide_axis("Body Mass (g)", cap = T)) +
-  labs(title = "Body Mass Predicted to Increase with Bill Depth",
-       subtitle = "After adjusting for species") +
-  theme_classic() +
-  theme(legend.position = "bottom")
+  scale_color_manual("Species", values = penguin_palette) +
+  scale_fill_manual("Species", values = penguin_palette) +
+  guides(
+    x = guide_axis("Bill Depth (z)", cap = TRUE),
+    y = guide_axis("Body Mass (g)", cap = TRUE),
+    color = guide_legend(
+      override.aes = list(
+        alpha = 1,
+        linetype = 0,
+        fill = NA,
+        shape = 21,
+        size = 3,
+        stroke = 1.2
+      )
+    )
+  ) +
+  labs(
+    title = "Body Mass Predicted to Increase with Bill Depth",
+    subtitle = "After adjusting for species"
+  ) +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = rel(1.7)),
+    plot.subtitle = element_text(size = rel(1.05), color = "grey35"),
+    plot.title.position = "plot",
+
+    axis.title = element_text(size = rel(1.05), face = "bold"),
+    axis.text = element_text(size = rel(0.95), color = "grey20"),
+
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(size = rel(1))
+  )
 ```
 
 ### Code
 ```{r}
 #| eval: false
+penguin_palette <- c(Adelie = "#FF8C00", Chinstrap = "#A034F0", Gentoo = "#159090")
+
 ggeffects::ggpredict(m2, terms = c("bill_depth_mm_z", "species")) |>
   plot() +
   geom_point(
     data = penguins_cleaned,
     aes(x = bill_depth_mm_z, y = body_mass_g, color = species),
-    inherit.aes = F,
+    inherit.aes = FALSE,
     shape = 21,
     alpha = 0.4,
     stroke = 1
   ) +
-  scale_color_discrete("Species", palette = "Set2") +
-  guides(x = guide_axis("Bill Depth (z)", cap = T),
-         y = guide_axis("Body Mass (g)", cap = T)) +
-  labs(title = "Body Mass Predicted to Increase with Bill Depth",
-       subtitle = "After adjusting for species") +
-  theme_classic() +
-  theme(legend.position = "bottom")
+  scale_color_manual("Species", values = penguin_palette) +
+  scale_fill_manual("Species", values = penguin_palette) +
+  guides(
+    x = guide_axis("Bill Depth (z)", cap = TRUE),
+    y = guide_axis("Body Mass (g)", cap = TRUE),
+    color = guide_legend(
+      override.aes = list(
+        alpha = 1,
+        linetype = 0,
+        fill = NA,
+        shape = 21,
+        size = 3,
+        stroke = 1.2
+      )
+    )
+  ) +
+  labs(
+    title = "Body Mass Predicted to Increase with Bill Depth",
+    subtitle = "After adjusting for species"
+  ) +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = rel(1.7)),
+    plot.subtitle = element_text(size = rel(1.05), color = "grey35"),
+    plot.title.position = "plot",
+
+    axis.title = element_text(size = rel(1.05), face = "bold"),
+    axis.text = element_text(size = rel(0.95), color = "grey20"),
+
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(size = rel(1))
+  )
 ```
 :::
 
 
 ## Multiple Regression
 
-:::: {.columns}
-::: {.column width="50%"}
+::::: {.columns}
+:::: {.column .fragment fragment-index=1 width="50%"}
 ```{r}
-m3 <- lm(body_mass_g ~ bill_depth_mm_z + 
-           bill_length_mm_z + 
-           species, 
+m3 <- lm(body_mass_g ~ bill_depth_mm_z + species + year, 
          data = penguins_cleaned) 
 summary(m3)
 ```
-:::
-
-::: {.column width="50%"}
-After adjusting for bill length and species, an increase in 1 SD in bill depth is associated with an `r coef(m3)["bill_depth_mm_z"] |> round(2)` g increase in body mass.
-
-After adjusting for bill length and depth, the difference between Adelie and Gentoo penguins is associated with an `r coef(m3)["speciesGentoo"] |> round(2)` g increase in body mass.
-:::
 ::::
+
+:::: {.column style="font-size:90%" width="50%"}
+What if we add the year of measurement?
+
+::: {.fragment fragment-index=2}
+When species is Adelie and year is zero...? Intercept is negative?
+
+:::
+
+::::
+:::::
+
+
+## Adjusting Year
+
+Let's let `year = 2007` be represented by zero, since that was the first year of the study.
+
+::: {style="font-size:80%"}
+```{r}
+penguins_cleaned <- penguins |>
+  drop_na(body_mass_g, bill_depth_mm) |>
+  mutate(
+    across(
+      ends_with("_mm"), 
+      function(col) (col - mean(col)) / sd(col), 
+      .names = "{.col}_z"),
+    year = year - 2007
+    )
+penguins_cleaned
+```
+:::
+
+
+## Multiple Regression
+
+::::: {.columns}
+:::: {.column .fragment fragment-index=1 width="50%"}
+```{r}
+m3 <- lm(body_mass_g ~ bill_depth_mm_z + species + year, 
+         data = penguins_cleaned) 
+summary(m3)
+```
+::::
+
+:::: {.column style="font-size:90%" width="50%"}
+::: {.fragment fragment-index=2}
+In the first year of the study, the expected body mass for Adelie penguins was `r coef(m3)["(Intercept)"] |> round(2)` g.
+
+In the first year of the study, the expected increase in body mass for Adelie penguins with 1 SD increase in bill depth was `r coef(m3)["bill_depth_mm_z"] |> round(2)` g.
+
+In the first year of the study, after adjusting for bill depth, the difference between Adelie and Gentoo penguins is associated with an `r coef(m3)["speciesGentoo"] |> round(2)` g increase in body mass.
+:::
+
+::::
+:::::
 
 
 ## Predictions with `ggpredict()`
@@ -612,58 +843,139 @@ After adjusting for bill length and depth, the difference between Adelie and Gen
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 7
-#| fig-height: 4
+#| fig-width: 8
+#| fig-height: 5
 #| fig-align: center
-ggeffects::ggpredict(m3, terms = c("bill_depth_mm_z", "bill_length_mm_z", "species")) |>
-  plot() +
-  geom_point(
-    data = penguins_cleaned |> mutate(facet = species), # needs to match ggpredict's name
-    aes(x = bill_depth_mm_z, y = body_mass_g),
-    inherit.aes = FALSE,
-    shape = 21,
-    alpha = 0.4,
-    color = "grey40"
-  ) +
-  scale_color_discrete(
-    "Bill Length", 
-    palette = "Reds", 
-    aesthetics = c("color", "fill"), 
-    labels = c("-1 SD", "0", "+1 SD")
-  ) +
-  theme_classic() +
-  guides(x = guide_axis("Bill Depth (z)", cap = T),
-         y = guide_axis("Body Mass (g)", cap = T)) +
-  labs(title = "Body Mass Predicted to Increase with Bill Depth",
-       subtitle = "After adjusting for species and bill length") +
-  theme(legend.position = "bottom")
+ggeffects::ggpredict(
+  m3, 
+  # first term is on the x, second term is color, third term is the faceting variable
+  terms = c("bill_depth_mm_z", "species", "year")
+) |>
+  plot() 
 ```
 
 ### Code
 ```{r}
 #| eval: false
-ggeffects::ggpredict(m3, terms = c("bill_depth_mm_z", "bill_length_mm_z", "species")) |>
+ggeffects::ggpredict(
+  m3, 
+  # first term is on the x, second term is color, third term is the faceting variable
+  terms = c("bill_depth_mm_z", "species", "year")
+) |>
+  plot() 
+```
+:::
+
+
+
+## Predictions with `ggpredict()`
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| fig-align: center
+penguin_palette <- c(Adelie = "#FF8C00", Chinstrap = "#A034F0", Gentoo = "#159090")
+
+ggeffects::ggpredict(m3, terms = c("bill_depth_mm_z", "species", "year")) |>
   plot() +
   geom_point(
-    data = penguins_cleaned |> mutate(facet = species), # needs to match ggpredict's name
-    aes(x = bill_depth_mm_z, y = body_mass_g),
+    data = penguins_cleaned |> mutate(facet = paste("year =", year)), # needs to match ggpredict's name
+    aes(x = bill_depth_mm_z, y = body_mass_g, color = species),
     inherit.aes = FALSE,
     shape = 21,
-    alpha = 0.4,
-    color = "grey40"
+    alpha = 0.4
   ) +
-  scale_color_discrete(
-    "Bill Length", 
-    palette = "Reds", 
-    aesthetics = c("color", "fill"), 
-    labels = c("-1 SD", "0", "+1 SD")
+  scale_color_manual("Species", values = penguin_palette, aesthetics = c("color", "fill")) +
+  guides(
+    x = guide_axis("Bill Depth (z)", cap = TRUE),
+    y = guide_axis("Body Mass (g)", cap = TRUE),
+        color = guide_legend(
+      override.aes = list(
+        alpha = 1,
+        linetype = 0,
+        fill = NA,
+        shape = 21,
+        size = 3,
+        stroke = 1.2
+      )
+    )
   ) +
-  theme_classic() +
-  guides(x = guide_axis("Bill Depth (z)", cap = T),
-         y = guide_axis("Body Mass (g)", cap = T)) +
-  labs(title = "Body Mass Predicted to Increase with Bill Depth",
-       subtitle = "After adjusting for species and bill length") +
-  theme(legend.position = "bottom")
+  labs(
+    title = "Body Mass Predicted to Increase with Bill Depth" |>
+      str_wrap(80),
+    subtitle = "After adjusting for species and year of the study"
+  ) +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = rel(1.7), margin = margin(b = 4)),
+    plot.subtitle = element_text(size = rel(1.05), color = "grey35", margin = margin(b = 14)),
+    plot.title.position = "plot",
+
+    axis.title = element_text(size = rel(1.05), face = "bold"),
+    axis.text = element_text(size = rel(0.95), color = "grey20"),
+
+    strip.background = element_blank(),
+    strip.text = element_text(face = "bold", size = rel(1)),
+
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(size = rel(1))
+  )
+```
+
+### Code
+```{r}
+#| eval: false
+penguin_palette <- c(Adelie = "#FF8C00", Chinstrap = "#A034F0", Gentoo = "#159090")
+
+ggeffects::ggpredict(m3, terms = c("bill_depth_mm_z", "species", "year")) |>
+  plot() +
+  geom_point(
+    data = penguins_cleaned |> mutate(facet = paste("year =", year)), # needs to match ggpredict's name
+    aes(x = bill_depth_mm_z, y = body_mass_g, color = species),
+    inherit.aes = FALSE,
+    shape = 21,
+    alpha = 0.4
+  ) +
+  scale_color_manual("Species", values = penguin_palette, aesthetics = c("color", "fill")) +
+  guides(
+    x = guide_axis("Bill Depth (z)", cap = TRUE),
+    y = guide_axis("Body Mass (g)", cap = TRUE),
+        color = guide_legend(
+      override.aes = list(
+        alpha = 1,
+        linetype = 0,
+        fill = NA,
+        shape = 21,
+        size = 3,
+        stroke = 1.2
+      )
+    )
+  ) +
+  labs(
+    title = "Body Mass Predicted to Increase with Bill Depth" |>
+      str_wrap(80),
+    subtitle = "After adjusting for species and bill length"
+  ) +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = rel(1.7), margin = margin(b = 4)),
+    plot.subtitle = element_text(size = rel(1.05), color = "grey35", margin = margin(b = 14)),
+    plot.title.position = "plot",
+
+    axis.title = element_text(size = rel(1.05), face = "bold"),
+    axis.text = element_text(size = rel(0.95), color = "grey20"),
+
+    strip.background = element_blank(),
+    strip.text = element_text(face = "bold", size = rel(1)),
+
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(size = rel(1))
+  )
 ```
 :::
 
@@ -693,15 +1005,15 @@ We want to see that our residuals are **normally distributed** and have constant
 Can extract residuals from a model with `resid(lm_model)` or `residuals(lm_model)`.
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
 residuals(m3) |>
-  head()
+  head(5)
 ```
 
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 
 ::: {.panel-tabset}
 ### Plot
@@ -711,7 +1023,7 @@ residuals(m3) |>
 #| fig-height: 3.5
 #| fig-align: center
 penguins_cleaned |>
-  add_column(residuals = residuals(m3)) |>
+  mutate(residuals = residuals(m3)) |>
   ggplot(aes(x = residuals)) +
   geom_density() +
   theme_classic()
@@ -721,7 +1033,7 @@ penguins_cleaned |>
 ```{r}
 #| eval: false
 penguins_cleaned |>
-  add_column(residuals = residuals(m3)) |>
+  mutate(residuals = residuals(m3)) |>
   ggplot(aes(x = bill_length_mm, y = residuals)) +
   geom_density() +
   theme_classic()
@@ -752,11 +1064,11 @@ QQ-plot on residuals with `geom_qq()` and `geom_qq_line()` (remember they need t
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 4
-#| fig-height: 4
+#| fig-width: 3.5
+#| fig-height: 3.5
 #| fig-align: center
 penguins_cleaned |>
-  add_column(residuals = residuals(m3)) |>
+  mutate(residuals = residuals(m3)) |>
   ggplot(aes(sample = residuals)) +
   geom_qq() +
   geom_qq_line()
@@ -766,7 +1078,7 @@ penguins_cleaned |>
 ```{r}
 #| eval: false
 penguins_cleaned |>
-  add_column(residuals = residuals(m3)) |>
+  mutate(residuals = residuals(m3)) |>
   ggplot(aes(sample = residuals)) +
   geom_qq() +
   geom_qq_line()
@@ -787,24 +1099,36 @@ We want to see that our residuals are normally distributed and have **constant v
 Can extract residuals from a model with `resid(lm_model)` or `residuals(lm_model)`.
 
 :::: {.columns}
-::: {.column width="50%"}
-Could specify the plots manually per each predictor or...
-
+::: {.column width="45%"}
+Because we have only a few predictors and they are mixed types (categorical and continuous), it may be best to make a plot manually for each predictor.
 :::
 
-::: {.column width="50%"}
+::: {.column width="55%"}
 
 ::: {.panel-tabset}
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
-#| fig-height: 4
+#| fig-width: 3.5
+#| fig-height: 3.5
 #| fig-align: center
+#| layout-ncol: 3
 penguins_cleaned |>
-  add_column(residuals = residuals(m3)) |>
-  ggplot(aes(x = bill_length_mm, y = residuals)) +
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = bill_depth_mm_z, y = residuals)) +
   geom_point() +
+  theme_classic()
+
+penguins_cleaned |>
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = species, y = residuals)) +
+  geom_jitter(height = 0) +
+  theme_classic()
+
+penguins_cleaned |>
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = year, y = residuals)) +
+  geom_jitter(height = 0) +
   theme_classic()
 ```
 
@@ -812,9 +1136,21 @@ penguins_cleaned |>
 ```{r}
 #| eval: false
 penguins_cleaned |>
-  add_column(residuals = residuals(m3)) |>
-  ggplot(aes(x = bill_length_mm, y = residuals)) +
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = bill_depth_mm_z, y = residuals)) +
   geom_point() +
+  theme_classic()
+
+penguins_cleaned |>
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = species, y = residuals)) +
+  geom_jitter(height = 0) +
+  theme_classic()
+
+penguins_cleaned |>
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = year, y = residuals)) +
+  geom_jitter(height = 0) +
   theme_classic()
 ```
 :::
@@ -831,62 +1167,81 @@ We want to see that our residuals are normally distributed and have **constant v
 Can extract residuals from a model with `resid(lm_model)` or `residuals(lm_model)`.
 
 :::: {.columns}
-::: {.column width="33%"}
-... `pivot_longer()` the columns with the predictor values (`names(coef(lm_model))`) so each predictor has a row: then you can just `facet_wrap()` by the predictor name!
-:::
-
-::: {.column width="66%"}
-
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 6.5
-#| fig-height: 3
-#| fig-align: center
-penguins_cleaned |>
-  add_column(residuals = residuals(m3)) |>
-  pivot_longer(any_of(names(coef(m3))),
-               names_to = "predictor", values_to = "x") |>
-  ggplot(aes(x = x, y = residuals)) +
-  geom_point() +
-  facet_wrap("predictor") +
-  theme_classic() +
-  theme(aspect.ratio = 1)
-```
-
-### Code
-```{r}
-#| eval: false
-penguins_cleaned |>
-  add_column(residuals = residuals(m3)) |>
-  pivot_longer(any_of(names(coef(m3))),
-               names_to = "predictor", values_to = "x") |>
-  ggplot(aes(x = x, y = residuals)) +
-  geom_point() +
-  facet_wrap("predictor") +
-  theme_classic() +
-  theme(aspect.ratio = 1)
-```
-:::
-
-
-:::
-::::
-
-
-## Residuals
-
-We want to see that our residuals are normally distributed and have **constant variance across all levels of the predictors**.
-
-Can extract residuals from a model with `resid(lm_model)` or `residuals(lm_model)`.
-
-:::: {.columns}
-::: {.column width="33%"}
+::: {.column width="45%"}
 Adding Loess line with standard errors (on by default)
 :::
 
-::: {.column width="66%"}
+::: {.column width="55%"}
+
+::: {.panel-tabset}
+### Plot
+```{r}
+#| echo: false
+#| fig-width: 3.5
+#| fig-height: 3.5
+#| fig-align: center
+#| layout-ncol: 3
+penguins_cleaned |>
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = bill_depth_mm_z, y = residuals)) +
+  geom_point() +
+  geom_smooth() +
+  theme_classic()
+
+penguins_cleaned |>
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = species, y = residuals)) +
+  geom_jitter(height = 0) +
+  theme_classic()
+
+penguins_cleaned |>
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = year, y = residuals)) +
+  geom_jitter(height = 0) +
+  theme_classic()
+```
+
+### Code
+```{r}
+#| eval: false
+penguins_cleaned |>
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = bill_depth_mm_z, y = residuals)) +
+  geom_point() +
+  geom_smooth() +
+  theme_classic()
+
+penguins_cleaned |>
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = species, y = residuals)) +
+  geom_jitter(height = 0) +
+  theme_classic()
+
+penguins_cleaned |>
+  mutate(residuals = residuals(m3)) |>
+  ggplot(aes(x = year, y = residuals)) +
+  geom_jitter(height = 0) +
+  theme_classic()
+```
+:::
+
+
+:::
+::::
+
+
+## Residuals
+
+We want to see that our residuals are normally distributed and have **constant variance across all levels of the predictors**.
+
+Can extract residuals from a model with `resid(lm_model)` or `residuals(lm_model)`.
+
+:::: {.columns}
+::: {.column width="45%"}
+If you had a model with only continuous predictors, you could `pivot_longer()` the columns with the predictor values (`names(coef(lm_model))`) so each predictor has a row: then you can just `facet_wrap()` by the predictor name!
+:::
+
+::: {.column width="55%"}
 
 ::: {.panel-tabset}
 ### Plot
@@ -895,14 +1250,18 @@ Adding Loess line with standard errors (on by default)
 #| fig-width: 6.5
 #| fig-height: 3
 #| fig-align: center
+m_numeric_only <- lm(body_mass_g ~ bill_length_mm_z + 
+                       bill_depth_mm_z + flipper_length_mm_z, 
+                     data = penguins_cleaned)
+
 penguins_cleaned |>
-  add_column(residuals = residuals(m3)) |>
-  pivot_longer(any_of(names(coef(m3))),
+  mutate(residuals = residuals(m_numeric_only)) |>
+  pivot_longer(any_of(names(coef(m_numeric_only))),
                names_to = "predictor", values_to = "x") |>
   ggplot(aes(x = x, y = residuals)) +
   geom_point() +
   geom_smooth() +
-  facet_wrap("predictor") +
+  facet_wrap("predictor", scales = "free_x") +
   theme_classic() +
   theme(aspect.ratio = 1)
 ```
@@ -910,22 +1269,26 @@ penguins_cleaned |>
 ### Code
 ```{r}
 #| eval: false
+m_numeric_only <- lm(body_mass_g ~ bill_length_mm_z + 
+                       bill_depth_mm_z + flipper_length_mm_z, 
+                     data = penguins_cleaned)
+
 penguins_cleaned |>
-  add_column(residuals = residuals(m3)) |>
-  pivot_longer(any_of(names(coef(m3))),
+  mutate(residuals = residuals(m_numeric_only)) |>
+  pivot_longer(any_of(names(coef(m_numeric_only))),
                names_to = "predictor", values_to = "x") |>
   ggplot(aes(x = x, y = residuals)) +
   geom_point() +
   geom_smooth() +
-  facet_wrap("predictor") +
+  facet_wrap("predictor", scales = "free_x") +
   theme_classic() +
   theme(aspect.ratio = 1)
 ```
 :::
 
-
 :::
 ::::
+
 
 
 
@@ -956,9 +1319,12 @@ Image made with GPT-6 on 2026-11-12 (may or may not try to make my own to replac
 From Mark's [Lecture 27: More Regression and Diagnostics, Slide 14](https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/27%20Regression%20Diagnostics/Lecture%2027%20Regression%20Diagnostics.html#/multicolinearity) accessed on 2026-11-12
 :::
 
-## Multicollinearity Consequences
 
-Inflated standard errors on partial regression coefficients
+## Consequences
+
+I've simulated some data where two predictors (`x1` and `x2`) are correlated with different strengths: $r = (0, \, .33, \,, .66, \, .99)$. What happens as the multicollinearity increases?
+
+[Inflated standard errors on partial regression coefficients]{.fragment}
 
 ::: panel-tabset
 
@@ -967,6 +1333,7 @@ Inflated standard errors on partial regression coefficients
 ```{r}
 #| echo: false
 #| layout-ncol: 4
+#| fig-align: center
 n <- 100
 sim_dat <- tibble(
   pred_cor = c(0, 0.33, 0.66, 0.99)
@@ -992,27 +1359,57 @@ sim_dat <- tibble(
     )
   ) 
 
-sim_dat |>
+# sim_dat |>
+#   select(pred_cor, res) |>
+#   pmap(
+#     \(pred_cor, res) res |>
+#          mutate(p.value = gtsummary::style_pvalue(p.value)) |>
+#         select(-c(statistic, conf.low, conf.high)) |>
+#         gt() |>
+#         fmt_number(columns = c(estimate, std.error), decimals = 2) |>
+#         tab_header(glue::glue("Predictor correlation: {pred_cor}")) |>
+#         cols_label(
+#           term = "Term",
+#           estimate = "Estimate",
+#           std.error = "SE",
+#           p.value = "p"
+#         ) |>
+#         tab_style(
+#           style = cell_text(weight = "bold"),
+#           locations = cells_column_labels()
+#         )
+#     ) |>
+#   print()
+
+
+tables <- sim_dat |>
   select(pred_cor, res) |>
   pmap(
     \(pred_cor, res) res |>
-         mutate(p.value = gtsummary::style_pvalue(p.value)) |>
-        select(-c(statistic, conf.low, conf.high)) |>
-        gt() |>
-        fmt_number(columns = c(estimate, std.error), decimals = 2) |>
-        tab_header(glue::glue("Predictor correlation: {pred_cor}")) |>
-        cols_label(
-          term = "Term",
-          estimate = "Estimate",
-          std.error = "SE",
-          p.value = "p"
-        ) |>
-        tab_style(
-          style = cell_text(weight = "bold"),
-          locations = cells_column_labels()
-        )
-    ) |>
-  print()
+      mutate(p.value = gtsummary::style_pvalue(p.value)) |>
+      select(-c(statistic, conf.low, conf.high)) |>
+      gt() |>
+      fmt_number(columns = c(estimate, std.error), decimals = 2) |>
+      tab_header(glue::glue("Predictor correlation: {pred_cor}")) |>
+      cols_label(
+        term = "Term",
+        estimate = "Estimate",
+        std.error = "SE",
+        p.value = "p"
+      ) |>
+      tab_style(
+        style = cell_text(weight = "bold"),
+        locations = cells_column_labels()
+      ) |>
+      tab_options(table.font.size = px(13)) |>  # 4 across is tight at the default 16px
+      as_raw_html(inline_css = TRUE) |>
+      htmltools::HTML()
+  )
+
+htmltools::div(
+  style = "display: grid; grid-template-columns: repeat(4, 1fr); gap: 1em;",
+  tables
+)
 ```
 
 ### Code
@@ -1068,22 +1465,19 @@ sim_dat |>
 :::
 
 
-Sim demoing misinterpretations, variance inflation bc multicollinearity
-
-
 
 ## Superficial Check
 
+In an example numeric-only model where bill depth, bill length, and flipper length are the predictors:
+
 ```{r}
-penguins |>
-  select(bill_length_mm, bill_depth_mm, flipper_length_mm) |>
+penguins_cleaned |>
+  select(bill_depth_mm_z, bill_length_mm_z, flipper_length_mm_z) |>
   cor(use = "pairwise.complete.obs")
 ```
 
 
 ## Why Superficial? 
-
-Sim showing that variables can have small bivariate cors but in total explain a lot of the variance in y
 
 Suppose you have this dataset:
 
@@ -1102,8 +1496,12 @@ d <- tibble(
   y = rnorm(n, x6)
 ) |>
   round(1)
+```
+
+```{r}
 head(d)
 ```
+
 
 And you fit this model:
 
@@ -1113,6 +1511,8 @@ m <- lm(y ~ x1 + x2 + x3 + x4 + x5 + x6, data = d)
 
 
 ## Why Superficial?
+
+::: {style="font-size:90%"}
 
 If we just look at the bivariate correlations, we get this correlation matrix:
 
@@ -1127,26 +1527,32 @@ d |>
 :::
 
 ::: {.column width="50%"}
-Not too bad, right?
+Not tooo bad, right?
 :::
 ::::
 
+::: fragment
 Well, multicollinearity isn't just about the bivariate relationships of predictors, it's about the total amount of variance other predictors can explain in a predictor.
+:::
 
+::: fragment
 What if we estimate a model of other predictors predicting `x6`?
+:::
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
 summary(lm(x6 ~ x1 + x2 + x3 + x4 + x5, data = d))$r.squared
 ```
 
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ...that's a lot of explained variance.
 :::
 ::::
+
+:::
 
 
 ## Squared Multiple Correlations
@@ -1176,7 +1582,7 @@ We can assess the amount of variance predictors can account for in an outcome wi
 
 ## Squared Multiple Correlations
 
-The $R^2$ of these models (again, predictors in the model of interest trying to predict each other) is called *squared multiple correlations*, $SMC$s. 
+The $R^2$ of these models (again, predictors in the model of interest trying to predict each other) is called *squared multiple correlations*, $\mathrm{SMC}$s. 
 
 ::: subpoint
 ○ $\text{bill length} = \beta_0 + \beta_1\text{bill depth} + \beta_2\text{flipper length} + \epsilon$
@@ -1207,20 +1613,20 @@ summary(multicoll_m3)$r.squared
 
 ## Variance Inflation Factor
 
-The presence of multicollinearity among predictors in the model increases the variance of the model estimates. We can examine this effect with Variance Inflation Factors ($VIF$s).
+The presence of multicollinearity among predictors in the model increases the variance of the model estimates. We can examine this effect with Variance Inflation Factors ($\mathrm{VIF}$s).
 
-$$\mathrm{VIF_p} = \frac{1}{1 - \mathrm{SMC_p}}$$
+$$\mathrm{VIF}_\mathrm{p} = \frac{1}{1 - \mathrm{SMC}_\mathrm{p}}$$
 
 where $p$ is a given model predictor.
 
 :::: {.columns}
 ::: {.column width="50%"}
-Our penguin model:
+Our numeric-predictors-only penguin model:
 :::
 
 ::: {.column width="50%"}
 ```{r}
-car::vif(m3)
+car::vif(m_numeric_only)
 ```
 :::
 ::::
@@ -1233,21 +1639,35 @@ Variance Inflation Factors indicate the factor by which the standard error has i
 
 An alternative way of looking at this is with *tolerance*, which is just the inverse of $VIF$.
 
-$$\mathrm{tolerance_p} = \frac{1}{\mathrm{VIF_p}}$$
+$$\mathrm{tolerance}_\mathrm{p} = \frac{1}{\mathrm{VIF}_\mathrm{p}} = 1 - \mathrm{SMC}_\mathrm{p}$$
 
 :::: {.columns}
 ::: {.column width="50%"}
-Our penguin model:
+Our numeric-predictors-only penguin model:
 :::
 
 ::: {.column width="50%"}
 ```{r}
-1 / car::vif(m3)
+1 / car::vif(m_numeric_only)
 ```
 :::
 ::::
 
 Tolerance indicates the proportion of variance in a given predictor that is independent of other predictors.
+
+
+## Tolerance and $\mathrm{VIF}$
+
+
+<div>
+```{=html}
+<iframe class="slide-deck" src="https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/27%20Regression%20Diagnostics/Lecture%2027%20Regression%20Diagnostics_v0.html#/vif-and-tolerance"></iframe>
+```
+</div>
+
+::: footer
+From Mark's [Lecture 27: More Regression and Diagnostics, Slide 20](https://jhelmer3.github.io/PSYC6019-2026/lecture/slides/27%20Regression%20Diagnostics/Lecture%2027%20Regression%20Diagnostics_v0.html#/vif-and-tolerance) accessed on 2026-11-20
+:::
 
 
 ## Why Superficial?
@@ -1276,12 +1696,41 @@ car::vif(m)
 ### Tolerance
 
 ```{r}
-1 / car::vif(m)
+(1 / car::vif(m)) |> round(3)
 ```
 
 :::
 ::::
 
+
+## Original Example
+
+:::: {.columns .fragment}
+::: {.column width="50%"}
+### VIF
+
+```{r}
+car::vif(m3)
+```
+
+
+:::
+
+::: {.column width="50%"}
+### Tolerance
+
+```{r}
+(1 / car::vif(m3)) |> round(3)
+```
+
+:::
+::::
+
+::: fragment
+Note that these say `GVIF`: this is the *Generalized* Variance Inflation Factor. It's *generalized* because some of the predictor models have categorical variables as their outcomes (penguin species).
+
+No need to worry about the details of this---the column with `GVIF^(1/(2*Df))` can be interpreted the same as we are used to!
+:::
 
 
 # Outliers
@@ -1308,7 +1757,7 @@ We can describe all datapoints based on their **leverage**, **distance**, and **
 ## Outlier Detection
 
 :::: {.columns style="font-size:85%"}
-::: {.column width="33%"}
+::: {.column .fragment width="33%"}
 ### Leverage
 
 Leverage represents the distance of a set of predictor values to the centroid of the predictor density
@@ -1320,7 +1769,7 @@ Leverage represents the distance of a set of predictor values to the centroid of
 $h$, or "hat," values indicate how far a point is from the centroid
 :::
 
-::: {.column width="33%"}
+::: {.column .fragment width="33%"}
 ### Distance
 
 Distance values are unusual outcome values given the observations' predictors
@@ -1332,7 +1781,7 @@ Distance values are unusual outcome values given the observations' predictors
 Studentized residuals provide a measure of distance
 :::
 
-::: {.column width="33%"}
+::: {.column .fragment width="33%"}
 ### Influence
 
 Influence indicates the amount an observation actually changes the results of a regression.
@@ -1340,6 +1789,16 @@ Influence indicates the amount an observation actually changes the results of a 
 Function of leverage and distance
 
 Considers the difference in predictions if a datapoint were removed
+:::
+::::
+
+:::: {.columns style="font-size:85%"}
+::: {.column .fragment width="66%"}
+Leverage and distance represent a potential to influence results, but don't necessarily mean the results were affected.
+:::
+
+::: {.column .fragment width="33%"}
+Influence does represent the degree of change in the model!
 :::
 ::::
 
@@ -1357,8 +1816,8 @@ One datapoint with very high X compared to others.
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
-#| fig-height: 4
+#| fig-width: 3.5
+#| fig-height: 3.5
 #| fig-align: center
 set.seed(1)
 n_people <- 100
@@ -1373,8 +1832,7 @@ d |>
   coord_cartesian(xlim = c(10, 70)) +
   theme_classic() +
   guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T)) +
-  labs(x = "Density Plot of X")
+         y = guide_axis(cap = T))
 ```
 
 ### Code
@@ -1393,8 +1851,7 @@ d |>
   coord_cartesian(xlim = c(10, 70)) +
   theme_classic() +
   guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T)) +
-  labs(x = "Density Plot of X")
+         y = guide_axis(cap = T))
 ```
 :::
 
@@ -1406,8 +1863,8 @@ d |>
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
-#| fig-height: 4
+#| fig-width: 3.5
+#| fig-height: 3.5
 #| fig-align: center
 d |>
   ggplot(aes(x = x, y = y)) +
@@ -1415,8 +1872,7 @@ d |>
   coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
   theme_classic() +
   guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T)) +
-  labs(title = "Scatterplot of X and Y")
+         y = guide_axis(cap = T))
 ```
 
 ### Code
@@ -1428,8 +1884,7 @@ d |>
   coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
   theme_classic() +
   guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T)) +
-  labs(title = "Scatterplot of X and Y")
+         y = guide_axis(cap = T))
 ```
 :::
 
@@ -1447,7 +1902,7 @@ One datapoint with very high X compared to others.
 ::: {.column width="50%"}
 A datapoint having high leverage is not about its relationship to Y. Here, the outlier falls comfortably in the regression line.
 
-But you can see **why** datapoints with unusual X values have high leverage: moving or changing them slightly could drastically change the estimated "line of best fit".
+But you can see **why** datapoints with unusual X values have high leverage: moving or changing them slightly could drastically change the estimated "line of best fit."
 
 :::
 
@@ -1457,18 +1912,18 @@ But you can see **why** datapoints with unusual X values have high leverage: mov
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
-#| fig-height: 4
+#| fig-width: 3.5
+#| fig-height: 3.5
 #| fig-align: center
 d |>
   ggplot(aes(x = x, y = y)) +
   geom_point() +
   geom_smooth(method = "lm") +
   coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
+  scale_x_continuous(breaks = c(20, 40, 60, 80)) +
   theme_classic() +
   guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T)) +
-  labs(title = "Scatterplot of X and Y")
+         y = guide_axis(cap = T))
 ```
 
 ### Code
@@ -1477,11 +1932,12 @@ d |>
 d |>
   ggplot(aes(x = x, y = y)) +
   geom_point() +
+  geom_smooth(method = "lm") +
   coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
+  scale_x_continuous(breaks = c(20, 40, 60, 80)) +
   theme_classic() +
   guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T)) +
-  labs(title = "Scatterplot of X and Y")
+         y = guide_axis(cap = T))
 ```
 :::
 
@@ -1501,13 +1957,14 @@ Leverage represents the distance of a set of predictor values to the centroid of
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
+#| fig-width: 4
 #| fig-height: 4
 #| fig-align: center
 d |>
   ggplot(aes(x = x, y = y)) +
   geom_point() +
   coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
+  scale_x_continuous(breaks = c(20, 40, 60, 80)) +
   theme_classic() +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T))
@@ -1520,6 +1977,7 @@ d |>
   ggplot(aes(x = x, y = y)) +
   geom_point() +
   coord_cartesian(xlim = c(10, 70), ylim = c(10, 70)) +
+  scale_x_continuous(breaks = c(20, 40, 60, 80)) +
   theme_classic() +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T))
@@ -1534,7 +1992,7 @@ d |>
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
+#| fig-width: 4
 #| fig-height: 4
 #| fig-align: center
 delta  <- 15                       # how far to move the outlier's Y up/down
@@ -1667,19 +2125,20 @@ We can examine observations' leverage statistics with their $h$ "hat" values wit
 Want to compare to a cutoff of $h > \frac{3(P + 1)}{N}$.
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column .fragment width="33%"}
 ```{r}
 hatvalues(m3) |>
-  head()
+  head(3)
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="66%"}
 ```{r}
 penguins_cleaned |>
   mutate(hat = hatvalues(m3)) |>
-  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, hat) |>
-  round(3)
+  select(bill_depth_mm_z, species, year, hat) |>
+  mutate(across(where(is.numeric), \(col) round(col, 3))) |>
+  head()
 ```
 
 :::
@@ -1697,121 +2156,121 @@ We can examine observations' leverage statistics with their $h$ "hat" values wit
 Want to compare to a cutoff of $h > \frac{3(P + 1)}{N}$.
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
-n_parameters <- length(coef(m3)) - 1
-n_observations = nrow(penguins_cleaned)
+n_predictors <- length(coef(m3)) - 1
+n_observations <- nrow(penguins_cleaned)
 
-cutoff <- 3 * (n_parameters + 1) / n_observations
-n_parameters; n_observations
+cutoff <- 3 * (n_predictors + 1) / n_observations
+n_predictors; n_observations
 cutoff
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column .fragment width="50%"}
 ```{r}
 high_hats <- penguins_cleaned |>
   mutate(hat = hatvalues(m3)) |>
   filter(hat > cutoff)
   
 high_hats |>
-  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, hat) |>
-  round(3)
+  select(bill_depth_mm_z, species, year, hat) |>
+  mutate(across(where(is.numeric), \(col) round(col, 3)))
 ```
 
 :::
 ::::
 
 
-## Leverage
+<!-- ## Leverage -->
 
-We can examine observations' leverage statistics with their $h$ "hat" values with `hatvalues(lm_model)`.
+<!-- We can examine observations' leverage statistics with their $h$ "hat" values with `hatvalues(lm_model)`. -->
 
-::: {.panel-tabset}
-### Plot
-```{r}
-#| echo: false
-#| fig-width: 5
-#| fig-height: 4
-#| fig-align: center
-#| layout-ncol: 3
-penguins_cleaned |>
-  ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z)) +
-  geom_point() +
-  geom_point(
-    data = high_hats,
-    color = "skyblue", fill = "white",
-    shape = 21, size = 2, stroke = 2
-  ) +
-  theme_classic() +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T))
+<!-- ::: {.panel-tabset} -->
+<!-- ### Plot -->
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- #| fig-width: 4 -->
+<!-- #| fig-height: 4 -->
+<!-- #| fig-align: center -->
+<!-- #| layout-ncol: 3 -->
+<!-- penguins_cleaned |> -->
+<!--   ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z)) + -->
+<!--   geom_point() + -->
+<!--   geom_point( -->
+<!--     data = high_hats, -->
+<!--     color = "skyblue", fill = "white", -->
+<!--     shape = 21, size = 2, stroke = 2 -->
+<!--   ) + -->
+<!--   theme_classic() + -->
+<!--   guides(x = guide_axis(cap = T), -->
+<!--          y = guide_axis(cap = T)) -->
 
-penguins_cleaned |>
-  ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z)) +
-  geom_point() +
-  geom_point(
-    data = high_hats,
-    color = "skyblue", fill = "white",
-    shape = 21, size = 2, stroke = 2
-  ) +
-  theme_classic() +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T))
+<!-- penguins_cleaned |> -->
+<!--   ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z)) + -->
+<!--   geom_point() + -->
+<!--   geom_point( -->
+<!--     data = high_hats, -->
+<!--     color = "skyblue", fill = "white", -->
+<!--     shape = 21, size = 2, stroke = 2 -->
+<!--   ) + -->
+<!--   theme_classic() + -->
+<!--   guides(x = guide_axis(cap = T), -->
+<!--          y = guide_axis(cap = T)) -->
 
-penguins_cleaned |>
-  ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z)) +
-  geom_point() +
-  geom_point(
-    data = high_hats,
-    color = "skyblue", fill = "white",
-    shape = 21, size = 2, stroke = 2
-  ) +
-  theme_classic() +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T))
-```
+<!-- penguins_cleaned |> -->
+<!--   ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z)) + -->
+<!--   geom_point() + -->
+<!--   geom_point( -->
+<!--     data = high_hats, -->
+<!--     color = "skyblue", fill = "white", -->
+<!--     shape = 21, size = 2, stroke = 2 -->
+<!--   ) + -->
+<!--   theme_classic() + -->
+<!--   guides(x = guide_axis(cap = T), -->
+<!--          y = guide_axis(cap = T)) -->
+<!-- ``` -->
 
-### Code
-```{r}
-#| eval: false
-penguins_cleaned |>
-  ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z)) +
-  geom_point() +
-  geom_point(
-    data = high_hats,
-    color = "skyblue", fill = "white",
-    shape = 21, size = 2, stroke = 2
-  ) +
-  theme_classic() +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T))
+<!-- ### Code -->
+<!-- ```{r} -->
+<!-- #| eval: false -->
+<!-- penguins_cleaned |> -->
+<!--   ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z)) + -->
+<!--   geom_point() + -->
+<!--   geom_point( -->
+<!--     data = high_hats, -->
+<!--     color = "skyblue", fill = "white", -->
+<!--     shape = 21, size = 2, stroke = 2 -->
+<!--   ) + -->
+<!--   theme_classic() + -->
+<!--   guides(x = guide_axis(cap = T), -->
+<!--          y = guide_axis(cap = T)) -->
 
-penguins_cleaned |>
-  ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z)) +
-  geom_point() +
-  geom_point(
-    data = high_hats,
-    color = "skyblue", fill = "white",
-    shape = 21, size = 2, stroke = 2
-  ) +
-  theme_classic() +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T))
+<!-- penguins_cleaned |> -->
+<!--   ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z)) + -->
+<!--   geom_point() + -->
+<!--   geom_point( -->
+<!--     data = high_hats, -->
+<!--     color = "skyblue", fill = "white", -->
+<!--     shape = 21, size = 2, stroke = 2 -->
+<!--   ) + -->
+<!--   theme_classic() + -->
+<!--   guides(x = guide_axis(cap = T), -->
+<!--          y = guide_axis(cap = T)) -->
 
-penguins_cleaned |>
-  ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z)) +
-  geom_point() +
-  geom_point(
-    data = high_hats,
-    color = "skyblue", fill = "white",
-    shape = 21, size = 2, stroke = 2
-  ) +
-  theme_classic() +
-  guides(x = guide_axis(cap = T),
-         y = guide_axis(cap = T))
-```
-:::
+<!-- penguins_cleaned |> -->
+<!--   ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z)) + -->
+<!--   geom_point() + -->
+<!--   geom_point( -->
+<!--     data = high_hats, -->
+<!--     color = "skyblue", fill = "white", -->
+<!--     shape = 21, size = 2, stroke = 2 -->
+<!--   ) + -->
+<!--   theme_classic() + -->
+<!--   guides(x = guide_axis(cap = T), -->
+<!--          y = guide_axis(cap = T)) -->
+<!-- ``` -->
+<!-- ::: -->
 
 
 
@@ -1842,23 +2301,24 @@ $$ \frac{y - \hat{y}}{\sqrt{\mathrm{MS}_\mathrm{residual(i)} \times (1 - h)}} $$
 We can examine observations' externally studentized residuals `rstudent(lm_model)`.
 
 ::: subpoint
-○ Returns one hat value per observation (row), so we can attach the column to our dataframe
+○ Returns one studentized residual value per observation (row), so we can attach the column to our dataframe
 :::
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column width="33%"}
 ```{r}
 rstudent(m3) |>
-  head()
+  head(3)
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column width="66%"}
 ```{r}
 penguins_cleaned |>
   mutate(ext_stud_resids = rstudent(m3)) |>
-  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, ext_stud_resids) |>
-  round(3)
+  select(bill_depth_mm_z, species, year, ext_stud_resids) |>
+  mutate(across(where(is.numeric), \(col) round(col, 3))) |>
+  head()
 ```
 
 :::
@@ -1873,11 +2333,16 @@ We can examine observations' externally studentized residuals `rstudent(lm_model
 ### Plot
 ```{r}
 #| echo: false
+#| fig-width: 3.5
+#| fig-height: 3.5
+#| fig-format: png
+#| fig-dpi: 600
 #| fig-align: center
+#| out-width: "100%"
 #| layout-ncol: 3
 penguins_cleaned |>
   mutate(ext_stud_resids = rstudent(m3)) |>
-  ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z, color = ext_stud_resids)) +
+  ggplot(aes(x = bill_depth_mm_z, y = body_mass_g, color = ext_stud_resids)) +
   geom_point() +
   theme_classic() +
   guides(x = guide_axis(cap = T),
@@ -1887,8 +2352,8 @@ penguins_cleaned |>
 
 penguins_cleaned |>
   mutate(ext_stud_resids = rstudent(m3)) |>
-  ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z, color = ext_stud_resids)) +
-  geom_point() +
+  ggplot(aes(x = species, y = body_mass_g, color = ext_stud_resids)) +
+  geom_jitter() +
   theme_classic() +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
@@ -1897,8 +2362,8 @@ penguins_cleaned |>
 
 penguins_cleaned |>
   mutate(ext_stud_resids = rstudent(m3)) |>
-  ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z, color = ext_stud_resids)) +
-  geom_point() +
+  ggplot(aes(x = year, y = body_mass_g, color = ext_stud_resids)) +
+  geom_jitter() +
   theme_classic() +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
@@ -1911,7 +2376,7 @@ penguins_cleaned |>
 #| eval: false
 penguins_cleaned |>
   mutate(ext_stud_resids = rstudent(m3)) |>
-  ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z, color = ext_stud_resids)) +
+  ggplot(aes(x = bill_depth_mm_z, y = body_mass_g, color = ext_stud_resids)) +
   geom_point() +
   theme_classic() +
   guides(x = guide_axis(cap = T),
@@ -1920,8 +2385,9 @@ penguins_cleaned |>
   theme(legend.position = "bottom")
 
 penguins_cleaned |>
-  ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z, color = ext_stud_resids)) +
-  geom_point() +
+  mutate(ext_stud_resids = rstudent(m3)) |>
+  ggplot(aes(x = species, y = body_mass_g, color = ext_stud_resids)) +
+  geom_jitter() +
   theme_classic() +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
@@ -1929,8 +2395,9 @@ penguins_cleaned |>
   theme(legend.position = "bottom")
 
 penguins_cleaned |>
-  ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z, color = ext_stud_resids)) +
-  geom_point() +
+  mutate(ext_stud_resids = rstudent(m3)) |>
+  ggplot(aes(x = year, y = body_mass_g, color = ext_stud_resids)) +
+  geom_jitter() +
   theme_classic() +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T)) +
@@ -1938,7 +2405,6 @@ penguins_cleaned |>
   theme(legend.position = "bottom")
 ```
 :::
-
 
 
 ## Influence
@@ -1976,19 +2442,20 @@ We can examine observations' DFFITS with `dffits(lm_model)`.
 Want to compare to a cutoff of $\mathrm{DFFITS} > 1$ or $\mathrm{DFFITS} > 2 \sqrt{\frac{p \, + \, 1}{N}}$.
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column width="33%"}
 ```{r}
 dffits(m3) |>
-  head()
+  head(3)
 ```
 :::
 
-::: {.column width="50%"}
+::: {.column width="66%"}
 ```{r}
 penguins_cleaned |>
   mutate(dffits = dffits(m3)) |>
-  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, dffits) |>
-  round(3)
+  select(bill_depth_mm_z, species, year, dffits) |>
+  mutate(across(where(is.numeric), \(col) round(col, 3))) |>
+  head()
 ```
 
 :::
@@ -2008,11 +2475,11 @@ Want to compare to a cutoff of $\mathrm{DFFITS} > 1$ or $\mathrm{DFFITS} > 2 \sq
 :::: {.columns}
 ::: {.column width="50%"}
 ```{r}
-n_parameters <- length(coef(m3)) - 1
-n_observations = nrow(penguins_cleaned)
+n_predictors <- length(coef(m3)) - 1
+n_observations <- nrow(penguins_cleaned)
 
-cutoff <- 2 * sqrt((n_parameters + 1) / n_observations)
-n_parameters; n_observations
+cutoff <- 2 * sqrt((n_predictors + 1) / n_observations)
+n_predictors; n_observations
 cutoff
 ```
 :::
@@ -2024,8 +2491,9 @@ high_dffits <- penguins_cleaned |>
   filter(dffits > cutoff)
   
 high_dffits |>
-  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, dffits) |>
-  round(3)
+  select(bill_depth_mm_z, species, year, dffits) |>
+  mutate(across(where(is.numeric), \(col) round(col, 3))) |>
+  head(4)
 ```
 
 :::
@@ -2038,7 +2506,7 @@ high_dffits |>
 ### Plot
 ```{r}
 #| echo: false
-#| fig-width: 5
+#| fig-width: 4
 #| fig-height: 4
 #| fig-align: center
 #| layout-ncol: 3
@@ -2055,24 +2523,26 @@ penguins_cleaned |>
          y = guide_axis(cap = T))
 
 penguins_cleaned |>
-  ggplot(aes(x = bill_depth_mm_z, y = body_mass_g)) +
-  geom_point() +
-  geom_point(
+  ggplot(aes(x = species, y = body_mass_g)) +
+  geom_jitter(height = 0) +
+  geom_jitter(
     data = high_dffits,
     color = "skyblue", fill = "white",
-    shape = 21, size = 2, stroke = 2
+    shape = 21, size = 2, stroke = 2,
+    height = 0
   ) +
   theme_classic() +
   guides(x = guide_axis(cap = T),
          y = guide_axis(cap = T))
 
 penguins_cleaned |>
-  ggplot(aes(x = flipper_length_mm_z, y = body_mass_g)) +
-  geom_point() +
-  geom_point(
+  ggplot(aes(x = year, y = body_mass_g)) +
+  geom_jitter(height = 0) +
+  geom_jitter(
     data = high_dffits,
     color = "skyblue", fill = "white",
-    shape = 21, size = 2, stroke = 2
+    shape = 21, size = 2, stroke = 2,
+    height = 0
   ) +
   theme_classic() +
   guides(x = guide_axis(cap = T),
@@ -2083,10 +2553,10 @@ penguins_cleaned |>
 ```{r}
 #| eval: false
 penguins_cleaned |>
-  ggplot(aes(x = bill_length_mm_z, y = bill_depth_mm_z)) +
+  ggplot(aes(x = bill_length_mm_z, y = body_mass_g)) +
   geom_point() +
   geom_point(
-    data = high_hats,
+    data = high_dffits,
     color = "skyblue", fill = "white",
     shape = 21, size = 2, stroke = 2
   ) +
@@ -2095,10 +2565,10 @@ penguins_cleaned |>
          y = guide_axis(cap = T))
 
 penguins_cleaned |>
-  ggplot(aes(x = bill_length_mm_z, y = flipper_length_mm_z)) +
-  geom_point() +
-  geom_point(
-    data = high_hats,
+  ggplot(aes(x = species, y = body_mass_g)) +
+  geom_jitter() +
+  geom_jitter(
+    data = high_dffits,
     color = "skyblue", fill = "white",
     shape = 21, size = 2, stroke = 2
   ) +
@@ -2107,10 +2577,10 @@ penguins_cleaned |>
          y = guide_axis(cap = T))
 
 penguins_cleaned |>
-  ggplot(aes(x = flipper_length_mm_z, y = bill_depth_mm_z)) +
-  geom_point() +
-  geom_point(
-    data = high_hats,
+  ggplot(aes(x = year, y = body_mass_g)) +
+  geom_jitter() +
+  geom_jitter(
+    data = high_dffits,
     color = "skyblue", fill = "white",
     shape = 21, size = 2, stroke = 2
   ) +
@@ -2142,6 +2612,22 @@ $$ \mathrm{DFBETAS} =  \frac{\hat{b} - \hat{b}_{(i)}}{s_{\hat{b}_{(i)}}} $$
 How much would the regression coefficients change if $i$ was not in the dataset?
 
 
+## DFBETAS
+
+We can examine observations' DFBETAS with `dfbetas(lm_model)`.
+
+::: subpoint
+○ Returns a **matrix** of DFBETAS values per observation (row), so we can still attach the column**s** to our dataframe with `bind_cols()`
+:::
+
+Want to compare to a cutoff of $\mathrm{DFBETAS} > 1$ or $\mathrm{DFBETAS} > \frac{2}{\sqrt{N}}$.
+
+```{r}
+dfbetas(m3) |>
+  head() |>
+  round(3)
+```
+
 
 ## DFBETAS
 
@@ -2153,31 +2639,16 @@ We can examine observations' DFBETAS with `dfbetas(lm_model)`.
 
 Want to compare to a cutoff of $\mathrm{DFBETAS} > 1$ or $\mathrm{DFBETAS} > \frac{2}{\sqrt{N}}$.
 
-
-:::: {.columns}
-::: {.column width="50%"}
 ```{r}
-dfbetas(m3) |>
-  head()
-
 m3_dfbetas <- m3 |>
   dfbetas() |>
   as_tibble() |>
   rename_with(\(colname) paste0("dfbeta_", colname))
-m3_dfbetas
-```
-:::
-
-::: {.column width="50%"}
-```{r}
-penguins_cleaned |>
-  bind_cols(m3_dfbetas) |>
-  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, starts_with("dfbeta_")) |>
-  round(3)
+m3_dfbetas |>
+  head()
 ```
 
-:::
-::::
+
 
 
 ## DFBETAS
@@ -2185,7 +2656,27 @@ penguins_cleaned |>
 We can examine observations' DFBETAS with `dfbetas(lm_model)`.
 
 ::: subpoint
-○ Returns one DFBETAS value per observation (row), so we can attach the column to our dataframe
+○ Returns a **matrix** of DFBETAS values per observation (row), so we can still attach the column**s** to our dataframe with `bind_cols()`
+:::
+
+Want to compare to a cutoff of $\mathrm{DFBETAS} > 1$ or $\mathrm{DFBETAS} > \frac{2}{\sqrt{N}}$.
+
+::: {style="font-size:85%"}
+```{r}
+penguins_cleaned |>
+  bind_cols(m3_dfbetas) |>
+  select(bill_depth_mm_z, species, year, starts_with("dfbeta")) |>
+  mutate(across(where(is.numeric), \(col) round(col, 3)))
+```
+:::
+
+
+## DFBETAS
+
+We can examine observations' DFBETAS with `dfbetas(lm_model)`.
+
+::: subpoint
+○ Returns a **matrix** of DFBETAS values per observation (row), so we can still attach the column**s** to our dataframe with `bind_cols()`
 :::
 
 Want to compare to a cutoff of $\mathrm{DFBETAS} > 1$ or $\mathrm{DFBETAS} > \frac{2}{\sqrt{N}}$.
@@ -2193,7 +2684,7 @@ Want to compare to a cutoff of $\mathrm{DFBETAS} > 1$ or $\mathrm{DFBETAS} > \fr
 :::: {.columns}
 ::: {.column width="50%"}
 ```{r}
-n_observations = nrow(penguins_cleaned)
+n_observations <- nrow(penguins_cleaned)
 
 cutoff <- 2 / sqrt(n_observations)
 cutoff
@@ -2210,30 +2701,48 @@ high_dfbetas <- penguins_cleaned |>
       \(dfbeta) dfbeta > cutoff
     )
   )
-  
-high_dfbetas |>
-  select(bill_length_mm_z, bill_depth_mm_z, flipper_length_mm_z, starts_with("dfbetas_")) |>
-  round(3)
 ```
 :::
 ::::
+
+
+## DFBETAS
+
+We can examine observations' DFBETAS with `dfbetas(lm_model)`.
+
+::: subpoint
+○ Returns a **matrix** of DFBETAS values per observation (row), so we can still attach the column**s** to our dataframe with `bind_cols()`
+:::
+
+Want to compare to a cutoff of $\mathrm{DFBETAS} > 1$ or $\mathrm{DFBETAS} > \frac{2}{\sqrt{N}}$.
+
+::: {style="font-size:85%"}
+```{r}
+high_dfbetas
+```
+:::
+
+<!-- ```{r} -->
+<!-- high_dfbetas |> -->
+<!--   select(bill_depth_mm_z, species, year, starts_with("dfbeta")) |> -->
+<!--   mutate(across(where(is.numeric), \(col) round(col, 3))) -->
+<!-- ``` -->
+
 
 
 # Matrix Math in R
 
 ## Matrix Math in R
 
-While most of the time, R functions will do the work of handling matrix math for us, it can be handy to know a few functions and operations to do matrix math yourself in R.
-
-### Creating a Matrix
+While most of the time, R functions will do the work of handling matrix math for us, it can be handy to know a few functions and operations to do matrix math yourself.
 
 The `matrix()` function allows us to create matrices. We can also convert from a dataframe with `as.matrix()`.
 
-`matrix(data, nrow = 1, col = 1, byrow = FALSE)
+`matrix(data, nrow = 1, col = 1, byrow = FALSE)`
 
 By default, `matrix()` will input values down columns first. Change `byrow = TRUE` to swap to by rows first.
 
-:::: {.columns}
+:::: {.columns style="font-size:90%"}
 ::: {.column width="33%"}
 ```{r}
 c(1, 2, 3, 4) |>
@@ -2329,13 +2838,12 @@ To invert a matrix in R, use the `solve()` function.
 :::: {.columns}
 ::: {.column width="33%"}
 ```{r}
-M <- tibble(
+(M <- tibble(
   x1 = c(1, 0, 3),
   x2 = c(2, 3, 0),
   x3 = c(0, 4, 5)
 ) |>
-  as.matrix()
-M
+  as.matrix())
 ```
 :::
 
