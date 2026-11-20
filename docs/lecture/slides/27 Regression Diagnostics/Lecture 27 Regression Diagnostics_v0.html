@@ -6,8 +6,8 @@
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.10.18">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.19">
 
   <meta name="author" content="Mark Himmelstein">
   <title>PSYC 6019 – Lecture 27: More Regression and Diagnostics</title>
@@ -222,7 +222,7 @@ Mark Himmelstein
 </section>
 <section id="categorical-predictors" class="slide level2">
 <h2>Categorical Predictors</h2>
-<div style="font-size: 0.825em;">
+<div style="font-size: 0.775em;">
 <p>So far, we have discussed regression with continuous predictors</p>
 <p>It is also possible to use categorical predictors in regression models, or both categorical and continuous predictors</p>
 <p>A regression model with <strong>only</strong> categorical predictors is identical to a technique we have already learned. What is it?</p>
@@ -320,14 +320,14 @@ Mark Himmelstein
 <h2>Dummy Coded Model</h2>
 <div style="font-size: 0.77em;">
 <p>Regression model:</p>
-<p><span class="math display">\[\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3x_3\]</span></p>
+<p><span class="math display">\[\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3x_3 + b_4\text{age}\]</span></p>
 <div class="columns">
 <div class="column">
 <ul>
-<li><p>Control: <span class="math inline">\(\hat{y} = b_0\)</span></p></li>
-<li><p>Drug: <span class="math inline">\(\hat{y} = b_0 + b_1x_1\)</span></p></li>
-<li><p>Therapy: <span class="math inline">\(\hat{y} = b_0 + b_2x_2\)</span></p></li>
-<li><p>D + T: <span class="math inline">\(\hat{y} = b_0 + b_3x_3\)</span></p></li>
+<li><p>Control: <span class="math inline">\(\hat{y} = b_0+ b_4\text{age}\)</span></p></li>
+<li><p>Drug: <span class="math inline">\(\hat{y} = b_0 + b_1x_1+ b_4\text{age}\)</span></p></li>
+<li><p>Therapy: <span class="math inline">\(\hat{y} = b_0 + b_2x_2+ b_4\text{age}\)</span></p></li>
+<li><p>D + T: <span class="math inline">\(\hat{y} = b_0 + b_3x_3+ b_4\text{age}\)</span></p></li>
 </ul>
 </div><div class="column">
 <table class="caption-top">
@@ -369,10 +369,10 @@ Mark Himmelstein
 </div></div>
 <p>Interpretation:</p>
 <ul>
-<li><span class="math inline">\(b_0\)</span>: predicted <span class="math inline">\(\hat{y}\)</span> for control group</li>
-<li><span class="math inline">\(b_1\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between (drug) and (control)</li>
-<li><span class="math inline">\(b_2\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between (therapy) and (control)</li>
-<li><span class="math inline">\(b_3\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between (drug + therapy) and (control)</li>
+<li><span class="math inline">\(b_0 + b_4\text{age}\)</span>: predicted <span class="math inline">\(\hat{y}\)</span> for control group</li>
+<li><span class="math inline">\(b_1 + b_4\text{age}\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between (drug) and (control) holding age constant</li>
+<li><span class="math inline">\(b_2 + b_4\text{age}\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between (therapy) and (control) holding age constant</li>
+<li><span class="math inline">\(b_3 + b_4\text{age}\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between (drug + therapy) and (control) holding age constant</li>
 </ul>
 <!-- Cool side effect: $x_1$, $x_2$, and $x_3$ are uncorrelated! -->
 <!-- * If $n$ is equal for each group -->
@@ -438,13 +438,13 @@ Mark Himmelstein
 <h2>Effects Coded Model</h2>
 <div style="font-size: 0.85em;">
 <p>Regression model:</p>
-<p><span class="math display">\[\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3x_3\]</span></p>
+<p><span class="math display">\[\hat{y} = b_0 + b_1x_1 + b_2x_2 + b_3x_3 + b_4\text{age}\]</span></p>
 <p>Interpretation:</p>
 <ul>
-<li><p><span class="math inline">\(b_0\)</span>: grand mean of <span class="math inline">\(y\)</span></p></li>
-<li><p><span class="math inline">\(b_1\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between drug and grand mean</p></li>
-<li><p><span class="math inline">\(b_2\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between therapy and grand mean</p></li>
-<li><p><span class="math inline">\(b_3\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between (drug + therapy) and grand mean</p></li>
+<li><p><span class="math inline">\(b_0 + b_4\text{age}\)</span>: predicted mean of <span class="math inline">\(y\)</span> at for a given age</p></li>
+<li><p><span class="math inline">\(b_1\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between drug and mean <span class="math inline">\(y\)</span> holding age constant</p></li>
+<li><p><span class="math inline">\(b_2\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between therapy and mean <span class="math inline">\(y\)</span> holding age constant</p></li>
+<li><p><span class="math inline">\(b_3\)</span>: difference in <span class="math inline">\(\hat{y}\)</span> between (drug + therapy) and mean <span class="math inline">\(y\)</span> holding age constant</p></li>
 </ul>
 <p>Omnibus test of <span class="math inline">\(R^2\)</span> is equivalent to simultaneously testing main effects in ANOVA</p>
 <p>ANOVA interaction corresponds to <strong>moderation</strong> effects—stay tuned!</p>

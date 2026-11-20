@@ -14,12 +14,21 @@ tar_source("lab/R")
 
 list(
   ## main pages
-  tar_quarto(index, "index.qmd"),
-  tar_quarto(syllabus, "syllabus.qmd"),
-  tar_quarto(extra_credit, "extra-credit.qmd"),
+  # tar_quarto(index, "index.qmd"),
+  # tar_quarto(syllabus, "syllabus.qmd"),
+  # tar_quarto(extra_credit, "extra-credit.qmd"),
   
   ## lab index page
   tar_quarto(lab_index, "lab/lab-index.qmd"),
+  
+  ## lab 14
+  tar_target(lab_14_slides_qmd, 
+             "lab/slides/lab_14.qmd", 
+             format = "file"),
+  tar_target(lab_14_slides, {
+    quarto::quarto_render(lab_14_slides_qmd, quiet = F)
+    qmd_out(lab_14_slides_qmd)
+  }, format = "file"),
   
   
   ## lab 13
@@ -29,6 +38,14 @@ list(
   tar_target(lab_13_slides, {
     quarto::quarto_render(lab_13_slides_qmd, quiet = F)
     qmd_out(lab_13_slides_qmd)
+  }, format = "file"),
+  
+  tar_target(lab_13_activity_key_qmd,
+             "lab/activities/activity-keys/lab_13_activity_key.qmd",
+             format = "file"),
+  tar_target(lab_13_activity_key, {
+    quarto::quarto_render(lab_13_activity_key_qmd)
+    qmd_out(lab_13_activity_key_qmd)
   }, format = "file"),
   
   
@@ -45,99 +62,98 @@ list(
              "lab/activities/activity-keys/lab_12_activity_key.qmd",
              format = "file"),
   tar_target(lab_12_activity_key, {
-    pixarfilms_data_file
     quarto::quarto_render(lab_12_activity_key_qmd)
     qmd_out(lab_12_activity_key_qmd)
-  }, format = "file"),
+  }, format = "file") #,
   
-  ## lab 11
-  tar_target(chick_week_data, make_chick_week_data()),
-  tar_file(chick_week_data_file, 
-           write.csv(chick_week_data, "lab/data/lab_11/chick_week_data.csv", row.names = F)),
-  
-  tar_target(lab_11_slides_qmd, 
-             "lab/slides/lab_11.qmd", 
-             format = "file"),
-  tar_target(lab_11_slides, {
-    chick_week_data
-    quarto::quarto_render(lab_11_slides_qmd, quiet = F)
-    qmd_out(lab_11_slides_qmd)
-  }, format = "file"),
-  
-  tar_target(lab_11_activity_key_qmd,
-             "lab/activities/activity-keys/lab_11_activity_key.qmd",
-             format = "file"),
-  tar_target(lab_11_activity_key, {
-    pixarfilms_data_file
-    quarto::quarto_render(lab_11_activity_key_qmd)
-    qmd_out(lab_11_activity_key_qmd)
-  }, format = "file"),
-  
+  # ## lab 11
+  # tar_target(chick_week_data, make_chick_week_data()),
+  # tar_file(chick_week_data_file, 
+  #          write.csv(chick_week_data, "lab/data/lab_11/chick_week_data.csv", row.names = F)),
+  # 
+  # tar_target(lab_11_slides_qmd, 
+  #            "lab/slides/lab_11.qmd", 
+  #            format = "file"),
+  # tar_target(lab_11_slides, {
+  #   chick_week_data
+  #   quarto::quarto_render(lab_11_slides_qmd, quiet = F)
+  #   qmd_out(lab_11_slides_qmd)
+  # }, format = "file"),
+  # 
   # tar_target(lab_11_activity_key_qmd,
   #            "lab/activities/activity-keys/lab_11_activity_key.qmd",
   #            format = "file"),
   # tar_target(lab_11_activity_key, {
-  #   pumpkin_prices_data_file
+  #   pixarfilms_data_file
   #   quarto::quarto_render(lab_11_activity_key_qmd)
   #   qmd_out(lab_11_activity_key_qmd)
   # }, format = "file"),
-  
-  
-  ## lab 10
-  tar_target(lab_10_slides_qmd, 
-             "lab/slides/lab_10.qmd", 
-             format = "file"),
-  tar_target(lab_10_slides, {
-    quarto::quarto_render(lab_10_slides_qmd, quiet = F)
-    qmd_out(lab_10_slides_qmd)
-  }, format = "file"),
-  
-  tar_target(pixarfilms_data, make_pixarfilms_data()),
-  tar_file(pixarfilms_data_file, 
-           write.csv(pixarfilms_data, "lab/data/lab_10/pixarfilms_data.csv", row.names = F)),
-  
-  tar_target(lab_10_activity_key_qmd,
-             "lab/activities/activity-keys/lab_10_activity_key.qmd",
-             format = "file"),
-  tar_target(lab_10_activity_key, {
-    pixarfilms_data_file
-    quarto::quarto_render(lab_10_activity_key_qmd)
-    qmd_out(lab_10_activity_key_qmd)
-  }, format = "file"),
-  
-  ## lab 09
-  tar_target(lab_09_slides_qmd, 
-             "lab/slides/lab_09.qmd", 
-             format = "file"),
-  tar_target(lab_09_slides, {
-    quarto::quarto_render(lab_09_slides_qmd, quiet = F)
-    qmd_out(lab_09_slides_qmd)
-  }, format = "file"),
-  
-  tar_target(lab_09_activity_key_qmd,
-             "lab/activities/activity-keys/lab_09_activity_key.qmd",
-             format = "file"),
-  tar_target(lab_09_activity_key, {
-    quarto::quarto_render(lab_09_activity_key_qmd)
-    qmd_out(lab_09_activity_key_qmd)
-  }, format = "file"),
-  
-  ## lab 08
-  tar_target(lab_08_slides_qmd, 
-             "lab/slides/lab_08.qmd", 
-             format = "file"),
-  tar_target(lab_08_slides, {
-    quarto::quarto_render(lab_08_slides_qmd, quiet = F)
-    qmd_out(lab_08_slides_qmd)
-  }, format = "file"),
-  
-  tar_target(lab_08_activity_key_qmd, 
-             "lab/activities/activity-keys/lab_08_activity_key.qmd", 
-             format = "file"),
-  tar_target(lab_08_activity_key, {
-    quarto::quarto_render(lab_08_activity_key_qmd)
-    qmd_out(lab_08_activity_key_qmd)
-  }, format = "file")#,
+  # 
+  # # tar_target(lab_11_activity_key_qmd,
+  # #            "lab/activities/activity-keys/lab_11_activity_key.qmd",
+  # #            format = "file"),
+  # # tar_target(lab_11_activity_key, {
+  # #   pumpkin_prices_data_file
+  # #   quarto::quarto_render(lab_11_activity_key_qmd)
+  # #   qmd_out(lab_11_activity_key_qmd)
+  # # }, format = "file"),
+  # 
+  # 
+  # ## lab 10
+  # tar_target(lab_10_slides_qmd, 
+  #            "lab/slides/lab_10.qmd", 
+  #            format = "file"),
+  # tar_target(lab_10_slides, {
+  #   quarto::quarto_render(lab_10_slides_qmd, quiet = F)
+  #   qmd_out(lab_10_slides_qmd)
+  # }, format = "file"),
+  # 
+  # tar_target(pixarfilms_data, make_pixarfilms_data()),
+  # tar_file(pixarfilms_data_file, 
+  #          write.csv(pixarfilms_data, "lab/data/lab_10/pixarfilms_data.csv", row.names = F)),
+  # 
+  # tar_target(lab_10_activity_key_qmd,
+  #            "lab/activities/activity-keys/lab_10_activity_key.qmd",
+  #            format = "file"),
+  # tar_target(lab_10_activity_key, {
+  #   pixarfilms_data_file
+  #   quarto::quarto_render(lab_10_activity_key_qmd)
+  #   qmd_out(lab_10_activity_key_qmd)
+  # }, format = "file"),
+  # 
+  # ## lab 09
+  # tar_target(lab_09_slides_qmd, 
+  #            "lab/slides/lab_09.qmd", 
+  #            format = "file"),
+  # tar_target(lab_09_slides, {
+  #   quarto::quarto_render(lab_09_slides_qmd, quiet = F)
+  #   qmd_out(lab_09_slides_qmd)
+  # }, format = "file"),
+  # 
+  # tar_target(lab_09_activity_key_qmd,
+  #            "lab/activities/activity-keys/lab_09_activity_key.qmd",
+  #            format = "file"),
+  # tar_target(lab_09_activity_key, {
+  #   quarto::quarto_render(lab_09_activity_key_qmd)
+  #   qmd_out(lab_09_activity_key_qmd)
+  # }, format = "file"),
+  # 
+  # ## lab 08
+  # tar_target(lab_08_slides_qmd, 
+  #            "lab/slides/lab_08.qmd", 
+  #            format = "file"),
+  # tar_target(lab_08_slides, {
+  #   quarto::quarto_render(lab_08_slides_qmd, quiet = F)
+  #   qmd_out(lab_08_slides_qmd)
+  # }, format = "file"),
+  # 
+  # tar_target(lab_08_activity_key_qmd, 
+  #            "lab/activities/activity-keys/lab_08_activity_key.qmd", 
+  #            format = "file"),
+  # tar_target(lab_08_activity_key, {
+  #   quarto::quarto_render(lab_08_activity_key_qmd)
+  #   qmd_out(lab_08_activity_key_qmd)
+  # }, format = "file")#,
   
   # ## lab 07
   # tar_target(where_ffmpeg, Sys.which("ffmpeg")),
