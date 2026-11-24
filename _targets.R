@@ -15,7 +15,7 @@ tar_source("lab/R")
 list(
   ## main pages
   # tar_quarto(index, "index.qmd"),
-  # tar_quarto(syllabus, "syllabus.qmd"),
+  tar_quarto(syllabus, "syllabus.qmd"),
   # tar_quarto(extra_credit, "extra-credit.qmd"),
   
   ## lab index page
