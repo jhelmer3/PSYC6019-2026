@@ -1,0 +1,780 @@
+---
+title: "GitHub and Hosting Quarto Documents Online"
+subtitle: "PSYC 6019-A01 / PSYC 6022-A01 <br> 2026-11-24 | Lab 14"
+author: "Jess Helmer"
+footer: "[jhelmer3.github.io/PSYC6019-2026](https://jhelmer3.github.io/PSYC6019-2026/)"
+format: 
+  revealjs:
+    code-link: true
+    slide-number: true
+    code-line-numbers: false
+    theme: ../../gt-theme.scss
+    width: 1200
+execute: 
+  echo: true
+  dpi: 600
+  freeze: auto
+knitr:
+  opts_chunk:
+    dev: svg
+---
+
+## Outline
+
+- GitHub basics
+
+- Quarto websites
+
+- Quarto publishing
+
+```{r setup}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(gt)
+```
+
+
+## Today's Resources
+
+:::: {.columns}
+::: {.column width="33%"}
+### Git Basics
+
+[Happy Git with R](https://happygitwithr.com/)
+
+This is where I learned how to get started with Git and GitHub!
+:::
+
+::: {.column width="33%"}
+### Quarto Websites
+
+
+:::
+
+::: {.column width="33%"}
+### Quarto Publishing
+
+
+
+:::
+::::
+
+I will be heavily pulling from these resources in these slides. Relevant references will be in the footer of the slide.
+
+
+## Goals for Today
+
+We are going to be covering a lot today!
+
+My main goal is to get everyone using the basic functionalities that allow you to host Quarto on GitHub. 
+
+There may be details or terminology that feel confusing---that is OK. There is lots of background information and context that we won't cover today.
+
+The resources provided have much more detail. I encourage you to read through them at your own pace to fill in the gaps of what we will skip today.
+
+::: subsubpoint
+○ Probably especially [Happy Git with R](https://happygitwithr.com/)
+:::
+
+
+# Git and GitHub Basics
+
+## About Git
+
+Git is a version control system
+
+::: subpoint
+○ Originally made for software developers to manage large codebases
+:::
+
+"Manages the "manages the evolution of a set of files---called a **repository** or **repo**---in a sane,  highly structured way." (Bryan, 2017, p. 2)
+
+
+Now often used for researchers to manage their coding / data work.
+
+::: subsubpoint
+○ Many of the functionalities map over well
+:::
+
+::: subsubpoint
+○ We often have a collection of code files, figures, data, etc that can run rampant if untamed...
+:::
+
+
+## About Git
+
+Without vs. with Git changes
+
+![](../media/lab_14/diy_vs_git.png)
+ 
+
+
+
+::: footer
+[Happy Git with R: Why Git](https://happygitwithr.com/big-picture#why-git) and [Excuse me, do you have a moment to talk about version control?](https://peerj.com/preprints/3159v2/)
+:::
+
+
+## About GitHub
+
+GitHub is a helpful **user interface** to Git (similar to how RStudio is a user interface to R) and provides a **hosting service** for our projects.
+
+::: subpoint
+○ Allows other people to easily look at the files, suggest changes, sync up themselves.
+:::
+
+::: subpoint
+○ Offers controls of who can see and edit the project
+:::
+
+If you do something silly to your files locally, you can always reset if you have been pushing to GitHub!
+
+
+::: footer
+[Happy Git with R: Why GitHub](https://happygitwithr.com/big-picture#why-github) and [Excuse me, do you have a moment to talk about version control?](https://peerj.com/preprints/3159v2/)
+:::
+
+
+## Benefits of Git / GitHub 
+
+
+
+::: footer
+[Happy Git with R: What is the payoff?](https://happygitwithr.com/big-picture#what-is-the-payoff) and [Excuse me, do you have a moment to talk about version control?](https://peerj.com/preprints/3159v2/)
+:::
+
+
+## Getting Started 
+
+In order to get all this working, we have a couple steps ahead of us:
+
+::: subpoint
+○ Register for a GitHub account (free)
+:::
+
+::: subpoint
+○ Install Git
+:::
+
+::: subpoint
+○ Install a local Git client
+:::
+
+::: subsubpoint
+○ Will be a friendly interface to working with Git on our end
+:::
+
+::: subsubpoint
+○ An alternative is working on the command line 
+:::
+
+::: subpoint
+○ Connect Git and RStudio
+:::
+
+::: subpoint
+○ Confirm we can interact with Git!
+:::
+
+::: subsubpoint
+○ We can create a practice repository to do this
+:::
+
+::: footer
+[Happy Git with R: Is it going to hurt?](https://happygitwithr.com/big-picture#is-it-going-to-hurt) and [Excuse me, do you have a moment to talk about version control?](https://peerj.com/preprints/3159v2/)
+:::
+
+
+
+
+## I. GitHub Account
+
+Create an account on [github.com](https://github.com/){target="_blank"}
+
+Jenny Bryan's advice on usernames (paraphrased):
+
+::: blockquote
+- Incorporate your actual name! People like to know who they’re dealing with. Also makes your username easier for people to guess or remember.
+
+- Reuse your username from other contexts, e.g., Twitter or Slack.
+
+- Pick a username you will be comfortable revealing to your future boss.
+
+- Shorter is better than longer.
+
+- Make it timeless. Don’t highlight your current university, employer, or place of residence, e.g. JennyFromTheBlock.
+
+- Avoid the use of upper vs. lower case to separate words. We highly recommend all lowercase. A better strategy for word separation is to use a hyphen -.
+:::
+
+You can always change your username later.
+
+::: footer
+[Happy Git with R: Register a GitHub Account](https://happygitwithr.com/github-acct#github-acct)
+:::
+
+
+## II. Install Git
+
+Do you have Git already? Check in the RStudio Terminal.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{.bash filename="Terminal"}
+which git
+## /usr/bin/git
+```
+:::
+
+::: {.column width="50%"}
+```{.bash filename="Terminal"}
+git --version
+## git version 2.50.1
+```
+:::
+::::
+
+:::: {.columns}
+::: {.column width="66%"}
+### Windows
+
+Install [Git for Windows](https://git-for-windows.github.io/)
+
+::: {.blockquote style="font-size:85%"}
+**NOTE**: When asked about “Adjusting your PATH environment”, make sure to select “Git from the command line and also from 3rd-party software”. Otherwise, we believe it is good to accept the defaults.
+
+Note that RStudio for Windows prefers for Git to be installed below C:/Program Files and this appears to be the default. This implies, for example, that the Git executable on my Windows system is found at C:/Program Files/Git/bin/git.exe. Unless you have specific reasons to otherwise, follow this convention.
+:::
+
+:::
+
+::: {.column width="33%"}
+### macOS
+
+Go to the shell (Terminal) and enter these commands:
+
+```{.bash filename="Terminal"}
+git --version
+git config
+```
+
+Click "Install"
+:::
+::::
+
+
+::: footer
+[Happy Git with R: Install Git](https://happygitwithr.com/install-git#install-git)
+:::
+
+
+## III. Introduce Yourself to Git
+
+:::: {.columns}
+::: {.column width="50%"}
+### In the Shell
+
+```
+git config --global user.name "Jane Doe"
+git config --global user.email "jane@example.com"
+git config --global --list
+```
+:::
+
+::: {.column width="50%"}
+### In R
+```{r}
+#| eval: false
+## install.packages("usethis")
+
+library(usethis)
+use_git_config(user.name = "Jane Doe", user.email = "jane@example.org")
+```
+:::
+::::
+
+**Username**: Can be your GitHub username, can also be your name
+
+**Email**: **Needs to be** the same email you used for your GitHub account
+
+
+
+::: footer
+[Happy Git with R: Introduce yourself to Git](https://happygitwithr.com/hello-git#hello-git)
+:::
+
+
+## IV. Install a Git Client
+
+Having a user interface can be a smoother way of interacting with Git, especially when starting out.
+
+There are options, but I recommend (and use) [GitKraken](https://www.gitkraken.com/).
+
+
+::: footer
+[Happy Git with R: Install a Git client](https://happygitwithr.com/git-client)
+:::
+
+
+## V. Get Everything Connected
+
+When we need to talk to a remote (e.g., on the Internet, including our own) GitHub repository, we need to include credentials that prove we are a specific GitHub user, allowed to do what we're trying to do.
+
+::: subpoint
+○ In the olden days, we could do this by entering our passwords. GitHub no longer considers password secure enough---so we just need to do a little fiddling to set these credentials up.
+:::
+
+How do we do this? Two options:
+
+::: subpoint
+○ **HTTPS**: recommended by *Happy Git with R*, what we are going to do
+:::
+
+::: subpoint
+○ **SSH**: an alternative method. Feel free to read more [here](https://happygitwithr.com/ssh-keys)
+:::
+
+Instead of a password, we will use a **Personal Access Token (PAT)**. We will go to GitHub, ask it to generate a **PAT**, and then tell RStudio the **PAT** to connect RStudio with GitHub.
+
+
+::: footer
+[Happy Git with R: Personal access token for HTTPS](https://happygitwithr.com/https-pat)
+:::
+
+
+## V. Get Everything Connected
+
+1. Go to [https://github.com/settings/tokens](https://github.com/settings/tokens) and click "Generate Token"
+
+From R, you could also do:
+
+```{r}
+#| eval: false
+usethis::create_github_token()
+```
+
+In the settings, Jenny recommends selecting "repo," "user," and "workflow." 
+
+2. Copy the generated PAT
+
+3. Set your Git credentials in R with the following code and pasting your PAT.
+
+```{r}
+#| eval: false
+gitcreds::gitcreds_set()
+```
+
+```
+? Enter password or token: ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+-> Adding new credentials...
+-> Removing credentials from cache...
+-> Done.
+```
+
+::: footer
+[Happy Git with R: Personal access token for HTTPS](https://happygitwithr.com/https-pat)
+:::
+
+
+## VI. Connect to GitHub
+
+Let's make sure we can **push** and **pull** from GitHub to our computer!
+
+1. Let's make a repo on GitHub
+
+::: subpoint
+○ Repositories > New
+:::
+
+::: blockquote
+How to fill this in:
+
+- Repository template: No template.
+
+- Repository name: myrepo or whatever you wish (we’ll delete this soon).
+
+- Description: “Repository for testing my Git/GitHub setup” or similar. It’s nice to have something here, so you’ll see it appear in the README.
+
+- Public.
+
+- Initialize this repository with: Add a README file.
+
+Click the big green button that says “Create repository”.
+
+Now click the big green button that says “<> Code”.
+
+Copy a clone URL to your clipboard. If you’re taking our default advice, copy the HTTPS URL. But if you’re opting for SSH, then make sure to copy the SSH URL.
+:::
+
+I recommend trying a public repo, but private is an option too.
+
+::: footer
+[Happy Git with R: Connect to GitHub](https://happygitwithr.com/push-pull-github)
+:::
+
+
+
+## VI. Connect to GitHub
+
+2. Clone the repo onto your computer
+
+This is like making our own, local version of this repository, which is currently empty with just a `README` file.
+
+::: subpoint
+○ Copy the URL of the repository (e.g., `https://github.com/username/my-repo`)
+:::
+
+::: subpoint
+○ Open GitKraken, File > Clone repo...
+:::
+
+::: subpoint
+○ Clone with URL
+:::
+
+::: subsubpoint
+○ Where to clone to: pick a location for a new folder on your computer. I'm going to do mine next to my `live-coding` folder for this class.
+:::
+
+::: subsubpoint
+○ URL: paste in the repository URL
+:::
+
+::: subpoint
+○ Clone the repo!
+:::
+
+
+## VI. Connect to GitHub
+
+Let's turn this newly-created folder into an R Project, like we made for this class.
+
+::: subpoint
+○ Open RStudio, File > New Project > Existing Directory
+:::
+
+::: subpoint
+○ Navigate to the new repo folder
+:::
+
+We now have *new files* in our *local* version of this repository: an .Rproj file, and a .gitignore file.
+
+Let's get these onto the **remote** (GitHub's version) of the repo.
+
+In RStudio, we can use the Git pane. 
+
+::: subpoint
+○ Check the "Staged" box next to each file
+:::
+
+::: subsubpoint
+○ This is telling RStudio which files we want to add to the remote
+:::
+
+::: subpoint
+○ Click the "Commit" button
+:::
+
+::: subsubpoint
+○ This is like putting all the added files into an envelope to send to Git
+:::
+
+::: subsubpoint
+○ Add a commit message: a short description of what is changing with this commit
+:::
+
+::: subsubpoint
+○ Click the "Commit" button
+:::
+
+::: subpoint
+○ Click the "Pull" button
+:::
+
+::: subsubpoint
+○ This is bringing down any new changes on the remote's version. This is unnecessary in our example, because there's no one else interacting with the remote. But, it's a good habit to build for collaboration with Git.
+:::
+
+::: subsubpoint
+○ `Already up to date`
+:::
+
+::: subpoint
+○ Click the "Push" button
+:::
+
+::: subsubpoint
+○ This is sending off our commit to the remote!
+:::
+
+
+## VI. Connect to GitHub
+
+Let's check the remote. Can we see the new files?
+
+We have successfully **pushed** our changes in the directory to the **remote**.
+
+Now we can practice **pulling** changes.
+
+Modify the `README.md` file by clicking the edit button (little pencil) on the website.
+
+Go back to RStudio, and click "Pull" to bring the changed `README.md` to your local version.
+
+We have now finished setup :)
+
+
+## What's Next?
+
+We have successfully been able to edit files and **push** / **pull** them to / from GitHub.
+
+We will now do this with Quarto files, so we can have a live-hosted Quarto website on our GitHub page!
+
+We will practice pushing and pulling (mostly pushing) to / from Git throughout our process of creating the website.
+
+
+## Appendix: From Local to Git
+
+Generally, starting a project by creating a repo on Git and then adding files is a smooth way to work.
+
+But, you may have an existing project on your computer and want to now host it on GitHub.
+
+This matches the ["Existing project, GitHub last"](https://happygitwithr.com/existing-github-last) page in the [Happy Git with R](https://happygitwithr.com/) book. Refer to it for how to implement this!
+
+::: footer
+[Happy Git with R: "Existing project, GitHub last](https://happygitwithr.com/existing-github-last)
+:::
+
+
+
+
+# Quarto Websites
+
+## Quarto Websites
+
+So far, we've mostly been using Quarto documents (single HTML files). Today, we are going to make a Quarto website.
+
+What is a Quarto website?
+
+A Quarto website is just a way of organizing multiple Quarto documents. Instead of just having one page to scroll through, now we can have multiple.
+
+By default, will have navigation features set up to help move throughout your website.
+
+Why website instead of a document?
+
+Websites allow you to have more than one page. You can have a website with just one page if you want, and then you will always have the flexibility of adding more (e.g., a new analysis, a Quarto slide deck for a presentation)
+
+::: footer
+[Quarto Websites](https://quarto.org/docs/websites/)
+:::
+
+
+## Quarto Website Examples
+
+Small gallery of 2--3 Quarto websites. One being the class site.
+
+
+## Creating a Website
+
+Let's turn our newly created Git repository into a Quarto website.
+
+One way to create a Quarto website is in RStudio, File > New Project > New Directory > Quarto Website
+
+But we already have a directory---our local version of the Git repo!
+
+Luckily, all we need is two things: a Quarto file named `index.qmd` (to be our "homepage"), and a config file named `_quarto.yml` (this just tells Quarto to render as a website! And, we can specify settings for the whole site).
+
+::: footer
+[Quarto Websites: Creating a Website](https://quarto.org/docs/websites/)
+:::
+
+
+## Creating a Website
+
+Let's add a Quarto document `index.qmd`, like we've made Quarto documents before.
+
+Next, let's create the `_quarto.yml` file. To do this, I usually click File > New File > Text File, and then save it and type in the name with the file extension specified. 
+
+::: subpoint
+○ Check the Files pane to make sure it did not add `.txt`
+:::
+
+Now, our config file needs some stuff. I usually go to the [Quarto Websites](https://quarto.org/docs/websites/) page and copy the default config file, provided under [Config File](https://quarto.org/docs/websites/#config-file).
+
+
+## Default Config File
+
+I've also included the default config file here.
+
+<div>
+```{=html}
+<iframe src="https://quarto.org/docs/websites/#config-file"></iframe>
+```
+</div>
+
+::: footer
+[Quarto Websites: Config File](https://quarto.org/docs/websites/#config-file)0Regression%20Diagnostics/Lecture%2027%20Regression%20Diagnostics.html#/multicolinearity) accessed on 2026-11-19.
+:::
+
+
+## Creating a Website
+
+Now let's render our site. The top right says "today", and the "about.qmd" link does nothing. These are things we can adjust in our `_quarto.yml` or fix by adding a new page!
+
+Changing title to "My Website"
+
+:::: {.columns}
+::: {.column width="50%"}
+```{.yaml filename="_quarto.yml"}
+project:
+  type: website
+
+website:
+  title: "My Website"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+```
+:::
+
+::: {.column width="50%"}
+`navbar` is specifying Navigation Bar settings, and `left` means it is located on the top-left of the page.
+
+`- href` is specifying a link to a page with the **path** to that file from the project root. By default, it uses the `title` specified in the Quarto document's YAML.
+
+You can manually specify a title putting `text: New Title` below the link (`href`).
+
+See more about navigation at [Quarto Websites: Website Navigation](https://quarto.org/docs/websites/website-navigation.html)
+
+We don't have an `about.qmd` right now, but we can create one!
+:::
+::::
+
+
+
+## Next Steps
+
+We have successfully created a Quarto website that has a couple pages. 
+
+You don't need to wait until your website is fully set-up to start pushing things to Git.
+
+It's good practice to "commit early and often."
+
+Now, let's get our website onto GitHub!!!
+
+
+
+# Quarto on GitHub
+
+## Quarto on GitHub
+
+The Quarto docs provide excellent documentation on hosting your website on GitHub at [Publishing: GitHub Pages](https://quarto.org/docs/publishing/github-pages.html){target="_blank"}.
+
+GitHub Pages is GitHub's website hosting service. It is free, and compatible with hosting HTML pages made from Quarto!
+
+We will follow its instructions (publishing way 1) together.
+
+::: subpoint
+○ I refer back to these instructions just about every time I'm putting a Quarto website online. There's no need to memorize any of this.
+:::
+
+
+## Render to `docs`
+
+So far, when we render our Quarto documents, the outputted HTML any any files (those little `page_files` folders) go into the *same directory* as the Quarto document.
+
+For websites, it can be helpful to keep the **source** and the **output** separate: so GitHub Pages knows what to use as the actual website content (the rendered HTML, not the Quarto source code).
+
+We will modify our `_quarto.yml` to use `docs` as the `output-dir`.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{.yaml filename="_quarto.yml"}
+project:
+  type: website
+  output-dir: docs
+```
+:::
+
+::: {.column width="50%"}
+And now we can rerender our site. The HTML files will all go into a `docs` folder, and we can delete the old `page_files` folders in the main directory.
+:::
+::::
+
+
+## Last Details
+
+GitHub Pages (by default) will do additional processing of the HTML we ask it to host via Jekyll (GitHub Pages' default website-creation tool).
+
+We can ask it not do this by adding a file `.nojekyll`.
+
+:::: {.columns}
+::: {.column width="50%"}
+### Windows
+
+```{.bash filename="Terminal"}
+touch .nojekyll
+```
+:::
+
+::: {.column width="50%"}
+### macOS
+
+```{.bash filename="Terminal"}
+copy NUL .nojekyll
+```
+:::
+::::
+
+Now, let's get all these changes onto the remote repository!
+
+
+## Using GitKraken
+
+So far, we've used RStudio's Git pane, but GitKraken is a nicer way of interacting with Git.
+
+When you open the folder in GitKraken (may already be open from cloning), you can see all the commits made so far.
+
+You can stage changes one-by-one (like clicking the checkbox in RStudio), or Stage All Changes.
+
+Add a commit message, and commit.
+
+Pull, push.
+
+
+## Hosting the Website
+
+We now should be able to see all the changes (`.qmd` files, `docs` folder, etc.) on the online version of the repository. Let's now get the website content rendering as webpages!
+
+In the repository, go to Settings > Pages. Under Branch, switch `None` to `main`. Then, switch `/ (root)` to `/docs` and click Save. This tells GitHub Pages host use the HTML in the `docs` folder.
+
+You should see "Your GitHub Pages site is currently being built from the /docs folder in the main branch."
+
+After a minute or two, refresh the page. You should see Your site is live at URL.
+
+Go to that URL! Your site is now live on the internet. Anyone with that link will be able to view the content.
+
+
+## Adding to Our Website
+
+Let's also add an `analysis.qmd` document that has some brief analyses of the `palmerpenguins` data and render.
+
+Then, let's commit and push those changes to get our analysis live on GitHub!
+
+
+
+
+
+
+
+
+
+

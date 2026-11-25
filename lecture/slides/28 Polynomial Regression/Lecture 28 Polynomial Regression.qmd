@@ -1,0 +1,468 @@
+---
+title: "Lecture 28: Polynomial Regression"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: true 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(haven)
+library(carData)
+library(gridExtra)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_yellow <- "#FFFF33"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+my_yellow2 <- "#FFFFCC"
+```
+
+```{r}
+#| label: helpers
+#| echo: false
+
+# ---- Path diagram (replaces the tikz mediation diagrams) --------------------
+# Boxes, arrows, and plotmath labels drawn in ggplot. `captions` are plotmath
+# strings (use ~ for spaces) placed under the left and right diagrams.
+path_diagram <- function(captions = c("Single~Mediator~Model", "Regression~Model"),
+                         txt_size = 6.5) {
+  boxes <- data.frame(
+    xmin = c(2, 0, 4, 6.5, 10), xmax = c(4, 2, 6, 8.5, 12),
+    ymin = c(2.5, 1, 1, 1, 1),  ymax = c(3.5, 2, 2, 2, 2),
+    label = c("Mediator~italic(m)", "Predictor~italic(x)", "Outcome~italic(y)",
+              "Predictor~italic(x)", "Outcome~italic(y)")
+  )
+  arrows <- data.frame(x = c(1, 4, 2, 8.5), y = c(2, 3, 1.5, 1.5),
+                       xend = c(2, 5, 4, 10), yend = c(3, 2, 1.5, 1.5))
+  path_labs <- data.frame(x = c(1.2, 4.85, 3, 9.25), y = c(2.75, 2.75, 1.78, 1.78),
+                          label = c("hat(a)", "hat(b)", "hat(c)*minute", "hat(c)"))
+  caps <- data.frame(x = c(3, 9.25), y = 0.55, label = captions)
+
+  ggplot() +
+    geom_rect(data = boxes, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+              fill = NA, colour = "black", linewidth = 1) +
+    geom_text(data = boxes, aes(x = (xmin + xmax) / 2, y = (ymin + ymax) / 2, label = label),
+              parse = TRUE, size = txt_size) +
+    geom_segment(data = arrows, aes(x = x, y = y, xend = xend, yend = yend),
+                 arrow = arrow(length = unit(0.3, "cm"), type = "open"), linewidth = 1) +
+    geom_text(data = path_labs, aes(x = x, y = y, label = label),
+              parse = TRUE, size = txt_size) +
+    geom_text(data = caps, aes(x = x, y = y, label = label),
+              parse = TRUE, size = txt_size) +
+    coord_fixed(xlim = c(-0.1, 12.1), ylim = c(0.2, 3.7), clip = "off") +
+    theme_void()
+}
+
+# ---- Regression surfaces for the moderation slide ---------------------------
+reg_surface <- function(f, rows) {
+  x1 <- seq(0, 1, length = 20)
+  x2 <- seq(0, 1, length = 20)
+  y <- outer(x1, x2, f)
+  pal <- colorRampPalette(c(my_red, my_blue))(20)
+  z.facet.center <- (y[-1, -1] + y[-1, -ncol(y)] + y[-nrow(y), -1] + y[-nrow(y), -ncol(y)]) / 4
+  z.facet.range <- cut(z.facet.center, 20)
+  pmat <- persp(x = x1, y = x2, z = y, theta = -30, box = TRUE, axes = TRUE,
+                ticktype = "simple", col = pal[z.facet.range],
+                xlab = "x", ylab = "z", zlab = "y", cex.lab = 1.5)
+  for (r in rows) {
+    lines(trans3d(x = x1, y = rep(x2[r], 20), z = y[, r], pmat = pmat),
+          col = my_orange, lwd = 5)
+  }
+}
+
+# ---- Annotated console output (replaces tikz rectangles drawn over output) ---
+# Prints `lines` as a block of text, draws a coloured outline around the
+# `highlight` line(s), and puts `label` (HTML) beside the first highlighted line.
+html_output <- function(lines, highlight = NULL, label = NULL, color = my_orange, lh = 1.35) {
+  esc <- function(s) {
+    s <- gsub("&", "&amp;", s, fixed = TRUE)
+    s <- gsub("<", "&lt;", s, fixed = TRUE)
+    gsub(">", "&gt;", s, fixed = TRUE)
+  }
+  rows <- vapply(seq_along(lines), function(i) {
+    txt <- if (nzchar(lines[i])) esc(lines[i]) else "&nbsp;"
+    outline <- if (i %in% highlight) {
+      sprintf("outline: 3px solid %s; outline-offset: -1px;", color)
+    } else ""
+    sprintf("<span style='display:block; white-space:pre; line-height:%sem; %s'>%s</span>",
+            lh, outline, txt)
+  }, character(1))
+  lab <- ""
+  if (!is.null(label) && length(highlight) > 0) {
+    top <- 0.4 + (highlight[1] - 1) * lh
+    lab <- sprintf(paste0("<div style='position:absolute; left:100%%; margin-left:1em; ",
+                          "top:%sem; height:%sem; display:flex; align-items:center; ",
+                          "white-space:nowrap; color:%s; font-size:0.9em; line-height:1.1;'>%s</div>"),
+                   top, lh, color, label)
+  }
+  html <- paste0("<div style='position:relative; display:inline-block; margin-right:10em;'>",
+                 "<pre class='sh' style='margin:0; padding:0.4em 0.6em; font-size:1em; overflow:visible;'>",
+                 "<code>", paste(rows, collapse = ""), "</code></pre>", lab, "</div>")
+  cat("\n```{=html}\n", html, "\n```\n", sep = "")
+}
+```
+
+## Polynomial Regression
+
+
+::: {style="font-size: 0.7em;"}
+
+
+Polynomial equations:
+
+$$\begin{aligned}
+\hat{y} &= b_{0}+b_{1}x &&\quad \text{1st order polynomial (linear)}\\
+\hat{y} &= b_{0}+b_{1}x+b_{2}x^{2} &&\quad \text{2nd order polynomial (quadratic)}\\
+\hat{y} &= b_{0}+b_{1}x+b_{2}x^{2}+b_{3}x^{3} &&\quad \text{3rd order polynomial (cubic)}\\
+\hat{y} &= b_{0}+b_{1}x+b_{2}x^{2}+\cdots+b_{p}x^{p} &&\quad p\text{th order polynomial}
+\end{aligned}$$
+
+- Always include all "lower order" terms
+- A polynomial of order $p$ has $(p-1)$ bends or inflections 
+
+$p = 1$ has no bends (straight line)
+
+Quadratic polynomial:
+
+- One bend
+- $b_2$: quadratic effect
+- $b_2 > 0$: curve is concave up
+- $b_2 < 0$: curve is concave down
+
+:::
+
+## Quadratic Model Viz
+
+```{r}
+#| fig-width: 11
+#| fig-height: 5.5
+
+quad_dat <- data.frame(x = seq(-2, 2, by = .01))
+quad_dat <- rbind(
+  data.frame(x = quad_dat$x, y = quad_dat$x^2,     type = "concave up"),
+  data.frame(x = quad_dat$x, y = 4 - quad_dat$x^2, type = "concave down")
+)
+
+# Replaces the tikz overlay nodes: one label per facet
+quad_labs <- data.frame(type = c("concave down", "concave up"),
+                        x = 0, y = 3,
+                        label = c("b[2] == -1", "b[2] == 1"))
+
+ggplot(quad_dat, aes(x, y)) + 
+  geom_line(col = my_blue, linewidth = 2) + 
+  geom_text(data = quad_labs, aes(label = label), parse = TRUE, 
+            col = my_blue, size = 11) +
+  facet_wrap(~type) + 
+  theme_minimal(base_size = 18) + 
+  labs(x = "", y = "") + 
+  theme(strip.text.x = element_text(size = 22))
+```
+
+
+## Cubic Model Viz
+
+
+
+```{r}
+#| fig-width: 11
+#| fig-height: 6.5
+
+b2_vals <- c(1, -1)
+b3_vals <- c(1, -1)
+
+cubic_dat <- expand.grid(x = seq(-2, 2, by = .01), b2 = b2_vals, b3 = b3_vals)
+cubic_dat$y <- with(cubic_dat, b2 * x^2 + b3 * x^3)   # b0 = b1 = 0 so the bends are easy to see
+
+# Parsed facet labels replace the tikz overlay nodes
+cubic_dat$b2_lab <- factor(cubic_dat$b2, levels = b2_vals,
+                           labels = paste0("b[2] == ", b2_vals))
+cubic_dat$b3_lab <- factor(cubic_dat$b3, levels = b3_vals,
+                           labels = paste0("b[3] == ", b3_vals))
+
+ggplot(cubic_dat, aes(x, y)) + 
+  geom_hline(yintercept = 0, col = "grey80") +
+  geom_line(col = my_blue, linewidth = 2) + 
+  facet_grid(b3_lab ~ b2_lab, labeller = label_parsed) + 
+  theme_minimal(base_size = 18) + 
+  labs(x = "", y = "") + 
+  theme(strip.text = element_text(size = 22))
+```
+
+
+
+## Centering
+
+
+::: {style="font-size: 0.7em;"}
+
+
+Two options for setting up $x$ in the equation:
+
+$$\begin{aligned}
+\hat{y} &= b_{0}+b_{1}x+b_{2}x^{2} &&\quad \text{uncentered equation}\\
+\hat{y} &= b_{0}+b_{1}(x-\bar{x})+b_{2}(x-\bar{x})^{2} &&\quad \text{centered equation}
+\end{aligned}$$
+
+Regression coefficients between uncentered and centered equations:
+
+- $b_2$: second-order coefficient (quadratic effect)
+  - Both equations have exactly the same $b_2$ coefficient, standard error of $b_2$, and $t$-test
+
+- $b_1$: first-order coefficient
+  - $b_1$ differs between the uncentered and centered equations
+  - $b_1$ depends on the scaling of $b_2$
+
+- $b_0$: regression constant (intercept)
+  - $b_0$ differs between the uncentered and centered equations
+  - $b_0$ depends on the scaling of $b_2$
+
+Note: no need to center the outcome $y$
+
+:::
+
+## Centering and Colinearity
+
+
+::: {style="font-size: 0.75em;"}
+
+Using centered $x$ eliminates a potential computational difficulty (depending on the accuracy of your software/computer)
+
+- collinearity between $x$ and $x^2$
+
+Example:
+
+::: columns
+
+:::: {.column width="50%"}
+
+| $x$ | $x^{2}$ | $(x-\bar{x})$ | $(x-\bar{x})^{2}$ |
+|:---:|:---:|:---:|:---:|
+| 1 | 1  | -3 | 9 |
+| 3 | 9  | -1 | 1 |
+| 5 | 25 | 1  | 1 |
+| 7 | 49 | 3  | 9 |
+
+::::
+
+:::: {.column width="50%"}
+
+$$\begin{aligned}
+\text{cor}(x, x^2) &= .98\\
+\text{cor}[(x - \bar{x}), (x - \bar{x})^2] &= 0
+\end{aligned}$$
+
+::::
+
+:::
+
+- Merely changing the scale of $x$ dramatically changes $\text{cor}(x, x^2)$
+  
+- The correlation that is produced merely by scaling is called **non-essential multicollinearity**
+  
+- If $x$ is symmetric, $(x - \bar{x})$ and $(x - \bar{x})^2$ will have zero correlation
+  
+- If $x$ is skewed, $(x - \bar{x})$ and $(x - \bar{x})^2$ will have non-zero correlation
+
+:::
+
+## Example
+
+
+
+Example: College graduation rates as a function of the percentage of the population that is black among Minneapolis neighborhoods in 2015
+
+
+```{r}
+#| echo: true
+mod1 <- lm(collegeGrad ~ black, MplsDemo)
+summary(mod1)
+```
+
+## Linear Interpretations
+
+No quadratic $x$: 
+
+```{r}
+options(width = 80)
+round(summary(mod1)$coefficients, 4)
+```
+
+
+
+$$\hat{y} = .64 - 1.01x$$
+
+- $b_1 = -1.01$: **linear** regression of collegeGrad ($y$) on black ($x$)
+- $b_0 = .63$: average predicted value of collegeGrad at black = 0
+
+
+
+## Linear Visual
+
+```{r}
+
+ggplot(MplsDemo, aes(black, collegeGrad)) + geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, formula = y ~ x, col = my_blue) + 
+  labs(title = "Linear Model") +
+  theme_minimal(base_size = 16)
+
+```
+
+
+## Quadratic Example {.scrollable}
+
+The `^` operator has a special function that is not "raise to the power of" when used inside `R`'s formula syntax. To "inhibit" this special meaning, we need to wrap the quadratic term around `I()`
+
+```{r}
+#| echo: true
+mod2 <- lm(collegeGrad ~ black + I(black^2), MplsDemo)
+summary(mod2)
+```
+
+## Quadratic Interpretations
+
+Uncentered $x$: 
+
+```{r}
+options(width = 80)
+round(summary(mod2)$coefficients, 4)
+```
+
+
+
+$$\hat{y} = .70 - 1.89x + 1.75x^2$$
+
+- $b_1 = -1.89$: linear regression of collegeGrad ($y$) on black ($x$) **at black = 0**
+  - Because in quadratic model slope changes as $x$ changes
+- $b_0 = .70$: average predicted value of collegeGrad at black = 0
+
+
+## Quadratic Visual
+
+```{r}
+# Label sits just right of the dotted line, at the bottom of the plot
+mean_label <- function(xint) {
+  annotate("text", x = xint, y = min(MplsDemo$collegeGrad),
+           label = "Mean of black", hjust = -0.1, vjust = 0, size = 5.5)
+}
+
+ggplot(MplsDemo, aes(black, collegeGrad)) + geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, formula = y ~ x + I(x^2), col = my_blue) + 
+  geom_vline(xintercept = mean(MplsDemo$black), linetype = 3) +
+  mean_label(mean(MplsDemo$black)) +
+  labs(title = "Uncentered Model") +
+  theme_minimal(base_size = 16)
+```
+
+
+## Centered Model {.scrollable}
+
+```{r}
+#| echo: true
+MplsDemo <- MplsDemo |>
+  mutate(black_centered = black - mean(black))
+
+mod3 <- lm(collegeGrad ~ black_centered + I(black_centered^2), MplsDemo)
+summary(mod3)
+```
+
+
+
+
+
+## Centered Interpretations
+
+
+Centered $x$:
+
+$$\hat{y} = .44 - 1.32(x - \bar{x}) + 1.75(x - \bar{x})^2$$
+
+- $b_1 = -1.32$: average linear regression of collegeGrad on black **across the range of black**
+- $b_0 = .44$: predicted value of collegeGrad at the average value of black
+
+```{r}
+round(summary(mod3)$coefficients, 4)
+options(width = 60)
+```
+
+
+## Centered Visual
+
+```{r}
+
+ ggplot(MplsDemo, aes(black_centered, collegeGrad)) + geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, formula = y ~ x + I(x^2), col = my_blue) + 
+  geom_vline(xintercept = mean(MplsDemo$black_centered), linetype = 3) +
+  mean_label(mean(MplsDemo$black_centered)) +
+  labs(title = "Centered Model") +
+  theme_minimal(base_size = 16)
+
+```
+
+
+
+
+
+## Interpretations
+
+
+
+Uncentered $x$: 
+
+$$\hat{y} = .70 - 1.89x + 1.75x^2$$
+
+
+
+Centered $x$:
+
+$$\hat{y} = .44 - 1.32(x - \bar{x}) + 1.75(x - \bar{x})^2$$
+
+
+
+**Both Models:**
+
+$b_2 = 1.75$: curve is concave up
+
+
+
+
+
+
+
