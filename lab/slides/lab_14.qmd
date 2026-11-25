@@ -25,7 +25,9 @@ knitr:
 
 - Quarto websites
 
-- Quarto publishing
+- Publishing Quarto on GitHub
+
+- Additional related bonus topics (if time + interest)
 
 ```{r setup}
 #| echo: false
@@ -41,7 +43,7 @@ library(gt)
 ::: {.column width="33%"}
 ### Git Basics
 
-[Happy Git with R](https://happygitwithr.com/)
+[Happy Git with R](https://happygitwithr.com/){target="_blank"}
 
 This is where I learned how to get started with Git and GitHub!
 :::
@@ -49,12 +51,15 @@ This is where I learned how to get started with Git and GitHub!
 ::: {.column width="33%"}
 ### Quarto Websites
 
+[Quarto Docs: Websites](https://quarto.org/docs/websites/){target="_blank"}
 
+[Quarto: The Practical Guide](https://quarto-tdg.org/websites){target="_blank"}
 :::
 
 ::: {.column width="33%"}
 ### Quarto Publishing
 
+[Quarto Docs: GitHub Pages](https://quarto.org/docs/publishing/github-pages.html){target="_blank"}
 
 
 :::
@@ -101,6 +106,10 @@ Now often used for researchers to manage their coding / data work.
 ○ We often have a collection of code files, figures, data, etc that can run rampant if untamed...
 :::
 
+::: footer
+[Happy Git with R: Why Git](https://happygitwithr.com/big-picture#why-git) and [Excuse me, do you have a moment to talk about version control?](https://peerj.com/preprints/3159v2/)
+:::
+
 
 ## About Git
 
@@ -118,7 +127,7 @@ Without vs. with Git changes
 
 ## About GitHub
 
-GitHub is a helpful **user interface** to Git (similar to how RStudio is a user interface to R) and provides a **hosting service** for our projects.
+GitHub is a helpful web **user interface** to Git (similar to how RStudio is a user interface to R) and provides a **hosting service** for our projects. Website that hosts the repository and provides collaboration tools.
 
 ::: subpoint
 ○ Allows other people to easily look at the files, suggest changes, sync up themselves.
@@ -130,13 +139,71 @@ GitHub is a helpful **user interface** to Git (similar to how RStudio is a user 
 
 If you do something silly to your files locally, you can always reset if you have been pushing to GitHub!
 
+Includes [GitHub Pages](https://docs.github.com/en/pages), which is a free website hosting service for GitHub repositories.
+
 
 ::: footer
 [Happy Git with R: Why GitHub](https://happygitwithr.com/big-picture#why-github) and [Excuse me, do you have a moment to talk about version control?](https://peerj.com/preprints/3159v2/)
 :::
 
 
-## Benefits of Git / GitHub 
+## Benefits of Git / GitHub
+
+:::: {.columns style="font-size:85%"}
+::: {.column width="33%"}
+### Track and Undo
+
+Every *commit* is a labeled snapshot of your project.
+
+::: subpoint
+○ See what changed, when, and why
+:::
+
+::: subpoint
+○ Go back to an earlier version if something breaks
+:::
+
+::: subpoint
+○ No more `analysis_final_v3_REAL.R`
+:::
+:::
+
+::: {.column width="33%"}
+### Share and Collaborate
+
+::: subpoint
+○ *Push*ed work lives somewhere besides your laptop
+:::
+
+::: subpoint
+○ Others can view your files, copy them, and suggest changes
+:::
+
+::: subpoint
+○ Several people can work on the same project without emailing files back and forth
+:::
+:::
+
+::: {.column width="33%"}
+### Show Your Work
+
+::: subpoint
+○ Share code, data, and reports with a link, which supports reproducibility
+:::
+
+::: subpoint
+○ Little extra effort to get a web presence (GitHub Pages!)
+:::
+
+::: subpoint
+○ Useful for sharing analyses, supplemental materials for papers, and your own portfolio
+:::
+:::
+::::
+
+::: footer
+[Happy Git with R: What is the payoff?](https://happygitwithr.com/big-picture#what-is-the-payoff) and [Excuse me, do you have a moment to talk about version control?](https://peerj.com/preprints/3159v2/)
+:::
 
 
 
@@ -179,9 +246,9 @@ In order to get all this working, we have a couple steps ahead of us:
 ○ Confirm we can interact with Git!
 :::
 
-::: subsubpoint
-○ We can create a practice repository to do this
-:::
+
+We can create a practice repository to do this.
+
 
 ::: footer
 [Happy Git with R: Is it going to hurt?](https://happygitwithr.com/big-picture#is-it-going-to-hurt) and [Excuse me, do you have a moment to talk about version control?](https://peerj.com/preprints/3159v2/)
@@ -194,7 +261,7 @@ In order to get all this working, we have a couple steps ahead of us:
 
 Create an account on [github.com](https://github.com/){target="_blank"}
 
-Jenny Bryan's advice on usernames (paraphrased):
+Jenny Bryan's advice on usernames (some details removed):
 
 ::: blockquote
 - Incorporate your actual name! People like to know who they’re dealing with. Also makes your username easier for people to guess or remember.
@@ -210,15 +277,16 @@ Jenny Bryan's advice on usernames (paraphrased):
 - Avoid the use of upper vs. lower case to separate words. We highly recommend all lowercase. A better strategy for word separation is to use a hyphen -.
 :::
 
-You can always change your username later.
+You can always change your username later (but we do want to avoid this).
 
 ::: footer
-[Happy Git with R: Register a GitHub Account](https://happygitwithr.com/github-acct#github-acct)
+[Happy Git with R: Register a GitHub Account](https://happygitwithr.com/github-acct#github-acct){target="_blank"}
 :::
 
 
 ## II. Install Git
 
+::: fragment
 Do you have Git already? Check in the RStudio Terminal.
 
 :::: {.columns}
@@ -237,13 +305,15 @@ git --version
 :::
 ::::
 
-:::: {.columns}
+:::
+
+:::: {.columns .fragment}
 ::: {.column width="66%"}
 ### Windows
 
-Install [Git for Windows](https://git-for-windows.github.io/)
+Install [Git for Windows](https://git-for-windows.github.io/){target="_blank"}
 
-::: {.blockquote style="font-size:85%"}
+::: {.blockquote style="font-size:75%"}
 **NOTE**: When asked about “Adjusting your PATH environment”, make sure to select “Git from the command line and also from 3rd-party software”. Otherwise, we believe it is good to accept the defaults.
 
 Note that RStudio for Windows prefers for Git to be installed below C:/Program Files and this appears to be the default. This implies, for example, that the Git executable on my Windows system is found at C:/Program Files/Git/bin/git.exe. Unless you have specific reasons to otherwise, follow this convention.
@@ -267,7 +337,7 @@ Click "Install"
 
 
 ::: footer
-[Happy Git with R: Install Git](https://happygitwithr.com/install-git#install-git)
+[Happy Git with R: Install Git](https://happygitwithr.com/install-git#install-git){target="_blank"}
 :::
 
 
@@ -277,11 +347,12 @@ Click "Install"
 ::: {.column width="50%"}
 ### In the Shell
 
-```
+```{.bash filename="Terminal"}
 git config --global user.name "Jane Doe"
 git config --global user.email "jane@example.com"
 git config --global --list
 ```
+
 :::
 
 ::: {.column width="50%"}
@@ -289,44 +360,63 @@ git config --global --list
 ```{r}
 #| eval: false
 ## install.packages("usethis")
-
 library(usethis)
-use_git_config(user.name = "Jane Doe", user.email = "jane@example.org")
+use_git_config(user.name = "Jane Doe", 
+               user.email = "jane@example.com")
 ```
 :::
 ::::
 
 **Username**: Can be your GitHub username, can also be your name
 
-**Email**: **Needs to be** the same email you used for your GitHub account
+**Email**: Needs to be the **same email address** associated with your GitHub account
 
 
 
 ::: footer
-[Happy Git with R: Introduce yourself to Git](https://happygitwithr.com/hello-git#hello-git)
+[Happy Git with R: Introduce yourself to Git](https://happygitwithr.com/hello-git#hello-git){target="_blank"}
 :::
 
 
 ## IV. Install a Git Client
 
-Having a user interface can be a smoother way of interacting with Git, especially when starting out.
+Having a local user interface can be a smoother way of interacting with Git, especially when starting out.
 
-There are options, but I recommend (and use) [GitKraken](https://www.gitkraken.com/).
+::: subpoint
+○ Compared to using Git by running commands in the Terminal
+:::
+
+There are options, but I recommend (and use) [GitKraken](https://www.gitkraken.com/){target="_blank"}.
+
+::: subpoint
+○ Use "Sign up with GitHub" to connect your GitHub account (and avoid having to make a separate account)
+:::
+
+::: subpoint
+○ GitKraken has paid plans, but we will not need any paid features. Free plan!
+
+::: subsubpoint
+○ One snag is that the free plan will not work with **private** repositories---more on that later.
+:::
+:::
 
 
 ::: footer
-[Happy Git with R: Install a Git client](https://happygitwithr.com/git-client)
+[Happy Git with R: Install a Git client](https://happygitwithr.com/git-client){target="_blank"}
 :::
 
 
 ## V. Get Everything Connected
 
-When we need to talk to a remote (e.g., on the Internet, including our own) GitHub repository, we need to include credentials that prove we are a specific GitHub user, allowed to do what we're trying to do.
+::: fragment
+When we need to talk to a **remote** (e.g., on the Internet, including our own) GitHub repository, we need to include credentials that prove we are a specific GitHub user, allowed to do what we're trying to do.
+:::
 
-::: subpoint
+::: {.subpoint .fragment}
 ○ In the olden days, we could do this by entering our passwords. GitHub no longer considers password secure enough---so we just need to do a little fiddling to set these credentials up.
 :::
 
+::: fragment
 How do we do this? Two options:
 
 ::: subpoint
@@ -334,20 +424,21 @@ How do we do this? Two options:
 :::
 
 ::: subpoint
-○ **SSH**: an alternative method. Feel free to read more [here](https://happygitwithr.com/ssh-keys)
+○ **SSH**: an alternative method. Feel free to read more. [here](https://happygitwithr.com/ssh-keys){target="_blank"}
+:::
 :::
 
-Instead of a password, we will use a **Personal Access Token (PAT)**. We will go to GitHub, ask it to generate a **PAT**, and then tell RStudio the **PAT** to connect RStudio with GitHub.
+[Instead of a password, we will use a **Personal Access Token (PAT)**. We will go to GitHub, ask it to generate a **PAT**, and then tell RStudio the **PAT** to connect RStudio with GitHub.]{.fragment}
 
 
 ::: footer
-[Happy Git with R: Personal access token for HTTPS](https://happygitwithr.com/https-pat)
+[Happy Git with R: Personal access token for HTTPS](https://happygitwithr.com/https-pat){target="_blank"}
 :::
 
 
 ## V. Get Everything Connected
 
-1. Go to [https://github.com/settings/tokens](https://github.com/settings/tokens) and click "Generate Token"
+1. Go to [https://github.com/settings/tokens](https://github.com/settings/tokens){target="_blank"} and click "Generate Token"
 
 From R, you could also do:
 
@@ -375,7 +466,7 @@ gitcreds::gitcreds_set()
 ```
 
 ::: footer
-[Happy Git with R: Personal access token for HTTPS](https://happygitwithr.com/https-pat)
+[Happy Git with R: Personal access token for HTTPS](https://happygitwithr.com/https-pat){target="_blank"}
 :::
 
 
@@ -383,36 +474,42 @@ gitcreds::gitcreds_set()
 
 Let's make sure we can **push** and **pull** from GitHub to our computer!
 
-1. Let's make a repo on GitHub
+1. Let's make a practice repo on GitHub (Repositories > New)
 
-::: subpoint
-○ Repositories > New
-:::
-
-::: blockquote
+:::: {.columns}
+::: {.column width="50%"}
+::: {.blockquote style="font-size:75%"}
 How to fill this in:
 
 - Repository template: No template.
 
-- Repository name: myrepo or whatever you wish (we’ll delete this soon).
+- Repository name: my-repo or whatever you wish...
 
 - Description: “Repository for testing my Git/GitHub setup” or similar. It’s nice to have something here, so you’ll see it appear in the README.
 
 - Public.
 
 - Initialize this repository with: Add a README file.
+:::
+:::
 
+::: {.column width="50%"}
+::: {.blockquote style="font-size:75%"}
 Click the big green button that says “Create repository”.
 
 Now click the big green button that says “<> Code”.
 
 Copy a clone URL to your clipboard. If you’re taking our default advice, copy the HTTPS URL. But if you’re opting for SSH, then make sure to copy the SSH URL.
 :::
+:::
+::::
 
-I recommend trying a public repo, but private is an option too.
+::: {style="font;size:85%"}
+I recommend trying a public repo, but private is an option too. **But**, you won't be able to publish a private website with a private repository on GitHub's free plan. Published websites will be public.
+:::
 
 ::: footer
-[Happy Git with R: Connect to GitHub](https://happygitwithr.com/push-pull-github)
+[Happy Git with R: Connect to GitHub](https://happygitwithr.com/push-pull-github){target="_blank"}
 :::
 
 
@@ -464,22 +561,27 @@ We now have *new files* in our *local* version of this repository: an .Rproj fil
 
 Let's get these onto the **remote** (GitHub's version) of the repo.
 
+
+## VI. Connect to GitHub
+
+Let's get these onto the **remote** (GitHub's version) of the repo.
+
 In RStudio, we can use the Git pane. 
 
 ::: subpoint
-○ Check the "Staged" box next to each file
-:::
+○ Check the **"Staged"** box next to each file
 
 ::: subsubpoint
-○ This is telling RStudio which files we want to add to the remote
+○ This is telling RStudio which files we want to add to the snapshot
 :::
+:::
+
 
 ::: subpoint
-○ Click the "Commit" button
-:::
+○ Click the **"Commit"** button
 
 ::: subsubpoint
-○ This is like putting all the added files into an envelope to send to Git
+○ This is like sealing all the added files into an envelope
 :::
 
 ::: subsubpoint
@@ -487,12 +589,12 @@ In RStudio, we can use the Git pane.
 :::
 
 ::: subsubpoint
-○ Click the "Commit" button
+○ Click the **"Commit"** button
+:::
 :::
 
 ::: subpoint
-○ Click the "Pull" button
-:::
+○ Click the **"Pull"** button
 
 ::: subsubpoint
 ○ This is bringing down any new changes on the remote's version. This is unnecessary in our example, because there's no one else interacting with the remote. But, it's a good habit to build for collaboration with Git.
@@ -501,29 +603,36 @@ In RStudio, we can use the Git pane.
 ::: subsubpoint
 ○ `Already up to date`
 :::
+:::
 
 ::: subpoint
 ○ Click the "Push" button
-:::
 
 ::: subsubpoint
-○ This is sending off our commit to the remote!
+○ This is like mailing off our commit envelope to the remote!
+:::
 :::
 
 
 ## VI. Connect to GitHub
 
-Let's check the remote. Can we see the new files?
+Let's check the remote. Can we see the new files in the online version?
 
+::: fragment
 We have successfully **pushed** our changes in the directory to the **remote**.
 
 Now we can practice **pulling** changes.
+:::
 
+::: fragment
 Modify the `README.md` file by clicking the edit button (little pencil) on the website.
 
 Go back to RStudio, and click "Pull" to bring the changed `README.md` to your local version.
+:::
 
-We have now finished setup :)
+::: fragment
+We have now finished setup 😁
+:::
 
 
 ## What's Next?
@@ -541,12 +650,11 @@ Generally, starting a project by creating a repo on Git and then adding files is
 
 But, you may have an existing project on your computer and want to now host it on GitHub.
 
-This matches the ["Existing project, GitHub last"](https://happygitwithr.com/existing-github-last) page in the [Happy Git with R](https://happygitwithr.com/) book. Refer to it for how to implement this!
+This matches the [Existing project, GitHub last](https://happygitwithr.com/existing-github-last){target="_blank"} page in the [Happy Git with R](https://happygitwithr.com/) book. Refer to it for how to implement this!
 
 ::: footer
-[Happy Git with R: "Existing project, GitHub last](https://happygitwithr.com/existing-github-last)
+[Happy Git with R: Existing project, GitHub last](https://happygitwithr.com/existing-github-last){target="_blank"}
 :::
-
 
 
 
@@ -556,24 +664,61 @@ This matches the ["Existing project, GitHub last"](https://happygitwithr.com/exi
 
 So far, we've mostly been using Quarto documents (single HTML files). Today, we are going to make a Quarto website.
 
-What is a Quarto website?
+::: fragment
+**What is a Quarto website?**
 
 A Quarto website is just a way of organizing multiple Quarto documents. Instead of just having one page to scroll through, now we can have multiple.
 
 By default, will have navigation features set up to help move throughout your website.
+:::
 
-Why website instead of a document?
+::: fragment
+**Why website instead of a document?**
 
 Websites allow you to have more than one page. You can have a website with just one page if you want, and then you will always have the flexibility of adding more (e.g., a new analysis, a Quarto slide deck for a presentation)
+:::
 
 ::: footer
-[Quarto Websites](https://quarto.org/docs/websites/)
+[Quarto Websites](https://quarto.org/docs/websites/){target="_blank"}
 :::
 
 
 ## Quarto Website Examples
 
-Small gallery of 2--3 Quarto websites. One being the class site.
+<div>
+```{=html}
+<iframe src="https://nasa-openscapes.github.io/" width="100%" height="550"></iframe>
+```
+</div>
+
+::: footer
+[NASA Openscapes](https://nasa-openscapes.github.io/){target="_blank"} accessed on 2026-11-23.
+:::
+
+## Quarto Website Examples
+
+<div>
+```{=html}
+<iframe src="https://realworlddatascience.net/" width="100%" height="550"></iframe>
+```
+</div>
+
+::: footer
+[Real World Data Science](https://realworlddatascience.net/){target="_blank"} accessed on 2026-11-23.
+:::
+
+
+## Quarto Website Examples
+
+<div>
+```{=html}
+<iframe src="https://jhelmer3.github.io/PSYC6019-2026/" width="100%" height="550"></iframe>
+```
+</div>
+
+::: footer
+[Our Class Page](https://jhelmer3.github.io/PSYC6019-2026/){target="_blank"} accessed on 2026-11-23.
+:::
 
 
 ## Creating a Website
@@ -587,7 +732,7 @@ But we already have a directory---our local version of the Git repo!
 Luckily, all we need is two things: a Quarto file named `index.qmd` (to be our "homepage"), and a config file named `_quarto.yml` (this just tells Quarto to render as a website! And, we can specify settings for the whole site).
 
 ::: footer
-[Quarto Websites: Creating a Website](https://quarto.org/docs/websites/)
+[Quarto Websites: Creating a Website](https://quarto.org/docs/websites/){target="_blank"}
 :::
 
 
@@ -595,13 +740,26 @@ Luckily, all we need is two things: a Quarto file named `index.qmd` (to be our "
 
 Let's add a Quarto document `index.qmd`, like we've made Quarto documents before.
 
+
+```{.md filename="index.qmd"}
+---
+title: "Home Page"
+format: html
+---
+
+This is the home page for my new website!
+```
+
+
+## Creating a Website
+
 Next, let's create the `_quarto.yml` file. To do this, I usually click File > New File > Text File, and then save it and type in the name with the file extension specified. 
 
 ::: subpoint
 ○ Check the Files pane to make sure it did not add `.txt`
 :::
 
-Now, our config file needs some stuff. I usually go to the [Quarto Websites](https://quarto.org/docs/websites/) page and copy the default config file, provided under [Config File](https://quarto.org/docs/websites/#config-file).
+Now, our config file needs some stuff. I usually go to the [Quarto Websites](https://quarto.org/docs/websites/){target="_blank"} page and copy the default config file, provided under [Config File](https://quarto.org/docs/websites/#config-file){target="_blank"}.
 
 
 ## Default Config File
@@ -610,23 +768,26 @@ I've also included the default config file here.
 
 <div>
 ```{=html}
-<iframe src="https://quarto.org/docs/websites/#config-file"></iframe>
+<iframe src="https://quarto.org/docs/websites/#workflow" width="100%" height="500"></iframe>
 ```
 </div>
 
 ::: footer
-[Quarto Websites: Config File](https://quarto.org/docs/websites/#config-file)0Regression%20Diagnostics/Lecture%2027%20Regression%20Diagnostics.html#/multicolinearity) accessed on 2026-11-19.
+[Quarto Websites: Config File](https://quarto.org/docs/websites/#config-file){target="_blank"} accessed on 2026-11-19.
 :::
 
 
 ## Creating a Website
 
-Now let's render our site. The top right says "today", and the "about.qmd" link does nothing. These are things we can adjust in our `_quarto.yml` or fix by adding a new page!
+Now let's render. The top left says "today", and the "about.qmd" link does nothing. These are things we can adjust in our `_quarto.yml` or fix by adding a new page!
 
+::::: {.columns}
+:::: {.column .fragment width="40%"}
+
+<!-- ::: {style="font-size:80%"} -->
 Changing title to "My Website"
+<!-- ::: -->
 
-:::: {.columns}
-::: {.column width="50%"}
 ```{.yaml filename="_quarto.yml"}
 project:
   type: website
@@ -645,20 +806,27 @@ format:
     css: styles.css
     toc: true
 ```
-:::
 
-::: {.column width="50%"}
+::::
+
+:::: {.column .fragment width="60%"}
+
+::: {style="font-size:80%"}
 `navbar` is specifying Navigation Bar settings, and `left` means it is located on the top-left of the page.
 
 `- href` is specifying a link to a page with the **path** to that file from the project root. By default, it uses the `title` specified in the Quarto document's YAML.
 
 You can manually specify a title putting `text: New Title` below the link (`href`).
 
-See more about navigation at [Quarto Websites: Website Navigation](https://quarto.org/docs/websites/website-navigation.html)
+See more about navigation at [Quarto Websites: Website Navigation](https://quarto.org/docs/websites/website-navigation.html){target="_blank"}
 
 We don't have an `about.qmd` right now, but we can create one!
+
+We can remove `styles.css` for now.
 :::
+
 ::::
+:::::
 
 
 
@@ -691,7 +859,7 @@ We will follow its instructions (publishing way 1) together.
 
 ## Render to `docs`
 
-So far, when we render our Quarto documents, the outputted HTML any any files (those little `page_files` folders) go into the *same directory* as the Quarto document.
+So far, when we render our Quarto documents, the outputted HTML files (and those little `page_files` folders and now `_site` folder) go into the *same directory* as the Quarto document.
 
 For websites, it can be helpful to keep the **source** and the **output** separate: so GitHub Pages knows what to use as the actual website content (the rendered HTML, not the Quarto source code).
 
@@ -723,15 +891,16 @@ We can ask it not do this by adding a file `.nojekyll`.
 ### Windows
 
 ```{.bash filename="Terminal"}
-touch .nojekyll
+copy NUL .nojekyll
 ```
+
 :::
 
 ::: {.column width="50%"}
 ### macOS
 
 ```{.bash filename="Terminal"}
-copy NUL .nojekyll
+touch .nojekyll
 ```
 :::
 ::::
@@ -756,11 +925,11 @@ Pull, push.
 
 We now should be able to see all the changes (`.qmd` files, `docs` folder, etc.) on the online version of the repository. Let's now get the website content rendering as webpages!
 
-In the repository, go to Settings > Pages. Under Branch, switch `None` to `main`. Then, switch `/ (root)` to `/docs` and click Save. This tells GitHub Pages host use the HTML in the `docs` folder.
+In the repository, go to Settings > Pages. Under Branch, switch `None` to `main`. Then, switch `/ (root)` to `/docs` and click Save. This tells GitHub Pages to use the HTML in the `docs` folder.
 
-You should see "Your GitHub Pages site is currently being built from the /docs folder in the main branch."
+You should see "Your GitHub Pages site is currently being built from the `/docs` folder in the main branch."
 
-After a minute or two, refresh the page. You should see Your site is live at URL.
+After a minute or two, refresh the page. You should see "Your site is live at URL."
 
 Go to that URL! Your site is now live on the internet. Anyone with that link will be able to view the content.
 
@@ -770,6 +939,766 @@ Go to that URL! Your site is now live on the internet. Anyone with that link wil
 Let's also add an `analysis.qmd` document that has some brief analyses of the `palmerpenguins` data and render.
 
 Then, let's commit and push those changes to get our analysis live on GitHub!
+
+
+## Adding to Our Website
+
+`````{.qmd filename="analysis.qmd"}
+---
+title: "Analysis Report"
+format: html
+html-table-processing: none
+code-fold: true
+---
+
+### Setup
+
+```{{r}}
+#| message: false
+library(palmerpenguins)
+library(tidyverse)
+```
+
+
+## Background
+
+The Palmer Penguins dataset contains measurements of penguins' flippers, bills, and body mass.
+
+
+## Methods
+
+We used a multiple regression analysis to examine the effect of penguin species and bill depth on body mass.
+
+
+## Results
+
+```{{r}}
+m <- lm(body_mass_g ~ species + bill_depth_mm, data = penguins)
+gtsummary::tbl_regression(m, intercept = TRUE)
+```
+
+After adjusting for penguin species, we found a significant effect of bill depth.
+
+```{{r}}
+ggeffects::ggpredict(
+  m, terms = c("bill_depth_mm", "species")
+) |>
+  plot() +
+  theme_classic()
+```
+
+
+## Discussion
+
+Penguins have different sizes!
+
+`````
+
+
+## Adding to Our Website
+
+When we render `analysis.qmd`, it doesn't appear on the top navigation bar. 
+
+::: fragment
+We need to tell Quarto to include it!
+:::
+
+::: fragment
+```{.yaml filename="_quarto.yml"}
+website:
+  title: "My Website"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+      - analysis.qmd
+```
+:::
+
+::: fragment
+Now when we rerender, we should see it linked at the top.
+:::
+
+::: fragment
+`quarto render` in the terminal will give the whole site a fresh render.
+:::
+
+
+# Bonus
+
+## Bonus Topics {#bonus-menu}
+
+Click a topic to jump to it. We'll pick based on time and interest!
+
+::: subpoint
+○ [Multiple Formats](#multiple-formats): one `.qmd`, rendered as HTML, slides, or PDF
+:::
+
+::: subpoint
+○ [Adding a Slide Deck](#adding-a-slide-deck): putting slides on the website
+:::
+
+::: subpoint
+○ [Styling Your Website](#styling): changing the theme, personalization
+:::
+
+<!-- ::: subpoint -->
+<!-- ○ [Wait, Go Back!](#/wait-go-back): undoing mistakes and recovering old versions -->
+<!-- ::: -->
+
+::: subpoint
+○ [What Not to Add](#what-not-to-add): data, passwords, and other files to keep out of Git
+:::
+
+
+## Multiple Formats {#multiple-formats}
+
+Quarto files can render to multiple types of formats by specifying the `format:` in the YAML header.
+
+:::: {.columns}
+::: {.column width="33%"}
+### HTML Document
+
+`format: html`
+
+Page-style documents we are used to seeing
+:::
+
+::: {.column width="33%"}
+### HTML Slides
+
+`format: revealjs`
+
+Makes a slide deck (like this one!)
+:::
+
+::: {.column width="33%"}
+### PDF
+
+`format: typst`
+
+Typst is a very quick PDF renderer. Could also do `format: pdf`, but that will require a TeX installation (I recommend `typst`)
+:::
+::::
+
+
+## Multiple Formats
+
+Can also tell the document to render to multiple formats at once. For example, here's a YAML header for all three:
+
+:::: {.columns}
+::: {.column width="50%"}
+```{.yaml filename="analysis.qmd"}
+title: "Analysis Report"
+format: 
+  html: default
+  revealjs:
+    output-file: analysis-slides.html
+  typst: default
+html-table-processing: none
+code-fold: true
+```
+:::
+
+::: {.column width="50%"}
+We have to set a specific name for the `revealjs` format because otherwise, it'll have the same name as the regular HTML files (since they are both HTML-based)
+:::
+::::
+
+
+## Adding a Slide Deck {#adding-a-slide-deck}
+
+Scenario: maybe you have a presentation coming up, and you would like to use Quarto slides for their dynamic capabilities and reproducibility.
+
+Let's add a link to the slides on the website!
+
+
+## Adding a Slide Deck
+
+Because `##` denotes a heading style in documents and denotes a new slide in revealjs slides, you may not want to use the exact same source for both documents and slides.
+
+We can create a separate .qmd file just for the slides, and use `##` to denote slide breaks and titles. We can have to remove the reference to `revealjs` in the original document.
+
+How else might we change the slides? 
+
+Removing `code-fold: true` will suppress the code (and just show the output). We can show the code on any individual cell by adding `#| echo: true`.
+
+The `### Setup` header is triggering a new slide too. Let's remove the header.
+
+
+## Adding a Slide Deck
+
+We can add the slides to the navigation bar by changing `_quarto.yml`. If we use the `menu:` option, we can make it a dropdown.
+
+```{.yaml filename="_quarto.yml"}
+website:
+  title: "My Website"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+      - analysis.qmd
+      - text: "Presentations"
+        menu: 
+          - text: PSYC6019L 11-2026
+            href: analysis-slides.qmd
+```
+
+
+## Styling Your Website {#styling}
+
+Remember `theme: cosmo` in our default `_quarto.yml`? That one line controls the look of the whole site.
+
+Quarto includes 25 built-in themes (from the [Bootswatch](https://bootswatch.com/){target="_blank"} project), so changing the look can be as simple as changing one word:
+
+```{.yaml filename="_quarto.yml"}
+format:
+  html:
+    theme: flatly
+    css: styles.css
+    toc: true
+```
+
+::: subpoint
+○ Browse the options, pick one, change the name, and re-render
+:::
+
+::: subpoint
+○ Themes only affect the HTML pages. Slide decks (`revealjs`) have their own theme setting
+:::
+
+::: footer
+[Quarto: HTML Theme Options](https://quarto.org/docs/output-formats/html-themes.html){target="_blank"}
+:::
+
+
+## Light / Dark Mode
+
+Give readers a light/dark toggle by naming two themes instead of one:
+
+```{.yaml filename="_quarto.yml"}
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    css: styles.css
+    toc: true
+```
+
+::: subpoint
+○ A toggle switch will appear in the navigation bar
+:::
+
+::: subpoint
+○ Not every theme has a matching pair. `flatly` / `darkly` is one that does
+:::
+
+::: footer
+[Quarto: HTML Theme Options](https://quarto.org/docs/output-formats/html-themes.html){target="_blank"}
+:::
+
+
+## Custom Tweaks
+
+Want to adjust a theme rather than replace it? The default `_quarto.yml` already points to a `styles.css` file, which is a place for your own rules.
+
+:::: {.columns}
+::: {.column width="50%"}
+```{.css filename="styles.css"}
+h1, h2 {
+  color: #2a6f97;
+}
+
+a {
+  text-decoration: none;
+}
+```
+:::
+
+::: {.column width="50%" style="font-size:85%"}
+CSS rules say "for this kind of element, change this property."
+
+::: subpoint
+○ `h1, h2` selects first- and second-level headings
+:::
+
+::: subpoint
+○ Your rules are applied *on top of* the theme
+:::
+
+::: subpoint
+○ Tip: right-click an element in your browser and choose "Inspect" to find what to target
+:::
+:::
+::::
+
+::: footer
+[Quarto: Custom CSS](https://quarto.org/docs/output-formats/html-themes.html){target="_blank"}
+:::
+
+
+## Sass / SCSS: CSS with Extras {#scss}
+
+Want more control than `styles.css`? Quarto themes are built with **Sass**, and **SCSS** is its CSS-like file format (`.scss`).
+
+:::: {.columns}
+::: {.column width="50%"}
+```{.yaml filename="_quarto.yml"}
+format:
+  html:
+    theme: [flatly, custom.scss]
+```
+
+```{.scss filename="custom.scss"}
+/*-- scss:defaults --*/
+$primary: #2a6f97;
+
+/*-- scss:rules --*/
+.navbar {
+  a {
+    text-decoration: none;
+  }
+}
+```
+:::
+
+::: {.column width="50%" style="font-size:85%"}
+::: subpoint
+○ **Variables** (`$primary`) change theme settings in one place. Your color flows through links, navbar, buttons, etc.
+:::
+
+::: subpoint
+○ **Nesting** lets you write rules inside rules, instead of repeating selectors
+:::
+
+::: subpoint
+○ `scss:defaults` sets variables; `scss:rules` holds your own CSS rules
+:::
+
+::: subpoint
+○ Listed *after* a built-in theme, so it adjusts the theme instead of replacing it
+:::
+
+::: subpoint
+○ Plain CSS still works in `.scss` files, so you can start small
+:::
+:::
+::::
+
+After any styling change: re-render, then **commit**, **pull**, **push** (the `docs` folder changed!).
+
+::: footer
+[Quarto: Sass Variables](https://quarto.org/docs/output-formats/html-themes.html#sass-variables){target=\"_blank\"}
+:::
+
+
+<!-- ## Wait, Go Back! {#wait-go-back} -->
+
+<!-- Version control is a safety net, but *how* you go back depends on what you want to undo. -->
+
+<!-- ::: subpoint -->
+<!-- ○ **Committed** work is saved in Git's history and can almost always be recovered -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ **Uncommitted** changes were never saved to Git, so if you discard them, they're gone -->
+<!-- ::: -->
+
+<!-- This is another reason to "commit early and often"! -->
+
+<!-- Three common situations: -->
+
+<!-- ::: subpoint -->
+<!-- ○ I messed up a file and haven't committed yet -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ I want an old version of a file -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ I committed something I want to undo -->
+<!-- ::: -->
+
+<!-- ::: footer -->
+<!-- [Pro Git: Undoing Things](https://git-scm.com/book/en/v2/Git-Basics-Undoing-Things){target="_blank"} -->
+<!-- ::: -->
+
+
+<!-- ## First, Look at the History -->
+
+<!-- Before undoing anything, find out what happened and when. Every commit has an ID (a **hash**) that we can use to point to it. -->
+
+<!-- ::: subpoint -->
+<!-- ○ **RStudio**: Git pane > History button -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ **GitKraken**: the commit graph in the middle of the window -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ **GitHub**: click the commits link on the repo page, or "History" when viewing a single file -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ **Terminal**: newest commit first -->
+<!-- ::: -->
+
+<!-- ```{.bash filename="Terminal"} -->
+<!-- git log --oneline -->
+<!-- ## a1b2c3d Add analysis page -->
+<!-- ## 9f8e7d6 Render site to docs -->
+<!-- ## 3c4d5e6 Initial commit -->
+<!-- ``` -->
+
+<!-- Your hashes will look different. The first 7 characters are enough to refer to a commit. -->
+
+<!-- ::: footer -->
+<!-- [Pro Git: Undoing Things](https://git-scm.com/book/en/v2/Git-Basics-Undoing-Things){target="_blank"} -->
+<!-- ::: -->
+
+
+<!-- ## Undo Uncommitted Changes -->
+
+<!-- You edited `analysis.qmd`, broke it, and want the last committed version back. -->
+
+<!-- ::: subpoint -->
+<!-- ○ **RStudio**: Git pane > select the file > Revert -->
+<!-- ::: -->
+
+<!-- ::: subsubpoint -->
+<!-- ○ Note: this *discards your edits*. It is **not** the same thing as `git revert` (coming up) -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ **GitKraken**: right-click the file > Discard changes -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ **Terminal**:  -->
+<!-- ::: -->
+
+<!-- ```{.bash filename="Terminal"} -->
+<!-- git restore analysis.qmd -->
+<!-- ``` -->
+
+<!-- ::: subpoint -->
+<!-- ○ This is the modern version of the `git checkout -- analysis.qmd` you may have seen -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ If you already staged the file, run `git restore --staged analysis.qmd` first (it unstages and keeps your edits) -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ Want to see what you'd lose first? `git diff` -->
+<!-- ::: -->
+
+<!-- ::: footer -->
+<!-- [Pro Git: Undoing Things](https://git-scm.com/book/en/v2/Git-Basics-Undoing-Things){target="_blank"} -->
+<!-- ::: -->
+
+
+<!-- ## Get an Old Version of a File -->
+
+<!-- Find the commit you want in the history, then pull that version of the file into your folder. -->
+
+<!-- ```{.bash filename="Terminal"} -->
+<!-- git restore --source=a1b2c3d analysis.qmd -->
+<!-- ``` -->
+
+<!-- ::: subpoint -->
+<!-- ○ Older equivalent: `git checkout a1b2c3d -- analysis.qmd` -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ The file in your folder now matches that old version. It shows up as a *change*, so commit it like any other change -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ History is kept: the new commit simply says "the file is like this now" -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ No terminal? Open the old version of the file on GitHub (or in the RStudio history viewer) and copy what you need -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ Looking at the whole project at an old commit (e.g., GitKraken "Checkout this commit") puts Git in a "detached HEAD" state. That's fine for looking around, but switch back to `main` before making changes -->
+<!-- ::: -->
+
+<!-- ::: footer -->
+<!-- [Pro Git: Undoing Things](https://git-scm.com/book/en/v2/Git-Basics-Undoing-Things){target="_blank"} -->
+<!-- ::: -->
+
+
+<!-- ## Undo a Whole Commit -->
+
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- ### `git revert` -->
+
+<!-- Makes a **new** commit that undoes an earlier one. -->
+
+<!-- ```{.bash filename="Terminal"} -->
+<!-- git revert a1b2c3d -->
+<!-- ``` -->
+
+<!-- ::: subpoint -->
+<!-- ○ History is kept, so it's safe even after pushing -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ May open a text editor for the commit message. Save and close it (or add `--no-edit`) -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ GitKraken: right-click the commit > Revert commit -->
+<!-- ::: -->
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+<!-- ### `git reset` -->
+
+<!-- Moves your project back to an earlier commit, **erasing** the later commits from history. -->
+
+<!-- ```{.bash filename="Terminal"} -->
+<!-- git reset --hard 9f8e7d6 -->
+<!-- ``` -->
+
+<!-- ::: subpoint -->
+<!-- ○ `--hard` also throws away uncommitted changes -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ Okay for commits you haven't pushed. Avoid it once they're on GitHub -->
+<!-- ::: -->
+
+<!-- ::: subpoint -->
+<!-- ○ Went too far? `git reflog` lists where you've been, and you can often recover -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- :::: -->
+
+<!-- Not sure which to use? Use `revert`. -->
+
+<!-- ::: footer -->
+<!-- [Pro Git: Undoing Things](https://git-scm.com/book/en/v2/Git-Basics-Undoing-Things){target="_blank"} -->
+<!-- ::: -->
+
+
+<!-- ## Which One Do I Use? -->
+
+<!-- ::: {style="font-size:80%"} -->
+<!-- | I want to... | Tool | Terminal | -->
+<!-- |:--|:--|:--| -->
+<!-- | Throw away edits I haven't committed | RStudio: Revert; GitKraken: Discard | `git restore file` | -->
+<!-- | Get an old version of a file | History viewer, GitHub | `git restore --source=hash file` | -->
+<!-- | Undo a commit (even a pushed one) | GitKraken: Revert commit | `git revert hash` | -->
+<!-- | Erase local commits I haven't pushed | GitKraken: Reset | `git reset hash` | -->
+<!-- ::: -->
+
+<!-- After undoing something that's already on GitHub, remember to **push**. Because our rendered site lives in `docs`, reverting a commit that changed `docs` and pushing will roll back the live website too. -->
+
+<!-- ::: footer -->
+<!-- [Pro Git: Undoing Things](https://git-scm.com/book/en/v2/Git-Basics-Undoing-Things){target="_blank"} -->
+<!-- ::: -->
+
+
+## What Not to Add to a Repo {#what-not-to-add}
+
+Git remembers everything we commit. On a public repo, everyone can see it, and so can our website: everything in `docs` is published.
+
+We do not want to commit:
+
+::: subpoint
+○ **Data we're not allowed to share**: raw or identifiable participant data
+:::
+
+::: subpoint
+○ **Credentials**: passwords, API keys, tokens (like our PAT), `.Renviron` files
+:::
+
+::: subpoint
+○ **Huge files**: GitHub rejects individual files over 100 MB
+:::
+
+::: subpoint
+○ **Local clutter**: `.Rhistory`, `.DS_Store`, `.Rproj.user/`, `.quarto/`
+:::
+
+::: footer
+[Pro Git: gitignore](https://git-scm.com/docs/gitignore){target="_blank"}
+:::
+
+
+## Participant Data
+
+Your IRB protocol, consent forms, and any data use agreements decide what can be shared, not Git.
+
+::: subpoint
+○ Raw data often contains identifiers (names, emails, IP addresses, timestamps, free-text responses)
+:::
+
+::: subpoint
+○ "Cleaned" data can still be identifying, especially with small samples or unusual combinations of demographics
+:::
+
+::: subpoint
+○ Check with your IRB or advisor *before* sharing
+:::
+
+::: subpoint
+○ A private repo isn't a loophole: access changes, and collaborators may not be covered by your protocol
+:::
+
+If you save intermediary files (e.g, to CSV or to `.rds`), be aware of what's being saved and if you want that tracked too!
+
+::: subpoint
+○ Part of the reason why we had RStudio not save our environment
+:::
+
+## Deleting It Later Doesn't Work
+
+Git is a history of every commit. If you commit a file and delete it in the *next* commit, the file is still in the earlier commit.
+
+::: subpoint
+○ Anyone who can see the repo can browse that old commit
+:::
+
+::: subpoint
+○ Anyone who already cloned or forked it keeps a copy
+:::
+
+::: subpoint
+○ Truly removing something means *rewriting history* (tools like `git filter-repo`), which is messy
+:::
+
+::: subpoint
+○ For a leaked password or token: **revoke it and make a new one**. Treat it as compromised
+:::
+
+So the best fix is to catch it *before* you commit.
+
+::: footer
+[GitHub Docs: Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository){target="_blank"}
+:::
+
+
+## Keeping Files Out of Git
+
+:::: {.columns}
+::: {.column width="50%"}
+### Option 1: Keep it outside the repo
+
+```
+research/
+├── raw-data/
+│   └── survey_raw.csv
+└── my-project/       <- the repo
+    ├── .git/
+    ├── analysis.qmd
+    └── data/
+        └── survey_clean.csv
+```
+
+```{.r}
+read_csv(here::here("..", "raw-data", "survey_raw.csv"))
+```
+
+::: subpoint
+○ Git can't track what isn't in the folder
+:::
+
+::: subpoint
+○ Document the layout in your `README`
+:::
+:::
+
+::: {.column width="50%"}
+### Option 2: Add it to `.gitignore`
+
+```{.default filename=".gitignore"}
+data/raw/
+*.rds
+.Renviron
+.DS_Store
+```
+
+::: subpoint
+○ Lists files and folders Git should not track
+:::
+
+::: subpoint
+○ RStudio already started this file for us
+:::
+
+::: subpoint
+○ `*.csv` (example) means everything with that file extension
+:::
+
+::: subpoint
+○ Edit it, then commit it like any other file
+:::
+
+::: subpoint
+○ Works only for files not yet tracked. If already committed, run `git rm --cached file` to stop tracking it (it stays in the old commits)
+:::
+:::
+::::
+
+You can use both: a gitignore pattern is a nice backup
+
+::: footer
+[Pro Git: gitignore](https://git-scm.com/docs/gitignore){target="_blank"}
+:::
+
+
+## Before You Commit
+
+::: subpoint
+○ Look at what you're staging: the RStudio Git pane and GitKraken both list changed files. Is anything there that shouldn't be?
+:::
+
+::: subpoint
+○ Check the rendered output, too. `head(data)` or a printed table in your site will publish those rows
+:::
+
+::: subpoint
+○ In doubt? Ask first!
+:::
+
+**If you've already committed something you shouldn't have:**
+
+::: subpoint
+○ **Not pushed yet**: you can undo the commit (see [Pro Git: Undoing Things](https://git-scm.com/book/en/v2/Git-Basics-Undoing-Things){target="_blank"})
+:::
+
+::: subpoint
+○ **Already pushed**: assume it's exposed. Revoke any credentials, tell your advisor, and then ask for help cleaning up the history
+:::
+
+::: footer
+[GitHub Docs: Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository){target="_blank"}
+:::
+
+
+## No Activity! {.nostretch background-image="https://i.pinimg.com/originals/c8/63/61/c8636176042ba7b381e0a220aaeb21a3.gif" background-size="contain"} 
+
+Have a great Thanksgiving break 😊
+
+
+
+
+
+
+
+
+
 
 
 
