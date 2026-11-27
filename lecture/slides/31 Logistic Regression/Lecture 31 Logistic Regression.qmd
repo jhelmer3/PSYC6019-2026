@@ -1,0 +1,1111 @@
+---
+title: "Lecture 31: Logistic Regression"
+author: "Mark Himmelstein"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../../../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: true 
+editor: source
+---
+
+```{r}
+#| echo: false
+
+library(knitr)
+library(formatR)
+library(tidyverse)
+library(ggtext)
+opts_chunk$set(out.width = '100%', options(width=60))
+
+opts_knit$set(global.par = TRUE)
+opts_chunk$set(echo=FALSE, warning = FALSE, message = FALSE, comment = '', class.output='sh',
+               fig.width=8, fig.height=5, fig.align = "center")
+
+my_red <- "#E41A1C"
+my_blue <- "#377EB8"
+my_green <- "#4DAF4A"
+my_purple <- "#984EA3"
+my_orange <- "#FF7F00"
+my_red2 <- "#FBB4AE" 
+my_blue2 <- "#B3CDE3" 
+my_green2 <- "#CCEBC5" 
+my_purple2 <- "#DECBE4"
+my_orange2 <- "#FED9A6"
+```
+
+```{r}
+#| label: helpers
+#| echo: false
+
+# ---- Voting plot used on several slides ------------------------------------
+# Scatter of the binary outcome against statusquo. With densities = TRUE, adds a
+# density curve for each outcome group. Add smoothers/annotations after calling.
+vote_plot <- function(d, densities = TRUE, from = NULL, to = NULL) {
+  p <- ggplot(d, aes(statusquo, vote, col = voteYN)) + 
+    geom_point() + 
+    scale_color_manual(values = c(my_blue, my_purple)) +
+    guides(color = "none") + 
+    scale_y_continuous(name = "Vote", labels = c("No", "Yes"), 
+                       breaks = c(0, 1), limits = c(-.1, 1.1)) +
+    theme_minimal(base_size = 18)
+  
+  if (densities) {
+    dens <- function(v) {
+      dd <- if (is.null(from)) density(v) else density(v, from = from, to = to)
+      data.frame(x = dd$x, y = dd$y)
+    }
+    d0 <- dens(d$statusquo[d$vote == 0])
+    d1 <- dens(d$statusquo[d$vote == 1])
+    p <- p + 
+      geom_path(data = d0, aes(x, y * .5), col = my_blue, linewidth = 1, inherit.aes = FALSE) +
+      geom_path(data = d1, aes(x, 1 - y * .5), col = my_purple, linewidth = 1, inherit.aes = FALSE)
+  }
+  p
+}
+
+# ---- Ellipse outline (replaces tikz \draw ... ellipse) ----------------------
+ellipse_df <- function(x0, y0, a, b, n = 100) {
+  t <- seq(0, 2 * pi, length = n)
+  data.frame(x = x0 + a * cos(t), y = y0 + b * sin(t))
+}
+
+# ---- Formatting helpers for inline numbers ---------------------------------
+f   <- function(x, d = 2) formatC(x, digits = d, format = "f")            # fixed decimals
+nz  <- function(x, d = 2) sub("^(-?)0\\.", "\\1.", f(x, d))                # drop leading zero
+pm  <- function(x, d = 2) if (x < 0) paste("-", f(abs(x), d)) else paste("+", f(x, d))
+fp  <- function(p) if (p < .001) "< .001" else paste("=", nz(p, 3))         # APA p-value
+chg <- function(x) if (x < 0) "decrease" else "increase"
+```
+
+## Types of Linear Models
+
+::: {style="font-size: 0.9em;"}
+
+**General Linear Model**
+
+$$\hat{y} = b_0 + b_1x_1 + b_2x_2 + \cdots + b_px_p$$
+
+- ANOVA, $t$-tests, linear regression are special cases
+
+- Assumes a linear relationship between the DV and (a linear combination of) predictor(s)
+
+**General**[**ized**]{style="text-decoration: underline;"} **Linear Model**
+
+$$f(\hat{y}) = b_0 + b_1x_1 + b_2x_2 + \cdots + b_px_p$$
+
+- $f$ is a nonlinear function
+
+- Assumes a **nonlinear** relationship between the DV and (a linear combination of) predictor(s)
+
+:::
+
+## Transformation
+
+General Linear Model with Transformed Criterion:
+
+$$\widehat{f(y)} = b_0 + b_1x_1 + b_2x_2 + \cdots + b_px_p$$
+
+$$y = f^{-1}(b_0 + b_1x_1 + b_2x_2 + \cdots + b_px_p + e)$$
+
+- Changes the interpretation of the criterion
+- Transformation must [both]{style="text-decoration: underline;"} improve linearity and achieve homogeneity of variance
+- Transformation may not be defined for all $y$ values (e.g., $\ln(0) = -\infty$)
+
+
+## Generalization
+
+Generalized Linear Model:
+
+$$f(\hat{y}) = b_0 + b_1x_1 + b_2x_2 + \cdots + b_px_p$$
+
+$$y = f^{-1}(b_0 + b_1x_1 + b_2x_2 + \cdots + b_px_p) + e$$
+
+- Transforms the **predicted value** $\hat{y}$
+- "Normalizes" the residuals $e$
+- Changes the interpretation of the **coefficients**
+
+
+
+
+## Other Types of $y$'s
+
+::: {style="font-size: 0.95em;"}
+
+Nearly all methods we've learned so far have assumed a continuous, normally distributed outcome variable and/or residuals
+
+Often, this is implausible:
+
+- Categorical outcome
+
+- Count data
+
+- Symptom inventory with many zeros
+
+For today, let's consider a binary outcome variable
+
+- Want to model/predict the **probability** of observing one outcome instead of the other
+  
+- Probability can be thought of as the average of a binary variable (categories coded 0 or 1)
+
+:::
+
+## General Linear Model
+
+::: {style="font-size: 0.95em;"}
+
+The multiple regression model we have learned so far is also known as ordinary least squares (OLS) regression (after the method used to obtain estimated coefficients)
+
+Three characteristics of OLS regression:
+
+1. Linear in coefficients (linear in parameters)
+
+    - Predicted outcome is a linear combination of predictors, where weights are regression coefficients
+
+2. Distribution of residuals:
+  
+    - Assume normally distributed
+
+    - Assume homoscedasticity
+
+3. Score of predicted outcome ($\hat{y}$)
+
+    - $\hat{y}$ has the same units as the observed outcome $y$
+    
+:::
+
+## Generalized Linear Model
+
+**General**[**ized**]{style="text-decoration: underline;"} **linear models (GLMs)** are a broad class of regression models that allows for nonlinear relationships between predictors and the criterion
+
+- Useful for discrete outcomes, counts
+
+OLS regression is a special case of a GLM
+
+GLMs do not necessarily assume a continuous outcome, normally distributed residuals, or homoscedasticity
+
+**Logistic regression** is one of the most popular GLMs for predicting **probabilities** of binary categorical outcomes.
+
+## Example: Voting Behavior
+
+::: {style="font-size: 0.85em;"}
+
+In 1973, Augusto Pinochet took power in Chile after a (US-backed) coup d'état, after which the country was ruled by a military dictatorship. In 1988, a referendum was taken to a public vote with options "Yes" - elect Pinochet to hold office for another 8 years, or "No" - hold presidential and parliamentary elections. The "No" vote won, and Chile has been ruled democratically since 1990.
+
+The data is from a national survey conducted about 5 months before the referendum.
+
+The dataset includes demographic information and voting intentions from 2700 Chileans, including:
+
+- `vote`: "Y" yes (for Pinochet), "N" no (against Pinochet), "A" abstain, "U" undecided
+
+- `statusquo`: Standardized measure of support for the status quo (higher values indicate greater support)
+
+- `education`: "P" primary school, "S" secondary school, "PS" post-secondary school
+
+Goal: predict voting intentions from demographics
+
+:::
+
+## Voting Data
+
+For this analysis, we will only include survey participants who responded "Yes" or "No". We will also omit the small number of cases with missing data on the `vote`, `education`, or `statusquo` variables. Now there are 1747 observations
+
+```{r}
+options(width = 75)
+```
+
+::: {style="font-size: 0.7em;"}
+
+```{r}
+#| echo: true
+
+data(Chile, package = "carData")
+Chile <- Chile %>%
+  filter(!is.na(education) & !is.na(statusquo) & 
+           vote %in% c("Y", "N")) %>%
+  mutate(voteYN = factor(vote),
+         vote = as.numeric(vote == "Y")) %>%
+  as_tibble
+Chile
+```
+
+:::
+
+```{r}
+options(width = 60)
+```
+
+## Weird Scatterplot
+
+```{r}
+#| fig-width: 11
+#| fig-height: 6.5
+
+vote_plot(Chile, densities = FALSE)
+```
+
+## Different Distributions
+
+```{r}
+#| fig-width: 11
+#| fig-height: 6.5
+
+vote_plot(Chile, from = -1.8, to = 1.8)
+```
+
+## Linear Regression?
+
+```{r}
+#| fig-width: 11
+#| fig-height: 6.5
+
+vote_plot(Chile, from = -1.8, to = 1.8) + 
+  geom_smooth(method = lm, col = my_red, se = FALSE, formula = y ~ x) + 
+  geom_path(data = ellipse_df(1.5, 1.04, .3, .07), aes(x, y), 
+            col = my_orange, linewidth = 1.3, inherit.aes = FALSE) + 
+  geom_path(data = ellipse_df(-1.5, -.04, .3, .07), aes(x, y), 
+            col = my_orange, linewidth = 1.3, inherit.aes = FALSE) + 
+  annotate("text", x = 1.2, y = .5, col = my_orange, size = 7, lineheight = 1,
+           label = "Linear models can lead to\npredicted probabilities\ngreater than one\nor less than zero")
+```
+
+## Logistic Regression
+
+```{r}
+#| fig-width: 11
+#| fig-height: 6.5
+
+vote_plot(Chile, from = -1.8, to = 1.8) + 
+  geom_smooth(method = glm, col = my_red, se = FALSE, 
+              method.args = list(family = binomial), formula = y ~ x) + 
+  annotate("richtext", x = 1.2, y = .4, col = my_green, size = 7, 
+           fill = NA, label.color = NA,
+           label = "A nonlinear model, here a<br><b>logistic</b> curve, constrains<br>probabilities between<br>zero and one")
+```
+
+## Probability $\rightarrow$ Normality
+
+
+::: {style="font-size: 0.7em;"}
+
+Probabilities are distributed between 0 and 1. The **uniform** probability distribution is a distribution such that all values between 0 and 1 are equally likely. 
+
+```{r}
+#| out-width: "70%"
+#| fig-height: 4
+
+unif <- data.frame(P = seq(0, 1, by = .01))
+
+ggplot(unif, aes(x = P)) + 
+  geom_segment(x = 0, xend = 1, y = 1, yend = 1) + 
+  geom_segment(x = 0, xend = 0, y = 0, yend = 1) + 
+  geom_segment(x = 1, xend = 1, y = 0, yend = 1) + 
+  xlim(c(-0.25, 1.25)) + 
+  ylim(c(0, 1.5)) + 
+  theme_minimal(base_size = 18)
+```
+
+**Problem:** Probability is **double bounded**. How can we map probability onto something like a normal distribution?
+
+
+::: 
+
+## Probability $\rightarrow$ Odds
+
+::: {style="font-size: 0.7em;"}
+
+Step 1: Convert probability to  $odds = \frac{P}{1-P}$
+
+```{r}
+#| out-width: "70%"
+#| fig-height: 4
+
+ggplot(unif, aes(x = P/(1-P))) + geom_density() + xlim(c(0, 10)) + 
+  ylab(NULL) + theme_minimal(base_size = 18)
+```
+
+Odds are only **single** bounded. How can we now get odds to be **unbounded**?
+
+::: 
+
+## Odds $\rightarrow$ Log Odds
+
+::: {style="font-size: 0.7em;"}
+
+Step 2: Take the **log** (when we say log we usually will mean natural log by default)
+
+```{r}
+#| out-width: "70%"
+#| fig-height: 4
+
+ggplot(unif, aes(x = log(P/(1-P)))) + geom_density() + xlim(c(-10, 10)) + 
+  ylab(NULL) + theme_minimal(base_size = 18)
+```
+
+$ln(1) = 0$. Taking the log makes anything between 0 and 1 negative, and anything greater than 1 positive (anything below 0 is undefined)
+
+:::
+
+## Logit Function
+
+
+
+
+We can now estimate our model in log odds, aka **logit** units, as 
+
+$$ln\left(\frac{P}{1-P}\right) = b_0 + b_1 x_1 + b_2 x_2 + \cdots + b_p x_p$$
+
+The inverse of the **logit** function is known as the **logistic** function, and allows us to write the model in probability units instead of logit units.
+
+## Logistic Function
+
+::: {style="font-size: 0.75em;"}
+
+::::: columns
+
+:::: {.column width="68%"}
+
+::: {style="font-size: 0.85em;"}
+
+The **logistic** function, also known as the **inverse logit** function of a quantity $w$ is:
+
+$$\text{logit}^{-1}(w) = \frac{1}{1 + \exp(-w)} = \frac{\exp(w)}{1 + \exp(w)}$$
+
+$\text{logit}^{-1}(w)$ is a probability $P$, so
+
+$$\begin{aligned}
+  P & = \frac{1}{1 + \exp(-w)} \\ 
+  \exp(-w) & = \frac{1}{P} - 1 \\
+  w & = \ln\left(\frac{P}{1-P}\right)
+\end{aligned}$$
+
+- $w$ is the log odds of success 
+- "success" is category coded "1"
+- "failure" is category coded "0"
+- In statistics, you can usually safely assume the *natural* log $\ln()$
+
+:::
+
+::::
+
+:::: {.column width="32%"}
+
+::: {style="color: #4DAF4A; text-align: center; border: 3px solid #4DAF4A; border-radius: 10px; padding: 0.6em; margin-top: 3em;"}
+
+$\exp()$ and $\ln()$ are inverse functions
+
+$-\ln(x) = \ln\left(\frac{1}{x}\right)$
+
+:::
+
+::::
+
+:::::
+
+:::
+
+## Our Example
+
+::: {style="font-size: 0.8em;"}
+
+In the voting example, we may use the following model:
+
+$$P(\mathsf{yes}) = \frac{1}{1 + \exp(-(b_0 + b_1\mathsf{statusquo}))}$$
+
+$$\ln\left(\frac{P(\mathsf{yes})}{1 - P(\mathsf{yes})}\right) = b_0 + b_1\mathsf{statusquo}$$
+
+- $b_0$: "intercept", the log odds of voting "yes" if status quo = 0
+  
+- $b_1$: "slope", the increase in log odds associated with a one-unit (1SD) increase in status quo
+
+In general:
+
+- Lower $b_0$ indicates a lower average probability of voting "yes" 
+
+- Higher $b_1$ indicates a steeper slope, greater separation between categories
+
+::: 
+
+## Logistic Function
+
+
+
+```{r}
+#| fig-width: 11
+#| fig-height: 6.5
+
+x <- seq(-3, 3, length = 100)
+curves <- data.frame(
+  x = rep(x, 3), 
+  y = c(1 / (1 + exp(-x)), 1 / (1 + exp(-2 * x + 1)), 1 / (1 + exp(-1 - x))),
+  gp = rep(c("A", "B", "C"), each = 100)
+)
+
+# Replaces the tikz node labels
+ggplot(curves, aes(x, y, group = gp, col = gp)) + 
+  geom_path(linewidth = 3) + 
+  annotate("richtext", x = 1.6, y = .62, col = my_blue, size = 8, fill = NA, label.color = NA,
+           label = "<b>b<sub>0</sub> = 0, b<sub>1</sub> = 1</b>") +
+  annotate("richtext", x = 1.2, y = .33, col = my_green, size = 8, fill = NA, label.color = NA,
+           label = "<b>b<sub>0</sub> = −1, b<sub>1</sub> = 2</b>") +
+  annotate("richtext", x = -1.8, y = .82, col = my_purple, size = 8, fill = NA, label.color = NA,
+           label = "<b>b<sub>0</sub> = 1, b<sub>1</sub> = 1</b>") +
+  labs(y = "Probability") + 
+  scale_color_manual(values = c(my_blue, my_green, my_purple)) + 
+  guides(color = "none") + 
+  theme_minimal(base_size = 18)
+```
+
+## Single Predictor
+
+::: {style="font-size: 0.8em;"}
+
+Logistic regression model with one predictor ($x_1$):
+
+$$\hat{P} = \frac{1}{1 + \exp(-(b_0 + b_1x_1))} = \frac{\exp(b_0 + b_1x_1)}{1 + \exp(b_0 + b_1x_1)}$$
+
+- $\hat{P}$: predicted probability of the outcome $y = 1$ ($\hat{P}$ ranges from 0 to 1)
+
+- A plot of $\hat{P}$ as a function of $x_1$ yields a logistic (S-shaped) curve
+
+NOTICE: no residual term in this equation!
+
+- Reason: observed outcome $y$ is binary (categories coded "0" and "1")
+
+- Mean of $y$ = $\hat{P}$
+
+- Variance of $y$ = $\hat{P} \times (1 - \hat{P})$
+
+- Mean and variance of a binary variable are dependent
+
+::: 
+
+## Alternative Form
+
+
+::: {style="font-size: 0.85em;"}
+
+The logistic regression model can also be expressed as follows:
+
+$$\frac{\hat{P}}{1 - \hat{P}} = \exp(b_0 + b_1x_1)$$
+
+- $\exp(w) = e^w = 2.718^w$
+
+- $\frac{\hat{P}}{1 - \hat{P}} =$ odds that $y = 1$
+
+Odds ranges from 0 to $+\infty$
+
+- When $\hat{P} = .5$, odds = 1
+
+- When $\hat{P} > .5$, odds > 1
+
+- When $\hat{P} < .5$, 0 < odds < 1
+
+:::
+
+## Another Alt Form
+
+::: {style="font-size: 0.95em;"}
+
+Yet another expression of the logistic regression model:
+
+$$\ln\left(\frac{\hat{P}}{1 - \hat{P}}\right) = b_0 + b_1x_1$$
+
+- $\ln()$: natural logarithmic function
+
+- $\ln\left(\frac{\hat{P}}{1 - \hat{P}}\right) =$ logit
+  
+- The **logit** is the function of $\hat{P}$ that is linearly related to $x_1$
+:::
+
+## Logistic Regression in `R`
+
+::: {style="font-size: 0.8em;"}
+
+Logistic regression models fit using the `glm()` function built into `R`
+
+- Same formula notation as multiple linear regression
+
+- Must add argument "`family = binomial`" to indicate logistic regression (instead of another GLM)
+
+- Unlike linear regression, which uses ordinary least squares (OLS), `glm()` estimates the coefficients by **maximum likelihood**: an iterative procedure that finds the coefficient values that make the observed data most likely
+
+```{r}
+#| echo: true
+
+glm1 <- glm(vote ~ statusquo, Chile, family = binomial)
+coef(glm1)
+```
+
+```{r}
+# Values used in the text of the following slides
+cf1 <- summary(glm1)$coefficients
+b0  <- cf1["(Intercept)", "Estimate"];  se0 <- cf1["(Intercept)", "Std. Error"]
+b1  <- cf1["statusquo", "Estimate"];    se1 <- cf1["statusquo", "Std. Error"]
+b0r <- round(b0, 2); b1r <- round(b1, 2)      # rounded values shown on slides
+P_at    <- function(x) plogis(b0r + b1r * x)  # predicted probability
+odds_at <- function(x) exp(b0r + b1r * x)     # predicted odds
+ci0 <- b0 + c(-1, 1) * qnorm(.975) * se0
+ci1 <- b1 + c(-1, 1) * qnorm(.975) * se1
+```
+
+These coefficients imply the following fitted equation: 
+
+$$\hat{P}(\mathsf{vote\ yes}) = \frac{1}{1 + \exp(-(`r nz(b0r)` `r pm(b1r)`\times\mathsf{statusquo}))}$$
+
+:::
+
+## Intercept Interpretation
+
+::: {style="font-size: 0.85em;"}
+
+How to interpret the estimated regression coefficients?
+
+$$\ln\left(\frac{\hat{P}}{1 - \hat{P}}\right) = b_0 + b_1x_1 = `r nz(b0r)` `r pm(b1r)` \times \mathsf{statusquo}$$
+
+- $b_0 = `r nz(b0r)`$: estimated intercept
+    - logit when statusquo = 0 (average support for the status quo)
+    - When statusquo = 0, $P(\mathsf{yes}) = \frac{1}{1+\exp(-(`r nz(b0r)`))} = `r nz(P_at(0))`$
+    - May not have a meaningful interpretation if 0 never occurs in data
+
+
+:::
+
+## Slope Interpretation
+
+::: {style="font-size: 0.75em;"}
+
+How to interpret the estimated regression coefficients?
+
+$$\ln\left(\frac{\hat{P}}{1 - \hat{P}}\right) = b_0 + b_1x_1 = `r nz(b0r)` `r pm(b1r)` \times \mathsf{statusquo}$$
+
+- $b_1 = `r f(b1r)`$
+    - Change in logit for a one-unit (approx. 1 SD) increase in statusquo
+    - How this affects predicted probability depends on the starting value:
+
+
+
+$$\begin{aligned}
+  P(\mathsf{yes} \vert -2) = \frac{1}{1 + \exp(-(`r nz(b0r)` `r pm(b1r)`\times -2))} & = `r nz(P_at(-2), 4)` \\
+  P(\mathsf{yes} \vert -1) = \frac{1}{1 + \exp(-(`r nz(b0r)` `r pm(b1r)`\times -1))} & = `r nz(P_at(-1), 3)` \\
+  P(\mathsf{yes} \vert 0) = \frac{1}{1 + \exp(-(`r nz(b0r)` `r pm(b1r)`\times 0))} & = `r nz(P_at(0), 3)`
+\end{aligned}$$
+
+
+
+:::
+
+## Odds Intercept
+
+::: {style="font-size: 0.85em;"}
+
+How to interpret the estimated regression coefficients?
+
+$$\ln\left(\frac{\hat{P}}{1 - \hat{P}}\right) = b_0 + b_1x_1 = `r nz(b0r)` `r pm(b1r)` \times \mathsf{statusquo}$$
+
+- $\exp(b_0) = \exp(`r nz(b0r)`) = `r f(exp(b0r))`$: estimated intercept in **odds**
+    - when statusquo = 0 (average support for the status quo), a vote of yes is `r f(exp(b0r))` times as likely as no
+    - When statusquo = 0, $P(\mathsf{yes}) = \frac{`r f(exp(b0r))`}{1+`r f(exp(b0r))`} = `r nz(P_at(0))`$
+    - May not have a meaningful interpretation if 0 never occurs in data
+
+
+
+
+:::
+
+
+## Odds Slope
+
+::: {style="font-size: 0.75em;"}
+
+How to interpret the estimated regression coefficients?
+
+$$\ln\left(\frac{\hat{P}}{1 - \hat{P}}\right) = b_0 + b_1x_1 = `r nz(b0r)` `r pm(b1r)` \times \mathsf{statusquo}$$
+
+- $\exp(b_1) = \exp(`r f(b1r)`) = `r f(exp(b1r))`$
+    - For one unit increase in statusquo, odds of yes (vs no) becomes `r f(exp(b1r))` times as large
+
+
+
+$$\begin{aligned}
+  \frac{P(\mathsf{yes} \vert -2)}{P(\mathsf{no} \vert -2)} &= \frac{`r nz(P_at(-2), 4)`}{1 - `r nz(P_at(-2), 4)`} = `r nz(odds_at(-2), 4)` \\
+  \frac{P(\mathsf{yes} \vert -1)}{P(\mathsf{no} \vert -1)} &= \frac{`r nz(P_at(-1), 3)`}{1 - `r nz(P_at(-1), 3)`} = `r f(exp(b1r))`(`r nz(odds_at(-2), 4)`) = `r nz(odds_at(-1), 3)` \\
+  \frac{P(\mathsf{yes} \vert 0)}{P(\mathsf{no} \vert 0)} &= \frac{`r nz(P_at(0), 3)`}{1 - `r nz(P_at(0), 3)`} = `r f(exp(b1r))`(`r nz(odds_at(-1), 3)`) = `r f(odds_at(0))`
+\end{aligned}$$
+
+
+:::
+
+## Classification Accuracy
+
+::: {style="font-size: 0.85em;"}
+
+From the fitted model, we can calculate predicted probabilities for each observation
+
+```{r}
+#| echo: true
+
+fitted1 <- fitted(glm1)
+class1 <- ifelse(fitted1 > .5, 
+                 "pred_yes", "pred_no")
+table(class1, Chile$voteYN)
+```
+
+```{r}
+tab1 <- table(class1, Chile$voteYN)
+cor1 <- c(tab1["pred_no", "N"], tab1["pred_yes", "Y"])
+acc1 <- sum(cor1) / sum(tab1)
+```
+
+$\frac{`r cor1[1]` + `r cor1[2]`}{`r sum(tab1)`} = `r f(100 * acc1)`\%$ of votes correctly classified using only status quo support as a predictor
+
+Other considerations
+
+- Is .5 the right cutoff? 
+    - What if one category is much less likely than the other?
+- This is classifying on the same sample as the one the model was estimated on
+    - Cross validation?
+
+:::
+
+## Confidence Intervals
+
+::: {style="font-size: 0.85em;"}
+
+`glm` output gives each estimated regression coefficient and its standard error
+
+- $z$-test assumes that sampling distributions of coefficients are normally distributed 
+
+```{r}
+#| echo: true
+
+summary(glm1)$coefficients
+```
+
+Confidence interval for coefficient $j$:
+
+$$b_j \pm z_{\alpha/2} s_{b_j}$$
+
+Example:
+
+$$\begin{aligned}
+  95\%\ \text{CI}(b_0) & = `r f(b0)` \pm 1.96 \times `r nz(se0, 3)` = \boldsymbol{[`r nz(ci0[1], 3)`,\ `r nz(ci0[2], 3)`]} \\
+  95\%\ \text{CI}(b_1) & = `r f(b1)` \pm 1.96 \times `r nz(se1, 3)` = \boldsymbol{[`r f(ci1[1])`,\ `r f(ci1[2])`]}
+\end{aligned}$$
+
+:::
+
+## Model Comparison
+
+::: {style="font-size: 0.67em;"}
+
+For ordinary linear regression, we used $t$-tests to evaluate the significance of each predictor in the regression equation
+
+For GLMs, we instead compare the fit of models that differ by only that predictor:
+
+$$\begin{aligned}
+  \text{Null Model} &: \ln\left(\frac{\hat{P}}{1 - \hat{P}}\right) = b_0 \\
+  \text{Model 1} &: \ln\left(\frac{\hat{P}}{1 - \hat{P}}\right) = b_0 + b_1x_1
+\end{aligned}$$
+
+$$\begin{aligned}
+  \chi^2(\text{dif}) & = {\color{#FF7F00}{-2\times \text{logLikelihood}(\text{Null Model})}} - \left({\color{#FF7F00}{-2\times  \text{logLikelihood}(\text{Model 1})}}\right) \\ 
+  & = \text{Deviance}(\text{Null Model}) - \text{Deviance}(\text{Model 1})
+\end{aligned}$$
+
+Then, $\chi^2(\text{dif}) \sim \chi^2(df)$, where $df$ equals the difference in the number of estimated parameters between Model 1 and the Null Model
+
+
+
+- [**Null Model:** all predicted probabilities are the same]{style="color: #377EB8;"}
+
+- [$-2\times$ log likelihood is evaluated at the maximum likelihood parameter estimates]{style="color: #FF7F00;"}
+
+- [**Deviance** $= -2 \times$ log likelihood]{style="color: #4DAF4A;"}
+
+:::
+
+## Model Comparison in `R`
+
+The `anova()` function (confusingly) is often used for model comparison
+
+- Here, we compare model with intercept only (Null Model) to a model with both slope and intercept for `statusquo`
+
+::::: columns
+
+:::: {.column width="55%"}
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+#| echo: true
+
+anova(glm1, test = "LRT")
+```
+
+:::
+
+```{r}
+a1 <- anova(glm1, test = "LRT")
+dev_null <- a1$`Resid. Dev`[1]
+dev_1    <- a1$`Resid. Dev`[2]
+chi1     <- a1$Deviance[2]
+p1       <- a1$`Pr(>Chi)`[2]
+```
+
+[`test = "LRT"` requests a "Likelihood Ratio Test"]{style="color: #FF7F00;"}
+
+::::
+
+:::: {.column width="45%"}
+
+::: {style="color: #4DAF4A; border: 3px solid #4DAF4A; border-radius: 10px; padding: 0.6em; font-size: 0.85em;"}
+
+Null Model Deviance: `r f(dev_null)`  
+Model 1 Deviance: `r f(dev_1)`  
+$\chi^2(\text{dif}, 1) = `r f(chi1)`, p `r fp(p1)`$
+
+Interpretation: Model 1 fits `r if (p1 < .05) "significantly better than" else "no better than"` the Null Model
+
+:::
+
+::::
+
+:::::
+
+## Adding Predictors
+
+General logistic regression model:
+
+$$\begin{aligned}
+  \hat{P} & = \frac{1}{1 + \exp(-(b_0 + b_1x_1 + b_2x_2 + \cdots + b_px_p))} \\ \\
+  & = \frac{\exp(b_0 + b_1x_1 + b_2x_2 + \cdots + b_px_p)}{1 + \exp(b_0 + b_1x_1 + b_2x_2 + \cdots + b_px_p)}
+\end{aligned}$$
+
+- $p$ predictors 
+
+- $\hat{P}$: predicted probability of the outcome $y = 1$ ($\hat{P}$ ranges from 0 to 1)
+  
+- Notice the linear combination of predictors: $b_0 + b_1x_1 + b_2x_2 + \cdots + b_px_p$
+
+## Predictor Interpretations
+
+::: {style="font-size: 0.9em;"}
+
+Interpreting parameters with 2 predictors:
+
+$$\ln\left(\frac{\hat{P}}{1 - \hat{P}}\right) = b_0 + b_1x_1 + b_2x_2$$
+
+$b_0$: estimated intercept
+
+- logit when both $x_1 =0$ and $x_2 = 0$
+
+$b_1$: estimated regression slope of $x_1$ on logit holding $x_2$ constant
+
+- change of logit when $x_1$ increases by 1 unit, holding $x_2$ constant
+
+$b_2$: estimated regression slope of $x_2$ on logit holding $x_1$ constant
+
+- change of logit when $x_2$ increases by 1 unit, holding $x_1$ constant
+
+:::
+
+## Odds Interpretations
+
+::: {style="font-size: 0.9em;"}
+
+Interpreting parameters with 2 predictors:
+
+$$\ln\left(\frac{\hat{P}}{1 - \hat{P}}\right) = b_0 + b_1x_1 + b_2x_2$$
+
+$\exp(b_0)$: estimated intercept
+
+- odds when both $x_1 =0$ and $x_2 = 0$
+
+$\exp(b_1)$: factor by which odds change for one unit increase of $x_1$  holding $x_2$ constant
+
+$\exp(b_2)$: factor by which odds change for one unit increase of $x_2$  holding $x_1$ constant
+
+:::
+
+## Multiple Predictors in `R` {.scrollable}
+
+::: {style="font-size: 0.7em;"}
+
+Let's add `education` to the model. Remember that `education` is a factor variable with 3 categories - `R` will represent this with 2 dummy variables
+
+```{r}
+#| echo: true
+
+glm2 <- glm(vote ~ statusquo + education, Chile, family = binomial)
+summary(glm2)$coefficients
+```
+
+```{r}
+cf2 <- summary(glm2)$coefficients
+bb  <- cf2[, "Estimate"]; ss <- cf2[, "Std. Error"]   # order: Intercept, statusquo, PS, S
+lo2 <- bb - qnorm(.975) * ss; hi2 <- bb + qnorm(.975) * ss
+```
+
+We can see that "S" (secondary) and "PS" (post-secondary) each have their own coefficient - that means that "P" (primary) is the reference level
+
+- $b_0 = `r nz(bb[1], 3)`$: logit for someone with a primary school education and the average support for the status quo
+
+- $b_1 = `r f(bb[2])`$: change of logit when `statusquo` increases by 1 unit (1 SD), holding `education` constant
+
+- $b_2 = `r f(bb[3])`$: `r chg(bb[3])` in logit (log odds) of voting "yes" for someone with a post-secondary education (vs. a primary school education), holding support for the status quo constant
+
+- $b_3 = `r f(bb[4])`$: `r chg(bb[4])` in logit (log odds) of voting "yes" for someone with a secondary education (vs. a primary school education), holding support for the status quo constant
+
+:::
+
+## Odds Interpretations {.scrollable}
+
+::: {style="font-size: 0.8em;"}
+
+Odds interpretation of the same model:
+
+```{r}
+summary(glm2)$coefficients
+```
+
+- $\exp(b_0) = \exp(`r nz(bb[1], 3)`) = `r f(exp(bb[1]))`$: odds of yes vote (vs no) for someone with a primary school education and the average support for the status quo
+
+- $\exp(b_1) = `r f(exp(bb[2]))`$: factor by which odds of yes vote (vs no) changes for one unit increase in statusquo holding education constant
+
+- $\exp(b_2) = `r f(exp(bb[3]))`$: factor by which odds of yes vote (vs no) changes for someone with post-secondary education (vs a primary school education) holding statusquo constant
+
+- $\exp(b_3) = `r f(exp(bb[4]))`$: factor by which odds of yes vote (vs no) changes for someone with secondary education (vs a primary school education) holding statusquo constant
+
+:::
+
+## Confidence Intervals
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+summary(glm2)$coefficients
+```
+
+Confidence interval for (population) $b_j$:
+
+$$b_j \pm z_{\alpha/2}\times s_{b_j}$$
+
+- 95% CI for $b_0: `r nz(bb[1])` \pm 1.96\times `r nz(ss[1])` = \boldsymbol{[`r nz(lo2[1])`,\ `r nz(hi2[1])`]}$
+
+- 95% CI for $b_1: `r nz(bb[2])` \pm 1.96\times `r nz(ss[2])` = \boldsymbol{[`r nz(lo2[2])`,\ `r nz(hi2[2])`]}$
+
+- 95% CI for $b_2: `r nz(bb[3])` \pm 1.96\times `r nz(ss[3])` = \boldsymbol{[`r nz(lo2[3])`,\ `r nz(hi2[3])`]}$
+
+- 95% CI for $b_3: `r nz(bb[4])` \pm 1.96\times `r nz(ss[4])` = \boldsymbol{[`r nz(lo2[4])`,\ `r nz(hi2[4])`]}$
+
+:::
+
+## Odds CIs
+
+Confidence interval for (population) as odds ratio:
+
+- Lower limit = $\exp(\text{lower limit of } b_1)$
+
+- Upper limit = $\exp(\text{upper limit of } b_1)$
+
+## Classification Accuracy
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+#| echo: true
+
+fitted2 <- fitted(glm2)
+class2 <- ifelse(fitted2 > .5, 
+                 "pred_yes", "pred_no")
+table(class2, Chile$voteYN)
+```
+
+```{r}
+tab2 <- table(class2, Chile$voteYN)
+cor2 <- c(tab2["pred_no", "N"], tab2["pred_yes", "Y"])
+acc2 <- sum(cor2) / sum(tab2)
+```
+
+$\frac{`r cor2[1]` + `r cor2[2]`}{`r sum(tab2)`} = `r f(100 * acc2)`\%$ accurate, compared with `r f(100 * acc1)`% for the model with only `statusquo` as a predictor
+
+Other considerations
+
+- Is .5 the right cutoff? 
+    - What if one category is much less likely than the other?
+- This is classifying on the same sample as the one the model was estimated on
+    - Cross validation?
+
+:::
+
+## Model Comparison
+
+We can also compare the fit of the two models to determine whether to keep `education` as a predictor
+
+::: {style="font-size: 0.85em;"}
+
+```{r}
+#| echo: true
+
+anova(glm1, glm2, test = "LRT")
+```
+
+:::
+
+```{r}
+a12  <- anova(glm1, glm2, test = "LRT")
+chi12 <- a12$Deviance[2]; df12 <- a12$Df[2]; p12 <- a12$`Pr(>Chi)`[2]
+```
+
+[`anova()` can take two models for comparison]{style="color: #FF7F00;"}
+
+$\chi^2(\text{dif}, `r df12`) = `r f(chi12, 3)`, p `r fp(p12)`$, which `r if (p12 < .05) "indicates significantly better fit in" else "does not indicate significantly better fit for"` the model with both `statusquo` and `education` as predictors over the model with only `statusquo` as a predictor  
+
+## Information Criteria
+
+Another way to compare models is through **information criteria**, which consider the tradeoff between goodness-of-fit (measured by the deviance) and model complexity (measured by a penalty term, usually a function of the number of estimated parameters)
+
+The two most common information criteria: 
+
+- Akaike information criterion (AIC)
+
+- Bayesian information criterion (BIC)
+
+$$\begin{aligned}
+\mathsf{AIC} & = \mathsf{Deviance} + \underbrace{2k}_{\text{penalty term}} \\
+\mathsf{BIC} & = \mathsf{Deviance} + \underbrace{k\ln(N)}_{\text{penalty term}}
+\end{aligned}$$
+
+- $k$: number of estimated parameters; $N$: sample size
+
+- Models with lower AIC or BIC [for the same data]{style="text-decoration: underline;"} are preferred 
+
+## Information Criteria
+
+```{r}
+which_lower <- function(v1, v2) {
+  if (v2 < v1) "model 2 (`statusquo` + `education` as predictors)" 
+  else "model 1 (only `statusquo` as a predictor)"
+}
+```
+
+::: {style="font-size: 0.85em;"}
+
+AIC is lower for `r which_lower(AIC(glm1), AIC(glm2))`
+
+```{r}
+#| echo: true
+
+AIC(glm1); AIC(glm2)
+```
+
+BIC is lower for `r which_lower(BIC(glm1), BIC(glm2))`
+
+```{r}
+#| echo: true
+
+BIC(glm1); BIC(glm2)
+```
+
+I recommend looking at multiple measures (including classification accuracy, likelihood ratio test, information criteria) to decide on the most appropriate model
+
+- Other relevant tools not covered include false positive rates, false negative rates, ROC curves, confusion matrix
+
+:::
+
+<!-- ## Logistic Regression with Perfect Prediction
+
+What happens if we are able to perfectly classify observations?
+
+```r
+glm3 <- glm(Y ~ Bottom + Diagonal, data = banknote1, family = binomial)
+round(fitted(glm3), 6)
+```
+
+(Original note on slide, drawn in tikz: "Predicted probabilities are all exactly 0 or 1")
+
+## Logistic Regression with Perfect Prediction
+
+Perfect prediction in the training data does not imply perfect prediction in the test data
+
+```r
+fitted3 <- predict(glm3, newdata = banknote2, 
+                 type = "response")
+class3 <- ifelse(fitted3 > .5, 
+                 "pred_counterfeit", "pred_genuine")
+table(class3, banknote2$Y)
+```
+-->
+
+## Related Methods
+
+
+::: {style="font-size: 0.85em;"}
+
+Methods somewhat similar to logistic regression include: 
+
+- Discriminant function analysis
+  
+    - Similar goal as logistic regression
+
+    - Find a linear combination of predictors that maximally separates two groups
+
+- Multinomial regression
+
+    - More than 2 ordered categories: proportional odds model
+
+    - More than 2 unordered categories: multinomial logit model
+    
+- Poisson regression and negative binomial regression
+
+    - Often used for count data
+
+    - Particularly useful for data with excessive 0's (see also zero-inflated models)
+
+:::
+
+## APA Writeup
+
+```{r}
+aic <- c(AIC(glm1), AIC(glm2))
+bic <- c(BIC(glm1), BIC(glm2))
+or_ <- exp(bb); or_lo <- exp(lo2); or_hi <- exp(hi2)   # odds ratios and 95% CIs
+lh  <- function(x) if (x < 1) "lower" else "higher"     # direction of an odds ratio
+
+ic_txt <- if (aic[2] < aic[1] & bic[2] < bic[1]) {
+  sprintf("Both information criteria also favored the model including education (AIC = %s vs. %s; BIC = %s vs. %s).",
+          f(aic[2]), f(aic[1]), f(bic[2]), f(bic[1]))
+} else if (aic[2] >= aic[1] & bic[2] >= bic[1]) {
+  sprintf("However, both information criteria favored the simpler model with status quo support alone (AIC = %s vs. %s; BIC = %s vs. %s).",
+          f(aic[1]), f(aic[2]), f(bic[1]), f(bic[2]))
+} else {
+  sprintf("Information criteria were mixed: AIC favored the model including education (%s vs. %s), whereas BIC, which penalizes additional parameters more heavily, favored the model with status quo support alone (%s vs. %s).",
+          f(aic[2]), f(aic[1]), f(bic[1]), f(bic[2]))
+}
+```
+
+::: {style="font-size: 0.8em;"}
+
+We fit a logistic regression predicting a "yes" vote (vs. "no") in the 1988 Chilean plebiscite from support for the status quo and education level, with primary school education as the reference group ($N = `r format(nrow(Chile), big.mark = ",")`$). A likelihood ratio test indicated that adding education to a model containing only status quo support `r if (p12 < .05) "significantly improved" else "did not significantly improve"` model fit, $\chi^2(`r df12`) = `r f(chi12)`$, $p `r fp(p12)`$. `r ic_txt`
+
+In the model with both predictors, each one-standard-deviation increase in status quo support was associated with `r f(or_[2])` times the odds of voting "yes," $OR = `r f(or_[2])`$, 95% CI $[`r f(or_lo[2])`, `r f(or_hi[2])`]$, holding education constant. Compared with respondents with a primary school education, respondents with a post-secondary education had `r lh(or_[3])` odds of voting "yes," $OR = `r f(or_[3])`$, 95% CI $[`r f(or_lo[3])`, `r f(or_hi[3])`]$, as did respondents with a secondary education, $OR = `r f(or_[4])`$, 95% CI $[`r f(or_lo[4])`, `r f(or_hi[4])`]$. The model correctly classified `r f(100 * acc2, 1)`% of respondents.
+
+:::
